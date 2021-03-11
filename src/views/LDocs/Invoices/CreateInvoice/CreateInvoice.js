@@ -670,6 +670,7 @@ export default function CreateInvoice(props) {
           InvoiceNumber: fileData.invoiceId,
           invoiceDate: getDateFormet(fileData.createdDate),
           notes: fileData.ref,
+          currency:fileData.FC_currency._id,
           selectedVendor:
             formState.vendors.find((v) => v._id == fileData.vendorId) || null,
         },
@@ -685,8 +686,7 @@ export default function CreateInvoice(props) {
           receiptNumber: item.receiptNumber,
           category: parseInt(item.category),
           poInline: item.poInline,
-          expenseType: item.expenseType
-
+          expenseType: item.expenseType,
         };
         return i;
       });
@@ -876,7 +876,9 @@ export default function CreateInvoice(props) {
     //Creating Invoice
     setIsSavingInvoice(true);
     const userData = jwt.decode(Token);
-    const userCurrency = currencyLookups.find(l=>l._id == userData.currency.Currency_Base);
+    const userCurrency = currencyLookups.find(
+      (l) => l._id == userData.currency.Currency_Base
+    );
     let invoiceDate;
     let InvoiceNumber;
     let dueDate;
@@ -963,7 +965,20 @@ export default function CreateInvoice(props) {
         formState.values.discountType === 2
           ? (formState.values.subtotal * formState.values.overallDiscount) / 100
           : formState.values.overallDiscount;
-
+      // let FC_currency = {
+      //   currency_id:f_currency._id,
+      //   name:f_currency.name,
+      //   symbol:f_currency.sign,
+      //   _id:f_currency._id,
+      //   sign:f_currency.sign
+      // }
+      // let LC_currency = {
+      //   currency_id:userCurrency._id,
+      //   name:userCurrency.name,
+      //   symbol:userCurrency.sign,
+      //   _id:userCurrency._id,
+      //   sign:userCurrency.sign
+      // }
       let formData = {
         invoiceId: formState.values.InvoiceNumber,
         invoiceDate: formState.values.invoiceDate,
@@ -990,13 +1005,15 @@ export default function CreateInvoice(props) {
         FC_currency: currencyLookups.find(
           (l) => l._id == formState.values.currency
         ),
-        LC_currency:userCurrency,
+        LC_currency: userCurrency,
         description: formState.values.notes,
       };
       //Axios Call
       axios({
         method: edit ? "put" : "post",
-        url: edit ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
+        url: edit
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
         //url: `https://api.matesol.net/invoice/submitInvoice`,
         data: formData,
         headers: {
@@ -1006,56 +1023,60 @@ export default function CreateInvoice(props) {
       })
         .then((response) => {
           setIsSavingInvoice(false);
-          successAlert(edit ? "Invoice Updated SuccessFully." : "Invoice Submited SuccessFully.");
-          if (edit) {
-            closeModal();
+          successAlert(
+            edit
+              ? "Invoice Updated SuccessFully."
+              : "Invoice Submited SuccessFully."
+          );
+          if (!edit) {
+            setItems([]);
+            setFormState({
+              selectedVendor: null,
+              values: {
+                invoiceDate: getDateFormet(today),
+                InvoiceNumber: "INV-00",
+                dueDate: getDateFormet(duedate),
+                poNumber: "",
+                itemName: "",
+                unitCost: 0,
+                quantity: 0,
+                discount: 0,
+                amount: 0,
+                additionalDetails: "",
+                overallDiscount: 0,
+                overallTax: 0,
+                notes: "",
+                selectedVendor: "",
+                subtotal: 0,
+                total: 0,
+                fileTitle: "",
+                fileDescription: "",
+                currency: "",
+              },
+              attachments: [],
+              errors: {
+                invoiceDate: "",
+                InvoiceNumber: "",
+                dueDate: "",
+                poNumber: "",
+                itemName: "",
+                unitCost: "",
+                quantity: "",
+                discount: "",
+                amount: "",
+                additionalDetails: "",
+                notes: "",
+                selectedVendor: "",
+                vendor: "",
+                currency: "",
+                items: "",
+                fileTitle: "",
+                fileDescription: "",
+              },
+            });
+          }else{
+            props.loadFiles(userData, false);
           }
-          setItems([]);
-          setFormState({
-            vendors: [],
-            selectedVendor: null,
-            values: {
-              invoiceDate: getDateFormet(today),
-              InvoiceNumber: "INV-00",
-              dueDate: getDateFormet(duedate),
-              poNumber: "",
-              itemName: "",
-              unitCost: 0,
-              quantity: 0,
-              discount: 0,
-              amount: 0,
-              additionalDetails: "",
-              overallDiscount: 0,
-              overallTax: 0,
-              notes: "",
-              selectedVendor: "",
-              subtotal: 0,
-              total: 0,
-              fileTitle: "",
-              fileDescription: "",
-              currency: "",
-            },
-            attachments: [],
-            errors: {
-              invoiceDate: "",
-              InvoiceNumber: "",
-              dueDate: "",
-              poNumber: "",
-              itemName: "",
-              unitCost: "",
-              quantity: "",
-              discount: "",
-              amount: "",
-              additionalDetails: "",
-              notes: "",
-              selectedVendor: "",
-              vendor: "",
-              currency: "",
-              items: "",
-              fileTitle: "",
-              fileDescription: "",
-            },
-          });
         })
         .catch((err) => {
           console.log(err);
@@ -1593,7 +1614,7 @@ export default function CreateInvoice(props) {
                             style={{
                               display: "flex",
                               alignItems: "center",
-                              paddingLeft:50,
+                              paddingLeft: 50,
                               // justifyContent: "left",
                             }}
                           >
@@ -1736,6 +1757,7 @@ export default function CreateInvoice(props) {
                                 ? "Valid Invoice Currency is required"
                                 : null
                             }
+                            disabled={edit}
                             label="Currency"
                             id="currency"
                             name="currency"

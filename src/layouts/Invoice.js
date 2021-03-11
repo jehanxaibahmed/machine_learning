@@ -70,15 +70,16 @@ export default function Dashboard(props) {
   const [logo, setLogo] = React.useState(require("assets/img/logo.png"));
   const [darkLogo, setDarkLogo] = React.useState(require("assets/img/logoexxx.png"));
   const dispatch = useDispatch();
-  const notify = (msg) => toast(msg, {
-    position: "bottom-left",
-    autoClose: 30000,
+  const notify = (msg) => 
+  toast(msg, {
+    position: "bottom-right",
+    autoClose: 10000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-  });
+    });
 
   const fetchData = async () => {
     dispatch(getNotification());
@@ -250,7 +251,7 @@ export default function Dashboard(props) {
       <Notifications />
       {!checkIsInvoiceDesk() ? <Redirect exact from="/" to="/auth/login" /> : 
       <React.Fragment>
-      <ToastContainer position="bottom-left"
+      {/* <ToastContainer position="bottom-left"
           autoClose={30000}
           hideProgressBar={false}
           newestOnTop={true}
@@ -259,7 +260,7 @@ export default function Dashboard(props) {
           rtl={false}
           pauseOnFocusLoss
           draggable
-          pauseOnHover/>
+          pauseOnHover/> */}
       <Sidebar
         routes={routes.filter(route=>route.name !== undefined)}
         logoText={process.env.REACT_APP_LDOCS_FOOTER_COPYRIGHT_LEVEL_1}

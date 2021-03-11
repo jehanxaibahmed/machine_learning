@@ -1173,7 +1173,7 @@ export default function FilesList(props) {
           animationOutDuration={1000}
           isVisible={editInvoice}
         >
-            <CreateInvoice edit={editInvoice} closeModal={closeInvoiceModel} fileData={row} />
+            <CreateInvoice edit={editInvoice} loadFiles={getMyFiles} closeModal={closeInvoiceModel} fileData={row} />
         </Animated>
         :
         ''
