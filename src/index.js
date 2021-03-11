@@ -4,6 +4,7 @@ import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./redux";
+import ScrollToTop  from "./ScrollToTop";
 
 // import AuthLayout from "layouts/Auth.js";
 // import RtlLayout from "layouts/RTL.js";
@@ -21,6 +22,7 @@ const hist = createBrowserHistory();
 ReactDOM.render(
   <Provider store={store}>
     <Router history={hist}>
+    <ScrollToTop>
       <Switch>
         <Route path="/rtl" component={RtlLayout} />
         <Route path="/auth" component={AuthLayout} />
@@ -30,6 +32,7 @@ ReactDOM.render(
         {/**  <Redirect from="/" to="/admin/dashboard" />  */}
         <Redirect from="/" to="/auth" />
       </Switch>
+      </ScrollToTop>
     </Router>
   </Provider>,
   document.getElementById("root")

@@ -47,7 +47,8 @@ export default function RegisterVendor(props) {
       loginname: "",
       cellnumber: "",
       referenceTicket: "",
-      organizationName:""
+      organizationName:"",
+      supplierSite:""
     },
     errors: {
       vendorName: "",
@@ -57,7 +58,8 @@ export default function RegisterVendor(props) {
       loginname: "",
       cellnumber: "",
       referenceTicket: "",
-      organizationName: ""
+      organizationName: "",
+      supplierSite:""
     },
   });
     useEffect(() => {
@@ -162,7 +164,7 @@ export default function RegisterVendor(props) {
       >
         {msg}
         <br />
-        Unable To Register Vendor Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
+        Unable To Register Supplier Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
       </SweetAlert>
     );
   };
@@ -191,6 +193,7 @@ export default function RegisterVendor(props) {
     let cellnumber;
     let referenceTicket;
     let organizationName;
+    let supplierSite;
 
     const Check = require("is-null-empty-or-undefined").Check;
     var error = false;
@@ -237,6 +240,12 @@ export default function RegisterVendor(props) {
       cellnumber = "error";
       error = true;
     }
+    if (!Check(formState.values.supplierSite)) {
+      supplierSite = "success";
+    } else {
+      supplierSite = "error";
+      error = true;
+    }
     // if (!Check(formState.values.referenceTicket)) {
     //   referenceTicket = "success";
     // } else {
@@ -260,7 +269,8 @@ export default function RegisterVendor(props) {
         loginname: loginname,
         cellnumber: cellnumber,
         referenceTicket: referenceTicket,
-        organizationName: organizationName
+        organizationName: organizationName,
+        supplierSite: supplierSite
       },
     }));
     if (error) {
@@ -280,6 +290,7 @@ export default function RegisterVendor(props) {
         contactNumber:formState.values.cellnumber,
         ref:formState.values.referenceTicket,
         currency:formState.values.currency,
+        site:formState.values.supplierSite,
         organizations:{
           tenantId:formState.orgs.find(org=>org.organizationName == formState.values.organizationName).tenantId,
           currency:formState.orgs.find(org=>org.organizationName == formState.values.organizationName).Currency_Base,
@@ -300,10 +311,10 @@ export default function RegisterVendor(props) {
           props.setFilters(formState.orgs.find(org=>org.organizationName == formState.values.organizationName))
           setFormState((formState) => ({
             ...formState,
-            message: "Vendor has been successfully registered! Check Mail and Activate Vendor Account.",
+            message: "Supplier has been successfully registered! Check Mail and Activate Supplier Account.",
             isRegistering: false,
           }));
-          msg = "Vendor Registered Successfully!  Check Mail and Activate Vendor Account.";
+          msg = "Supplier Registered Successfully!  Check Mail and Activate Vendor Account.";
           successAlert(msg);
         })
         .catch((error) => {
@@ -363,7 +374,7 @@ export default function RegisterVendor(props) {
         <Card>
           <CardHeader color="info" icon>
             <CardIcon color="info">
-              <h4 className={classes.cardTitle}>Vendor On Boarding</h4>
+              <h4 className={classes.cardTitle}>Supplier On Boarding</h4>
             </CardIcon>
           </CardHeader>
           <CardBody>
@@ -430,10 +441,10 @@ export default function RegisterVendor(props) {
                     error={formState.errors.vendorName === "error"}
                     helperText={
                       formState.errors.vendorName === "error"
-                        ? "Valid Vendor name is required"
+                        ? "Valid Supplier name is required"
                         : null
                     }
-                    label="Vendor Name"
+                    label="Supplier Name"
                     id="vendorName"
                     name="vendorName"
                     onChange={(event) => {
@@ -595,6 +606,31 @@ export default function RegisterVendor(props) {
                 >
                   <TextField
                     fullWidth={true}
+                    error={formState.errors.supplierSite === "error"}
+                    helperText={
+                      formState.errors.supplierSite === "error"
+                        ? "Valid Supplier Site is required"
+                        : null
+                    }
+                    label="Supplier Site"
+                    id="supplierSite"
+                    name="supplierSite"
+                    onChange={(event) => {
+                      handleChange(event);
+                    }}
+                    type="text"
+                    value={formState.values.supplierSite || ""}
+                  />
+                </GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={12}
+                  lg={12}
+                  style={{ marginTop: "10px", marginBottom: "10px" }}
+                >
+                  <TextField
+                    fullWidth={true}
                     error={formState.errors.referenceTicket === "error"}
                     helperText={
                       formState.errors.referenceTicket === "error"
@@ -603,6 +639,8 @@ export default function RegisterVendor(props) {
                     }
                     label="Remarks"
                     id="referenceTicket"
+                    multiline
+                    rows="3"
                     name="referenceTicket"
                     onChange={(event) => {
                       handleChange(event);
@@ -659,7 +697,7 @@ export default function RegisterVendor(props) {
                 type="button"
                 onClick={handleRegister}
               >
-                Register Vendor
+                Register Supplier
               </Button>
               {formState.isRegistering ? (
                 <CircularProgress disableShrink />

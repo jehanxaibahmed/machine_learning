@@ -78,6 +78,7 @@ const calculateTimimg = d => {
 };
 
 export default function InvoiceAge(props) {
+  const [data, setData] = React.useState([]);
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
@@ -85,14 +86,23 @@ export default function InvoiceAge(props) {
     return { name, remainingDays, dueDate, invoiceDate };
   }
 
-  const rows = [
-    createData("INV-00001", 10, "10/12/2023", "10/12/2020"),
-    createData("INV-00002", 12, "03/08/2021", "10/12/2020"),
-    createData("INV-00004", 18, "12/07/2024", "10/12/2020"),
-    createData("INV-00005", 30, "12/05/2021", "10/12/2020"),
-    createData("INV-00003", 12, "03/16/2021", "10/12/2020"),
-  ];
-
+  
+  React.useEffect(()=>{
+    const user = jwt.decode(Token);
+    axios({
+      method: "get",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceAgeing/${user.orgDetail.organizationId}`,
+      headers: { cooljwt: Token },
+    })
+      .then((response) => {
+        var data = response.data;
+        data.length = 5;
+        setData(data);
+        }).catch((err)=>{
+        console.log(err);
+        setData([]);
+      })
+  },[])
   const BorderLinearProgress = withStyles((theme) => ({
     root: {
       height: 40,
@@ -138,18 +148,20 @@ export default function InvoiceAge(props) {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows.map((row) => {
-                        var remainingDays = datediff(new Date(), parseDate(row.dueDate));
-                        var totalDays = datediff(
-                          parseDate(row.invoiceDate),
-                          parseDate(row.dueDate)
-                        );
-                        var percentage = remainingDays * 100 / totalDays;
+                      {data.map((row) => {
+                        var remainingDays = datediff(new Date(), new Date(row.dueDate));
+                        // var totalDays = datediff(
+                        //   new Date(row.createdDate),
+                        //   new Date(row.dueDate)
+                        // );
+                        // var percentage = remainingDays * 100 / totalDays;
+                        var remainingDays = 10;
+                        var percentage = 10;
                         console.log(percentage);
                         return (
-                        <TableRow key={row.name}>
+                        <TableRow key={row.invoiceId}>
                           <TableCell component="th" scope="row">
-                            {row.name}
+                            {row.invoiceId}
                           </TableCell>
                           <TableCell style={{ width: 600 }}>
                             <div style={{ position: "relative" }}>
@@ -176,9 +188,9 @@ export default function InvoiceAge(props) {
                             </div>
                           </TableCell>
                           <TableCell align="right">{row.dueDate}</TableCell>
-                          <TableCell align="right">{row.invoiceDate}</TableCell>
+                          <TableCell align="right">{row.createdDate}</TableCell>
                           <TableCell align="right">
-                            $&nbsp;{parseFloat(row.remainingDays).toFixed(2)}
+                            $&nbsp;{parseFloat(row.netAmt).toFixed(2)}
                           </TableCell>
                         </TableRow>
                        )})}

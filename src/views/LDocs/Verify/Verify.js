@@ -31,6 +31,7 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView";
+import { addZeroes, formatDateTime } from "../Functions/Functions";
 
 
 const styles = {
@@ -308,9 +309,9 @@ export default function Verify() {
                     tableHeaderColor="info"
                     tableShopping={true}
                     tableHead={[
-                      "Invoice ID", "Submit Date", "Due Date", "Vendor Name", "Amount", "Version", 'Status',"Action"
+                      "Invoice ID", "Submit Date", "Due Date", "Vendor Name", "Amount", "Version","Action"
                     ]}
-                    tableData={fileData.map((file,index)=>{return [file.invoiceId, dateFormat(file.invoiceDate, "dd/mm/yyyy hh:mm:ss"), dateFormat(file.dueDate, "dd/mm/yyyy hh:mm:ss") ,file.vendorName,file.netAmt,file.version,file.status,(<Button
+                    tableData={fileData.map((file,index)=>{return [file.invoiceId, formatDateTime(file.invoiceDate), formatDateTime(file.dueDate) ,file.vendorName,`$${addZeroes(file.netAmt)}`,file.version,(<Button
                         round
                         color={Selected == index ? "danger" : "info"}
                         className="Edit"

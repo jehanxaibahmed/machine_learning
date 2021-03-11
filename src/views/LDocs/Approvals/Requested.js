@@ -12,6 +12,7 @@ import {
   Dialog,
   DialogContent,
   Tooltip,
+  IconButton
 } from "@material-ui/core";
 // @material-ui/icons
 import VisibilityIcon from "@material-ui/icons/Visibility";
@@ -35,10 +36,16 @@ import NoStatus from "assets/img/statuses/NoStatus.png";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import jwt from "jsonwebtoken";
 import Iframe from "react-iframe";
+import { validateInvoice, formatDateTime } from "../Functions/Functions.js";
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView";
 import ViewModuleIcon from "@material-ui/icons/ViewModule";
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import { sendNotification, getNotification } from "actions";
+import Validator from "../../Components/Timeline";
 import { useSelector, useDispatch } from "react-redux";
+import { CallReceived, DoneAll } from "@material-ui/icons";
+
+
 
 const styles = {
   cardIconTitle: {
@@ -78,11 +85,14 @@ export default function ApprovalRequested() {
   const [data, setData] = React.useState();
   const [FileData, setFileData] = React.useState();
   const [InvoiceData, setInvoiceData] = React.useState();
+  const [validation, setValidation] = React.useState({});
+  const [validateModal, setValidateModal] = React.useState(false);
+  const [show, setShow] = React.useState(true);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     getRequests();
-  }, []);
+  }, [show]);
 
   const getInvoiceDetails = (row) => {
     axios({
@@ -123,21 +133,30 @@ export default function ApprovalRequested() {
     setApproverModal(true);
   };
 
+  const ValidateFile = async (row) => {
+    setInvoiceData(row);
+    validateInvoice(row, Token).then(res=>{
+    setAnimateTable(false);
+    setValidation(res);
+    setValidateModal(true);   
+  });
+}
   const getRequests = () => {
     setIsLoading(true);
     axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveMyPending`,
+      url: show ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveMyPending` :
+      `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/myApproves`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
+        console.log(response.data);
         setData(
           response.data.map((prop, key) => {
             return {
               id: prop._id,
               fileName: prop.invoiceId,
               requestedBy: prop.requestedBy,
-              approvedBy: prop.approvedBy,
               status:
                 prop.status === "pending" ? (
                   <div className="fileinput text-center">
@@ -164,7 +183,7 @@ export default function ApprovalRequested() {
                     </div>
                   </div>
                 ),
-              version: prop.version,
+              requestTime: formatDateTime(prop.requestedTime),
               actions: (
                 <div className="actions-right">
                   <Tooltip title="View Invoice View" aria-label="viewfile">
@@ -180,6 +199,18 @@ export default function ApprovalRequested() {
                       <ViewModuleIcon />
                     </Button>
                   </Tooltip>
+                  <Tooltip title="Validate File" aria-label="validatefile">
+                    <Button
+                      justIcon
+                      round
+                      simple
+                      icon={VerifiedUserIcon}
+                      onClick={() => ValidateFile(prop)}
+                      color="info"
+                    >
+                      <VerifiedUserIcon />
+                    </Button>
+                  </Tooltip>
                   <Tooltip title="View File" aria-label="viewfile">
                     <Button
                       justIcon
@@ -193,6 +224,7 @@ export default function ApprovalRequested() {
                       <VisibilityIcon />
                     </Button>
                   </Tooltip>
+                  {show ? 
                   <Tooltip title="Review File" aria-label="reviewfile">
                     <Button
                       justIcon
@@ -204,7 +236,7 @@ export default function ApprovalRequested() {
                     >
                       <RateReview />
                     </Button>
-                  </Tooltip>
+                  </Tooltip>:''}
                 </div>
               ),
             };
@@ -331,11 +363,19 @@ export default function ApprovalRequested() {
         },
       })
         .then((response) => {
+          setApproverModal(false);
           successAlert("Invoice Approved Successfully!");
-          // dispatch(sendNotification(`${FileData.invoiceId} Invoice is Approved`, data.fileOwner));
           dispatch(getNotification());
           getRequests();
           setIsApprovingFile(false);
+          setFormState((formState) => ({
+            ...formState,
+            values: {
+              ...formState.values,
+              status: "",
+              approveComments: ""
+            },
+          }));
         })
         .catch((error) => {
           console.log(
@@ -343,7 +383,7 @@ export default function ApprovalRequested() {
               ? error.response.data
               : error.message
           );
-          errorAlert('There is some issue.');
+          errorAlert("There is some issue.");
           setIsApprovingFile(false);
         });
     }
@@ -544,6 +584,43 @@ export default function ApprovalRequested() {
       ) : (
         ""
       )}
+      {validateModal ? (
+        <Animated
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
+          animationInDuration={1000}
+          animationOutDuration={1000}
+          isVisible={validateModal}
+        >
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={12} className={classes.center}>
+              <Card>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
+                    <h4 className={classes.cardTitleText}>
+                      Invoice : {InvoiceData.invoiceId}
+                    </h4>
+                  </CardIcon>
+                  <Button
+                    color="danger"
+                    round
+                    style={{ float: "right" }}
+                    className={classes.marginRight}
+                    onClick={() => goBack()}
+                  >
+                    Go Back
+                  </Button>
+                </CardHeader>
+                <CardBody>
+                  <Validator validation={validation} />
+                </CardBody>
+              </Card>
+            </GridItem>
+          </GridContainer>
+        </Animated>
+      ) : (
+        ""
+      )}
       {isAdvanceView ? (
         <Animated
           animationIn="bounceInRight"
@@ -594,9 +671,33 @@ export default function ApprovalRequested() {
               <CardHeader color="info" icon>
                 <CardIcon color="info">
                   <h4 className={classes.cardTitleText}>
-                    Invoices Requested For Approval
+                    {show ? 'Invoices Requested For Approval' : 'Invoices Approved' }
                   </h4>
                 </CardIcon>
+                {show ?
+                <Tooltip title="Show Approve Done">
+                  <IconButton
+                    color="danger"
+                    round
+                    style={{ float: "right" }}
+                    className={classes.marginRight}
+                    onClick={() => setShow(!show)}
+                  >
+                    <DoneAll />
+                  </IconButton>
+                  </Tooltip>:
+                  <Tooltip title="Show Requested">
+                  <IconButton
+                  color="danger"
+                  round
+                  style={{ float: "right" }}
+                  className={classes.marginRight}
+                  onClick={() => setShow(!show)}
+                >
+                  <CallReceived />
+                </IconButton>
+                </Tooltip>
+                  }
               </CardHeader>
               <CardBody>
                 {isLoading ? (
@@ -611,22 +712,17 @@ export default function ApprovalRequested() {
                         accessor: "fileName",
                       },
                       {
-                        Header: "Version",
-                        accessor: "version",
+                        Header: "Request Time",
+                        accessor: "requestTime",
                       },
                       {
                         Header: "Requested By",
                         accessor: "requestedBy",
                       },
                       {
-                        Header: "Approved By",
-                        accessor: "approvedBy",
-                      },
-                      {
                         Header: "Status",
                         accessor: "status",
                       },
-
                       {
                         Header: "Actions",
                         accessor: "actions",

@@ -4,22 +4,12 @@ import {
   TextField,
   MenuItem,
   makeStyles,
-  Fab,
-  Tooltip,
-  IconButton,
   Slide,
   Dialog,
   DialogContent,
   CircularProgress,
-  withStyles,
   Typography,
-  InputLabel,
-  Select,
-  DialogActions,
-  Input,
-  DialogTitle,
-  FormControl,
-  ListItemSecondaryAction,
+  LinearProgress,
 } from "@material-ui/core";
 import SweetAlert from "react-bootstrap-sweetalert";
 // core components
@@ -39,16 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
-import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
-import BuildNetwork from "../../Vendor/BuildNetwork";
-import AttachmentRounded from "@material-ui/icons/AttachmentRounded";
 import Iframe from "react-iframe";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
@@ -56,9 +37,11 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ScanningDocumentAnimation from "components/ScanningDocumentAnimation/ScanningDocumentAnimation";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
-import VisibilityIcon from "@material-ui/icons/Visibility";
-import CardFooter from "components/Card/CardFooter";
-import CreateIcon from "@material-ui/icons/Create";
+import Attachments from "./Attachments";
+import Items from "./Items";
+import { addZeroes } from "../../Functions/Functions";
+import { Person } from "@material-ui/icons";
+
 const sweetAlertStyle = makeStyles(styles2);
 
 const styles = {
@@ -82,40 +65,7 @@ const styles = {
   },
 };
 
-let fileInput = React.createRef();
 let pdfInput = React.createRef();
-
-function addZeroes(num) {
-  // Convert input string to a number and store as a variable.
-  var value = Number(num);
-  // Split the input string into two arrays containing integers/decimals
-  var res = num.toString().split(".");
-  // If there is no decimal point or only one decimal place found.
-  if (res.length == 1 || res[1].length < 1) {
-    // Set the number to two decimal places
-    value = value.toFixed(2);
-  }
-  // Return updated or original number.
-  return value;
-}
-
-const StyledTableCell = withStyles((theme) => ({
-  head: {
-    backgroundColor: theme.palette.action.hover,
-    color: theme.palette.common.black,
-  },
-  body: {
-    fontSize: 14,
-  },
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
-}))(TableRow);
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
@@ -131,6 +81,7 @@ const getDateFormet = (date) => {
   return today;
 };
 export default function CreateInvoice(props) {
+  const { edit, fileData, closeModal } = props;
   const [pdfModal, setPdfModal] = useState(false);
   const [vendorModal, setVendorModal] = useState(false);
   const [viewFile, setViewFile] = useState(false);
@@ -138,6 +89,7 @@ export default function CreateInvoice(props) {
   const [addingItem, setAddingItem] = useState(false);
   const [file, setFile] = useState(null);
   const [isCreateInvoice, setIsCreateInvoice] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const sweetClass = sweetAlertStyle();
   const [editIndex, setEditIndex] = useState(null);
   const [selectedFileModel, setSelectedFileModel] = useState(false);
@@ -145,17 +97,25 @@ export default function CreateInvoice(props) {
   const [isSavingInvoice, setIsSavingInvoice] = useState(false);
   const [discountModel, setIsDiscountModel] = useState(false);
   const [taxModal, setIsTaxModal] = useState(false);
+  const [category, setCategory] = useState(1);
+  const [currencyLookups, setCurrencyLookups] = useState([]);
+  const [currency, setCurrency] = useState({
+    _id: "602a2d12f31966419864e43c",
+    lookup_Id: 1,
+    Name: "dollor",
+    sign: "$",
+  });
   let duedate = new Date();
   let today = new Date();
-  duedate = duedate.setDate(today.getDate()+15);
+  duedate = duedate.setDate(today.getDate() + 15);
   const [formState, setFormState] = useState({
     vendors: [],
     selectedVendor: null,
     values: {
       invoiceDate: getDateFormet(today),
-      InvoiceNumber: 'INV-00',
+      InvoiceNumber: "INV-00",
       dueDate: getDateFormet(duedate),
-      poNumber: "",
+      currency: "",
       itemName: "",
       unitCost: 0,
       quantity: 0,
@@ -170,15 +130,18 @@ export default function CreateInvoice(props) {
       total: 0,
       fileTitle: "",
       fileDescription: "",
-      discountType:1,
-      taxType:1
+      discountType: 1,
+      taxType: 1,
+      poInline: "",
+      expenseType: "",
+      receiptNumber: "",
     },
     attachments: [],
     errors: {
       invoiceDate: "",
       InvoiceNumber: "",
       dueDate: "",
-      poNumber: "",
+      currency: "",
       itemName: "",
       unitCost: "",
       quantity: "",
@@ -191,19 +154,28 @@ export default function CreateInvoice(props) {
       items: "",
       fileTitle: "",
       fileDescription: "",
+      poInline: "",
+      expenseType: "",
+      receiptNumber: "",
     },
   });
-  React.useEffect(()=>{
-    if (typeof formState.values.selectedVendor == 'object') {
-      setFormState((formState) => ({
-        ...formState,
-        values: {
-          ...formState.values,
-          InvoiceNumber: `INV-00${formState.values.selectedVendor.invoiceCount+1}`,
-        },
-      }));
-    }
-  },[formState.values.selectedVendor])
+  const getLookUp = () => {
+    axios({
+      method: "get", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/getLookups/1`,
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then((res) => {
+        if (typeof res.data.result == "object") {
+          setCurrencyLookups(res.data.result);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const [alert, setAlert] = React.useState(null);
   const successAlert = (msg) => {
     setAlert(
@@ -276,8 +248,13 @@ export default function CreateInvoice(props) {
         unitCost: item.unitCost,
         quantity: item.quantity,
         discount: item.discount,
+        poInline: item.poInline,
+        expenseType: item.expenseType,
+        receiptNumber: item.receiptNumber,
+        additionalDetails: item.additionalDetails,
       },
     }));
+    setCategory(item.category || 1);
   };
   const getFileDetails = () => {
     Object.entries(selectedFile).map(async ([key, value]) => {
@@ -290,20 +267,30 @@ export default function CreateInvoice(props) {
               ...formState.attachments,
               {
                 name: value.name,
-                base64:reader.result,
-                type:value.type,
+                base64: reader.result,
+                type: value.type,
                 attachmentTitle: formState.values.fileTitle,
                 attachmentPath: "",
                 file: value,
                 title: formState.values.fileTitle,
                 description: formState.values.fileDescription,
               },
-            ]
+            ],
           }));
           setSelectedFileModel(false);
           successAlert("File Added Successfully.");
         };
         reader.readAsDataURL(value);
+        setTimeout(() => {
+          setFormState((formState) => ({
+            ...formState,
+            values: {
+              ...formState.values,
+              fileTitle: "",
+              fileDescription: "",
+            },
+          }));
+        }, 500);
       }
     });
   };
@@ -475,7 +462,9 @@ export default function CreateInvoice(props) {
                 unitCost: item[2].values[0].value
                   ? addZeroes(item[2].values[0].value)
                   : "",
-                amount: item[3].values[0].value ? addZeroes(item[3].values[0].value) : "",
+                amount: item[3].values[0].value
+                  ? addZeroes(item[3].values[0].value)
+                  : "",
                 originalamount: item[3].values[0].value
                   ? item[3].values[0].value
                   : "",
@@ -532,6 +521,27 @@ export default function CreateInvoice(props) {
                   ) || null,
               },
             }));
+            //AddFileInAttachments
+            let reader = new FileReader();
+            reader.onloadend = () => {
+              setFormState((formState) => ({
+                ...formState,
+                attachments: [
+                  ...formState.attachments,
+                  {
+                    name: file.name,
+                    base64: reader.result,
+                    type: file.type,
+                    attachmentTitle: formState.values.fileTitle,
+                    attachmentPath: "",
+                    file: file,
+                    title: "OCR",
+                    description: "OCR FILE USED FOR DATA EXTRACTING..",
+                  },
+                ],
+              }));
+            };
+            reader.readAsDataURL(file);
             setItems(invoice_lineitems);
             successAlert("Extracted Data Successfully.");
           }
@@ -579,8 +589,16 @@ export default function CreateInvoice(props) {
           return sum + parseFloat(current.amount);
         }, 0)
       ) +
-      parseFloat(formState.values.taxType === 1 ?  formState.values.overallTax : grossAmt * formState.values.overallTax / 100 ) -
-      parseFloat(formState.values.discountType === 1 ? formState.values.overallDiscount : grossAmt * formState.values.overallDiscount /100);
+      parseFloat(
+        formState.values.taxType === 1
+          ? formState.values.overallTax
+          : (grossAmt * formState.values.overallTax) / 100
+      ) -
+      parseFloat(
+        formState.values.discountType === 1
+          ? formState.values.overallDiscount
+          : (grossAmt * formState.values.overallDiscount) / 100
+      );
     setFormState((formState) => ({
       ...formState,
       values: {
@@ -589,13 +607,33 @@ export default function CreateInvoice(props) {
         subtotal: grossAmt,
       },
     }));
-  }
+  };
+  React.useEffect(() => {
+    setCurrency(
+      currencyLookups.find((l) => l._id == formState.values.currency)
+    );
+  }, [formState.values.currency, currencyLookups]);
   React.useEffect(() => {
     updateTotal();
   }, [items, formState.values.overallDiscount, formState.values.overallTax]);
-
   React.useEffect(() => {
+    if (typeof formState.values.selectedVendor == "object") {
+      setFormState((formState) => ({
+        ...formState,
+        values: {
+          ...formState.values,
+          InvoiceNumber: `INV-00${formState.values.selectedVendor.invoiceCount +
+            1}`,
+        },
+      }));
+    }
+  }, [formState.values.selectedVendor]);
+  React.useEffect(() => {
+    setIsLoading(true);
+    window.scrollTo(0, 0);
     const userDetails = jwt.decode(Token);
+    const userCurrency = userDetails.currency.Currency_Base;
+    getLookUp();
     axios({
       method: "get",
       url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
@@ -609,14 +647,52 @@ export default function CreateInvoice(props) {
           values: {
             ...formState.values,
             selectedVendor: "",
+            currency: userCurrency,
           },
         }));
+        if (edit) {
+          setInvoice();
+        }
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+  const setInvoice = () => {
+    if (edit) {
+      console.log(fileData);
+      setFormState((formState) => ({
+        ...formState,
+        selectedVendor: fileData.vendorId,
+        values: {
+          ...formState.values,
+          InvoiceNumber: fileData.invoiceId,
+          invoiceDate: getDateFormet(fileData.createdDate),
+          notes: fileData.ref,
+          selectedVendor:
+            formState.vendors.find((v) => v._id == fileData.vendorId) || null,
+        },
+      }));
+      var invoice_items = fileData.items.map((item) => {
+        const i = {
+          additionalDetails: item.additionalDetails,
+          amount: item.amount,
+          discount: item.discount,
+          itemName: item.itemName,
+          quantity: item.quantity,
+          unitCost: item.unitCost,
+          receiptNumber: item.receiptNumber,
+          category: parseInt(item.category),
+          poInline: item.poInline,
+          expenseType: item.expenseType
 
+        };
+        return i;
+      });
+      setItems(invoice_items);
+    }
+  };
   const openVendorModal = () => {
     setFormState((formState) => ({
       ...formState,
@@ -636,6 +712,7 @@ export default function CreateInvoice(props) {
     let selectedVendor = formState.vendors.find(
       (v) => v._id == event.target.value
     );
+    console.log(selectedVendor);
     setFormState((formState) => ({
       ...formState,
       selectedVendor: event.target.value,
@@ -656,6 +733,7 @@ export default function CreateInvoice(props) {
     setIsCreateInvoice(true);
   };
   const addInvoiceItem = () => {
+    //Clearing State
     setFormState((formState) => ({
       ...formState,
       values: {
@@ -663,6 +741,9 @@ export default function CreateInvoice(props) {
         itemName: "",
         unitCost: 0,
         quantity: 0,
+        expenseType: "",
+        receiptNumber: "",
+        poInline: "",
         discount: 0,
         amount: 0,
         additionalDetails: "",
@@ -674,19 +755,25 @@ export default function CreateInvoice(props) {
         quantity: "",
         discount: "",
         amount: "",
+        expenseType: "",
+        receiptNumber: "",
+        poInline: "",
         additionalDetails: "",
       },
     }));
-
+    //Open Inline Model ...
     setAddingItem(true);
   };
   const addItem = () => {
+    //Adding Item to Invoice
     let itemName;
     let unitCost;
     let quantity;
     let discount;
-    let amount;
     let additionalDetails;
+    let expenseType;
+    let receiptNumber;
+    let poInline;
     const Check = require("is-null-empty-or-undefined").Check;
     var error = false;
 
@@ -714,18 +801,27 @@ export default function CreateInvoice(props) {
       discount = "error";
       error = true;
     }
-    // if (!Check(formState.values.amount)) {
-    //   amount = "success";
-    // } else {
-    //   amount = "error";
-    //   error = true;
-    // }
-    // if (!Check(formState.values.additionalDetails)) {
-    //   additionalDetails = "success";
-    // } else {
-    //   additionalDetails = "error";
-    //   error = true;
-    // }
+    if (category == 1) {
+      if (!Check(formState.values.poInline)) {
+        poInline = "success";
+      } else {
+        poInline = "error";
+        error = true;
+      }
+    } else {
+      if (!Check(formState.values.expenseType)) {
+        expenseType = "success";
+      } else {
+        expenseType = "error";
+        error = true;
+      }
+    }
+    if (!Check(formState.values.receiptNumber)) {
+      receiptNumber = "success";
+    } else {
+      receiptNumber = "error";
+      error = true;
+    }
 
     setFormState((formState) => ({
       ...formState,
@@ -735,7 +831,9 @@ export default function CreateInvoice(props) {
         unitCost: unitCost,
         quantity: quantity,
         discount: discount,
-        // amount: amount,
+        poInline: poInline,
+        expenseType: expenseType,
+        receiptNumber: receiptNumber,
         additionalDetails: additionalDetails,
       },
     }));
@@ -747,42 +845,44 @@ export default function CreateInvoice(props) {
         unitCost: formState.values.unitCost,
         quantity: formState.values.quantity,
         discount: formState.values.discount,
+        poInline: formState.values.poInline,
+        expenseType: formState.values.expenseType,
+        category: category,
+        receiptNumber: formState.values.receiptNumber,
         amount:
           parseFloat(formState.values.unitCost) *
-          parseFloat(formState.values.quantity) -
-          parseFloat(formState.values.unitCost*formState.values.discount/100)*formState.values.quantity,
+            parseFloat(formState.values.quantity) -
+          parseFloat(
+            (formState.values.unitCost * formState.values.discount) / 100
+          ) *
+            formState.values.quantity,
         additionalDetails: formState.values.additionalDetails,
       };
-      setItems([...items, item]);
-      setAddingItem(false);
+      //Editing
+      if (editIndex !== null) {
+        let newItems = items;
+        newItems[editIndex] = item;
+        setItems(newItems);
+        setEditIndex(null);
+        updateTotal();
+      } else {
+        setItems([...items, item]);
+        setAddingItem(false);
+      }
     }
   };
-  const editItem = (index) => {
-    const item = {
-      itemName: formState.values.itemName,
-      unitCost: formState.values.unitCost,
-      quantity: formState.values.quantity,
-      discount: formState.values.discount,
-      amount:
-        parseFloat(formState.values.unitCost) *
-          parseFloat(formState.values.quantity) -
-        parseFloat(formState.values.unitCost*formState.values.discount/100)*formState.values.quantity,
-      additionalDetails: formState.values.additionalDetails,
-    };
-    let newItems = items;
-    newItems[index] = item;
-    setItems(newItems);
-    setEditIndex(null);
-    updateTotal();
-  };
+
   const createInvoice = () => {
+    //Creating Invoice
     setIsSavingInvoice(true);
     const userData = jwt.decode(Token);
+    const userCurrency = currencyLookups.find(l=>l._id == userData.currency.Currency_Base);
     let invoiceDate;
     let InvoiceNumber;
     let dueDate;
     let vendor;
     let item;
+    let currency;
     const Check = require("is-null-empty-or-undefined").Check;
     var error = false;
 
@@ -810,12 +910,21 @@ export default function CreateInvoice(props) {
       vendor = "error";
       error = true;
     }
-    // if (items.length == 0) {
-    //   item = "success";
-    // } else {
-    //   item = "error";
-    //   error = true;
-    // }
+    if (!Check(formState.values.currency)) {
+      currency = "success";
+    } else {
+      currency = "error";
+      error = true;
+    }
+    if (
+      items.filter((i) => Check(i.poInline) && Check(i.expenseType) == true)
+        .length > 0
+    ) {
+      item = "error";
+      error = true;
+    } else {
+      item = "success";
+    }
 
     setFormState((formState) => ({
       ...formState,
@@ -826,47 +935,69 @@ export default function CreateInvoice(props) {
         dueDate: dueDate,
         vendor: vendor,
         items: item,
+        currency: currency,
       },
     }));
     if (error) {
+      if (item == "error") {
+        errorAlert("There is Something Missing in Line Items ..");
+      } else {
+        errorAlert("Missing Data ..");
+      }
       setIsSavingInvoice(false);
       return false;
     } else {
-      let taxPercent = formState.values.taxType === 1 ?  formState.values.overallTax * 100 / formState.values.subtotal : formState.values.overallTax;
-      let discountPercent = formState.values.discountType === 1 ? formState.values.overallDiscount * 100 / formState.values.subtotal : formState.values.overallDiscount;
-      let taxAmt = formState.values.taxType === 2 ? formState.values.subtotal * formState.values.overallTax / 100 : formState.values.overallTax;
-      let discountAmt = formState.values.discountType === 2 ? formState.values.subtotal * formState.values.overallDiscount / 100 : formState.values.overallDiscount;
-     
+      let taxPercent =
+        formState.values.taxType === 1
+          ? (formState.values.overallTax * 100) / formState.values.subtotal
+          : formState.values.overallTax;
+      let discountPercent =
+        formState.values.discountType === 1
+          ? (formState.values.overallDiscount * 100) / formState.values.subtotal
+          : formState.values.overallDiscount;
+      let taxAmt =
+        formState.values.taxType === 2
+          ? (formState.values.subtotal * formState.values.overallTax) / 100
+          : formState.values.overallTax;
+      let discountAmt =
+        formState.values.discountType === 2
+          ? (formState.values.subtotal * formState.values.overallDiscount) / 100
+          : formState.values.overallDiscount;
 
       let formData = {
-      invoiceId: formState.values.InvoiceNumber,
-      invoiceDate: formState.values.invoiceDate,
-      dueDate: formState.values.dueDate,
-      grossAmt: formState.values.subtotal,
-      discountPercent: discountPercent,
-      discountAmt: discountAmt,
-      taxAmt: taxAmt,
-      taxPercent:taxPercent,
-      invoice_details:formState.values.notes,
-      netAmt:formState.values.total,
-      ref:formState.values.poNumber,
-      tenantId:userData.tenantId,
-      organizationId: userData.orgDetail.organizationId,
-      organizationName: userData.orgDetail.organization,
-      contactPerson:  "",
-      createdBy : userData.email,
-      balanceDue : formState.values.total,
-      items :JSON.stringify(items),
-      attachments: formState.attachments,
-      vendorName:formState.values.selectedVendor.level1.vendorName,
-      vendorId:formState.values.selectedVendor._id
-      }
+        invoiceId: formState.values.InvoiceNumber,
+        invoiceDate: formState.values.invoiceDate,
+        dueDate: formState.values.dueDate,
+        grossAmt: formState.values.subtotal,
+        discountPercent: discountPercent,
+        discountAmt: discountAmt,
+        taxAmt: taxAmt,
+        taxPercent: taxPercent,
+        invoice_details: formState.values.notes,
+        netAmt: formState.values.total,
+        ref: formState.values.poNumber,
+        tenantId: userData.tenantId,
+        organizationId: userData.orgDetail.organizationId,
+        organizationName: userData.orgDetail.organization,
+        contactPerson: formState.values.selectedVendor.level1.contactPerson,
+        createdBy: userData.email,
+        balanceDue: formState.values.total,
+        items: JSON.stringify(items),
+        attachments: formState.attachments,
+        vendorName: formState.values.selectedVendor.level1.vendorName,
+        vendorId: formState.values.selectedVendor._id,
+        vendorSite: formState.values.selectedVendor.site,
+        FC_currency: currencyLookups.find(
+          (l) => l._id == formState.values.currency
+        ),
+        LC_currency:userCurrency,
+        description: formState.values.notes,
+      };
       //Axios Call
-
       axios({
-        method: "post",
-        //url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
-        url: `https://api.matesol.net/invoice/submitInvoice`,
+        method: edit ? "put" : "post",
+        url: edit ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
+        //url: `https://api.matesol.net/invoice/submitInvoice`,
         data: formData,
         headers: {
           //"Content-Type": "multipart/form-data",
@@ -875,7 +1006,10 @@ export default function CreateInvoice(props) {
       })
         .then((response) => {
           setIsSavingInvoice(false);
-          successAlert("Invoice Submited SuccessFully.");
+          successAlert(edit ? "Invoice Updated SuccessFully." : "Invoice Submited SuccessFully.");
+          if (edit) {
+            closeModal();
+          }
           setItems([]);
           setFormState({
             vendors: [],
@@ -899,6 +1033,7 @@ export default function CreateInvoice(props) {
               total: 0,
               fileTitle: "",
               fileDescription: "",
+              currency: "",
             },
             attachments: [],
             errors: {
@@ -915,6 +1050,7 @@ export default function CreateInvoice(props) {
               notes: "",
               selectedVendor: "",
               vendor: "",
+              currency: "",
               items: "",
               fileTitle: "",
               fileDescription: "",
@@ -1103,12 +1239,7 @@ export default function CreateInvoice(props) {
                     </CardHeader>
                     <CardBody>
                       <GridContainer>
-                      <GridItem
-                          xs={6}
-                          sm={6}
-                          md={6}
-                          lg={6}
-                        >
+                        <GridItem xs={6} sm={6} md={6} lg={6}>
                           <TextField
                             error={formState.errors.overallDiscount === "error"}
                             helperText={
@@ -1127,12 +1258,7 @@ export default function CreateInvoice(props) {
                             value={formState.values.overallDiscount || ""}
                           />
                         </GridItem>
-                        <GridItem
-                          xs={6}
-                          sm={6}
-                          md={6}
-                          lg={6}
-                        >
+                        <GridItem xs={6} sm={6} md={6} lg={6}>
                           <TextField
                             labelId="demo-dialog-select-label"
                             id="demo-dialog-select"
@@ -1145,7 +1271,9 @@ export default function CreateInvoice(props) {
                             fullWidth={true}
                             select
                           >
-                            <MenuItem value={1}>Amount ($)</MenuItem>
+                            <MenuItem value={1}>
+                              Amount ({currency.sign})
+                            </MenuItem>
                             <MenuItem value={2}>Percentage (%)</MenuItem>
                           </TextField>
                         </GridItem>
@@ -1186,7 +1314,7 @@ export default function CreateInvoice(props) {
             ) : (
               ""
             )}
-          {taxModal ? (
+            {taxModal ? (
               <Dialog
                 fullWidth={true}
                 maxWidth={"sm"}
@@ -1204,12 +1332,7 @@ export default function CreateInvoice(props) {
                     </CardHeader>
                     <CardBody>
                       <GridContainer>
-                        <GridItem
-                          xs={6}
-                          sm={6}
-                          md={6}
-                          lg={6}
-                        >
+                        <GridItem xs={6} sm={6} md={6} lg={6}>
                           <TextField
                             error={formState.errors.overallTax === "error"}
                             helperText={
@@ -1228,12 +1351,7 @@ export default function CreateInvoice(props) {
                             value={formState.values.overallTax || ""}
                           />
                         </GridItem>
-                        <GridItem
-                          xs={6}
-                          sm={6}
-                          md={6}
-                          lg={6}
-                        >
+                        <GridItem xs={6} sm={6} md={6} lg={6}>
                           <TextField
                             labelId="demo-dialog-select-label"
                             id="demo-dialog-select"
@@ -1246,7 +1364,9 @@ export default function CreateInvoice(props) {
                             fullWidth={true}
                             select
                           >
-                            <MenuItem value={1}>Amount ($)</MenuItem>
+                            <MenuItem value={1}>
+                              Amount ({currency.sign})
+                            </MenuItem>
                             <MenuItem value={2}>Percentage (%)</MenuItem>
                           </TextField>
                         </GridItem>
@@ -1287,7 +1407,6 @@ export default function CreateInvoice(props) {
             ) : (
               ""
             )}
-
 
             {vendorModal ? (
               <Dialog
@@ -1308,7 +1427,9 @@ export default function CreateInvoice(props) {
                   <Card>
                     <CardHeader color="info" icon>
                       <CardIcon color="info">
-                        <h4 className={classes.cardTitleText}>Select Vendor</h4>
+                        <h4 className={classes.cardTitleText}>
+                          Select Supplier
+                        </h4>
                       </CardIcon>
                     </CardHeader>
                     <CardBody>
@@ -1324,12 +1445,12 @@ export default function CreateInvoice(props) {
                             error={formState.errors.selectedVendor === "error"}
                             helperText={
                               formState.errors.selectedVendor === "error"
-                                ? "Valid Venodr Name is required"
+                                ? "Valid Supplier Name is required"
                                 : null
                             }
                             className={classes.textField}
                             fullWidth={true}
-                            label="Select Vendor"
+                            label="Select Supplier"
                             name="selectedVendor"
                             onChange={(event) => {
                               handleVendorChange(event);
@@ -1343,7 +1464,7 @@ export default function CreateInvoice(props) {
                                 root: classes.selectMenuItem,
                               }}
                             >
-                              Choose Vendor
+                              Choose Supplier
                             </MenuItem>
                             {formState.vendors.map((vendor, index) => {
                               return (
@@ -1392,7 +1513,7 @@ export default function CreateInvoice(props) {
                             onClick={() => selectVendor()}
                             round
                           >
-                            Select Vendor
+                            Select Supplier
                           </Button>
                         </GridItem>
                       </GridContainer>
@@ -1404,19 +1525,24 @@ export default function CreateInvoice(props) {
               ""
             )}
             <GridItem xs={12}>
+              {/* {isLoading ? <LinearProgress /> : ""} */}
               <Card>
                 <CardHeader color="info" icon>
                   <CardIcon color="info">
-                    <h4 className={classes.cardTitleText}>Create Invoice</h4>
+                    <h4 className={classes.cardTitleText}>
+                      {edit ? "Edit Invoice" : "Create Invoice"}
+                    </h4>
                   </CardIcon>
                   <Button
                     color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
-                    onClick={() => pdfInput.current.click()}
+                    onClick={() =>
+                      edit ? closeModal() : pdfInput.current.click()
+                    }
                   >
-                    Upload PDF / Image
+                    {edit ? "Close" : "Upload PDF / Image"}
                   </Button>
                 </CardHeader>
                 <CardBody>
@@ -1430,28 +1556,72 @@ export default function CreateInvoice(props) {
                     >
                       <Card
                         style={{
-                          height: "14vh",
+                          height: "15vh",
+                          maxWidth: "70%",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          maxWidth: "100%",
-                          cursor: "pointer",
+                          cursor: edit ? "" : "pointer",
                           border:
                             formState.errors.vendor === "error"
                               ? "2px red solid"
                               : "none",
                           background: "#f5f5f5",
                         }}
-                        onClick={openVendorModal}
+                        onClick={
+                          edit
+                            ? () => console.log("Can't Do..")
+                            : openVendorModal
+                        }
                       >
-                        <PersonOutlineIcon fontSize="large" />
-                        <Typography component="h2" variant="h6">
-                          {formState.values.selectedVendor != "" ||
-                          null ||
-                          undefined
-                            ? formState.values.selectedVendor.level1.vendorName
-                            : "Add a Vendor"}
-                        </Typography>
+                        <GridContainer>
+                          <GridItem
+                            xs="3"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "left",
+                            }}
+                          >
+                            <Person
+                              fontSize="large"
+                              style={{ width: 120, height: 120 }}
+                            />
+                          </GridItem>
+                          <GridItem
+                            xs="9"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              paddingLeft:50,
+                              // justifyContent: "left",
+                            }}
+                          >
+                            {formState.values.selectedVendor != "" ||
+                            null ||
+                            undefined ? (
+                              <div>
+                                <Typography variant="h6" component="h2">
+                                  {formState.values.selectedVendor.level1
+                                    .vendorName || "Supplier Name"}
+                                </Typography>
+                                <Typography variant="body2" component="h2">
+                                  {formState.values.selectedVendor.level1
+                                    .site || "Supplier Site"}
+                                </Typography>
+                              </div>
+                            ) : (
+                              <div>
+                                <Typography variant="h6" component="h2">
+                                  Supplier Name
+                                </Typography>
+                                <Typography variant="body2" component="h2">
+                                  Supplier Site
+                                </Typography>
+                              </div>
+                            )}
+                          </GridItem>
+                        </GridContainer>
                       </Card>
                     </GridItem>
                     <GridItem
@@ -1478,6 +1648,7 @@ export default function CreateInvoice(props) {
                                 : null
                             }
                             label="Invoice Date *"
+                            disabled={edit}
                             id="invoiceDate"
                             name="invoiceDate"
                             onChange={(event) => {
@@ -1559,522 +1730,60 @@ export default function CreateInvoice(props) {
                         >
                           <TextField
                             fullWidth={true}
-                            error={formState.errors.poNumber === "error"}
+                            error={formState.errors.currency === "error"}
                             helperText={
-                              formState.errors.poNumber === "error"
-                                ? "Valid PO Number is required"
+                              formState.errors.currency === "error"
+                                ? "Valid Invoice Currency is required"
                                 : null
                             }
-                            label="PO Number"
-                            id="po number"
-                            name="poNumber"
+                            label="Currency"
+                            id="currency"
+                            name="currency"
                             onChange={(event) => {
                               handleChange(event);
                             }}
                             type="text"
                             // variant="outlined"
-                            value={formState.values.poNumber || ""}
-                            className={classes.textField}
-                          />
+                            value={formState.values.currency || ""}
+                            select
+                          >
+                            <MenuItem
+                              disabled
+                              classes={{
+                                root: classes.selectMenuItem,
+                              }}
+                            >
+                              Choose Currency Base
+                            </MenuItem>
+                            {currencyLookups.map((cu) => (
+                              <MenuItem key={cu._id} value={cu._id}>
+                                {cu.Name.toUpperCase()}
+                              </MenuItem>
+                            ))}
+                          </TextField>
                         </GridItem>
                       </GridContainer>
                     </GridItem>
                   </GridContainer>
                   <GridContainer>
-                    <GridItem xs={12} sm={12} md={12} lg={12}>
-                      <TableContainer
-                        component={Paper}
-                        style={{
-                          borderBottom:
-                            formState.errors.items === "error"
-                              ? "2px red solid"
-                              : "none",
-                        }}
-                      >
-                        <Table
-                          className={classes.table}
-                          aria-label="customized table"
-                        >
-                          <TableHead>
-                            <TableRow>
-                              <StyledTableCell>#</StyledTableCell>
-                              <StyledTableCell >Name</StyledTableCell>
-                              <StyledTableCell align="right">Unit Cost ($)</StyledTableCell>
-                              <StyledTableCell align="right">Quantity</StyledTableCell>
-                              <StyledTableCell align="right">Discount (%)</StyledTableCell>
-                              <StyledTableCell align="right">Amount ($)</StyledTableCell>
-                              <StyledTableCell> </StyledTableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {items.map((row, index) =>
-                              editIndex == index ? (
-                                <React.Fragment>
-                                  <StyledTableRow key={"AddingItem"}>
-                                    <StyledTableCell style={{ width: 100 }}>
-                                      <TextField
-                                        fullWidth={true}
-                                        label="ID "
-                                        type="number"
-                                        disabled={true}
-                                        value={index + 1 || ""}
-                                        className={classes.textField}
-                                      />
-                                    </StyledTableCell>
-                                    <StyledTableCell
-                                      style={{ minWidth: 400 }}
-                                      component="th"
-                                      scope="row"
-                                    >
-                                      <TextField
-                                        fullWidth={true}
-                                        error={
-                                          formState.errors.itemName === "error"
-                                        }
-                                        helperText={
-                                          formState.errors.itemName === "error"
-                                            ? "Valid Item Name is required"
-                                            : null
-                                        }
-                                        label="Item Name "
-                                        id="item"
-                                        name="itemName"
-                                        onChange={(event) => {
-                                          handleChange(event);
-                                        }}
-                                        type="text"
-                                        value={formState.values.itemName || ""}
-                                        className={classes.itemName}
-                                      />
-                                    </StyledTableCell>
-                                    <StyledTableCell align="right">
-                                      <TextField
-                                        fullWidth={true}
-                                        error={
-                                          formState.errors.unitCost === "error"
-                                        }
-                                        helperText={
-                                          formState.errors.unitCost === "error"
-                                            ? "Valid Unit Cost is required"
-                                            : null
-                                        }
-                                        label="Unit Cost"
-                                        id="unitcost"
-                                        name="unitCost"
-                                        onChange={(event) => {
-                                          handleChange(event);
-                                        }}
-                                        type="number"
-                                        value={formState.values.unitCost || ""}
-                                        className={classes.textField}
-                                      />
-                                    </StyledTableCell>
-                                    <StyledTableCell align="right">
-                                      <TextField
-                                        fullWidth={true}
-                                        error={
-                                          formState.errors.quantity === "error"
-                                        }
-                                        helperText={
-                                          formState.errors.quantity === "error"
-                                            ? "Valid Quantity is required"
-                                            : null
-                                        }
-                                        label="Quantity"
-                                        id="quantity"
-                                        name="quantity"
-                                        onChange={(event) => {
-                                          handleChange(event);
-                                        }}
-                                        type="number"
-                                        value={formState.values.quantity || ""}
-                                        className={classes.textField}
-                                      />
-                                    </StyledTableCell>
-                                    <StyledTableCell align="right">
-                                      <TextField
-                                        fullWidth={true}
-                                        error={
-                                          formState.errors.discount === "error"
-                                        }
-                                        helperText={
-                                          formState.errors.discount === "error"
-                                            ? "Valid Discount is required"
-                                            : null
-                                        }
-                                        label="Discount "
-                                        id="discount"
-                                        name="discount"
-                                        onChange={(event) => {
-                                          handleChange(event);
-                                        }}
-                                        type="number"
-                                        value={formState.values.discount || ""}
-                                        className={classes.textField}
-                                      />
-                                    </StyledTableCell>
-                                    <StyledTableCell align="right">
-                                      <TextField
-                                        fullWidth={true}
-                                        label="Amount"
-                                        id="item"
-                                        name="amount"
-                                        onChange={(event) => {
-                                          handleChange(event);
-                                        }}
-                                        disabled={true}
-                                        type="number"
-                                        value={
-                                          addZeroes(
-                                            parseFloat(
-                                              formState.values.unitCost
-                                            ) *
-                                              parseFloat(
-                                                formState.values.quantity
-                                              ) -
-                                              parseFloat(
-                                                formState.values.unitCost*formState.values.discount/100)*formState.values.quantity
-                                          ) || 0.0
-                                        }
-                                        className={classes.textField}
-                                      />
-                                    </StyledTableCell>
-                                    <StyledTableCell
-                                      style={{ width: 100 }}
-                                      align="right"
-                                    >
-                                      <Tooltip
-                                        title="Save Chnages"
-                                        aria-label="save"
-                                      >
-                                        <IconButton
-                                          onClick={() => editItem(index)}
-                                        >
-                                          <CheckCircleOutlineIcon
-                                            style={{ color: "green" }}
-                                            size="small"
-                                          />
-                                        </IconButton>
-                                      </Tooltip>
-                                      <Tooltip
-                                        title="Remove Item"
-                                        aria-label="remove"
-                                      >
-                                        <IconButton
-                                          onClick={() => setAddingItem(false)}
-                                        >
-                                          <HighlightOffIcon
-                                            style={{ color: "red" }}
-                                            size="small"
-                                          />
-                                        </IconButton>
-                                      </Tooltip>
-                                    </StyledTableCell>
-                                  </StyledTableRow>
-                                  <StyledTableRow key={"AddingItem"}>
-                                    <StyledTableCell colSpan="8">
-                                      <TextField
-                                        fullWidth={true}
-                                        error={
-                                          formState.errors.additionalDetails ===
-                                          "error"
-                                        }
-                                        helperText={
-                                          formState.errors.additionalDetails ===
-                                          "error"
-                                            ? "Valid Additional Details is required"
-                                            : null
-                                        }
-                                        label="Additonal Details"
-                                        id="additionaldetails"
-                                        name="additionalDetails"
-                                        onChange={(event) => {
-                                          handleChange(event);
-                                        }}
-                                        multiline
-                                        rows={2}
-                                        type="text"
-                                        value={
-                                          formState.values.additionalDetails ||
-                                          ""
-                                        }
-                                      />
-                                    </StyledTableCell>
-                                  </StyledTableRow>
-                                </React.Fragment>
-                              ) : (
-                                <StyledTableRow key={row.itemName}>
-                                  <StyledTableCell style={{ width: 100 }}>
-                                    {index + 1}
-                                  </StyledTableCell>
-                                  <StyledTableCell
-                                    style={{ width: 400 }}
-                                    component="th"
-                                    scope="row"
-                                  >
-                                    {row.itemName}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="right">
-                                    ${addZeroes(row.unitCost)}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="right">
-                                    {addZeroes(row.quantity)}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="right">
-                                    {addZeroes(row.discount)}%
-                                  </StyledTableCell>
-                                  <StyledTableCell align="right">
-                                    ${addZeroes(row.amount)}
-                                  </StyledTableCell>
-                                  <StyledTableCell
-                                    style={{ width: 100 }}
-                                    align="right"
-                                  >
-                                    <Tooltip
-                                      title="Edit Item"
-                                      aria-label="edit"
-                                    >
-                                      <IconButton
-                                        onClick={() =>
-                                          handleEditItem(row, index)
-                                        }
-                                      >
-                                        <CreateIcon
-                                          style={{ color: "orange" }}
-                                          size="small"
-                                        />
-                                      </IconButton>
-                                    </Tooltip>
-                                    <Tooltip
-                                      title="Remove Item"
-                                      aria-label="add"
-                                    >
-                                      <IconButton
-                                        onClick={() => removeItem(index)}
-                                      >
-                                        <HighlightOffIcon
-                                          style={{ color: "red" }}
-                                          size="small"
-                                        />
-                                      </IconButton>
-                                    </Tooltip>
-                                  </StyledTableCell>
-                                </StyledTableRow>
-                              )
-                            )}
-                            {addingItem ? (
-                              <React.Fragment>
-                                <StyledTableRow key={"AddingItem"}>
-                                  <StyledTableCell style={{ width: 100 }}>
-                                    <TextField
-                                      fullWidth={true}
-                                      label="ID "
-                                      type="number"
-                                      disabled={true}
-                                      value={items.length + 1 || ""}
-                                      className={classes.textField}
-                                    />
-                                  </StyledTableCell>
-                                  <StyledTableCell
-                                    style={{ minWidth: 400 }}
-                                    component="th"
-                                    scope="row"
-                                  >
-                                    <TextField
-                                      fullWidth={true}
-                                      error={
-                                        formState.errors.itemName === "error"
-                                      }
-                                      helperText={
-                                        formState.errors.itemName === "error"
-                                          ? "Valid Item Name is required"
-                                          : null
-                                      }
-                                      label="Item Name "
-                                      id="item"
-                                      name="itemName"
-                                      onChange={(event) => {
-                                        handleChange(event);
-                                      }}
-                                      type="text"
-                                      value={formState.values.itemName || ""}
-                                      className={classes.itemName}
-                                    />
-                                  </StyledTableCell>
-                                  <StyledTableCell align="right">
-                                    <TextField
-                                      fullWidth={true}
-                                      error={
-                                        formState.errors.unitCost === "error"
-                                      }
-                                      helperText={
-                                        formState.errors.unitCost === "error"
-                                          ? "Valid Unit Cost is required"
-                                          : null
-                                      }
-                                      label="Unit Cost"
-                                      id="unitcost"
-                                      name="unitCost"
-                                      onChange={(event) => {
-                                        handleChange(event);
-                                      }}
-                                      type="number"
-                                      value={formState.values.unitCost || ""}
-                                      className={classes.textField}
-                                    />
-                                  </StyledTableCell>
-                                  <StyledTableCell align="right">
-                                    <TextField
-                                      fullWidth={true}
-                                      error={
-                                        formState.errors.quantity === "error"
-                                      }
-                                      helperText={
-                                        formState.errors.quantity === "error"
-                                          ? "Valid Quantity is required"
-                                          : null
-                                      }
-                                      label="Quantity"
-                                      id="quantity"
-                                      name="quantity"
-                                      onChange={(event) => {
-                                        handleChange(event);
-                                      }}
-                                      type="number"
-                                      value={formState.values.quantity || ""}
-                                      className={classes.textField}
-                                    />
-                                  </StyledTableCell>
-                                  <StyledTableCell align="right">
-                                    <TextField
-                                      fullWidth={true}
-                                      error={
-                                        formState.errors.discount === "error"
-                                      }
-                                      helperText={
-                                        formState.errors.discount === "error"
-                                          ? "Valid Discount is required"
-                                          : null
-                                      }
-                                      label="Discount "
-                                      id="discount"
-                                      name="discount"
-                                      onChange={(event) => {
-                                        handleChange(event);
-                                      }}
-                                      type="number"
-                                      value={formState.values.discount || ""}
-                                      className={classes.textField}
-                                    />
-                                  </StyledTableCell>
-                                  <StyledTableCell align="right">
-                                    <TextField
-                                      fullWidth={true}
-                                      label="Amount"
-                                      id="item"
-                                      name="amount"
-                                      onChange={(event) => {
-                                        handleChange(event);
-                                      }}
-                                      disabled={true}
-                                      type="number"
-                                      value={
-                                        addZeroes(
-                                          parseFloat(
-                                            formState.values.unitCost
-                                          ) *
-                                            parseFloat(
-                                              formState.values.quantity
-                                            ) -
-                                            parseFloat(
-                                              formState.values.unitCost*formState.values.discount/100)*formState.values.quantity
-                                        ) || 0.0
-                                      }
-                                      className={classes.textField}
-                                    />
-                                  </StyledTableCell>
-                                  <StyledTableCell
-                                    style={{ width: 100 }}
-                                    align="right"
-                                  >
-                                    <Tooltip
-                                      title="Save Chnages"
-                                      aria-label="save"
-                                    >
-                                      <IconButton onClick={addItem}>
-                                        <CheckCircleOutlineIcon
-                                          style={{ color: "green" }}
-                                          size="small"
-                                        />
-                                      </IconButton>
-                                    </Tooltip>
-                                    <Tooltip
-                                      title="Remove Item"
-                                      aria-label="remove"
-                                    >
-                                      <IconButton
-                                        onClick={() => setAddingItem(false)}
-                                      >
-                                        <HighlightOffIcon
-                                          style={{ color: "red" }}
-                                          size="small"
-                                        />
-                                      </IconButton>
-                                    </Tooltip>
-                                  </StyledTableCell>
-                                </StyledTableRow>
-                                <StyledTableRow key={"AddingItem"}>
-                                  <StyledTableCell colSpan="8">
-                                    <TextField
-                                      fullWidth={true}
-                                      error={
-                                        formState.errors.additionalDetails ===
-                                        "error"
-                                      }
-                                      helperText={
-                                        formState.errors.additionalDetails ===
-                                        "error"
-                                          ? "Valid Additional Details is required"
-                                          : null
-                                      }
-                                      label="Additonal Details"
-                                      id="additionaldetails"
-                                      name="additionalDetails"
-                                      onChange={(event) => {
-                                        handleChange(event);
-                                      }}
-                                      multiline
-                                      rows={2}
-                                      type="text"
-                                      value={
-                                        formState.values.additionalDetails || ""
-                                      }
-                                    />
-                                  </StyledTableCell>
-                                </StyledTableRow>
-                              </React.Fragment>
-                            ) : (
-                              ""
-                            )}
-                            {!addingItem && editIndex == null ? (
-                              <StyledTableRow key={"AddItem"}>
-                                <StyledTableCell colSpan="8" align="center">
-                                  <Tooltip title="Add Item" aria-label="add">
-                                    {/* <Fab color="secoundry" className={classes.fab}> */}
-                                    <IconButton onClick={addInvoiceItem}>
-                                      <AddCircleOutlineIcon />
-                                    </IconButton>
-                                    {/* </Fab> */}
-                                  </Tooltip>
-                                </StyledTableCell>
-                              </StyledTableRow>
-                            ) : (
-                              ""
-                            )}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </GridItem>
+                    <Items
+                      formState={formState}
+                      items={items}
+                      handleChange={handleChange}
+                      addZeroes={addZeroes}
+                      handleEditItem={handleEditItem}
+                      removeItem={removeItem}
+                      editIndex={editIndex}
+                      setEditIndex={setEditIndex}
+                      addingItem={addingItem}
+                      addInvoiceItem={addInvoiceItem}
+                      addItem={addItem}
+                      setAddingItem={setAddingItem}
+                      editItem={addItem}
+                      setCategory={setCategory}
+                      category={category}
+                      currency={currency || {}}
+                    />
                     <GridItem
                       style={{
                         marginTop: "40px",
@@ -2097,13 +1806,13 @@ export default function CreateInvoice(props) {
                             component="h2"
                             variant="body1"
                           >
-                            Notes
+                            Invoice Description
                           </Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                           <TextField
                             fullWidth={true}
-                            label="Add a notes..."
+                            label="Description"
                             id="notes"
                             name="notes"
                             onChange={(event) => {
@@ -2118,125 +1827,46 @@ export default function CreateInvoice(props) {
                         </AccordionDetails>
                       </Accordion>
                     </GridItem>
-                    <GridItem
-                      style={{
-                        marginTop: "40px",
-                      }}
-                      xs={12}
-                      sm={12}
-                      md={12}
-                      lg={12}
-                    >
-                      <Accordion>
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                          aria-label="Expand"
-                          aria-controls="additional-actions3-content"
-                          id="additional-actions3-header"
-                          style={{ background: "#f5f5f5" }}
-                        >
-                          <Typography
-                            color="textSecondary"
-                            component="h2"
-                            variant="body1"
+                    {!edit ? (
+                      <GridItem
+                        style={{
+                          marginTop: "40px",
+                        }}
+                        xs={12}
+                        sm={12}
+                        md={12}
+                        lg={12}
+                      >
+                        <Accordion>
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-label="Expand"
+                            aria-controls="additional-actions3-content"
+                            id="additional-actions3-header"
+                            style={{ background: "#f5f5f5" }}
                           >
-                            Attachments
-                          </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <GridContainer>
-                            {formState.attachments.map((file, index) => (
-                              <GridItem
-                                key={index}
-                                xs={12}
-                                sm={3}
-                                md={2}
-                                lg={2}
-                              >
-                                <Card>
-                                  <CardBody
-                                    style={{
-                                      padding: "10px",
-                                      textAlign: "center",
-                                      cursor: "pointer",
-                                    }}
-                                  >
-                                    <AttachmentRounded
-                                      onClick={() => viewFileHandler(file)}
-                                      style={{
-                                        alignSelf: "center",
-                                        width: 50,
-                                        height: 70,
-                                        marginBottom: 10,
-                                      }}
-                                      fontSize="large"
-                                    />
-                                    <Typography variant="body1" component="h6">
-                                      {file.title.substring(0, 7)} <br />{" "}
-                                      <sub>({file.file.type})</sub>
-                                    </Typography>
-                                  </CardBody>
-                                  <CardFooter>
-                                    <IconButton
-                                      onClick={() => viewFileHandler(file)}
-                                      style={{
-                                        float: "right",
-                                        color: "orange",
-                                      }}
-                                      fontSize="small"
-                                    >
-                                      <VisibilityIcon fontSize="small" />
-                                    </IconButton>
-                                    <IconButton
-                                      onClick={() => removeAttachment(index)}
-                                      style={{
-                                        float: "right",
-                                        color: "red",
-                                      }}
-                                      fontSize="small"
-                                    >
-                                      <HighlightOffIcon fontSize="small" />
-                                    </IconButton>
-                                  </CardFooter>
-                                </Card>
-                              </GridItem>
-                            ))}
-                            <GridItem
-                              key={"addAttachment"}
-                              xs={12}
-                              sm={3}
-                              md={2}
-                              lg={2}
+                            <Typography
+                              color="textSecondary"
+                              component="h2"
+                              variant="body1"
                             >
-                              <Card
-                                onClick={() => {
-                                  fileInput.current.click();
-                                }}
-                                style={{
-                                  padding: "10px",
-                                  textAlign: "center",
-                                  cursor: "pointer",
-                                  background: "#f5f5f5",
-                                }}
-                              >
-                                <AddCircleOutlineIcon
-                                  style={{
-                                    alignSelf: "center",
-                                    width: 50,
-                                    height: 125,
-                                    marginBottom: 10,
-                                  }}
-                                  fontSize="large"
-                                />
-                                <Typography variant="body1" component="h6">
-                                  Attachments
-                                </Typography>
-                              </Card>
-                            </GridItem>
-                          </GridContainer>
-                        </AccordionDetails>
-                      </Accordion>
-                    </GridItem>
+                              Attachments
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            {/* View Attachments */}
+                            <Attachments
+                              attachments={formState.attachments}
+                              viewFileHandler={viewFileHandler}
+                              removeAttachment={removeAttachment}
+                              handleAttachmentChange={handleAttachmentChange}
+                            />
+                          </AccordionDetails>
+                        </Accordion>
+                      </GridItem>
+                    ) : (
+                      ""
+                    )}
                     {items.length > 0 ? (
                       <GridItem
                         style={{
@@ -2260,7 +1890,7 @@ export default function CreateInvoice(props) {
                               <TableCell>Sub Total</TableCell>
                               <TableCell>
                                 <TextField
-                                  label="Sub Total ($)"
+                                  label={`Sub Total(${currency.sign})`}
                                   id="subtotal"
                                   name="subtotal"
                                   disabled={true}
@@ -2275,14 +1905,14 @@ export default function CreateInvoice(props) {
                             </TableRow>
                             <TableRow>
                               <TableCell
-                                style={{cursor:'pointer'}}
+                                style={{ cursor: "pointer" }}
                                 onClick={() => setIsDiscountModel(true)}
                               >
                                 Discount
                               </TableCell>
                               <TableCell>
                                 <TextField
-                                  label="Discount ($)"
+                                  label={`Discount(${currency.sign})`}
                                   id="discount"
                                   name="overallDiscount"
                                   onChange={(event) => {
@@ -2293,9 +1923,11 @@ export default function CreateInvoice(props) {
                                   variant="outlined"
                                   value={
                                     addZeroes(
-                                      formState.values.discountType == 1 ?
-                                      formState.values.overallDiscount :
-                                      formState.values.subtotal*formState.values.overallDiscount/100
+                                      formState.values.discountType == 1
+                                        ? formState.values.overallDiscount
+                                        : (formState.values.subtotal *
+                                            formState.values.overallDiscount) /
+                                            100
                                     ) || ""
                                   }
                                   className={classes.textField}
@@ -2304,12 +1936,14 @@ export default function CreateInvoice(props) {
                             </TableRow>
                             <TableRow>
                               <TableCell
-                                style={{cursor:'pointer'}}
+                                style={{ cursor: "pointer" }}
                                 onClick={() => setIsTaxModal(true)}
-                                >Tax</TableCell>
+                              >
+                                Tax
+                              </TableCell>
                               <TableCell>
                                 <TextField
-                                  label="Tax ($)"
+                                  label={`Tax(${currency.sign})`}
                                   id="tax"
                                   name="overallTax"
                                   onChange={(event) => {
@@ -2319,9 +1953,12 @@ export default function CreateInvoice(props) {
                                   disabled={true}
                                   variant="outlined"
                                   value={
-                                    addZeroes(formState.values.taxType == 1 ?
-                                      formState.values.overallTax :
-                                      formState.values.subtotal*formState.values.overallTax/100
+                                    addZeroes(
+                                      formState.values.taxType == 1
+                                        ? formState.values.overallTax
+                                        : (formState.values.subtotal *
+                                            formState.values.overallTax) /
+                                            100
                                     ) || ""
                                   }
                                   className={classes.textField}
@@ -2334,7 +1971,7 @@ export default function CreateInvoice(props) {
                               </TableCell>
                               <TableCell component="th" scope="row">
                                 <TextField
-                                  label="Total ($)"
+                                  label={`Total(${currency.sign})`}
                                   id="total"
                                   name="total"
                                   disabled={true}
@@ -2396,12 +2033,6 @@ export default function CreateInvoice(props) {
                 <input
                   type="file"
                   accept="image/png, image/jpeg ,application/pdf "
-                  onChange={handleAttachmentChange}
-                  ref={fileInput}
-                />
-                <input
-                  type="file"
-                  accept="image/png, image/jpeg ,application/pdf "
                   onChange={handlePdfChange}
                   ref={pdfInput}
                 />
@@ -2447,7 +2078,7 @@ export default function CreateInvoice(props) {
                       height={window.screen.height}
                     />
                   ) : (
-                    <img width="100%" src={file.url} />
+                    <img width="100%" src={file.base64} />
                   )}
                 </CardBody>
               </Card>

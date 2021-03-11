@@ -6,7 +6,8 @@ import { makeStyles, MenuItem, TextField,CircularProgress,
 Slide,
 Dialog,
 DialogContent,
-Tooltip } from "@material-ui/core";
+Tooltip, 
+IconButton} from "@material-ui/core";
 // @material-ui/icons
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import RateReview from "@material-ui/icons/RateReview";
@@ -31,11 +32,12 @@ import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertSty
 import Iframe from 'react-iframe'
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView";
 import ViewModuleIcon from '@material-ui/icons/ViewModule';
-import { validateInvoice } from "../Functions/Functions.js";
+import { validateInvoice, formatDateTime } from "../Functions/Functions.js";
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import Validator from "../../Components/Timeline";
 import { sendNotification, getNotification } from "actions";
 import { useSelector, useDispatch } from "react-redux";
+import { CallReceived, DoneAll } from "@material-ui/icons";
 
 const styles = {
   cardIconTitle: {
@@ -73,12 +75,13 @@ export default function Requested() {
   const [InvoiceData, setInvoiceData] = React.useState();
   const [validation, setValidation] = React.useState({});
   const [validateModal, setValidateModal] = React.useState(false);
+  const [show, setShow] = React.useState(true);
   const dispatch = useDispatch();
 
 
   React.useEffect(() => {
     getRequests();
-  }, []);
+  }, [show]);
 
   const getInvoiceDetails = (row) => {
      axios({
@@ -90,8 +93,10 @@ export default function Requested() {
        },
      })
        .then((response) => {
+         console.log(row);
+         console.log(response.data);
          if(response.data !== null || undefined){
-             const invoice = response.data.find(invoice=>invoice.invoiceId === row.invoiceId && invoice.version === row.version);
+             const invoice = response.data.find(invoice=>invoice.invoiceId == row.invoiceId && invoice.version == row.version);
             setIsAdvanceView(false);
             setInvoiceData(invoice);
             setAnimateTable(false);
@@ -134,17 +139,18 @@ export default function Requested() {
     setIsLoading(true);
     axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending`,
+      url: show ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending`
+      :`${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
-        setData(
-          response.data.map((prop, key) => {
+        response.data.length > 0 ? setData(
+           response.data.map((prop, key) => {
+            console.log(prop);
             return {
               id: prop._id,
               fileName: prop.invoiceId,
               requestedBy: prop.requestedBy,
-              reviewedBy: prop.reviewedBy,
               status:
                 prop.status === "pending" ? (
                   <div className="fileinput text-center">
@@ -171,22 +177,9 @@ export default function Requested() {
                     </div>
                   </div>
                 ),
-              version: prop.version,
+              requestTime: formatDateTime(prop.requestedTime),
               actions: (
                 <div className="actions-right">
-                  <Tooltip title="View Invoice View" aria-label="viewfile">
-                    <Button
-                      justIcon
-                      round
-                      simple
-                      color="info"
-                      icon={ViewModuleIcon}
-                      onClick={() => getInvoiceDetails(prop)}
-                      className="View"
-                    >
-                    <ViewModuleIcon />
-                    </Button>
-                  </Tooltip>
                   <Tooltip title="View Invoice" aria-label="viewfile">
                     <Button
                       justIcon
@@ -198,6 +191,19 @@ export default function Requested() {
                       className="View"
                     >
                       <VisibilityIcon />
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="View Invoice View" aria-label="viewfile">
+                    <Button
+                      justIcon
+                      round
+                      simple
+                      color="info"
+                      icon={ViewModuleIcon}
+                      onClick={() => getInvoiceDetails(prop)}
+                      className="View"
+                    >
+                    <ViewModuleIcon />
                     </Button>
                   </Tooltip>
                   <Tooltip title="Validate File" aria-label="validatefile">
@@ -212,6 +218,7 @@ export default function Requested() {
                       <VerifiedUserIcon />
                     </Button>
                   </Tooltip>
+                  {show ?
                   <Tooltip title="Review File" aria-label="reviewfile">
                     <Button
                       justIcon
@@ -223,12 +230,12 @@ export default function Requested() {
                     >
                       <RateReview />
                     </Button>
-                  </Tooltip>
+                  </Tooltip>:''}
                 </div>
               ),
             };
           })
-        );
+        ):setData([]);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -237,6 +244,7 @@ export default function Requested() {
             ? error.response.data
             : error.message
         );
+        setData([]);
         setIsLoading(false);
       });
   };
@@ -348,11 +356,13 @@ const goBack = () => {
                     cooljwt: Token,
                 },
             }).then((response) => {
+                    setReviewModal(false);
                     successAlert("Invoice Reviewed Successfully!");
                     dispatch(sendNotification(`${InvoiceData.fileId} Invoice is Reviewed`, InvoiceData.fileOwner));
                     dispatch(getNotification());
                     setIsReviewingFile(false);
                     getRequests();
+
                 })
                 .catch((error) => {
                     console.log(
@@ -663,9 +673,33 @@ const goBack = () => {
               <CardHeader color="info" icon>
                 <CardIcon color="info">
                   <h4 className={classes.cardTitleText}>
-                    Invoice Requested For Review
+                    {show ?  `Invoice Requested For Review` : `Invoice Reviewed` }
                   </h4>
                 </CardIcon>
+                {show ?
+                <Tooltip title="Show Review Done">
+                  <IconButton
+                    color="danger"
+                    round
+                    style={{ float: "right" }}
+                    className={classes.marginRight}
+                    onClick={() => setShow(!show)}
+                  >
+                    <DoneAll />
+                  </IconButton>
+                  </Tooltip>:
+                  <Tooltip title="Show Requested">
+                  <IconButton
+                  color="danger"
+                  round
+                  style={{ float: "right" }}
+                  className={classes.marginRight}
+                  onClick={() => setShow(!show)}
+                >
+                  <CallReceived />
+                </IconButton>
+                </Tooltip>
+                  }
               </CardHeader>
               <CardBody>
                 {isLoading ? (
@@ -680,16 +714,12 @@ const goBack = () => {
                         accessor: "fileName",
                       },
                       {
-                        Header: "Version",
-                        accessor: "version",
+                        Header: "Request Time",
+                        accessor: "requestTime",
                       },
                       {
                         Header: "Requested By",
                         accessor: "requestedBy",
-                      },
-                      {
-                        Header: "Reviewed By",
-                        accessor: "reviewedBy",
                       },
                       {
                         Header: "Status",

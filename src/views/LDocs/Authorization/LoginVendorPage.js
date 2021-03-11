@@ -82,7 +82,7 @@ export default function LoginVendorPage(props) {
                 className={`${classes.cardHeader} ${classes.textCenter}`}
                 color="info"
               >
-                <h4 className={classes.cardTitle}>Vendor Zone</h4>
+                <h4 className={classes.cardTitle}>Supplier Zone</h4>
               </CardHeader>
               <CardBody>
                 <CustomInput

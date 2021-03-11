@@ -9,7 +9,7 @@ import { Animated } from "react-animated-css";
 import GridContainer from "components/Grid/GridContainer.js";
 import {Table,TableHead,TableRow,TableCell,TableBody,Card} from '@material-ui/core';
 import GridItem from "components/Grid/GridItem.js";
-
+import { formatDateTime, addZeroes } from "../../../Functions/Functions";
 
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
@@ -76,12 +76,12 @@ export default function Step4(props) {
                     let Payment = JSON.parse(item.Record);
                     return (
                     <TableRow key={item.id}>
-                        <TableCell className={classesList.TableCell}>{Payment.PaymentID}</TableCell>
-                        <TableCell className={classesList.TableCell}>{Payment.PaidAmt.toFixed(2)}</TableCell>
-                        <TableCell className={classesList.TableCell}>{parseFloat(Payment.BalanceDue).toFixed(2)}</TableCell>
+                        <TableCell className={classesList.TableCell}>{`P-${index+1}`}</TableCell>
+                        <TableCell className={classesList.TableCell}>{addZeroes(Payment.PaidAmt)}</TableCell>
+                        <TableCell className={classesList.TableCell}>{addZeroes(Payment.BalanceDue)}</TableCell>
                         <TableCell className={classesList.TableCell}>{Payment.PaymentStatus.toUpperCase()}</TableCell>
                         <TableCell className={classesList.TableCell}>{Payment.TransactionBy.toUpperCase()}</TableCell>
-                        <TableCell className={classesList.TableCell}>{Payment.Date}</TableCell>
+                        <TableCell className={classesList.TableCell}>{formatDateTime(Payment.Date)}</TableCell>
                         
                     </TableRow>
                 )

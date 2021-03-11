@@ -56,7 +56,7 @@ export default function AuthNavbar(props) {
         >
           <Fingerprint className={classes.listItemIcon} />
           <ListItemText
-            primary={"Vendor Zone"}
+            primary={"Supplier Zone"}
             disableTypography={true}
             className={classes.listItemText}
           />

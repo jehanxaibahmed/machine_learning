@@ -29,6 +29,8 @@ import {
   LocalOffer,
   Visibility,
   Send,
+  Edit,
+  EditOutlined,
 } from "@material-ui/icons";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -54,6 +56,7 @@ import FiberNewIcon from '@material-ui/icons/FiberNew';
 import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import Filters from "./Filters";
+import { formatDateTime } from "../../Functions/Functions";
 import {
   Menu,
   Item,
@@ -77,6 +80,7 @@ import { useDispatch, useSelector } from "react-redux";
 import FileReceived from "./FileReceived";
 import InitiatePayment from "./InitiatePayment";
 import { partial } from "lodash";
+import CreateInvoice from "../CreateInvoice/CreateInvoice";
 
 const styles = {
   cardIconTitle: {
@@ -103,6 +107,12 @@ const StyledBadge = withStyles((theme) => ({
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
+const TransitionRight = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="right" ref={ref} {...props} />;
+});
+const TransitionLeft = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="left" ref={ref} {...props} />;
+});
 
 export default function FilesList(props) {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
@@ -128,6 +138,7 @@ export default function FilesList(props) {
   const [blockChainData, setBlockChainData] = React.useState(null);
   const [markAsReceivedModel, setMarkAsReceivedModel] = React.useState(false);
   const [initPaymentModel, setinitPaymentModel] = React.useState(false);
+  const [editInvoice, setEditInvoiceModel] = React.useState(false);
   const [decoded, setDecoded] = React.useState(null);
   const [view, setView] = React.useState('read');
   const [showFiltersModel, setShowFiltersModel] = React.useState(false);
@@ -168,6 +179,12 @@ export default function FilesList(props) {
   const initPayment = (row) => {
     setRow(row)
     setinitPaymentModel(true);
+  };
+  //Edit Invoice
+  const editSelectedInvoice = (row) => {
+    setRow(row);
+    setAnimateTable(false);
+    setEditInvoiceModel(true);
   };
   //Add File Tasks
   const addFileTasks = (row) => {
@@ -252,12 +269,12 @@ export default function FilesList(props) {
           ),
           createdDate: (
             <MenuProvider data={prop} id="menu_id">
-              {dateFormat(prop.createdDate, "dd/mm/yyyy")}
+              {formatDateTime(prop.createdDate)}
             </MenuProvider> 
           ),
           date: (
             <MenuProvider data={prop} id="menu_id">
-              {dateFormat(prop.dueDate, "dd/mm/yyyy")}
+              {formatDateTime(prop.dueDate)}
             </MenuProvider>
           ),
           vendorName: (
@@ -440,6 +457,20 @@ export default function FilesList(props) {
               </Button>
             </Tooltip>
           ):''}
+          {prop.markedAs == 'unread' ? (
+          <Tooltip title="Edit" aria-label="edit">
+              <Button
+                justIcon
+                round
+                simple
+                icon={EditOutlined}
+                onClick={() => editSelectedInvoice(prop)}
+                color="info"
+              >
+                <EditOutlined />
+              </Button>
+            </Tooltip>
+          ):''}
             </div>
           ),
         };
@@ -501,6 +532,10 @@ export default function FilesList(props) {
   }
   const closePaymentModel = () => {
     setinitPaymentModel(false);
+  }
+  const closeInvoiceModel = () => {
+    setEditInvoiceModel(false);
+    setAnimateTable(true);
   }
   const closeTaskModal = () => {
     setTaskModal(false);
@@ -601,12 +636,16 @@ export default function FilesList(props) {
   const [fileData, setFileData] = React.useState();
   const [type, setType] = React.useState("");
   const initWorkFLow = ({ event, props }) => {
-    if(!props.initWorkFlow){
+    if(props.markedAs == 'unread'){
+    msgAlert('Review Invoice Before Initiate Workflow...');
+    }
+    else if(props.initWorkFlow){
+      msgAlert('WorkFlow Already Initiated...');
+    }
+    else{
       setFileData(props);
       setInitWorkFlowModal(true);
-    }else{
-    msgAlert('WorkFlow Already Initiated...')
-    } 
+    }
   };
   //Open Advance View From through Awesome Menu
   const viewQrViewFromAwesomeMenu = ({ event, props }) => {viewQrView(props)};
@@ -823,7 +862,8 @@ export default function FilesList(props) {
                 paper: classes.modal,
               }}
               fullWidth={true}
-              maxWidth={"sm"}
+              maxWidth={"md"}
+              scroll="body"
               open={initPaymentModel}
               TransitionComponent={Transition}
               keepMounted
@@ -843,6 +883,37 @@ export default function FilesList(props) {
       ) : (
         ""
       )}
+       {/* Mark As edit Model */}
+       {/* {editInvoice ? (
+        <GridContainer justify="center">
+          <GridItem xs={12} sm={12} md={12} className={classes.center}>
+            <Dialog
+              classes={{
+                root: classes.center + " " + classes.modalRoot,
+                paper: classes.modal,
+              }}
+              fullWidth={true}
+              maxWidth={"lg"}
+              scroll="body"
+              open={editInvoice}
+              // TransitionComponent={TransitionLeft}
+              keepMounted
+              onClose={closeInvoiceModel}
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
+            >
+              <DialogContent
+                id="tag-modal-slide-description"
+                className={classes.modalBody}
+              >
+                <CreateInvoice edit={editInvoice} closeModal={closeInvoiceModel} fileData={row} />
+              </DialogContent>
+            </Dialog>
+          </GridItem>
+        </GridContainer>
+      ) : (
+        ""
+      )} */}
       {/* Task Model */}
       {taskModal ? (
         <GridContainer justify="center">
@@ -982,7 +1053,7 @@ export default function FilesList(props) {
       ) : (
         ""
       )} */}
-
+    {animateTable ?
       <Animated
         animationIn="bounceInRight"
         animationOut="bounceOutLeft"
@@ -1058,7 +1129,7 @@ export default function FilesList(props) {
                         accessor: "createdDate"
                       },
                       {
-                        Header: "Vendor Name",
+                        Header: "Supplier Name",
                         accessor: "vendorName"
                       },
                       {
@@ -1093,7 +1164,20 @@ export default function FilesList(props) {
             </Card>
           </GridItem>
         </GridContainer>
-      </Animated>
+      </Animated>:''}
+      {editInvoice ? 
+          <Animated
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
+          animationInDuration={1000}
+          animationOutDuration={1000}
+          isVisible={editInvoice}
+        >
+            <CreateInvoice edit={editInvoice} closeModal={closeInvoiceModel} fileData={row} />
+        </Animated>
+        :
+        ''
+        }
       <SwipeableDrawer
             anchor={'right'}
             open={showFiltersModel}

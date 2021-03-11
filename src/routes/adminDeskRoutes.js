@@ -57,8 +57,8 @@ var adminRoutes = [
         layout: "/admin",
       },
       {
-        path: "/vendor",
-        name: "Vendors",
+        path: "/supplier",
+        name: "Supplier",
         icon: PeopleIcon,
         component: Vendor,
         layout: "/admin",

@@ -139,7 +139,7 @@ export default function Vendor() {
       headers: { cooljwt:token},
     })
       .then((response) => {
-        let msg = "Vendor Status Changed Successfully!";
+        let msg = "Supplier Status Changed Successfully!";
         successAlert(msg);
         getVendors(status.organizationId, true);
       }).catch((err)=>{
@@ -230,11 +230,11 @@ export default function Vendor() {
         // setUpdatingStatus(null);
         getLookUp().then(res=>{
         setData(
-          response.data.map((prop, key) => {
+          response.data.map((prop, index) => {
             let currency =  res.find(cu=>cu._id == prop.currency);
             var status  = prop.organizations.find(item=>item.organizationsId === org._id);
             return {
-              id: prop._id,
+              id:  `V-00${index+1}`,
               vendorName: prop.level1.vendorName,
               //organizationName: prop.organizationName,
               currency: currency ? currency.Name.toUpperCase() : prop.Currency_Base,
@@ -271,7 +271,7 @@ export default function Vendor() {
                    </Button>
                  </Tooltip> */}
                   <Tooltip
-                    title="View Vendor"
+                    title="View Supplier"
                     aria-label="viewvendor"
                   >
                     <Button
@@ -429,7 +429,7 @@ export default function Vendor() {
             <Card>
               <CardHeader color="info" icon>
                 <CardIcon color="info">
-                  <h4 className={classes.cardTitleText}>Vendor List</h4>
+                  <h4 className={classes.cardTitleText}>Supplier List</h4>
                 </CardIcon>
                 <Button
                   color="danger"
@@ -438,7 +438,7 @@ export default function Vendor() {
                   style={{ float: "right" }}
                   onClick={() => setClassicModal(true)}
                 >
-                  Add New Vendor
+                  Add New Supplier
                 </Button>
               </CardHeader>
               <CardBody>
@@ -450,11 +450,11 @@ export default function Vendor() {
                     sortable={false}
                     columns={[
                       {
-                        Header: "Vendor ID",
+                        Header: "Supplier ID",
                         accessor: "id",
                       },
                       {
-                        Header: "Vendor Name",
+                        Header: "Supplier Name",
                         accessor: "vendorName",
                       },
                       {

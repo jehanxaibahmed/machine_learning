@@ -346,7 +346,7 @@ const setOtpValue = (value) => {
             <CardHeader color="info" icon>
               <CardIcon color="info">
                 <h4 className={classes.cardTitle}>
-                  Vendor Details
+                Supplier Details
                 </h4>
               </CardIcon>
             </CardHeader>
@@ -364,7 +364,7 @@ const setOtpValue = (value) => {
                 >
                   <TextField
                     fullWidth={true}
-                    label="Vendor Name"
+                    label="Supplier Name"
                     id="name"
                     name="name"
                     type="text"

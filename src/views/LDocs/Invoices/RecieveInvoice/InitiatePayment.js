@@ -6,6 +6,7 @@ import { makeStyles, MenuItem, TextField,CircularProgress,
     Dialog,
     LinearProgress,
     DialogContent,
+    IconButton,
     Tooltip } from "@material-ui/core";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -22,10 +23,16 @@ import ChipInput from "material-ui-chip-input";
 import Pending from "assets/img/statuses/Pending.png";
 import Success from "assets/img/statuses/Success.png";
 import Rejected from "assets/img/statuses/Rejected.png";
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import { useDispatch, useSelector } from "react-redux";
+import BuildNetwork from "views/LDocs/Vendor/BuildNetwork";
+import Step3 from "views/LDocs/Vendor/steps/level3";
+import { formatDateTime } from "views/LDocs/Functions/Functions";
+
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -33,11 +40,12 @@ const sweetAlertStyle = makeStyles(styles2);
 export default function InitiatePayment(props) {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
   const decoded = jwt.decode(Token);
+  const [vendorData, setVendorData] = React.useState();
   const classes = useStyles();
   const sweetClass = sweetAlertStyle();
-//   const [isSavingTags, setIsSavingTags] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [alert, setAlert] = React.useState(null);
+  const [showVendorDetails, setShowVendorDetails] = React.useState(false);
   const [formState, setFormState] = React.useState({
     values: {
         paidAmount:"",
@@ -86,6 +94,7 @@ export default function InitiatePayment(props) {
   };
 
   React.useEffect(() => {
+    getVendorData();
   }, []);
 
   const handleChange = (event) => {
@@ -99,6 +108,23 @@ export default function InitiatePayment(props) {
       }));
   };
 
+  const getVendorData = () => {
+    axios({
+      method: "get",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${props.fileData.organizationId}`,
+      headers: { cooljwt: Token },
+    })
+      .then((response) => {
+        const vendor = response.data.find(v=> v._id == props.fileData.vendorId);
+        if(vendor){
+          setVendorData(vendor)
+        }else{
+          setVendorData({});
+        }
+      }).catch((err)=>{
+        console.log(err);
+      })
+  }
   const initPayment = () => {
     setIsLoading(true);
     let paidAmount;
@@ -106,7 +132,7 @@ export default function InitiatePayment(props) {
     let paymentType;
     const Check = require("is-null-empty-or-undefined").Check;
     var error = false;
-    if (!Check(formState.values.paidAmount)) {
+    if (!Check(formState.values.paidAmount) && formState.values.paidAmount <= props.fileData.balanceDue ) {
         paidAmount = "success";
     } else {
         paidAmount = "error";
@@ -156,10 +182,10 @@ export default function InitiatePayment(props) {
                 cooljwt: Token,
             },
         }).then(async (response) => {
-                successAlert("Payment Initiated Successfully!");
                 await props.loadFiles(decoded, false);
                 setIsLoading(false);
-                props.closeModal();
+                //props.closeModal();
+                successAlert("Payment Initiated Successfully!");
             })
             .catch((error) => {
                 console.log(
@@ -191,11 +217,12 @@ export default function InitiatePayment(props) {
                         </CardIcon>
                       </CardHeader>
                       <CardBody>
+                        <GridContainer>
                       <GridItem
-                          xs={12}
-                          sm={12}
-                          md={12}
-                          lg={12}
+                          xs={10}
+                          sm={10}
+                          md={11}
+                          lg={11}
                           style={{
                             marginTop: "10px",
                             marginBottom: "10px",
@@ -205,11 +232,42 @@ export default function InitiatePayment(props) {
                             className={classes.textField}
                             type="text"
                             fullWidth={true}
-                            label="Vendor Name"
+                            label="Supplier Name"
                             disabled={true}
                             value={props.fileData.vendorName || ""}
                           ></TextField>
                         </GridItem>
+                        <GridItem
+                          xs={2}
+                          sm={2}
+                          md={1}
+                          lg={1}
+                          style={{
+                            marginTop: "10px",
+                            marginBottom: "10px",
+                          }}
+                        >
+                           <Tooltip title="Show Bank Details" ><IconButton onClick={()=>setShowVendorDetails(!showVendorDetails)} >{showVendorDetails ?<VisibilityIcon fontSize="small"/>:<VisibilityOffIcon fontSize="small"/>}</IconButton></Tooltip>                       
+                        </GridItem>
+                        {showVendorDetails ?
+                        <GridItem
+                        xs={12}
+                        sm={12}
+                        md={12}
+                        lg={12}
+                        style={{
+                          marginTop: "10px",
+                          marginBottom: "10px",
+                        }}
+                      > 
+                        <Step3 
+                          goBack={()=>setShowVendorDetails(!showVendorDetails)}
+                          vendorData={vendorData}
+                        />
+                        </GridItem>
+                        : 
+                        <React.Fragment>
+                        {props.fileData.paymentStatus != 'pending' ? 
                         <GridItem
                           xs={12}
                           sm={12}
@@ -228,7 +286,7 @@ export default function InitiatePayment(props) {
                             fullWidth={true}
                             value={props.fileData.balanceDue.toFixed(2) || ""}
                           ></TextField>
-                        </GridItem>
+                        </GridItem>:''}
                         <GridItem
                           xs={12}
                           sm={12}
@@ -332,7 +390,7 @@ export default function InitiatePayment(props) {
                             fullWidth={true}
                             helperText={
                               formState.errors.paidAmount === "error"
-                                ? "Amount is required"
+                                ? "Amount must be less then balance due"
                                 : null
                             }
                             label="Paid Amount"
@@ -343,6 +401,10 @@ export default function InitiatePayment(props) {
                             value={formState.values.paidAmount || ""}
                           ></TextField>
                         </GridItem>
+                        </React.Fragment>
+                        }
+                        </GridContainer>
+                        {!showVendorDetails ?
                         <span style={{ float: "right" }}>
                             <Button
                                 color="info"
@@ -351,9 +413,8 @@ export default function InitiatePayment(props) {
                                 type="button"
                                 onClick={initPayment}
                             >
-                                Save Payment
+                               {isLoading ? <CircularProgress disableShrink />:'Save Payment'} 
                             </Button>
-                            {/* {isSavingTags ? <CircularProgress disableShrink /> : ""} */}
                             <Button
                                 color="danger"
                                 className={classes.registerButton}
@@ -362,7 +423,7 @@ export default function InitiatePayment(props) {
                             >
                                 Close
                             </Button>
-                            </span>
+                            </span>:""}
                         </CardBody>
                         </Card>
                     </GridItem>

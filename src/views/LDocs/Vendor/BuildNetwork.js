@@ -41,7 +41,7 @@ export default function BuildNetwork(props) {
           <Card>
             <CardHeader color="info" icon>
               <CardIcon color="info">
-                <h4 className={classes.cardTitleText}>Vendor Details</h4>
+                <h4 className={classes.cardTitleText}>Supplier Details</h4>
               </CardIcon>
               <Button
               color="danger"

@@ -42,7 +42,7 @@ import CenterFocusStrongIcon from '@material-ui/icons/CenterFocusStrong';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import RoomIcon from '@material-ui/icons/Room';
 import ViewListIcon from '@material-ui/icons/ViewList';
-
+import { formatDateTime, addZeroes } from "../Functions/Functions";
 import PieChartView from "./PieChart";
 import LineChart from "./LineChart";
 import  Calendar from "../../Calendar/Calendar";
@@ -51,27 +51,6 @@ import _ from 'lodash';
 import { useSelector } from "react-redux";
 
 const useStyles = makeStyles(styles);
-
-const formatAMPM = (dat) => {
-  var date = new Date(dat);
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  var ampm = hours >= 12 ? 'pm' : 'am';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  //minutes = minutes < 10 ? '0'+minutes : minutes;
-  var strTime = hours + ':' + minutes + ' ' + ampm;
-  return strTime;
-}
-
-const formatDate = (dat) => {
-  var d = new Date(dat);
-  var date = d.getDate();
-  var month = d.getMonth() + 1; // Since getMonth() returns month from 0-11 not 1-12
-  var year = d.getFullYear(); 
-  var dateStr = date + "/" + month + "/" + year;
-  return dateStr;
-}
 
 function LinearProgressWithLabel(props) {
   return (
@@ -495,8 +474,8 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
               <Table
                 hover
                 tableHeaderColor="info"
-                tableHead={["Invoice ID", "Submit Date", "Due Date", "Vendor Name", "Amount", "Version", 'Status']}
-                tableData={typeof fileHistory.recentInvoices !== "undefined" && fileHistory.recentInvoices.length > 0 ? fileHistory.recentInvoices.map((file,index)=>{return [file.invoiceId,formatAMPM(file.invoiceDate)+' '+formatDate(file.invoiceDate), formatAMPM(file.dueDate) +' '+formatDate(file.dueDate) ,file.vendorName,file.netAmt,file.version,file.status]}): []}
+                tableHead={["Invoice ID","Version","Submit Date", "Due Date", "Supplier Name", "Amount"]}
+                tableData={typeof fileHistory.recentInvoices !== "undefined" && fileHistory.recentInvoices.length > 0 ? fileHistory.recentInvoices.map((file,index)=>{return [file.invoiceId,file.version,formatDateTime(file.invoiceDate), formatDateTime(file.dueDate) ,file.vendorName,`$${addZeroes(file.netAmt)}`]}): []}
               />
               }
             </CardBody>

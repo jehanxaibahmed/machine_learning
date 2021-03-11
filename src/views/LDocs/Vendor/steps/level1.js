@@ -39,7 +39,7 @@ export default function Step1(props) {
                 >
                   <TextField
                     fullWidth={true}
-                    label="Vendor Name"
+                    label="Supplier Name"
                     id="name"
                     name="name"
                     type="text"
@@ -133,8 +133,31 @@ export default function Step1(props) {
                 <GridItem
                   xs={12}
                   sm={12}
-                  md={4}
-                  lg={4}
+                  md={12}
+                  lg={12}
+                  style={{
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <TextField
+                    fullWidth={true}
+                    label="Supplier Site"
+                    id="supplierSite"
+                    name="supplierSite"
+                   
+                    type="text"
+                    disabled={true}
+                    value={
+                      props.vendorData.level1.supplierSite||""
+                    }
+                  />
+                </GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={12}
+                  lg={12}
                   style={{
                     marginTop: "10px",
                     marginBottom: "10px",
@@ -145,7 +168,8 @@ export default function Step1(props) {
                     label="Remarks"
                     id="referenceTicket"
                     name="referenceTicket"
-                   
+                    multiline
+                    rows="3"
                     type="text"
                     disabled={true}
                     value={

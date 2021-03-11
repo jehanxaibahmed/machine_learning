@@ -8,8 +8,7 @@ import {
 import { Animated } from "react-animated-css";
 import GridContainer from "components/Grid/GridContainer.js";
 import {Table,TableHead,TableRow,TableCell,TableBody,Card} from '@material-ui/core';
-import GridItem from "components/Grid/GridItem.js";
-
+import { addZeroes } from "../../../Functions/Functions";
 
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
@@ -81,10 +80,10 @@ export default function Step1(props) {
                     <TableRow key={item.id}>
                         <TableCell className={classesList.TableID}>{index+1}</TableCell>
                         <TableCell >{item.itemName}</TableCell>
-                        <TableCell className={classesList.TableCell}>{parseFloat(item.quantity).toFixed(2)}</TableCell>
-                        <TableCell className={classesList.TableCell}>${parseFloat(item.unitCost).toFixed(2)}</TableCell>
-                        <TableCell className={classesList.TableCell}>${parseFloat((item.discount*item.unitCost)/100)*item.quantity.toFixed(2)} <sub>({item.discount}%)</sub></TableCell>
-                        <TableCell className={classesList.TableCell}>${parseFloat(item.amount).toFixed(2)}</TableCell>
+                        <TableCell className={classesList.TableCell}>{addZeroes(item.quantity)}</TableCell>
+                        <TableCell className={classesList.TableCell}>${addZeroes(item.unitCost)}</TableCell>
+                        <TableCell className={classesList.TableCell}>${addZeroes((item.discount*item.unitCost)/100*item.quantity)} <sub>({item.discount}%)</sub></TableCell>
+                        <TableCell className={classesList.TableCell}>${addZeroes(item.amount)}</TableCell>
                         
                     </TableRow>
                 )}

@@ -40,30 +40,8 @@ import styles from "assets/jss/material-dashboard-pro-react/components/adminNavb
 import DeleteRecord from "../../views/LDocs/DeleteRecords/DeleteRecord";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { formatDateTime } from "../../views/LDocs/Functions/Functions";
 const useStyles = makeStyles(styles);
-
-const formatAMPM = (dat) => {
-  var date = new Date(dat);
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  var ampm = hours >= 12 ? 'pm' : 'am';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  //minutes = minutes < 10 ? '0'+minutes : minutes;
-  var strTime = hours + ':' + minutes + ' ' + ampm;
-  return strTime;
-}
-
-const formatDate = (dat) => {
-  var d = new Date(dat);
-  var date = d.getDate();
-  var month = d.getMonth() + 1; // Since getMonth() returns month from 0-11 not 1-12
-  var year = d.getFullYear(); 
-  var dateStr = date + "/" + month + "/" + year;
-  return dateStr;
-}
-
-
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -446,7 +424,7 @@ export default function HeaderLinks(props) {
                             >
                               {notification.notifyMessage}
                               <br />
-                              {formatDate(notification.notificationDate)} {formatAMPM(notification.notificationDate)} 
+                              {formatDateTime(notification.notificationDate)} 
                             </Typography>
                           </React.Fragment>
                         }
@@ -574,7 +552,7 @@ export default function HeaderLinks(props) {
                             >
                               {task.taskDescription}
                               <br />
-                              {formatDate(task.taskReminderDate)} {formatAMPM(task.taskReminderDate)} 
+                              {formatDateTime(task.taskReminderDate)} 
                               <hr />
                               Invoice ID : {task.invoiceId}
                              

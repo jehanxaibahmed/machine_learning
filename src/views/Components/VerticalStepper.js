@@ -86,7 +86,7 @@ function Row(props) {
           <TableCell component="th" scope="row">
             {row.InvoiceID}
           </TableCell>
-          <TableCell style={{color:'#3f51b5'}} align="left"> {row.InvoiceHash}</TableCell>
+          {/* <TableCell style={{color:'#3f51b5'}} align="left"> {row.InvoiceHash}</TableCell> */}
           <TableCell align="left">{row.WorkflowID}</TableCell>
           <TableCell align="left">{row.InitBy}</TableCell>
           <TableCell align="left">{row.EventFor}</TableCell>
@@ -103,7 +103,7 @@ function Row(props) {
         <TableCell component="th" scope="row" style={{fontWeight:800}}>
           {row.WorkflowName}
         </TableCell>
-        <TableCell style={{color:'#3f51b5'}} align="left"> {row.WorkflowHash}</TableCell>
+        {/* <TableCell style={{color:'#3f51b5'}} align="left"> {row.WorkflowHash}</TableCell> */}
         <TableCell align="left">{row.WorkflowId}</TableCell>
         <TableCell align="left">{row.OrganizationName}</TableCell>
         <TableCell align="left">{row.CompanyName}</TableCell>
@@ -137,7 +137,7 @@ function getStepContentTable(step, ind) {
             <TableRow>
                 <TableCell />
                 <TableCell>Invoice ID</TableCell>
-                <TableCell align="left">Invoice Hash</TableCell>
+                {/* <TableCell align="left">Invoice Hash</TableCell> */}
                 <TableCell align="left">Workflow ID</TableCell>
                 <TableCell align="left">Inited By</TableCell>
                 <TableCell align="left">Event For</TableCell>
@@ -147,7 +147,7 @@ function getStepContentTable(step, ind) {
             <TableRow>
                 <TableCell />
                 <TableCell>Workflow Name</TableCell>
-                <TableCell align="left">Block Hash</TableCell>
+                {/* <TableCell align="left">Block Hash</TableCell> */}
                 <TableCell align="left">Workflow ID</TableCell>
                 <TableCell align="left">Organization Name</TableCell>
                 <TableCell align="left">Company Name</TableCell>
@@ -169,15 +169,16 @@ function getStepContentTable(step, ind) {
 return (
 <div className={classes.root}>
     <Stepper  orientation="vertical" connector={<QontoConnector />}>
-    {steps.map((data, index) => (
-        <Step active={true}  key={index} >
-            <StepLabel >{JSON.parse(data.Record).docHash}</StepLabel>
+    {steps.map((data, index) => {
+      console.log(JSON.parse(data.Record));
+        return <Step active={true}  key={index} >
+            <StepLabel >#{JSON.parse(data.Record).InvoiceHash || JSON.parse(data.Record).WorkflowHash}</StepLabel>
             {JSON.parse(data.Record).event ? <StepLabel >{JSON.parse(data.Record).event ? `${JSON.parse(data.Record).event.toUpperCase()} STEP`:''}</StepLabel>:''}
             <StepContent>                
                 <div>{getStepContentTable(JSON.parse(data.Record), index)}</div>
             </StepContent>
         </Step>
-    ))}
+      })}
     </Stepper>
 
 </div>
