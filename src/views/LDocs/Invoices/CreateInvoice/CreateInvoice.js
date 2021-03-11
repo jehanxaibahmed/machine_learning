@@ -1606,7 +1606,7 @@ export default function CreateInvoice(props) {
                           >
                             <Person
                               fontSize="large"
-                              style={{ width: 120, height: 120 }}
+                              style={{ width: '100%', height: '100%' }}
                             />
                           </GridItem>
                           <GridItem

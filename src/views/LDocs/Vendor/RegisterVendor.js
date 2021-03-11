@@ -314,7 +314,7 @@ export default function RegisterVendor(props) {
             message: "Supplier has been successfully registered! Check Mail and Activate Supplier Account.",
             isRegistering: false,
           }));
-          msg = "Supplier Registered Successfully!  Check Mail and Activate Vendor Account.";
+          msg = "Supplier Registered Successfully!  Check Mail and Activate Supplier Account.";
           successAlert(msg);
         })
         .catch((error) => {

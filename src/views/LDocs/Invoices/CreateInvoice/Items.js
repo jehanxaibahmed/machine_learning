@@ -140,7 +140,7 @@ export default function Items(props) {
           <TableBody>
             {items.map((row, index) =>
               editIndex == index ? (
-                <React.Fragment>
+                <React.Fragment >
                   <StyledTableRow key={"AddingItem"}>
                     <StyledTableCell style={{ width: 100 }}>
                       <TextField
