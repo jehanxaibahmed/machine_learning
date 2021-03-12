@@ -617,7 +617,7 @@ export default function CreateInvoice(props) {
     updateTotal();
   }, [items, formState.values.overallDiscount, formState.values.overallTax]);
   React.useEffect(() => {
-    if (typeof formState.values.selectedVendor == "object") {
+    if (typeof formState.values.selectedVendor == "object" && !edit) {
       setFormState((formState) => ({
         ...formState,
         values: {
@@ -669,8 +669,8 @@ export default function CreateInvoice(props) {
           ...formState.values,
           InvoiceNumber: fileData.invoiceId,
           invoiceDate: getDateFormet(fileData.createdDate),
-          notes: fileData.ref,
-          currency:fileData.FC_currency._id,
+          notes: fileData.description,
+          currency:fileData.FC_currency._id || currency,
           selectedVendor:
             formState.vendors.find((v) => v._id == fileData.vendorId) || null,
         },
