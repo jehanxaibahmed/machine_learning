@@ -107,6 +107,7 @@ export default function InitWorkflow(props) {
     );
   };
   const hideAlert = () => {
+     props.closeModal();
     setAlert(null);
   };
   const [formState, setFormState] = React.useState({
@@ -262,6 +263,7 @@ export default function InitWorkflow(props) {
             ? error.response.data
             : error.message
         );
+        errorAlert('Some Issue in Init Workflow');
       })
   }
 

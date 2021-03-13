@@ -18,6 +18,7 @@ import Step1 from "./steps/level1.js";
 import Step2 from "./steps/level2.js";
 import Step3 from "./steps/level3.js";
 import Step4 from "./steps/level4.js";
+import Step5 from "./steps/level5.js";
 
 
 const styles = {
@@ -63,6 +64,11 @@ export default function WizardView(props) {
                   stepName: "Payments",
                   stepComponent: Step4,
                   stepId: "payments",
+                },
+                {
+                  stepName: "Validation",
+                  stepComponent: Step5,
+                  stepId: "validation",
                 }
               ]}
               items={props.items}
@@ -71,6 +77,8 @@ export default function WizardView(props) {
               workflow={props.workflow}
               attachments={props.attachments}
               payments={props.payments}
+              currency={props.currency}
+              validation={props.validation}
 
               
            />

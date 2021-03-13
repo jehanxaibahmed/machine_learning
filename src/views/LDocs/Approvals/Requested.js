@@ -44,6 +44,7 @@ import { sendNotification, getNotification } from "actions";
 import Validator from "../../Components/Timeline";
 import { useSelector, useDispatch } from "react-redux";
 import { CallReceived, DoneAll } from "@material-ui/icons";
+import Alert from '@material-ui/lab/Alert';
 
 
 
@@ -130,7 +131,10 @@ export default function ApprovalRequested() {
 
   const reviewFile = (row) => {
     setFileData(row);
-    setApproverModal(true);
+    validateInvoice(row, Token).then(res=>{
+      setValidation(res);
+      setApproverModal(true);
+    });
   };
 
   const ValidateFile = async (row) => {
@@ -256,6 +260,7 @@ export default function ApprovalRequested() {
   const goBack = () => {
     setPdfUrl();
     setIsViewing(false);
+    setValidateModal(false);
     setIsAdvanceView(false);
     setAnimateTable(true);
     setAnimateAdvanceView(false);
@@ -505,6 +510,20 @@ export default function ApprovalRequested() {
                             value={formState.values.approveComments || ""}
                           ></TextField>
                         </GridItem>
+                        {validation ? validation.Validate.isSame == false ? 
+                        <GridItem
+                          xs={12}
+                          sm={12}
+                          md={12}
+                          lg={12}
+                          style={{
+                            marginTop: "10px",
+                            marginBottom: "10px",
+                          }}
+                        >
+                           <Alert severity="warning">Invoice has been Modified — check it out!</Alert>
+                        </GridItem>
+                        :'':''}
                         <span style={{ float: "right" }}>
                           <Button
                             color="info"
@@ -676,26 +695,28 @@ export default function ApprovalRequested() {
                 </CardIcon>
                 {show ?
                 <Tooltip title="Show Approve Done">
-                  <IconButton
+                  <Button
                     color="danger"
                     round
+                    size="sm"
                     style={{ float: "right" }}
                     className={classes.marginRight}
                     onClick={() => setShow(!show)}
                   >
                     <DoneAll />
-                  </IconButton>
+                  </Button>
                   </Tooltip>:
                   <Tooltip title="Show Requested">
-                  <IconButton
+                  <Button
                   color="danger"
                   round
+                  size="sm"
                   style={{ float: "right" }}
                   className={classes.marginRight}
                   onClick={() => setShow(!show)}
                 >
                   <CallReceived />
-                </IconButton>
+                </Button>
                 </Tooltip>
                   }
               </CardHeader>

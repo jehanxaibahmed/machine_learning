@@ -27,6 +27,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
+import { addZeroes, formatDateTime } from "views/LDocs/Functions/Functions";
 
 const styles = {
   cardIconTitle: {
@@ -109,12 +110,12 @@ export default function InvoiceAge(props) {
       borderRadius: 5,
     },
     colorPrimary: {
-      backgroundColor: "#1a90ff",
-    },
-    bar: {
-      // borderRadius: 5,
       backgroundColor:  theme.palette.grey[400],
     },
+    bar: {
+      backgroundColor:  '#7c1f44',
+    }
+  
   }))(LinearProgress);
 
   const classes = useStyles();
@@ -141,33 +142,37 @@ export default function InvoiceAge(props) {
                     <TableHead>
                       <TableRow>
                         <TableCell>Invoice ID</TableCell>
-                        <TableCell style={{ width: 600 }}></TableCell>
-                        <TableCell align="right">Due Date</TableCell>
                         <TableCell align="right">Invoice Date</TableCell>
+                        <TableCell align="right">Due Date</TableCell>
+                        <TableCell style={{ width: 600 }}></TableCell>
                         <TableCell align="right">Amount&nbsp;($)</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {data.map((row) => {
-                        var remainingDays = datediff(new Date(), new Date(row.dueDate));
-                        // var totalDays = datediff(
-                        //   new Date(row.createdDate),
-                        //   new Date(row.dueDate)
-                        // );
-                        // var percentage = remainingDays * 100 / totalDays;
-                        var remainingDays = 10;
-                        var percentage = 10;
-                        console.log(percentage);
+                        var remainingDays = datediff(new Date(), new Date(row.dueDate))+2;
+                        var totalDays = datediff(
+                          new Date(row.createdDate),
+                          new Date(row.dueDate)
+                        );
+                        var percentage = remainingDays * 100 / totalDays;
+                        if(percentage < 100 && percentage > 0){
+                          percentage = percentage;
+                        }else{
+                          percentage = 0
+                        }
                         return (
                         <TableRow key={row.invoiceId}>
                           <TableCell component="th" scope="row">
                             {row.invoiceId}
                           </TableCell>
+                          <TableCell align="right">{formatDateTime(row.createdDate)}</TableCell>
+                          <TableCell align="right">{formatDateTime(row.dueDate)}</TableCell>
                           <TableCell style={{ width: 600 }}>
                             <div style={{ position: "relative" }}>
                               <BorderLinearProgress
                                 style={{
-                                  background: percentage > 0 ?  percentage < 15 ? '#ffa5009e' : '#008000bf' : '#ff0000b8'
+                                  background: remainingDays < 0 ? '#ff0000b8' : ''
                                 }}
                                 variant="determinate"
                                 value={percentage}
@@ -183,14 +188,12 @@ export default function InvoiceAge(props) {
                                   transform: "translateX(-50%)",
                                 }}
                               >
-                                {percentage > 0 ? `${calculateTimimg(remainingDays)} Days` : 'Over Due'}
+                                {remainingDays > 0 ? `${calculateTimimg(remainingDays)} Days` : 'Over Due'}
                               </Typography>
                             </div>
                           </TableCell>
-                          <TableCell align="right">{row.dueDate}</TableCell>
-                          <TableCell align="right">{row.createdDate}</TableCell>
                           <TableCell align="right">
-                            $&nbsp;{parseFloat(row.netAmt).toFixed(2)}
+                            ${addZeroes(row.netAmt)}
                           </TableCell>
                         </TableRow>
                        )})}

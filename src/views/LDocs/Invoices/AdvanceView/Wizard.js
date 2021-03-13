@@ -225,6 +225,8 @@ class Wizard extends React.Component {
                     workflow={this.props.workflow}
                     attachments={this.props.attachments}
                     payments={this.props.payments}
+                    currency={this.props.currency}
+                    validation={this.props.validation}
                   />
                 </div>
               );

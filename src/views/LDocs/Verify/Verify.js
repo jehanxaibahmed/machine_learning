@@ -311,7 +311,7 @@ export default function Verify() {
                     tableHead={[
                       "Invoice ID", "Submit Date", "Due Date", "Vendor Name", "Amount", "Version","Action"
                     ]}
-                    tableData={fileData.map((file,index)=>{return [file.invoiceId, formatDateTime(file.invoiceDate), formatDateTime(file.dueDate) ,file.vendorName,`$${addZeroes(file.netAmt)}`,file.version,(<Button
+                    tableData={fileData.map((file,index)=>{return [file.invoiceId, formatDateTime(file.invoiceDate), formatDateTime(file.dueDate) ,file.vendorName,`${file.FC_currency.sign}${addZeroes(file.netAmt)}`,file.version,(<Button
                         round
                         color={Selected == index ? "danger" : "info"}
                         className="Edit"

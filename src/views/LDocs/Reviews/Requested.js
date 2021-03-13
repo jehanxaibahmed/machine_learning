@@ -37,6 +37,7 @@ import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import Validator from "../../Components/Timeline";
 import { sendNotification, getNotification } from "actions";
 import { useSelector, useDispatch } from "react-redux";
+import Alert from '@material-ui/lab/Alert';
 import { CallReceived, DoneAll } from "@material-ui/icons";
 
 const styles = {
@@ -123,8 +124,8 @@ export default function Requested() {
       setInvoiceData(row);
       validateInvoice(row, Token).then(res=>{
         setValidation(res);
+        setReviewModal(true);   
       });
-      setReviewModal(true);   
     }
     const ValidateFile = async (row) => {
         setInvoiceData(row);
@@ -527,7 +528,7 @@ const goBack = () => {
                             value={formState.values.reviewComments || ""}
                           ></TextField>
                         </GridItem>
-                        {/* {validation ? validation.IsValidate.isSame == false ? 
+                        {validation ? validation.Validate.isSame == false ? 
                         <GridItem
                           xs={12}
                           sm={12}
@@ -540,7 +541,7 @@ const goBack = () => {
                         >
                            <Alert severity="warning">Invoice has been Modified — check it out!</Alert>
                         </GridItem>
-                        :'':''} */}
+                        :'':''}
                         <span style={{ float: "right" }}>
                           <Button
                             color="info"
@@ -678,26 +679,28 @@ const goBack = () => {
                 </CardIcon>
                 {show ?
                 <Tooltip title="Show Review Done">
-                  <IconButton
+                  <Button
                     color="danger"
                     round
+                    size="sm"
                     style={{ float: "right" }}
                     className={classes.marginRight}
                     onClick={() => setShow(!show)}
                   >
                     <DoneAll />
-                  </IconButton>
+                  </Button>
                   </Tooltip>:
                   <Tooltip title="Show Requested">
-                  <IconButton
+                  <Button
                   color="danger"
                   round
+                  size="sm"
                   style={{ float: "right" }}
                   className={classes.marginRight}
                   onClick={() => setShow(!show)}
                 >
                   <CallReceived />
-                </IconButton>
+                </Button>
                 </Tooltip>
                   }
               </CardHeader>

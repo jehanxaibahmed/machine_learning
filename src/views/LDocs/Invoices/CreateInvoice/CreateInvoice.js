@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Typography,
   LinearProgress,
+  IconButton
 } from "@material-ui/core";
 import SweetAlert from "react-bootstrap-sweetalert";
 // core components
@@ -39,8 +40,9 @@ import ScanningDocumentAnimation from "components/ScanningDocumentAnimation/Scan
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import Attachments from "./Attachments";
 import Items from "./Items";
-import { addZeroes } from "../../Functions/Functions";
-import { Person } from "@material-ui/icons";
+import { addZeroes, formatDateTime } from "../../Functions/Functions";
+import { Person, Visibility, VisibilityOff } from "@material-ui/icons";
+import Step1 from "../../Vendor/steps/level1";
 
 const sweetAlertStyle = makeStyles(styles2);
 
@@ -80,6 +82,18 @@ const getDateFormet = (date) => {
   today = yyyy + "-" + mm + "-" + dd;
   return today;
 };
+const defaultCurrency = {
+  _id: "602a2d12f31966419864e43c",
+  lookup_Id: 1,
+  Name: "dollor",
+  sign: "$",
+};
+const VendorSites = [
+  " Jeddah, Saudi Arabia",
+  " Ad-Dilam, Saudi Arabia",
+  " Al-Abwa, Saudi Arabia",
+  " Abha, Saudi Arabia",
+];
 export default function CreateInvoice(props) {
   const { edit, fileData, closeModal } = props;
   const [pdfModal, setPdfModal] = useState(false);
@@ -99,12 +113,11 @@ export default function CreateInvoice(props) {
   const [taxModal, setIsTaxModal] = useState(false);
   const [category, setCategory] = useState(1);
   const [currencyLookups, setCurrencyLookups] = useState([]);
-  const [currency, setCurrency] = useState({
-    _id: "602a2d12f31966419864e43c",
-    lookup_Id: 1,
-    Name: "dollor",
-    sign: "$",
-  });
+  const [pos, setPos] = useState([]);
+  const [po, setPO] = useState(null);
+  const [poModal, setPoModal] = useState(null);
+  const [showVendor, setShowVendor] = useState(false);
+  const [currency, setCurrency] = useState(defaultCurrency);
   let duedate = new Date();
   let today = new Date();
   duedate = duedate.setDate(today.getDate() + 15);
@@ -115,6 +128,7 @@ export default function CreateInvoice(props) {
       invoiceDate: getDateFormet(today),
       InvoiceNumber: "INV-00",
       dueDate: getDateFormet(duedate),
+      paymentTerms:"NET-",
       currency: "",
       itemName: "",
       unitCost: 0,
@@ -135,18 +149,21 @@ export default function CreateInvoice(props) {
       poInline: "",
       expenseType: "",
       receiptNumber: "",
+      site: "",
     },
     attachments: [],
     errors: {
       invoiceDate: "",
       InvoiceNumber: "",
       dueDate: "",
+      paymentTerms:"",
       currency: "",
       itemName: "",
       unitCost: "",
       quantity: "",
       discount: "",
       amount: "",
+      site: "",
       additionalDetails: "",
       notes: "",
       selectedVendor: "",
@@ -174,6 +191,22 @@ export default function CreateInvoice(props) {
       })
       .catch((err) => {
         console.log(err);
+      });
+  };
+  const getPos = () => {
+    axios({
+      method: "get", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then((res) => {
+        setPos(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setPos([]);
       });
   };
   const [alert, setAlert] = React.useState(null);
@@ -251,7 +284,7 @@ export default function CreateInvoice(props) {
         poInline: item.poInline,
         expenseType: item.expenseType,
         receiptNumber: item.receiptNumber,
-        additionalDetails: item.additionalDetails,
+        additionalDetails: item.additionalDetails
       },
     }));
     setCategory(item.category || 1);
@@ -532,10 +565,10 @@ export default function CreateInvoice(props) {
                     name: file.name,
                     base64: reader.result,
                     type: file.type,
-                    attachmentTitle: formState.values.fileTitle,
+                    attachmentTitle: "ORIGNAL INVOICE",
                     attachmentPath: "",
                     file: file,
-                    title: "OCR",
+                    title: "ORIGNAL INVOICE",
                     description: "OCR FILE USED FOR DATA EXTRACTING..",
                   },
                 ],
@@ -556,6 +589,7 @@ export default function CreateInvoice(props) {
 
   const selectVendor = () => {
     let selectedVendor;
+    let site;
     const Check = require("is-null-empty-or-undefined").Check;
     var error = false;
 
@@ -565,11 +599,18 @@ export default function CreateInvoice(props) {
       selectedVendor = "error";
       error = true;
     }
+    if (!Check(formState.values.site)) {
+      site = "success";
+    } else {
+      site = "error";
+      error = true;
+    }
     setFormState((formState) => ({
       ...formState,
       errors: {
         ...formState.errors,
         selectedVendor: selectedVendor,
+        site: site,
       },
     }));
     if (error) {
@@ -634,6 +675,7 @@ export default function CreateInvoice(props) {
     const userDetails = jwt.decode(Token);
     const userCurrency = userDetails.currency.Currency_Base;
     getLookUp();
+    getPos();
     axios({
       method: "get",
       url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
@@ -647,6 +689,7 @@ export default function CreateInvoice(props) {
           values: {
             ...formState.values,
             selectedVendor: "",
+            site: "",
             currency: userCurrency,
           },
         }));
@@ -668,9 +711,14 @@ export default function CreateInvoice(props) {
         values: {
           ...formState.values,
           InvoiceNumber: fileData.invoiceId,
+          site: fileData.vendorSite,
           invoiceDate: getDateFormet(fileData.createdDate),
           notes: fileData.description,
-          currency:fileData.FC_currency._id || currency,
+          taxType : 1,
+          overallTax:fileData.taxAmt,
+          discountType:1,
+          overallDiscount:fileData.discountAmt,
+          currency: fileData.FC_currency._id || currency,
           selectedVendor:
             formState.vendors.find((v) => v._id == fileData.vendorId) || null,
         },
@@ -693,6 +741,17 @@ export default function CreateInvoice(props) {
       setItems(invoice_items);
     }
   };
+  const viewPO = () => {
+    let po = pos.find((po) => po.poNumber == formState.values.poInline);
+    setPO([
+      {name: 'Date of Issue' , value : formatDateTime(po.dateOfIssue)},
+      {name: 'Payment Terms' , value : po.paymentTerm},
+      {name: 'Date of Expiry' , value :formatDateTime(po.dateOfExpiry)},
+      {name: 'PO Amount:' , value : `${currency.sign + addZeroes(po.poAmount)}`},
+      {name: 'Partial Delivery:' , value : po.partialDelivery ? "YES" : "NO" }
+    ]);
+    setPoModal(true);
+  };
   const openVendorModal = () => {
     setFormState((formState) => ({
       ...formState,
@@ -700,6 +759,7 @@ export default function CreateInvoice(props) {
       values: {
         ...formState.values,
         selectedVendor: "",
+        site: "",
       },
     }));
     setVendorModal(true);
@@ -1001,7 +1061,9 @@ export default function CreateInvoice(props) {
         attachments: formState.attachments,
         vendorName: formState.values.selectedVendor.level1.vendorName,
         vendorId: formState.values.selectedVendor._id,
-        vendorSite: formState.values.selectedVendor.site,
+        vendorSite: formState.values.site,
+        version: fileData ? fileData.version : "",
+        invoicePath: fileData ? fileData.invoicePath : "",
         FC_currency: currencyLookups.find(
           (l) => l._id == formState.values.currency
         ),
@@ -1074,7 +1136,7 @@ export default function CreateInvoice(props) {
                 fileDescription: "",
               },
             });
-          }else{
+          } else {
             props.loadFiles(userData, false);
           }
         })
@@ -1348,7 +1410,7 @@ export default function CreateInvoice(props) {
                   <Card>
                     <CardHeader color="info" icon>
                       <CardIcon color="info">
-                        <h4 className={classes.cardTitleText}>Tax</h4>
+                        <h4 className={classes.cardTitleText}>Tax/VAT</h4>
                       </CardIcon>
                     </CardHeader>
                     <CardBody>
@@ -1363,7 +1425,7 @@ export default function CreateInvoice(props) {
                             }
                             className={classes.textField}
                             fullWidth={true}
-                            label="Tax"
+                            label="Tax / VAT"
                             type="number"
                             name="overallTax"
                             onChange={(event) => {
@@ -1428,7 +1490,48 @@ export default function CreateInvoice(props) {
             ) : (
               ""
             )}
-
+            {poModal ? (
+              <Dialog
+                classes={{
+                  root: classes.center + " " + classes.modalRoot,
+                  paper: classes.modal,
+                }}
+                fullWidth={true}
+                maxWidth={"sm"}
+                open={poModal}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={() => setPoModal(false)}
+                aria-labelledby="vendor-modal-slide-title"
+                aria-describedby="vendor-modal-slide-description"
+              >
+                <DialogContent id="vendorSelect" className={classes.modalBody}>
+                  <Card>
+                    <CardHeader color="info" icon>
+                      <CardIcon color="info">
+                        <h4 className={classes.cardTitleText}>
+                         Purchase Order 
+                        </h4>
+                      </CardIcon>
+                    </CardHeader>
+                    <CardBody>
+                      <Table>
+                        <TableBody>
+                      {po.map((val, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{val.name}</TableCell>
+                          <TableCell>{val.value}</TableCell>
+                        </TableRow>
+                      ))}
+                      </TableBody>
+                      </Table>
+                    </CardBody>
+                  </Card>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              ""
+            )}
             {vendorModal ? (
               <Dialog
                 classes={{
@@ -1458,8 +1561,8 @@ export default function CreateInvoice(props) {
                         <GridItem
                           xs={12}
                           sm={12}
-                          md={12}
-                          lg={12}
+                          md={11}
+                          lg={11}
                           style={{ marginTop: "10px", marginBottom: "10px" }}
                         >
                           <TextField
@@ -1496,6 +1599,65 @@ export default function CreateInvoice(props) {
                             })}
                           </TextField>
                         </GridItem>
+                        <GridItem
+                          xs={12}
+                          sm={12}
+                          md={1}
+                          lg={1}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        >
+                          <IconButton disabled={formState.values.selectedVendor == null || undefined || '' ? true : false} onClick={()=>setShowVendor(!showVendor)}>
+                            {!showVendor ? <Visibility fontSize="small" />: <VisibilityOff />}
+                          </IconButton>
+                        </GridItem>
+                        {formState.selectedVendor ? (
+                          <GridItem
+                            xs={12}
+                            sm={12}
+                            md={12}
+                            lg={12}
+                            style={{ marginTop: "10px", marginBottom: "10px" }}
+                          >
+                            {showVendor ? 
+                              <Step1 vendorData={formState.values.selectedVendor}  />
+                             :
+                            <TextField
+                              error={formState.errors.site === "error"}
+                              helperText={
+                                formState.errors.site === "error"
+                                  ? "Valid Supplier Site is required"
+                                  : null
+                              }
+                              className={classes.textField}
+                              fullWidth={true}
+                              label="Select Supplier Site"
+                              name="site"
+                              onChange={(event) => {
+                                handleChange(event);
+                              }}
+                              select
+                              value={formState.values.site || ""}
+                            >
+                              <MenuItem
+                                disabled
+                                classes={{
+                                  root: classes.selectMenuItem,
+                                }}
+                              >
+                                Choose Supplier Site
+                              </MenuItem>
+                              {VendorSites.map((site, index) => {
+                                return (
+                                  <MenuItem key={index} value={site}>
+                                    {site}
+                                  </MenuItem>
+                                );
+                              })}
+                            </TextField>}
+                          </GridItem>
+                        ) : (
+                          ""
+                        )}
                         {/* {formState.selectedVendor !== null ? 
                       <GridItem
                         xs={12}
@@ -1606,7 +1768,7 @@ export default function CreateInvoice(props) {
                           >
                             <Person
                               fontSize="large"
-                              style={{ width: '100%', height: '100%' }}
+                              style={{ width: "100%", height: "100%" }}
                             />
                           </GridItem>
                           <GridItem
@@ -1627,8 +1789,7 @@ export default function CreateInvoice(props) {
                                     .vendorName || "Supplier Name"}
                                 </Typography>
                                 <Typography variant="body2" component="h2">
-                                  {formState.values.selectedVendor.level1
-                                    .site || "Supplier Site"}
+                                  {formState.values.site || "Supplier Site"}
                                 </Typography>
                               </div>
                             ) : (
@@ -1784,6 +1945,33 @@ export default function CreateInvoice(props) {
                             ))}
                           </TextField>
                         </GridItem>
+                        <GridItem
+                          xs={12}
+                          sm={12}
+                          md={6}
+                          lg={6}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        >
+                          <TextField
+                            fullWidth={true}
+                            error={formState.errors.paymentTerms === "error"}
+                            helperText={
+                              formState.errors.paymentTerms === "error"
+                                ? "Valid Payment Terms required"
+                                : null
+                            }
+                            label="Payment Terms"
+                            id="paymentTerms"
+                            name="paymentTerms"
+                            onChange={(event) => {
+                              handleChange(event);
+                            }}
+                            type="text"
+                            // variant="outlined"
+                            value={formState.values.paymentTerms || ""}
+                            className={classes.textField}
+                          />
+                        </GridItem>
                       </GridContainer>
                     </GridItem>
                   </GridContainer>
@@ -1805,6 +1993,8 @@ export default function CreateInvoice(props) {
                       setCategory={setCategory}
                       category={category}
                       currency={currency || {}}
+                      viewPO={viewPO}
+                      pos={pos}
                     />
                     <GridItem
                       style={{
@@ -1961,7 +2151,7 @@ export default function CreateInvoice(props) {
                                 style={{ cursor: "pointer" }}
                                 onClick={() => setIsTaxModal(true)}
                               >
-                                Tax
+                                Tax / VAT
                               </TableCell>
                               <TableCell>
                                 <TextField

@@ -56,7 +56,7 @@ import FiberNewIcon from '@material-ui/icons/FiberNew';
 import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import Filters from "./Filters";
-import { formatDateTime } from "../../Functions/Functions";
+import { addZeroes, formatDateTime } from "../../Functions/Functions";
 import {
   Menu,
   Item,
@@ -81,6 +81,8 @@ import FileReceived from "./FileReceived";
 import InitiatePayment from "./InitiatePayment";
 import { partial } from "lodash";
 import CreateInvoice from "../CreateInvoice/CreateInvoice";
+import ExportToFusion from "./ExportToFusion";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const styles = {
   cardIconTitle: {
@@ -138,6 +140,7 @@ export default function FilesList(props) {
   const [blockChainData, setBlockChainData] = React.useState(null);
   const [markAsReceivedModel, setMarkAsReceivedModel] = React.useState(false);
   const [initPaymentModel, setinitPaymentModel] = React.useState(false);
+  const [exportToFusionModel, setExportToFusionModel] = React.useState(false);
   const [editInvoice, setEditInvoiceModel] = React.useState(false);
   const [decoded, setDecoded] = React.useState(null);
   const [view, setView] = React.useState('read');
@@ -179,6 +182,10 @@ export default function FilesList(props) {
   const initPayment = (row) => {
     setRow(row)
     setinitPaymentModel(true);
+  };
+  const exportToFusion = (row) => {
+    setRow(row)
+    setExportToFusionModel(true);
   };
   //Edit Invoice
   const editSelectedInvoice = (row) => {
@@ -284,7 +291,7 @@ export default function FilesList(props) {
           ),
           netAmt: (
             <MenuProvider data={prop} id="menu_id">
-              {`$${prop.netAmt.toFixed(2)}`} 
+              {`${prop.FC_currency.sign}${addZeroes(prop.netAmt)}`} 
             </MenuProvider>
           ),
           version: (
@@ -444,6 +451,7 @@ export default function FilesList(props) {
             </Tooltip>
           ):''}
            {prop.approveStatus == 'approved' ? (
+          <React.Fragment>
           <Tooltip title="Initiate Payment" aria-label="initPayment">
               <Button
                 justIcon
@@ -456,6 +464,19 @@ export default function FilesList(props) {
                 <MonetizationOnIcon />
               </Button>
             </Tooltip>
+            <Tooltip title="Export to Fusion" aria-label="export">
+            <Button
+              justIcon
+              round
+              simple
+              icon={ExitToAppIcon}
+              onClick={() => exportToFusion(prop)}
+              color="info"
+            >
+              <ExitToAppIcon />
+            </Button>
+          </Tooltip>
+          </React.Fragment>
           ):''}
           {prop.markedAs == 'unread' ? (
           <Tooltip title="Edit" aria-label="edit">
@@ -876,6 +897,37 @@ export default function FilesList(props) {
                 className={classes.modalBody}
               >
                 <InitiatePayment closeModal={closePaymentModel} fileData={row} loadFiles={getMyFiles} />
+              </DialogContent>
+            </Dialog>
+          </GridItem>
+        </GridContainer>
+      ) : (
+        ""
+      )}
+      {/* Mark As Payment Model */}
+      {exportToFusionModel ? (
+        <GridContainer justify="center">
+          <GridItem xs={12} sm={12} md={12} className={classes.center}>
+            <Dialog
+              classes={{
+                root: classes.center + " " + classes.modalRoot,
+                paper: classes.modal,
+              }}
+              fullWidth={true}
+              maxWidth={"sm"}
+              scroll="body"
+              open={exportToFusionModel}
+              TransitionComponent={Transition}
+              keepMounted
+              onClose={()=>setExportToFusionModel(false)}
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
+            >
+              <DialogContent
+                id="tag-modal-slide-description"
+                className={classes.modalBody}
+              >
+                <ExportToFusion closeModal={()=>setExportToFusionModel(false)} fileData={row} loadFiles={getMyFiles} />
               </DialogContent>
             </Dialog>
           </GridItem>

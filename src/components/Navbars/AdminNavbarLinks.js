@@ -393,12 +393,12 @@ export default function HeaderLinks(props) {
                   <ListItem 
                   key={notification._id}
                   button
-                  onClick={()=>{handleMarkNotificationRead(notification._id, 'read')}}
+                  onClick={()=>{handleMarkNotificationRead(notification._id, 'seen')}}
                   alignItems="flex-start"
                   >
                       <ListItemAvatar> 
                         <Avatar>
-                        {notification.status == 'un-read' ? 
+                        {notification.status == 'un-seen' ? 
                            <NotificationsIcon/> :
                            <NotificationsNoneIcon />
                         }
@@ -432,7 +432,7 @@ export default function HeaderLinks(props) {
                             <Typography
                              align="right"
                             >
-                                          {notification.status == 'un-read' ? 
+                                          {notification.status == 'un-seen' ? 
                                             <CheckIcon fontSize="small" /> :
                                             <DoneAllIcon color="primary" fontSize="small" />
                                           }

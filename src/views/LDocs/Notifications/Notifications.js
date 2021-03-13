@@ -21,30 +21,12 @@ import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import CheckIcon from '@material-ui/icons/Check';
 import { Animated } from "react-animated-css";
+import { formatDateTime } from "../Functions/Functions";
 
 
 const useStyles = makeStyles();
 
-const formatAMPM = (dat) => {
-    var date = new Date(dat);
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    //minutes = minutes < 10 ? '0'+minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
-    return strTime;
-  }
-  
-  const formatDate = (dat) => {
-    var d = new Date(dat);
-    var date = d.getDate();
-    var month = d.getMonth() + 1; // Since getMonth() returns month from 0-11 not 1-12
-    var year = d.getFullYear(); 
-    var dateStr = date + "/" + month + "/" + year;
-    return dateStr;
-  }
+ 
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
@@ -142,7 +124,9 @@ export default function Notifications() {
                                 }} container wrap="nowrap" spacing={1}>
                                       
                                       <Grid item xs={11}>
-                                      {formatAMPM(notification.notificationDate)} {formatDate(notification.notificationDate)}
+                                      {notification.notifyMessage}
+                                      <br />
+                                      {formatDateTime(notification.notificationDate)}
                                       </Grid>
                                       <Grid item xs={1}>
                                           {notification.status == 'un-seen' ? 

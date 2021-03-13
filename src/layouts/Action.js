@@ -87,11 +87,10 @@ export default function Dashboard(props) {
   function fetchData(){
     dispatch(getNotification());
     dispatch(getTasks());
-    console.log('in');
   }
     useEffect(() => {
       fetchData();
-      notifications.filter(n=>n.status == 'un-seen').map((notif,index)=>{
+       notifications.filter(n=>n.status == 'un-seen').map((notif,index)=>{
         notify(`${notif.notificationItem ? notif.notificationItem.invoiceId : notif.invoiceId }-${notif.notifyMessage}`);
       });
       setInterval(() => {

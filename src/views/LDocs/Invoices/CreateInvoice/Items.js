@@ -7,6 +7,7 @@ import {
   IconButton,
   withStyles,
   MenuItem,
+  Typography,
 } from "@material-ui/core";
 // core components
 import GridItem from "components/Grid/GridItem.js";
@@ -25,6 +26,7 @@ import CreateIcon from "@material-ui/icons/Create";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import axios from "axios";
+import { Visibility } from "@material-ui/icons";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -87,9 +89,10 @@ export default function Items(props) {
     setCategory,
     setEditIndex,
     category,
-    currency
+    currency,
+    viewPO,
+    pos
   } = props;
-  console.log(currency);
   const classes = useStyles();
   const [lookups, setLookups] = useState([]);
   //getLookups
@@ -318,7 +321,7 @@ export default function Items(props) {
                         <MenuItem value={2}>Expense</MenuItem>
                       </TextField>
                     </StyledTableCell>
-                    <StyledTableCell colSpan="3">
+                    <StyledTableCell colSpan={category == 1 && formState.values.poInline ? "2" : "3"}>
                       {category == 1 ? (
                         <TextField
                           fullWidth={true}
@@ -328,15 +331,21 @@ export default function Items(props) {
                               ? "Valid PO Number is required"
                               : null
                           }
-                          label="PO Number"
+                          label={`PO Number`}
                           id="poInline"
                           name="poInline"
                           onChange={(event) => {
                             handleChange(event);
                           }}
-                          type="text"
                           value={formState.values.poInline || ""}
-                        />
+                          select
+                        >
+                          {pos.map((po, index) => (
+                            <MenuItem key={index} value={po.poNumber}>
+                             {po.poNumber}
+                            </MenuItem>
+                          ))}
+                        </TextField>
                       ) : (
                         <TextField
                           fullWidth={true}
@@ -363,6 +372,15 @@ export default function Items(props) {
                         </TextField>
                       )}
                     </StyledTableCell>
+                    {category == 1 && formState.values.poInline ? 
+                    <StyledTableCell style={{ width: 100 }} align="right" colSpan="1">
+                      <Tooltip title="View PO">
+                    <IconButton onClick={()=> viewPO()}>
+                      <Visibility />
+                    </IconButton>
+                    </Tooltip>
+                    </StyledTableCell>
+                    :""}
                   </StyledTableRow>
                   <StyledTableRow key={"AddingItem1"}>
                     <StyledTableCell colSpan="8">
@@ -624,7 +642,7 @@ export default function Items(props) {
                       <MenuItem value={2}>Expense</MenuItem>
                     </TextField>
                   </StyledTableCell>
-                  <StyledTableCell colSpan="3">
+                  <StyledTableCell colSpan={category == 1 && formState.values.poInline ? "2" : "3"}>
                     {category == 1 ? (
                       <TextField
                         fullWidth={true}
@@ -640,9 +658,15 @@ export default function Items(props) {
                         onChange={(event) => {
                           handleChange(event);
                         }}
-                        type="text"
                         value={formState.values.poInline || ""}
-                      />
+                        select
+                        >
+                          {pos.map((po, index) => (
+                            <MenuItem key={index} value={po.poNumber}>
+                              {po.poNumber}
+                            </MenuItem>
+                          ))}
+                        </TextField>
                     ) : (
                       <TextField
                         fullWidth={true}
@@ -669,6 +693,15 @@ export default function Items(props) {
                       </TextField>
                     )}
                   </StyledTableCell>
+                  {category  == 1 && formState.values.poInline ? 
+                    <StyledTableCell style={{ width: 100 }} align="right" colSpan="1">
+                      <Tooltip title="View PO">
+                    <IconButton onClick={()=> viewPO()}>
+                      <Visibility fontSize="small" />
+                    </IconButton>
+                    </Tooltip>
+                    </StyledTableCell>
+                    :""}
                 </StyledTableRow>
                 <StyledTableRow key={"AddingItem1"}>
                   <StyledTableCell colSpan="8">

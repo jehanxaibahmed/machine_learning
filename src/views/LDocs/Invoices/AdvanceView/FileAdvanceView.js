@@ -12,6 +12,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Tooltip
 } from "@material-ui/core";
 // core components
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -42,7 +43,7 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import WizardView from "./WizardView";
 import Horizentalteppers from "../../../Components/HorizentalStepper";
-import { formatDateTime } from "../../Functions/Functions";
+import { addZeroes, formatDateTime, validateInvoice } from "../../Functions/Functions";
 
 const useStyle = makeStyles(styles);
 const useStyles = makeStyles((theme) => ({
@@ -66,7 +67,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
   const [fileData, setFileData] = useState(props.fileData);
   const [version, setVersion] = useState(fileData.version);
   const [workflow, setWorkflow] = useState(null);
-  console.log(props);
+  const [validation, setValidation] = React.useState({});
   //Get BlockChain View
   const getBlockChainData = async () => {
     await axios({
@@ -136,6 +137,13 @@ const FileAdvanceView = forwardRef((props, ref) => {
       });
   };
 
+   //Get Validator
+   const getValidator = async () => {
+    await validateInvoice(fileData, Token).then(res=>{
+      setValidation(res);
+    })
+  };
+
   //Get File version
   const getFileVersions = async () => {
     let data = {
@@ -177,6 +185,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
     setIsLoading(true);
     await getQrCode();
     await getFileVersions();
+    await getValidator();
     if (fileData.initWorkFlow) {
       await getBlockChainData();
       await getWorkflowSteps();
@@ -215,15 +224,18 @@ const FileAdvanceView = forwardRef((props, ref) => {
         <Divider />
         <CardBody>
           <GridContainer style={{ padding: "10px" }}>
-            <GridItem xs={12} sm={12} md={8} lg={8}>
+            <GridItem xs={12} sm={12} md={6} lg={6}>
+              <Tooltip title={step.EventFor.toUpperCase()}>
               <Typography variant="subtitle2" component="h2">
-                {step.EventFor.toUpperCase()}
+                {step.EventFor.split("@")[0].toUpperCase()}
               </Typography>
+              </Tooltip>
             </GridItem>
-            <GridItem xs={12} sm={12} md={4} lg={4}>
+            <GridItem xs={12} sm={12} md={6} lg={6} >
               <Chip
                 size="small"
                 style={{
+                  float:'right',
                   color: "white",
                   background:
                     step.EventStatus == "pending"
@@ -232,7 +244,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                       ? "green"
                       : "red",
                 }}
-                label={step.EventStatus.toUpperCase()}
+                label={step.EventStatus == "pending" ? `SENT FOR ${step.Event.toUpperCase()}` :step.EventStatus.toUpperCase()}
               />
             </GridItem>
           </GridContainer>
@@ -298,15 +310,15 @@ const FileAdvanceView = forwardRef((props, ref) => {
                   />
                   <ListItemText
                     primary="Discount"
-                    secondary={`${fileData.discountPercent.toFixed(2)}%`}
+                    secondary={`${addZeroes(fileData.discountPercent)}%`}
                   />
                   <ListItemText
                     primary="Gross Amount"
-                    secondary={`$${fileData.grossAmt.toFixed(2)}`}
+                    secondary={`${fileData.FC_currency.sign}${addZeroes(fileData.grossAmt)}`}
                   />
                   <ListItemText
                     primary="Net Amount"
-                    secondary={`$${fileData.netAmt.toFixed(2)}`}
+                    secondary={`${fileData.FC_currency.sign}${addZeroes(fileData.netAmt)}`}
                   />
                 </List>
               </GridItem>
@@ -320,14 +332,10 @@ const FileAdvanceView = forwardRef((props, ref) => {
                     primary="Vendor Name"
                     secondary={fileData.vendorName}
                   />
-                  {fileData.ref ? (
-                    <ListItemText
-                      primary="Vendor Name"
-                      secondary={fileData.ref}
+                  <ListItemText
+                      primary="Currency"
+                      secondary={fileData.FC_currency.Name.toUpperCase()}
                     />
-                  ) : (
-                    ""
-                  )}
                   <ListItemText
                     primary="Created Date"
                     secondary={formatDateTime(fileData.invoiceDate)}
@@ -403,9 +411,22 @@ const FileAdvanceView = forwardRef((props, ref) => {
                 sm={12}
                 md={12}
                 lg={12}
+                style={{ textAlign: "left", marginTop: 20 }}
+              >
+                <Typography>
+                  {fileData.description}
+                </Typography>
+              </GridItem>
+              <GridItem
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
                 style={{ textAlign: "center", marginTop: 20 }}
               >
-                <Chip size="small" label={fileData.invoiceHash} />
+                <Tooltip title={validation.Validate ? validation.Validate.isSame == false ? "Invoice has been modified":"Invoice Hash":"Invoice Hash"}>
+                <Chip style={{color:validation.Validate ? validation.Validate.isSame == false ? 'red' : '' :''}} size="small" label={fileData.invoiceHash} />
+                </Tooltip>
               </GridItem>
             </GridContainer>
           </Card>
@@ -419,6 +440,8 @@ const FileAdvanceView = forwardRef((props, ref) => {
                   workflow={workflow}
                   attachments={fileData.attachments}
                   payments={paymentData}
+                  currency={fileData.FC_currency}
+                  validation={validation}
                 />
               </Card>
             </GridItem>
