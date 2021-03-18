@@ -48,7 +48,9 @@ const Check = require("is-null-empty-or-undefined").Check;
 
 export default function Filter(props) {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const [customers, setCustomers] = useState([]);
   const decoded = jwt.decode(Token);
+  const isVendor = props.isVendor;
   const classes = useStyles();
   const sweetClass = sweetAlertStyle();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -159,7 +161,21 @@ export default function Filter(props) {
 
 
   React.useEffect(() => {
-   
+    if(isVendor){
+      axios({
+        method: "get", //you can set what request you want to be
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/organizationByVender`,
+        headers: {
+          cooljwt: Token,
+        },
+      })
+        .then((response) => {
+          setCustomers(response.data.organizations);
+          console.log(response.data.organizations);
+        }).catch((err)=>{
+          console.log(err);
+        })
+    }
   }, []);
 
   return (
@@ -189,12 +205,12 @@ export default function Filter(props) {
                   style={{ marginTop: "10px", marginBottom: "10px" }}
                 >
                   <Typography varient="h6" component="h2" >
-                      Invoice Status
+                  {isVendor ? 'Customers' : 'Invoice Status'}
                   </Typography>
                   <Select
                     className={classes.textField}
                     fullWidth={true}
-                    label="Status"
+                    label={isVendor ? 'Customers' : 'Invoice Status'}
                     multiple
                     name="status"
                     onChange={(event) => {
@@ -205,7 +221,16 @@ export default function Filter(props) {
                     select
                     value={formState.values.status || []}
                   >
-                    {formState.statusOptions.map((o, index) => {
+                    
+                    {isVendor ? 
+                    customers.map((o, index)=>{
+                      return (
+                        <MenuItem key={index} value={o.organizationId}>
+                          {o.organizationName}
+                        </MenuItem>
+                      )
+                    }):
+                    formState.statusOptions.map((o, index) => {
                       return (
                         <MenuItem key={index} value={o._id}>
                           {o.value}

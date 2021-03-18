@@ -41,13 +41,15 @@ import DeleteRecord from "../../views/LDocs/DeleteRecords/DeleteRecord";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { formatDateTime } from "../../views/LDocs/Functions/Functions";
+import jwt from "jsonwebtoken";
 const useStyles = makeStyles(styles);
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function HeaderLinks(props) {
-
+  let Token = localStorage.getItem("cooljwt");
+  const userData = jwt.decode(Token);
 
   
   const [openNotification, setOpenNotification] = useState(null);
@@ -136,7 +138,6 @@ export default function HeaderLinks(props) {
     setDeleteModal(false);
   }
   const handleMarkNotificationRead = (notification_id, status) =>{
-    let Token = localStorage.getItem("cooljwt");
     axios({
       method: "put",
       url: `${process.env.REACT_APP_LDOCS_API_URL}/notify/updateSysNotify`,
@@ -274,6 +275,7 @@ export default function HeaderLinks(props) {
             />
           </Button>
       </Tooltip> */}
+      {!userData.isVendor ?
       <Tooltip   title="Verifier" aria-label="verify">
         <Link to="verifier" style={{color: props.isDarkmode?'#fff':"#555555"}}>
           <Button
@@ -295,7 +297,7 @@ export default function HeaderLinks(props) {
             />
           </Button>
         </Link>
-      </Tooltip>
+      </Tooltip>:''}
       <Tooltip title="Dashboard" aria-label="dashboard">
       <Link to="dashboard" style={{color: props.isDarkmode?'#fff':"#555555"}}>
       <Button

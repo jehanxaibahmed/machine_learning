@@ -37,40 +37,43 @@ const useStyles = makeStyles(styles);
 
 export default function WizardView(props) {
   const classes = useStyles();
-  
+  const steps = [
+    {
+      stepName: "Items",
+      stepComponent: Step1,
+      stepId: "about",
+    },
+    !props.isVendor?
+    {
+      stepName: "Workflow Steps",
+      stepComponent: Step2,
+      stepId: "account",
+    }:{},
+    {
+      stepName: "Attachments",
+      stepComponent: Step3,
+      stepId: "address",
+    },
+    {
+      stepName: "Payments",
+      stepComponent: Step4,
+      stepId: "payments",
+    },
+    !props.isVendor?
+    {
+      stepName: "Validation",
+      stepComponent: Step5,
+      stepId: "validation",
+    }:{}
+  ]
+  // .filter(s=>s.stepName != null||undefined||'')
   return (
     <div>
       <GridContainer justify="center">
       <GridItem xs={12} sm={12} md={12} lg={12}>
             <Wizard
               validate
-              steps={[
-                {
-                  stepName: "Items",
-                  stepComponent: Step1,
-                  stepId: "about",
-                },
-                {
-                  stepName: "Workflow Steps",
-                  stepComponent: Step2,
-                  stepId: "account",
-                },
-                {
-                  stepName: "Attachments",
-                  stepComponent: Step3,
-                  stepId: "address",
-                },
-                {
-                  stepName: "Payments",
-                  stepComponent: Step4,
-                  stepId: "payments",
-                },
-                {
-                  stepName: "Validation",
-                  stepComponent: Step5,
-                  stepId: "validation",
-                }
-              ]}
+              steps={steps.filter(s=>s.stepName != null||undefined||'')}
               items={props.items}
               isWorkflowInit={props.isWorkflowInit}
               blockChainData={props.blockChainData}
@@ -79,6 +82,7 @@ export default function WizardView(props) {
               payments={props.payments}
               currency={props.currency}
               validation={props.validation}
+              isVendor={props.isVendor}
 
               
            />

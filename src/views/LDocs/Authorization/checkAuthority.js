@@ -205,3 +205,44 @@ export const checkIsActionDesk = () => {
   }
 };
 
+
+export const checkIsVendorDesk = () => {
+  let token = localStorage.getItem("cooljwt");
+  try {
+    if (
+      typeof token !== "undefined" &&
+      token !== false &&
+      token !== "false" &&
+      token !== "" &&
+      token !== null
+    ) {
+      let decoded = jwt.decode(token);
+        if (typeof decoded.otp !== "undefined") {
+            if (decoded.otp) {
+              if (decoded.isVendor !== undefined || 'undefined' || null) {
+                if (decoded.isVendor == true || 'true') {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+              }
+              else{
+                return false;
+              }
+            }
+            else {
+                return false;
+            }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }catch(e){
+    return false;
+  }
+};
+

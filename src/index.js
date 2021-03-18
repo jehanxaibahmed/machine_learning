@@ -11,6 +11,7 @@ import ScrollToTop  from "./ScrollToTop";
 import AdminLayout from "layouts/Admin.js";
 import ActionLayout from "layouts/Action.js";
 import InvoiceLayout from "layouts/Invoice.js";
+import VendorLayout from "layouts/Vendor.js";
 import AuthLayout from "layouts/Auth.js";
 import RtlLayout from "layouts/RTL.js";
 
@@ -29,6 +30,7 @@ ReactDOM.render(
         <Route path="/admin" component={AdminLayout} />
         <Route path="/invoice" component={InvoiceLayout} />
         <Route path="/action" component={ActionLayout} />
+        <Route path="/vendor" component={VendorLayout} />
         {/**  <Redirect from="/" to="/admin/dashboard" />  */}
         <Redirect from="/" to="/auth" />
       </Switch>

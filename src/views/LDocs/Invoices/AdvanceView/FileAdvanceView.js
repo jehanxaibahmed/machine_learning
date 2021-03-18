@@ -57,6 +57,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
     localStorage.getItem("cooljwt");
   const decoded = jwt.decode(Token);
   const classes = useStyle();
+  const isVendor = props.isVendor;
   const classesList = useStyles();
   const [isLoading, setIsLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -185,8 +186,10 @@ const FileAdvanceView = forwardRef((props, ref) => {
     setIsLoading(true);
     await getQrCode();
     await getFileVersions();
+    if(!isVendor){
     await getValidator();
-    if (fileData.initWorkFlow) {
+    }
+    if (fileData.initWorkFlow && !isVendor) {
       await getBlockChainData();
       await getWorkflowSteps();
       await getPaymentData();
@@ -442,6 +445,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                   payments={paymentData}
                   currency={fileData.FC_currency}
                   validation={validation}
+                  isVendor={isVendor}
                 />
               </Card>
             </GridItem>

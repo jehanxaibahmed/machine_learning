@@ -10,7 +10,7 @@ import {
   CircularProgress,
   Typography,
   LinearProgress,
-  IconButton
+  IconButton,
 } from "@material-ui/core";
 import SweetAlert from "react-bootstrap-sweetalert";
 // core components
@@ -43,6 +43,7 @@ import Items from "./Items";
 import { addZeroes, formatDateTime } from "../../Functions/Functions";
 import { Person, Visibility, VisibilityOff } from "@material-ui/icons";
 import Step1 from "../../Vendor/steps/level1";
+import { defaultCurrency, VendorSites } from "./GlobalValues";
 
 const sweetAlertStyle = makeStyles(styles2);
 
@@ -82,19 +83,11 @@ const getDateFormet = (date) => {
   today = yyyy + "-" + mm + "-" + dd;
   return today;
 };
-const defaultCurrency = {
-  _id: "602a2d12f31966419864e43c",
-  lookup_Id: 1,
-  Name: "dollor",
-  sign: "$",
-};
-const VendorSites = [
-  " Jeddah, Saudi Arabia",
-  " Ad-Dilam, Saudi Arabia",
-  " Al-Abwa, Saudi Arabia",
-  " Abha, Saudi Arabia",
-];
+
 export default function CreateInvoice(props) {
+  const Token =
+    useSelector((state) => state.userReducer.Token) ||
+    localStorage.getItem("cooljwt");
   const { edit, fileData, closeModal } = props;
   const [pdfModal, setPdfModal] = useState(false);
   const [vendorModal, setVendorModal] = useState(false);
@@ -123,12 +116,14 @@ export default function CreateInvoice(props) {
   duedate = duedate.setDate(today.getDate() + 15);
   const [formState, setFormState] = useState({
     vendors: [],
+    organizations: [],
+    selectedOrg: null,
     selectedVendor: null,
     values: {
       invoiceDate: getDateFormet(today),
       InvoiceNumber: "INV-00",
       dueDate: getDateFormet(duedate),
-      paymentTerms:"NET-",
+      paymentTerms: "NET-",
       currency: "",
       itemName: "",
       unitCost: 0,
@@ -150,13 +145,14 @@ export default function CreateInvoice(props) {
       expenseType: "",
       receiptNumber: "",
       site: "",
+      organizationId: "",
     },
     attachments: [],
     errors: {
       invoiceDate: "",
       InvoiceNumber: "",
       dueDate: "",
-      paymentTerms:"",
+      paymentTerms: "",
       currency: "",
       itemName: "",
       unitCost: "",
@@ -174,8 +170,10 @@ export default function CreateInvoice(props) {
       poInline: "",
       expenseType: "",
       receiptNumber: "",
+      organizationId: "",
     },
   });
+  const isVendor = jwt.decode(Token).isVendor;
   const getLookUp = () => {
     axios({
       method: "get", //you can set what request you want to be
@@ -244,9 +242,7 @@ export default function CreateInvoice(props) {
   const hideErrorAlert = () => {
     setAlert(null);
   };
-  const Token =
-    useSelector((state) => state.userReducer.Token) ||
-    localStorage.getItem("cooljwt");
+
   const classes = useStyles();
   const handleChange = (event) => {
     event.persist();
@@ -284,7 +280,7 @@ export default function CreateInvoice(props) {
         poInline: item.poInline,
         expenseType: item.expenseType,
         receiptNumber: item.receiptNumber,
-        additionalDetails: item.additionalDetails
+        additionalDetails: item.additionalDetails,
       },
     }));
     setCategory(item.category || 1);
@@ -539,19 +535,21 @@ export default function CreateInvoice(props) {
             };
             setFormState((formState) => ({
               ...formState,
-              selectedVendor:
-                formState.vendors.find(
-                  (v) => v.level1.vendorName == invoice_companyowner
-                )._id || null,
+              selectedVendor: !isVendor
+                ? formState.vendors.find(
+                    (v) => v.level1.vendorName == invoice_companyowner
+                  )._id || null
+                : null,
               values: {
                 ...formState.values,
                 invoiceDate: invoice_date,
                 dueDate: invoice_duedate,
                 overallTax: addZeroes(invoice_tax),
-                selectedVendor:
-                  formState.vendors.find(
-                    (v) => v.level1.vendorName == invoice_companyowner
-                  ) || null,
+                selectedVendor: !isVendor
+                  ? formState.vendors.find(
+                      (v) => v.level1.vendorName == invoice_companyowner
+                    ) || null
+                  : null,
               },
             }));
             //AddFileInAttachments
@@ -590,29 +588,38 @@ export default function CreateInvoice(props) {
   const selectVendor = () => {
     let selectedVendor;
     let site;
+    let organizationId;
     const Check = require("is-null-empty-or-undefined").Check;
     var error = false;
-
-    if (!Check(formState.selectedVendor)) {
-      selectedVendor = "success";
+    if (!isVendor) {
+      if (!Check(formState.selectedVendor)) {
+        selectedVendor = "success";
+      } else {
+        selectedVendor = "error";
+        error = true;
+      }
+      if (!Check(formState.values.site)) {
+        site = "success";
+      } else {
+        site = "error";
+        error = true;
+      }
+      setFormState((formState) => ({
+        ...formState,
+        errors: {
+          ...formState.errors,
+          selectedVendor: selectedVendor,
+          site: site,
+        },
+      }));
     } else {
-      selectedVendor = "error";
-      error = true;
+      if (!Check(formState.values.organizationId)) {
+        organizationId = "success";
+      } else {
+        organizationId = "error";
+        error = true;
+      }
     }
-    if (!Check(formState.values.site)) {
-      site = "success";
-    } else {
-      site = "error";
-      error = true;
-    }
-    setFormState((formState) => ({
-      ...formState,
-      errors: {
-        ...formState.errors,
-        selectedVendor: selectedVendor,
-        site: site,
-      },
-    }));
     if (error) {
       return false;
     } else {
@@ -651,14 +658,19 @@ export default function CreateInvoice(props) {
   };
   React.useEffect(() => {
     setCurrency(
-      currencyLookups.find((l) => l._id == formState.values.currency)
+      currencyLookups.find((l) => l._id == formState.values.currency) ||
+        defaultCurrency
     );
   }, [formState.values.currency, currencyLookups]);
   React.useEffect(() => {
     updateTotal();
   }, [items, formState.values.overallDiscount, formState.values.overallTax]);
   React.useEffect(() => {
-    if (typeof formState.values.selectedVendor == "object" && !edit) {
+    if (
+      typeof formState.values.selectedVendor == "object" &&
+      !edit &&
+      !isVendor
+    ) {
       setFormState((formState) => ({
         ...formState,
         values: {
@@ -673,34 +685,77 @@ export default function CreateInvoice(props) {
     setIsLoading(true);
     window.scrollTo(0, 0);
     const userDetails = jwt.decode(Token);
-    const userCurrency = userDetails.currency.Currency_Base;
+    if (!isVendor) {
+      const userCurrency = userDetails.currency.Currency_Base;
+      axios({
+        method: "get",
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
+        headers: { cooljwt: Token },
+      })
+        .then((response) => {
+          setFormState((formState) => ({
+            ...formState,
+            selectedVendor: "",
+            vendors: response.data,
+            values: {
+              ...formState.values,
+              selectedVendor: "",
+              site: "",
+              currency: userCurrency,
+            },
+          }));
+          if (edit) {
+            setInvoice();
+          }
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      if(!edit){
+      axios({
+        method: "get", //you can set what request you want to be
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/getInvoiceCount`,
+        headers: {
+          cooljwt: Token,
+        },
+      })
+        .then((response) => {
+          setFormState((formState) => ({
+            ...formState,
+            values: {
+              ...formState.values,
+              InvoiceNumber: `INV-00${response.data.result.invoiceCount +
+                1}`,
+            },
+          }));
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      }
+      axios({
+        method: "get", //you can set what request you want to be
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/organizationByVender`,
+        headers: {
+          cooljwt: Token,
+        },
+      })
+        .then((response) => {
+          console.log(response.data);
+          setFormState((formState) => ({
+            ...formState,
+            organizations: response.data.organizations,
+          }));
+          setInvoice();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
     getLookUp();
     getPos();
-    axios({
-      method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
-      headers: { cooljwt: Token },
-    })
-      .then((response) => {
-        setFormState((formState) => ({
-          ...formState,
-          selectedVendor: "",
-          vendors: response.data,
-          values: {
-            ...formState.values,
-            selectedVendor: "",
-            site: "",
-            currency: userCurrency,
-          },
-        }));
-        if (edit) {
-          setInvoice();
-        }
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   }, []);
   const setInvoice = () => {
     if (edit) {
@@ -708,19 +763,26 @@ export default function CreateInvoice(props) {
       setFormState((formState) => ({
         ...formState,
         selectedVendor: fileData.vendorId,
+        selectedOrg: isVendor
+          ? formState.organizations.find(
+              (org) => org.organizationId == fileData.organizationId
+            )
+          : null,
         values: {
           ...formState.values,
           InvoiceNumber: fileData.invoiceId,
           site: fileData.vendorSite,
           invoiceDate: getDateFormet(fileData.createdDate),
           notes: fileData.description,
-          taxType : 1,
-          overallTax:fileData.taxAmt,
-          discountType:1,
-          overallDiscount:fileData.discountAmt,
+          taxType: 1,
+          overallTax: fileData.taxAmt,
+          discountType: 1,
+          overallDiscount: fileData.discountAmt,
+          organizationId:fileData.organizationId,
           currency: fileData.FC_currency._id || currency,
-          selectedVendor:
-            formState.vendors.find((v) => v._id == fileData.vendorId) || null,
+          selectedVendor: !isVendor
+            ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
+            : null,
         },
       }));
       var invoice_items = fileData.items.map((item) => {
@@ -744,11 +806,14 @@ export default function CreateInvoice(props) {
   const viewPO = () => {
     let po = pos.find((po) => po.poNumber == formState.values.poInline);
     setPO([
-      {name: 'Date of Issue' , value : formatDateTime(po.dateOfIssue)},
-      {name: 'Payment Terms' , value : po.paymentTerm},
-      {name: 'Date of Expiry' , value :formatDateTime(po.dateOfExpiry)},
-      {name: 'PO Amount:' , value : `${currency.sign + addZeroes(po.poAmount)}`},
-      {name: 'Partial Delivery:' , value : po.partialDelivery ? "YES" : "NO" }
+      { name: "Date of Issue", value: formatDateTime(po.dateOfIssue) },
+      { name: "Payment Terms", value: po.paymentTerm },
+      { name: "Date of Expiry", value: formatDateTime(po.dateOfExpiry) },
+      {
+        name: "PO Amount:",
+        value: `${currency.sign + addZeroes(po.poAmount)}`,
+      },
+      { name: "Partial Delivery:", value: po.partialDelivery ? "YES" : "NO" },
     ]);
     setPoModal(true);
   };
@@ -756,10 +821,12 @@ export default function CreateInvoice(props) {
     setFormState((formState) => ({
       ...formState,
       selectedVendor: "",
+      selectedOrg: "",
       values: {
         ...formState.values,
         selectedVendor: "",
         site: "",
+        organizationId: "",
       },
     }));
     setVendorModal(true);
@@ -769,18 +836,32 @@ export default function CreateInvoice(props) {
   };
   const handleVendorChange = (event) => {
     event.persist();
-    let selectedVendor = formState.vendors.find(
-      (v) => v._id == event.target.value
-    );
-    console.log(selectedVendor);
-    setFormState((formState) => ({
-      ...formState,
-      selectedVendor: event.target.value,
-      values: {
-        ...formState.values,
-        selectedVendor: selectedVendor,
-      },
-    }));
+    if (isVendor) {
+      let selectedOrg = formState.organizations.find(
+        (o) => o.organizationId == event.target.value
+      );
+      setFormState((formState) => ({
+        ...formState,
+        selectedOrg: selectedOrg,
+        values: {
+          ...formState.values,
+          organizationId: event.target.value,
+          currency: selectedOrg.currency,
+        },
+      }));
+    } else {
+      let selectedVendor = formState.vendors.find(
+        (v) => v._id == event.target.value
+      );
+      setFormState((formState) => ({
+        ...formState,
+        selectedVendor: event.target.value,
+        values: {
+          ...formState.values,
+          selectedVendor: selectedVendor,
+        },
+      }));
+    }
   };
   const viewFileHandler = (file) => {
     setIsCreateInvoice(false);
@@ -936,9 +1017,20 @@ export default function CreateInvoice(props) {
     //Creating Invoice
     setIsSavingInvoice(true);
     const userData = jwt.decode(Token);
-    const userCurrency = currencyLookups.find(
-      (l) => l._id == userData.currency.Currency_Base
-    );
+    console.log(userData);
+    let userCurrency;
+    if (isVendor && formState.selectedOrg) {
+      userCurrency = currencyLookups.find(
+        (l) => l._id == formState.selectedOrg.currency
+      );
+    } else if (userData.currency && !isVendor) {
+      userCurrency = currencyLookups.find(
+        (l) => l._id == userData.currency.Currency_Base
+      );
+    } else {
+      userCurrency = defaultCurrency;
+    }
+
     let invoiceDate;
     let InvoiceNumber;
     let dueDate;
@@ -966,11 +1058,20 @@ export default function CreateInvoice(props) {
       dueDate = "error";
       error = true;
     }
-    if (!Check(formState.selectedVendor)) {
-      vendor = "success";
+    if (isVendor) {
+      if (!Check(formState.values.organizationId)) {
+        vendor = "success";
+      } else {
+        vendor = "error";
+        error = true;
+      }
     } else {
-      vendor = "error";
-      error = true;
+      if (!Check(formState.selectedVendor)) {
+        vendor = "success";
+      } else {
+        vendor = "error";
+        error = true;
+      }
     }
     if (!Check(formState.values.currency)) {
       currency = "success";
@@ -1025,20 +1126,6 @@ export default function CreateInvoice(props) {
         formState.values.discountType === 2
           ? (formState.values.subtotal * formState.values.overallDiscount) / 100
           : formState.values.overallDiscount;
-      // let FC_currency = {
-      //   currency_id:f_currency._id,
-      //   name:f_currency.name,
-      //   symbol:f_currency.sign,
-      //   _id:f_currency._id,
-      //   sign:f_currency.sign
-      // }
-      // let LC_currency = {
-      //   currency_id:userCurrency._id,
-      //   name:userCurrency.name,
-      //   symbol:userCurrency.sign,
-      //   _id:userCurrency._id,
-      //   sign:userCurrency.sign
-      // }
       let formData = {
         invoiceId: formState.values.InvoiceNumber,
         invoiceDate: formState.values.invoiceDate,
@@ -1051,17 +1138,25 @@ export default function CreateInvoice(props) {
         invoice_details: formState.values.notes,
         netAmt: formState.values.total,
         ref: formState.values.poNumber,
-        tenantId: userData.tenantId,
-        organizationId: userData.orgDetail.organizationId,
-        organizationName: userData.orgDetail.organization,
-        contactPerson: formState.values.selectedVendor.level1.contactPerson,
+        tenantId: isVendor ? formState.selectedOrg.tenantId : userData.tenantId,
+        organizationId: isVendor
+          ? formState.selectedOrg.organizationId
+          : userData.orgDetail.organizationId,
+        organizationName: isVendor
+          ? formState.selectedOrg.organizationName
+          : userData.orgDetail.organization,
+        contactPerson: isVendor
+          ? null
+          : formState.values.selectedVendor.level1.contactPerson,
         createdBy: userData.email,
         balanceDue: formState.values.total,
         items: JSON.stringify(items),
         attachments: formState.attachments,
-        vendorName: formState.values.selectedVendor.level1.vendorName,
-        vendorId: formState.values.selectedVendor._id,
-        vendorSite: formState.values.site,
+        vendorName: isVendor
+          ? userData.name
+          : formState.values.selectedVendor.level1.vendorName,
+        vendorId: isVendor ? userData.id : formState.values.selectedVendor._id,
+        vendorSite: isVendor ? "" : formState.values.site,
         version: fileData ? fileData.version : "",
         invoicePath: fileData ? fileData.invoicePath : "",
         FC_currency: currencyLookups.find(
@@ -1072,11 +1167,12 @@ export default function CreateInvoice(props) {
       };
       //Axios Call
       axios({
-        method: edit ? "put" : "post",
-        url: edit
-          ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
-          : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
-        //url: `https://api.matesol.net/invoice/submitInvoice`,
+        method: "post",
+        // method: edit ? "put" : "post",
+        // url: edit
+        //   ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
+        //   : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
         data: formData,
         headers: {
           //"Content-Type": "multipart/form-data",
@@ -1087,13 +1183,14 @@ export default function CreateInvoice(props) {
           setIsSavingInvoice(false);
           successAlert(
             edit
-              ? "Invoice Updated SuccessFully."
+              ? "Invoice Re-Submiited SuccessFully."
               : "Invoice Submited SuccessFully."
           );
           if (!edit) {
             setItems([]);
             setFormState({
               selectedVendor: null,
+              selectedOrg:null,
               values: {
                 invoiceDate: getDateFormet(today),
                 InvoiceNumber: "INV-00",
@@ -1114,6 +1211,7 @@ export default function CreateInvoice(props) {
                 fileTitle: "",
                 fileDescription: "",
                 currency: "",
+                organizationId:""
               },
               attachments: [],
               errors: {
@@ -1134,6 +1232,7 @@ export default function CreateInvoice(props) {
                 items: "",
                 fileTitle: "",
                 fileDescription: "",
+                organizationId:""
               },
             });
           } else {
@@ -1355,7 +1454,7 @@ export default function CreateInvoice(props) {
                             select
                           >
                             <MenuItem value={1}>
-                              Amount ({currency.sign})
+                              Amount ({currency.sign || "$"})
                             </MenuItem>
                             <MenuItem value={2}>Percentage (%)</MenuItem>
                           </TextField>
@@ -1448,7 +1547,7 @@ export default function CreateInvoice(props) {
                             select
                           >
                             <MenuItem value={1}>
-                              Amount ({currency.sign})
+                              Amount ({currency.sign || "$"})
                             </MenuItem>
                             <MenuItem value={2}>Percentage (%)</MenuItem>
                           </TextField>
@@ -1510,20 +1609,20 @@ export default function CreateInvoice(props) {
                     <CardHeader color="info" icon>
                       <CardIcon color="info">
                         <h4 className={classes.cardTitleText}>
-                         Purchase Order 
+                          Purchase Order
                         </h4>
                       </CardIcon>
                     </CardHeader>
                     <CardBody>
                       <Table>
                         <TableBody>
-                      {po.map((val, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{val.name}</TableCell>
-                          <TableCell>{val.value}</TableCell>
-                        </TableRow>
-                      ))}
-                      </TableBody>
+                          {po.map((val, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{val.name}</TableCell>
+                              <TableCell>{val.value}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
                       </Table>
                     </CardBody>
                   </Card>
@@ -1552,124 +1651,244 @@ export default function CreateInvoice(props) {
                     <CardHeader color="info" icon>
                       <CardIcon color="info">
                         <h4 className={classes.cardTitleText}>
-                          Select Supplier
+                          {isVendor ? "Select Customer" : "Select Supplier"}
                         </h4>
                       </CardIcon>
                     </CardHeader>
                     <CardBody>
                       <GridContainer>
-                        <GridItem
-                          xs={12}
-                          sm={12}
-                          md={11}
-                          lg={11}
-                          style={{ marginTop: "10px", marginBottom: "10px" }}
-                        >
-                          <TextField
-                            error={formState.errors.selectedVendor === "error"}
-                            helperText={
-                              formState.errors.selectedVendor === "error"
-                                ? "Valid Supplier Name is required"
-                                : null
-                            }
-                            className={classes.textField}
-                            fullWidth={true}
-                            label="Select Supplier"
-                            name="selectedVendor"
-                            onChange={(event) => {
-                              handleVendorChange(event);
-                            }}
-                            select
-                            value={formState.selectedVendor || ""}
-                          >
-                            <MenuItem
-                              disabled
-                              classes={{
-                                root: classes.selectMenuItem,
+                        {!isVendor ? (
+                          <React.Fragment>
+                            <GridItem
+                              xs={12}
+                              sm={12}
+                              md={11}
+                              lg={11}
+                              style={{
+                                marginTop: "10px",
+                                marginBottom: "10px",
                               }}
                             >
-                              Choose Supplier
-                            </MenuItem>
-                            {formState.vendors.map((vendor, index) => {
-                              return (
-                                <MenuItem key={index} value={vendor._id}>
-                                  {vendor.level1.vendorName}
+                              <TextField
+                                error={
+                                  formState.errors.selectedVendor === "error"
+                                }
+                                helperText={
+                                  formState.errors.selectedVendor === "error"
+                                    ? "Valid Supplier Name is required"
+                                    : null
+                                }
+                                className={classes.textField}
+                                fullWidth={true}
+                                label="Select Supplier"
+                                name="selectedVendor"
+                                onChange={(event) => {
+                                  handleVendorChange(event);
+                                }}
+                                select
+                                value={formState.selectedVendor || ""}
+                              >
+                                <MenuItem
+                                  disabled
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                  }}
+                                >
+                                  Choose Supplier
                                 </MenuItem>
-                              );
-                            })}
-                          </TextField>
-                        </GridItem>
-                        <GridItem
-                          xs={12}
-                          sm={12}
-                          md={1}
-                          lg={1}
-                          style={{ marginTop: "10px", marginBottom: "10px" }}
-                        >
-                          <IconButton disabled={formState.values.selectedVendor == null || undefined || '' ? true : false} onClick={()=>setShowVendor(!showVendor)}>
-                            {!showVendor ? <Visibility fontSize="small" />: <VisibilityOff />}
-                          </IconButton>
-                        </GridItem>
-                        {formState.selectedVendor ? (
-                          <GridItem
-                            xs={12}
-                            sm={12}
-                            md={12}
-                            lg={12}
-                            style={{ marginTop: "10px", marginBottom: "10px" }}
-                          >
-                            {showVendor ? 
-                              <Step1 vendorData={formState.values.selectedVendor}  />
-                             :
-                            <TextField
-                              error={formState.errors.site === "error"}
-                              helperText={
-                                formState.errors.site === "error"
-                                  ? "Valid Supplier Site is required"
-                                  : null
-                              }
-                              className={classes.textField}
-                              fullWidth={true}
-                              label="Select Supplier Site"
-                              name="site"
-                              onChange={(event) => {
-                                handleChange(event);
+                                {formState.vendors.map((vendor, index) => {
+                                  return (
+                                    <MenuItem key={index} value={vendor._id}>
+                                      {vendor.level1.vendorName}
+                                    </MenuItem>
+                                  );
+                                })}
+                              </TextField>
+                            </GridItem>
+                            <GridItem
+                              xs={12}
+                              sm={12}
+                              md={1}
+                              lg={1}
+                              style={{
+                                marginTop: "10px",
+                                marginBottom: "10px",
                               }}
-                              select
-                              value={formState.values.site || ""}
                             >
-                              <MenuItem
-                                disabled
-                                classes={{
-                                  root: classes.selectMenuItem,
+                              <IconButton
+                                disabled={
+                                  formState.values.selectedVendor == null ||
+                                  undefined ||
+                                  ""
+                                    ? true
+                                    : false
+                                }
+                                onClick={() => setShowVendor(!showVendor)}
+                              >
+                                {!showVendor ? (
+                                  <Visibility fontSize="small" />
+                                ) : (
+                                  <VisibilityOff />
+                                )}
+                              </IconButton>
+                            </GridItem>
+                            {formState.selectedVendor ? (
+                              <GridItem
+                                xs={12}
+                                sm={12}
+                                md={12}
+                                lg={12}
+                                style={{
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
                                 }}
                               >
-                                Choose Supplier Site
-                              </MenuItem>
-                              {VendorSites.map((site, index) => {
-                                return (
-                                  <MenuItem key={index} value={site}>
-                                    {site}
-                                  </MenuItem>
-                                );
-                              })}
-                            </TextField>}
-                          </GridItem>
+                                {showVendor ? (
+                                  <Step1
+                                    vendorData={formState.values.selectedVendor}
+                                  />
+                                ) : (
+                                  <TextField
+                                    error={formState.errors.site === "error"}
+                                    helperText={
+                                      formState.errors.site === "error"
+                                        ? "Valid Supplier Site is required"
+                                        : null
+                                    }
+                                    className={classes.textField}
+                                    fullWidth={true}
+                                    label="Select Supplier Site"
+                                    name="site"
+                                    onChange={(event) => {
+                                      handleChange(event);
+                                    }}
+                                    select
+                                    value={formState.values.site || ""}
+                                  >
+                                    <MenuItem
+                                      disabled
+                                      classes={{
+                                        root: classes.selectMenuItem,
+                                      }}
+                                    >
+                                      Choose Supplier Site
+                                    </MenuItem>
+                                    {VendorSites.map((site, index) => {
+                                      return (
+                                        <MenuItem key={index} value={site}>
+                                          {site}
+                                        </MenuItem>
+                                      );
+                                    })}
+                                  </TextField>
+                                )}
+                              </GridItem>
+                            ) : (
+                              ""
+                            )}
+                          </React.Fragment>
                         ) : (
-                          ""
+                          <React.Fragment>
+                            <GridItem
+                              xs={12}
+                              sm={12}
+                              md={11}
+                              lg={11}
+                              style={{
+                                marginTop: "10px",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <TextField
+                                error={
+                                  formState.errors.selectedVendor === "error"
+                                }
+                                helperText={
+                                  formState.errors.selectedVendor === "error"
+                                    ? "Valid Customer Name is required"
+                                    : null
+                                }
+                                className={classes.textField}
+                                fullWidth={true}
+                                label="Select Customer"
+                                name="organizationId"
+                                onChange={(event) => {
+                                  handleVendorChange(event);
+                                }}
+                                select
+                                value={formState.values.organizationId || ""}
+                              >
+                                <MenuItem
+                                  disabled
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                  }}
+                                >
+                                  Choose Customer
+                                </MenuItem>
+                                {formState.organizations.map((org, index) => {
+                                  return (
+                                    <MenuItem
+                                      key={index}
+                                      value={org.organizationId}
+                                    >
+                                      {org.organizationName}
+                                    </MenuItem>
+                                  );
+                                })}
+                              </TextField>
+                            </GridItem>
+                            <GridItem
+                              xs={12}
+                              sm={12}
+                              md={1}
+                              lg={1}
+                              style={{
+                                marginTop: "10px",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <IconButton
+                                disabled={
+                                  formState.values.organization == null ||
+                                  undefined ||
+                                  ""
+                                    ? true
+                                    : false
+                                }
+                                //onClick={() => setShowVendor(!showVendor)}
+                              >
+                                {!showVendor ? (
+                                  <Visibility fontSize="small" />
+                                ) : (
+                                  <VisibilityOff />
+                                )}
+                              </IconButton>
+                            </GridItem>
+                            {formState.values.organizationId ? (
+                              <GridItem
+                                xs={12}
+                                sm={12}
+                                md={12}
+                                lg={12}
+                                style={{
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                {showVendor ? (
+                                  <Step1
+                                    vendorData={formState.values.selectedVendor}
+                                  />
+                                ) : (
+                                  ""
+                                )}
+                              </GridItem>
+                            ) : (
+                              ""
+                            )}
+                          </React.Fragment>
                         )}
-                        {/* {formState.selectedVendor !== null ? 
-                      <GridItem
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                      >
-                      <BuildNetwork
-                        goBack={()=>console.log('x')}
-                        vendorData={formState.vendors.find(v=>v._id==formState.selectedVendor)}
-                      />
-                      </GridItem>:''} */}
                         <GridItem
                           style={{
                             display: "flex",
@@ -1696,7 +1915,7 @@ export default function CreateInvoice(props) {
                             onClick={() => selectVendor()}
                             round
                           >
-                            Select Supplier
+                            {isVendor ? "Select Customer" : "Select Supplier"}
                           </Button>
                         </GridItem>
                       </GridContainer>
@@ -1757,53 +1976,100 @@ export default function CreateInvoice(props) {
                             : openVendorModal
                         }
                       >
-                        <GridContainer>
-                          <GridItem
-                            xs="3"
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "left",
-                            }}
-                          >
-                            <Person
-                              fontSize="large"
-                              style={{ width: "100%", height: "100%" }}
-                            />
-                          </GridItem>
-                          <GridItem
-                            xs="9"
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              paddingLeft: 50,
-                              // justifyContent: "left",
-                            }}
-                          >
-                            {formState.values.selectedVendor != "" ||
-                            null ||
-                            undefined ? (
-                              <div>
-                                <Typography variant="h6" component="h2">
-                                  {formState.values.selectedVendor.level1
-                                    .vendorName || "Supplier Name"}
-                                </Typography>
-                                <Typography variant="body2" component="h2">
-                                  {formState.values.site || "Supplier Site"}
-                                </Typography>
-                              </div>
-                            ) : (
-                              <div>
-                                <Typography variant="h6" component="h2">
-                                  Supplier Name
-                                </Typography>
-                                <Typography variant="body2" component="h2">
-                                  Supplier Site
-                                </Typography>
-                              </div>
-                            )}
-                          </GridItem>
-                        </GridContainer>
+                        {isVendor ? (
+                          <GridContainer>
+                            <GridItem
+                              xs="3"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "left",
+                              }}
+                            >
+                              <Person
+                                fontSize="large"
+                                style={{ width: "100%", height: "100%" }}
+                              />
+                            </GridItem>
+                            <GridItem
+                              xs="9"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                paddingLeft: 50,
+                                // justifyContent: "left",
+                              }}
+                            >
+                              {formState.values.organizationId != "" ||
+                              null ||
+                              undefined ? (
+                                <div>
+                                  <Typography variant="h6" component="h2">
+                                    {formState.selectedOrg.organizationName ||
+                                      "Customer Name"}
+                                  </Typography>
+                                  <Typography variant="h6" component="h2">
+                                    {formState.selectedOrg.address || ""}
+                                  </Typography>
+                                </div>
+                              ) : (
+                                <div>
+                                  <Typography variant="h6" component="h2">
+                                    Customer Name
+                                  </Typography>
+                                </div>
+                              )}
+                            </GridItem>
+                          </GridContainer>
+                        ) : (
+                          <GridContainer>
+                            <GridItem
+                              xs="3"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "left",
+                              }}
+                            >
+                              <Person
+                                fontSize="large"
+                                style={{ width: "100%", height: "100%" }}
+                              />
+                            </GridItem>
+                            <GridItem
+                              xs="9"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                paddingLeft: 50,
+                                // justifyContent: "left",
+                              }}
+                            >
+                              {formState.values.selectedVendor != "" ||
+                              null ||
+                              undefined ? (
+                                <div>
+                                  <Typography variant="h6" component="h2">
+                                    {formState.values.selectedVendor.level1
+                                      .vendorName || "Supplier Name"}
+                                  </Typography>
+                                  <Typography variant="body2" component="h2">
+                                    {formState.values.site || "Supplier Site"}
+                                  </Typography>
+                                </div>
+                              ) : (
+                                <div>
+                                  <Typography variant="h6" component="h2">
+                                    Supplier Name
+                                  </Typography>
+                                  <Typography variant="body2" component="h2">
+                                    Supplier Site
+                                  </Typography>
+                                </div>
+                              )}
+                            </GridItem>
+                          </GridContainer>
+                        )}
                       </Card>
                     </GridItem>
                     <GridItem
@@ -1995,6 +2261,7 @@ export default function CreateInvoice(props) {
                       currency={currency || {}}
                       viewPO={viewPO}
                       pos={pos}
+                      isVendor={isVendor}
                     />
                     <GridItem
                       style={{
@@ -2102,7 +2369,7 @@ export default function CreateInvoice(props) {
                               <TableCell>Sub Total</TableCell>
                               <TableCell>
                                 <TextField
-                                  label={`Sub Total(${currency.sign})`}
+                                  label={`Sub Total(${currency.sign || "$"})`}
                                   id="subtotal"
                                   name="subtotal"
                                   disabled={true}
@@ -2124,7 +2391,7 @@ export default function CreateInvoice(props) {
                               </TableCell>
                               <TableCell>
                                 <TextField
-                                  label={`Discount(${currency.sign})`}
+                                  label={`Discount(${currency.sign || "$"})`}
                                   id="discount"
                                   name="overallDiscount"
                                   onChange={(event) => {
@@ -2155,7 +2422,7 @@ export default function CreateInvoice(props) {
                               </TableCell>
                               <TableCell>
                                 <TextField
-                                  label={`Tax(${currency.sign})`}
+                                  label={`Tax(${currency.sign || "$"})`}
                                   id="tax"
                                   name="overallTax"
                                   onChange={(event) => {
@@ -2183,7 +2450,7 @@ export default function CreateInvoice(props) {
                               </TableCell>
                               <TableCell component="th" scope="row">
                                 <TextField
-                                  label={`Total(${currency.sign})`}
+                                  label={`Total(${currency.sign || "$"})`}
                                   id="total"
                                   name="total"
                                   disabled={true}

@@ -91,7 +91,8 @@ export default function Items(props) {
     category,
     currency,
     viewPO,
-    pos
+    pos,
+    isVendor
   } = props;
   const classes = useStyles();
   const [lookups, setLookups] = useState([]);
@@ -133,10 +134,10 @@ export default function Items(props) {
             <TableRow>
               <StyledTableCell>#</StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
-              <StyledTableCell align="right">Unit Cost ({currency.sign})</StyledTableCell>
+              <StyledTableCell align="right">Unit Cost ({currency.sign || "$"})</StyledTableCell>
               <StyledTableCell align="right">Quantity</StyledTableCell>
               <StyledTableCell align="right">Discount (%)</StyledTableCell>
-              <StyledTableCell align="right">Amount ({currency.sign})</StyledTableCell>
+              <StyledTableCell align="right">Amount ({currency.sign || '$'})</StyledTableCell>
               <StyledTableCell> </StyledTableCell>
             </TableRow>
           </TableHead>
@@ -317,8 +318,9 @@ export default function Items(props) {
                         }}
                         select
                       >
+                        
                         <MenuItem value={1}>Purchase Order</MenuItem>
-                        <MenuItem value={2}>Expense</MenuItem>
+                        <MenuItem disabled={isVendor} value={2}>Expense</MenuItem>
                       </TextField>
                     </StyledTableCell>
                     <StyledTableCell colSpan={category == 1 && formState.values.poInline ? "2" : "3"}>
@@ -639,7 +641,7 @@ export default function Items(props) {
                       select
                     >
                       <MenuItem value={1}>Purchase Order</MenuItem>
-                      <MenuItem value={2}>Expense</MenuItem>
+                      <MenuItem disabled={isVendor} value={2}>Expense</MenuItem>
                     </TextField>
                   </StyledTableCell>
                   <StyledTableCell colSpan={category == 1 && formState.values.poInline ? "2" : "3"}>

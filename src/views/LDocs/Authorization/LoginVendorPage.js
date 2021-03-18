@@ -31,47 +31,48 @@ export default function LoginVendorPage(props) {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
 
-
   const classes = useStyles();
 
- const handleLoginName = (event) => {
-   event.persist();
-   setloginname(event.target.value);
- };
- const handlePassword = (event) => {
-   event.persist();
-   setPassword(event.target.value);
+  const handleLoginName = (event) => {
+    event.persist();
+    setloginname(event.target.value);
   };
-    const handleLoginIn = (event) => {
-      event.preventDefault();
+  const handlePassword = (event) => {
+    event.persist();
+    setPassword(event.target.value);
+  };
+  const handleLoginIn = (event) => {
+    event.preventDefault();
 
-      setAPIErrorMessage("");
-      setlogging(true);
-      axios
-        .post(`${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorLogin`, {
-          email: loginName,
-          password: password,
-        })
-        .then((response) => {
-          setlogging(false);
-          localStorage.setItem("cooljwt", response.data);
-          dispatch(setToken(response.data));
-          setloginnameError("success");
-          setPasswordError("success");
-          props.loginSuccess();
-        })
-        .catch((error) => {
-          setlogging(false);
-          setloginnameError("error");
-          setPasswordError("error");
-          setAPIErrorMessage(typeof error.response != "undefined"
+    setAPIErrorMessage("");
+    setlogging(true);
+    axios
+      .post(`${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorLogin`, {
+        email: loginName,
+        password: password,
+      })
+      .then((response) => {
+        setlogging(false);
+        localStorage.setItem("cooljwt", response.data.token);
+        dispatch(setToken(response.data.token));
+        setloginnameError("success");
+        setPasswordError("success");
+        props.loginSuccess();
+      })
+      .catch((error) => {
+        setlogging(false);
+        setloginnameError("error");
+        setPasswordError("error");
+        setAPIErrorMessage(
+          typeof error.response != "undefined"
             ? error.response.data
-            : error.message);
-            setTimeout(function() {
-              setAPIErrorMessage("");
-            }, 2000);
-        });
-    };
+            : error.message
+        );
+        setTimeout(function() {
+          setAPIErrorMessage("");
+        }, 2000);
+      });
+  };
   return (
     <div className={classes.container}>
       <GridContainer justify="center">
@@ -135,9 +136,8 @@ export default function LoginVendorPage(props) {
               </CardBody>
               <CardFooter className={classes.justifyContentCenter}>
                 <Button color="info" simple size="lg" type="submit" block>
-                {logging ? <CircularProgress /> : "Let's Go"} 
+                  {logging ? <CircularProgress /> : "Let's Go"}
                 </Button>
-                
               </CardFooter>
             </Card>
           </form>

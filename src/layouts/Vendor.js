@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserDataAction, getNotification, getTasks, setDarkMode } from "../actions";
 import {  Switch, Route, Redirect } from "react-router-dom";
 import addNotification from 'react-push-notification';
+import { checkIsVendorDesk } from "../views/LDocs/Authorization/checkAuthority";
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
@@ -88,12 +89,13 @@ export default function Dashboard(props) {
   }
 
   React.useEffect(() => {
-    // getUserInfo();
     fetchData();
     setInterval(() => {
         fetchData();     
     }, 60000);
-    if (checkIsActionDesk ()) { dispatch(getUserDataAction()); }
+    //if (checkIsVendorDesk()) {
+       dispatch(getUserDataAction()); 
+    //}
     },[]);
 
 
@@ -105,7 +107,9 @@ export default function Dashboard(props) {
       setInterval(() => {
           fetchData();     
       }, 60000);
-      if (checkIsActionDesk()) { dispatch(getUserDataAction()); }
+       //if (checkIsVendorDesk()) {
+          dispatch(getUserDataAction()); 
+        //}
       },[]);
   
     useEffect(()=>{
@@ -143,7 +147,7 @@ export default function Dashboard(props) {
   const mainPanel = React.createRef();
   // effect instead of componentDidMount, componentDidUpdate and componentWillUnmount
   React.useEffect(() => {
-    if(checkIsActionDesk ()){
+    // if(checkIsVendorDesk()){
       if (navigator.platform.indexOf("Win") > -1) {
         ps = new PerfectScrollbar(mainPanel.current, {
           suppressScrollX: true,
@@ -160,7 +164,7 @@ export default function Dashboard(props) {
         }
         window.removeEventListener("resize", resizeFunction);
       };
-    }
+  //  }
   },[]);
   // functions for changeing the states from components
   const handleImageClick = (image) => {
@@ -208,7 +212,7 @@ export default function Dashboard(props) {
         ) {
           return routes[i].name;
         }else {
-          let name = window.location.pathname.replace("/action/","");
+          let name = window.location.pathname.replace("/vendor/","");
           if(name == "verifier"){
             return "Verifier";
           }else if(name == "user-profile"){
@@ -224,7 +228,7 @@ export default function Dashboard(props) {
       if (prop.collapse) {
         return getRoutes(prop.views);
       }
-      if (prop.layout === "/action") {
+      if (prop.layout === "/vendor") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -255,7 +259,7 @@ export default function Dashboard(props) {
       <CssBaseline />
     <div className={classes.wrapper}>
       <Notifications />
-      {1+1 == 3 ? <Redirect exact from="/" to="/auth/login" /> : 
+      {checkIsVendorDesk() ? <Redirect exact from="/" to="/auth/login" /> : 
       <React.Fragment>
       {/* <ToastContainer position="bottom-left"
           autoClose={30000}
@@ -295,18 +299,18 @@ export default function Dashboard(props) {
               <Switch>
                 {getRoutes(routes)}
                 <Route
-                  path="/action/user-profile"
+                  path="/vendor/user-profile"
                   component={UserProfile}
                   name="Profile"
-                  layout="/action"
+                  layout="/vendor"
                 />
                 <Route
-                  path="/action/verifier"
+                  path="/vendor/verifier"
                   component={Verify}
                   name="Verifier"
-                  layout="/action"
+                  layout="/vendor"
                 />
-                <Redirect from="/action" to="/action/dashboard" />
+                <Redirect from="/vendor" to="/vendor/dashboard" />
               </Switch>
             </div>
           </div>
@@ -315,10 +319,10 @@ export default function Dashboard(props) {
             <Switch>
               {getRoutes(routes)}
               <Route
-                path="/action/user-profile"
+                path="/vendor/user-profile"
                 component={UserProfile}
                 name="Profile"
-                layout="/action"
+                layout="/vendor"
               />
               <Route
                   path="/profile/verifier"
@@ -326,7 +330,7 @@ export default function Dashboard(props) {
                   name="Verifier"
                   layout="/profile"
                 />
-              <Redirect from="/action" to="/action/dashboard" />
+              <Redirect from="/vendor" to="/vendor/dashboard" />
             </Switch>
           </div>
         )}

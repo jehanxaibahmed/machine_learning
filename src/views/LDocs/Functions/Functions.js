@@ -32,10 +32,8 @@ import dateFormat from "dateformat";
 //        </SweetAlert>
 //    };
 
-
-
 export function addZeroes(num) {
-  num = typeof num == 'string' ? num : num.toString();
+  num = typeof num == "string" ? num : num.toString();
   var value = Number(num);
   var res = num.toString().split(".");
   if (res.length == 1 || res[1].length < 1) {
@@ -45,8 +43,52 @@ export function addZeroes(num) {
 }
 
 export const formatDateTime = (date) => {
-  return dateFormat(date, "dd/mm/yyyy hh:mm:ss")
-}
+  return dateFormat(date, "dd/mm/yyyy hh:mm:ss");
+};
+
+export const currentTracking = (trackingStatus) => {
+  let currentStatus;
+  let activeStep;
+  switch (trackingStatus.current_status) {
+    case "pending":
+      currentStatus = trackingStatus.pending.status;
+      activeStep = { val: 0, status: currentStatus };
+      break;
+    case "received":
+      currentStatus = trackingStatus.received.status;
+      if (currentStatus && currentStatus !== "inProgress") {
+        activeStep = { val: 1, status: currentStatus };
+      } else {
+        activeStep = { val: 0, status: currentStatus };
+      }
+      break;
+    case "underReview":
+      currentStatus = trackingStatus.underReview.status;
+      if (currentStatus) {
+        activeStep = { val: 2, status: currentStatus };
+      } else {
+        activeStep = { val: 1, status: currentStatus };
+      }
+      break;
+    case "readyForPayment":
+      currentStatus = trackingStatus.readyForPayment.status;
+      if (currentStatus) {
+        activeStep = { val: 3, status: currentStatus };
+      } else {
+        activeStep = { val: 2, status: currentStatus };
+      }
+      break;
+      case "paid":
+        currentStatus = trackingStatus.paid.status;
+        if (currentStatus) {
+          activeStep = { val: 4, status: currentStatus };
+        } else {
+          activeStep = { val: 3, status: currentStatus };
+        }
+        break;
+  }
+  return activeStep;
+};
 
 export const validateInvoice = (row, Token) => {
   return new Promise((res, rej) => {
@@ -163,65 +205,70 @@ export const validateInvoice = (row, Token) => {
                 isValidate = true;
               }
               const ValidationData = {
-                Validate: {
-                  isSame: isValidate,
-                },
-                'Submit Date': {
+                "Submit Date": {
                   onChain: formatDateTime(blockchain.InvoiceDate),
                   offChain: formatDateTime(invoice.invoiceDate),
                   isSame: isInvoiceDateSame,
                 },
-                'Vendor ID': {
+                "Vendor ID": {
                   onChain: blockchain.VendorID,
                   offChain: invoice.vendorId,
                   isSame: isVendorIDSame,
                 },
-                'Item Count': {
+                "Item Count": {
                   onChain: blockchain.ItemCount,
                   offChain: invoice.items.length,
                   isSame: isItemCountSame,
                 },
-                'Gross Amount': {
-                  onChain: invoice.FC_currency.sign + addZeroes(blockchain.GrossAmt),
-                  offChain: invoice.FC_currency.sign + addZeroes(invoice.grossAmt),
+                "Gross Amount": {
+                  onChain:
+                    invoice.FC_currency.sign + addZeroes(blockchain.GrossAmt),
+                  offChain:
+                    invoice.FC_currency.sign + addZeroes(invoice.grossAmt),
                   isSame: isGrossAmtSame,
                 },
-                'Organization ID': {
+                "Organization ID": {
                   onChain: blockchain.OrganizationID,
                   offChain: invoice.organizationId,
                   isSame: isOrganizationIDSame,
                 },
-                'Discount Percentage': {
+                "Discount Percentage": {
                   onChain: `${blockchain.DiscountPercentage}%`,
                   offChain: `${invoice.discountPercent}%`,
                   isSame: isDiscountPercentageSame,
                 },
-                'Tax Amount': {
-                  onChain: invoice.FC_currency.sign + addZeroes(blockchain.TaxAmt),
-                  offChain: invoice.FC_currency.sign + addZeroes(invoice.taxAmt),
+                "Tax Amount": {
+                  onChain:
+                    invoice.FC_currency.sign + addZeroes(blockchain.TaxAmt),
+                  offChain:
+                    invoice.FC_currency.sign + addZeroes(invoice.taxAmt),
                   isSame: isTaxAmtSame,
                 },
-                'Net Amount': {
-                  onChain: invoice.FC_currency.sign + addZeroes(blockchain.NetAmt),
-                  offChain: invoice.FC_currency.sign + addZeroes(invoice.netAmt),
+                "Net Amount": {
+                  onChain:
+                    invoice.FC_currency.sign + addZeroes(blockchain.NetAmt),
+                  offChain:
+                    invoice.FC_currency.sign + addZeroes(invoice.netAmt),
                   isSame: isNetAmtSame,
                 },
-                'Tenant ID': {
+                "Tenant ID": {
                   onChain: blockchain.TenantID,
                   offChain: invoice.tenantId,
                   isSame: isTenantIDSame,
                 },
-                'Created Date': {
+                "Created Date": {
                   onChain: formatDateTime(blockchain.CreatedDate),
                   offChain: formatDateTime(invoice.createdDate),
                   isSame: isCreatedDateSame,
                 },
-                'Created By': {
+                "Created By": {
                   onChain: blockchain.CreatedBy,
                   offChain: invoice.createdBy,
                   isSame: isCreatedBySame,
                 },
-               
+                Validate: {
+                  isSame: isValidate,
+                }
               };
               res(ValidationData);
             }

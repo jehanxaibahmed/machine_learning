@@ -201,6 +201,11 @@ export default function Horizentalteppers(props) {
   ]);
 
   React.useEffect(() => {
+    if(props.fileData.exported){
+      setActiveStep(4);
+    }
+    else
+    {
     let currentStatus;
     switch (props.fileData.trackingStatus.current_status) {
       case "pending":
@@ -232,6 +237,7 @@ export default function Horizentalteppers(props) {
         }
         break;
     }
+  }
   }, []);
 
   return (

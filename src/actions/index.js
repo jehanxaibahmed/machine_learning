@@ -1,5 +1,5 @@
 import axios from "axios";
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import CryptoJS from "crypto-js";
 import defaultAvatar from "assets/img/avatar-2.png";
 
@@ -45,17 +45,32 @@ export const logoutUserAction = () => {
   }
 };
 export const getUserDataAction = () => {
+  console.log("IN");
     return (dispatch) => {
       let Token = localStorage.getItem("cooljwt");
       let decoded = jwt.decode(Token);
       let email = decoded.loginName;
       axios({
         method: "get",
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/user/getUserDetail`,
+        url: decoded.isVendor ? `${process.env.REACT_APP_LDOCS_API_URL}/vendor/verifyLogin` :`${process.env.REACT_APP_LDOCS_API_URL}/user/getUserDetail`,
         headers: { cooljwt: Token },
       })
         .then((response) => {
-          if (typeof response.data.userDetail.level1 != "undefined") {
+          if (typeof response.data.isVendor.level1 != "undefined") {
+            if (
+              response.data.isVendor.level1.profileImg == "" ||
+              typeof response.data.isVendor.level1.profileImg == "undefined"
+            ) {
+              response.data.isVendor.level1.profileImg = defaultAvatar;
+              dispatch({ type: "GET_USER_DATA", response: response.data.isVendor });
+            } else {
+              var base64Flag = `data:${response.data.userDetail.isVendor.profileImgT};base64,`;
+              let profileImage = base64Flag + response.data.isVendor.level1.profileImg;
+              response.data.level1.isVendor.profileImg = profileImage;
+              dispatch({ type: "GET_USER_DATA", response: response.data.isVendor });
+            }
+          }
+          else if (typeof response.data.userDetail.level1 != "undefined") {
             if (
               response.data.userDetail.level1.profileImg == "" ||
               typeof response.data.userDetail.level1.profileImg == "undefined"
