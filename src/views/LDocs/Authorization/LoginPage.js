@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../../../actions";
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
 import axios from "axios";
+import { getToken  } from "../../../firebase";
 
 const useStyles = makeStyles(styles);
 
@@ -55,7 +56,7 @@ export default function LoginPage(props) {
           email: loginName,
           password: password,
         })
-        .then((response) => {
+        .then(async (response) => {
           setlogging(false);
           //let token = response.headers.cooljwt;
           localStorage.setItem("cooljwt", response.data);
@@ -77,6 +78,9 @@ export default function LoginPage(props) {
             }, 2000);
         });
     };
+    
+    useEffect(()=>{
+    })
   return (
     <div className={classes.container}>
       <GridContainer justify="center">

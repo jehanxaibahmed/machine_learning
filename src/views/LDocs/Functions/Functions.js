@@ -1,11 +1,13 @@
 import React from "react";
 // @material-ui/icons
 import { makeStyles } from "@material-ui/core";
-
+import firebase from 'firebase/app';
+import 'firebase/messaging';
 import SweetAlert from "react-bootstrap-sweetalert";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import axios from "axios";
 import dateFormat from "dateformat";
+import { firebaseConfig } from "config/Firebase";
 
 // const sweetAlertStyle = makeStyles(styles2);
 // const sweetClass = sweetAlertStyle();
@@ -282,3 +284,22 @@ export const validateInvoice = (row, Token) => {
       });
   });
 };
+
+export const getToken = (setTokenFound) => {
+  const messaging = firebase.messaging();
+  return messaging.getToken({vapidKey:'BMJe3ulY2GQsme1JTdoUXn0BGOUwmzE5FoWHomcfeC98R73CUCvwpVOFYw1p3plWShjMcGLdyyG8KDpvVvA8m6o'}).then((currentToken) => {
+    if (currentToken) {
+      console.log('current token for client: ', currentToken);
+      setTokenFound(true);
+      // Track the token -> client mapping, by sending to backend server
+      // show on the UI that permission is secured
+    } else {
+      console.log('No registration token available. Request permission to generate one.');
+      setTokenFound(false);
+      // shows on the UI that permission is required 
+    }
+  }).catch((err) => {
+    console.log('An error occurred while retrieving token. ', err);
+    // catch error while creating client token
+  });
+}

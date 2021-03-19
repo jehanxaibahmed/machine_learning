@@ -22,6 +22,7 @@ import { getNotification } from "../../../actions";
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import { getToken } from "../../../firebase";
 const useStyles = makeStyles(styles);
 export default function LoginSecret(props) {
   const [twofa, setTwofa] = useState("");
@@ -51,7 +52,9 @@ export default function LoginSecret(props) {
         cooljwt: token,
       },
     })
-      .then((response) => {
+      .then(async (response) => {
+        let firebase_token = await getToken();
+        console.log(firebase_token);
         setLoading(false);
         let token = response.headers.cooljwt;
         console.log(token);

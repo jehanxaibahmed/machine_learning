@@ -3,11 +3,11 @@ import cx from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDataAction, getNotification, getTasks, setDarkMode } from "../actions";
 import {  Switch, Route, Redirect } from "react-router-dom";
-import addNotification from 'react-push-notification';
 import { checkIsVendorDesk } from "../views/LDocs/Authorization/checkAuthority";
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
+import firebase from 'firebase/app';
 
 // @material-ui/core components
 import { makeStyles , ThemeProvider} from "@material-ui/core/styles";
@@ -27,7 +27,6 @@ import UserProfile from "views/LDocs/Profile/Profile";
 import styles from "assets/jss/material-dashboard-pro-react/layouts/adminStyle.js";
 import Verify from "views/LDocs/Verify/Verify";
 
-import { Notifications } from 'react-push-notification';
 import { ToastContainer, toast } from 'react-toastify';
 
 
@@ -258,19 +257,8 @@ export default function Dashboard(props) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
     <div className={classes.wrapper}>
-      <Notifications />
       {checkIsVendorDesk() ? <Redirect exact from="/" to="/auth/login" /> : 
       <React.Fragment>
-      {/* <ToastContainer position="bottom-left"
-          autoClose={30000}
-          hideProgressBar={true}
-          newestOnTop={true}
-          closeOnClick
-          enableMultiContainer
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover/> */}
       <Sidebar
         routes={routes.filter(route=>route.name !== undefined)}
         logoText={process.env.REACT_APP_LDOCS_FOOTER_COPYRIGHT_LEVEL_1}

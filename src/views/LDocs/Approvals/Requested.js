@@ -477,10 +477,19 @@ export default function ApprovalRequested() {
                               MARK AS REJECT&nbsp;&nbsp;
                               <div className="fileinput text-center">
                                 <div className="thumbnail img-circle3">
+                                  <img src={Pending} alt={"MARK AS REJECT"} />
+                                </div>
+                              </div>
+                            </MenuItem>
+                            <MenuItem value="rejectedFinal">
+                              MARK AS FINAL REJECT&nbsp;&nbsp;
+                              <div className="fileinput text-center">
+                                <div className="thumbnail img-circle3">
                                   <img src={Rejected} alt={"MARK AS REJECT"} />
                                 </div>
                               </div>
                             </MenuItem>
+                            
                           </TextField>
                         </GridItem>
                         <GridItem

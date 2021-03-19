@@ -5,6 +5,9 @@ import { Router, Route, Switch, Redirect } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./redux";
 import ScrollToTop  from "./ScrollToTop";
+import addNotification from 'react-push-notification';
+import {Notifications} from 'react-push-notification';
+
 
 // import AuthLayout from "layouts/Auth.js";
 // import RtlLayout from "layouts/RTL.js";
@@ -14,14 +17,28 @@ import InvoiceLayout from "layouts/Invoice.js";
 import VendorLayout from "layouts/Vendor.js";
 import AuthLayout from "layouts/Auth.js";
 import RtlLayout from "layouts/RTL.js";
-
+import firebase from 'firebase/app';
 import "assets/scss/material-dashboard-pro-react.scss?v=1.8.0";
-
-
+import { getToken, onMessageListener } from './firebase';
+const messaging = firebase.messaging();
+messaging.onMessage((payload) => {
+  console.log(payload);
+  addNotification(
+        {
+          title: payload.notification.title,
+          message: payload.notification.body,
+          duration:999*999,
+          native: true,
+          onClick:()=> window.open(payload.data.url)
+        });
+});
 const hist = createBrowserHistory();
 
 ReactDOM.render(
   <Provider store={store}>
+    <Notifications
+    position="bottom-right"
+    />
     <Router history={hist}>
     <ScrollToTop>
       <Switch>

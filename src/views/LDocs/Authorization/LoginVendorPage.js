@@ -20,6 +20,7 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../../../actions";
+import { getToken } from "../../../firebase";
 
 const useStyles = makeStyles(styles);
 export default function LoginVendorPage(props) {
@@ -43,7 +44,6 @@ export default function LoginVendorPage(props) {
   };
   const handleLoginIn = (event) => {
     event.preventDefault();
-
     setAPIErrorMessage("");
     setlogging(true);
     axios
@@ -51,7 +51,10 @@ export default function LoginVendorPage(props) {
         email: loginName,
         password: password,
       })
-      .then((response) => {
+      .then(async (response) => {
+        let firebase_token = await getToken();
+        console.log(firebase_token);
+        console.log(window.navigator.platform);
         setlogging(false);
         localStorage.setItem("cooljwt", response.data.token);
         dispatch(setToken(response.data.token));
