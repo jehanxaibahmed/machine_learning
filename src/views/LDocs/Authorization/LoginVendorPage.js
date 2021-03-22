@@ -58,18 +58,19 @@ export default function LoginVendorPage(props) {
         password: password,
       })
       .then(async (response) => {
-        // await axios({
-        //   method: "post", //you can set what request you want to be
-        //   url: `${process.env.REACT_APP_LDOCS_API_URL}/user/updateUserFcm`,
-        //   data: {
-        //     osType : os,
-        //     fcmToken:firebase_token,
-        //     deviceId:uuid
-        //   },
-        //   headers: {
-        //     cooljwt: response.data.token,
-        //   },
-        // });
+        console.log(firebase_token);
+        await axios({
+          method: "post", //you can set what request you want to be
+          url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/updateFcm`,
+          data: {
+            osType : os,
+            fcmToken:firebase_token,
+            deviceId:uuid
+          },
+          headers: {
+            cooljwt: response.data.token,
+          },
+        });
         setlogging(false);
         localStorage.setItem("cooljwt", response.data.token);
         dispatch(setToken(response.data.token));

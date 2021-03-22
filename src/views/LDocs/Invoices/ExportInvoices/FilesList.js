@@ -5,9 +5,9 @@ import Iframe from "react-iframe";
 
 import { useReactToPrint } from "react-to-print";
 import { Link } from "react-router-dom";
-import CenterFocusWeakIcon from '@material-ui/icons/CenterFocusWeak';
-import CenterFocusStrongIcon from '@material-ui/icons/CenterFocusStrong';
-import DateRangeIcon from '@material-ui/icons/DateRange';
+import CenterFocusWeakIcon from "@material-ui/icons/CenterFocusWeak";
+import CenterFocusStrongIcon from "@material-ui/icons/CenterFocusStrong";
+import DateRangeIcon from "@material-ui/icons/DateRange";
 import styles from "assets/jss/material-dashboard-pro-react/views/dashboardStyle.js";
 // @material-ui/core components
 import {
@@ -25,6 +25,7 @@ import {
   SwipeableDrawer,
   Chip,
   Checkbox,
+  Avatar,
 } from "@material-ui/core";
 // @material-ui/icons
 import {
@@ -41,7 +42,7 @@ import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import CardIcon from "components/Card/CardIcon.js";
 import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import ClearAllIcon from "@material-ui/icons/ClearAll";
@@ -84,11 +85,8 @@ import NoStatus from "assets/img/statuses/NoStatus.png";
 import VerticalLinearStepper from "../../../Components/VerticalStepper";
 import ViewModuleIcon from "@material-ui/icons/ViewModule";
 import { useDispatch, useSelector } from "react-redux";
-import { partial, set } from "lodash";
 import ExportToFusion from "./ExportToFusion";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import { version } from "chartist";
-
+import Filters from "./Filters";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -147,6 +145,28 @@ export default function FilesList(props) {
   const [decoded, setDecoded] = React.useState(null);
   const [view, setView] = React.useState("read");
   const [filesData, setFilesData] = React.useState([]);
+  const [showFiltersModel, setShowFiltersModel] = React.useState(false);
+  const [formState, setFormState] = React.useState({
+    files:[],
+    filters: {
+      status: true,
+      date: true,
+      amount: true,
+      partialPaid: true,
+      fullPaid: true,
+      notPaid: true,
+    },
+    values: {
+      status: [],
+      submitStart: null,
+      submitEnd: null,
+      amountTo: null,
+      amountfrom: null,
+      partialPaid: false,
+      fullPaid: false,
+      notPaid: false,
+    },
+  });
 
   //View File
   const viewFile = (row) => {
@@ -158,6 +178,54 @@ export default function FilesList(props) {
     setIsViewing(true);
     setAnimateTable(false);
     setAnimatePdf(true);
+  };
+  const setFilter = (data) => {
+    setFormState((formState) => ({
+      ...formState,
+      values: data.values,
+      filters: data.filters,
+    }));
+    let files = formState.files;
+    if (
+      data.filters.amount &&
+      data.values.amountTo >= 1 &&
+      data.values.amountfrom >= 1
+    ) {
+      files = files.filter(
+        (file) =>
+          file.netAmt <= parseInt(data.values.amountTo) &&
+          file.netAmt >= parseInt(data.values.amountfrom)
+      );
+    }
+
+    if (
+      (data.filters.date && data.values.submitEnd !== null) ||
+      (undefined && data.values.submitStart !== null) ||
+      undefined
+    ) {
+      var endDate = new Date(data.values.submitEnd);
+      endDate.setDate(endDate.getDate() + 1);
+      files = files.filter(
+        (file) =>
+          new Date(file.createdDate) >= new Date(data.values.submitStart) &&
+          new Date(file.createdDate) <= new Date(endDate)
+      );
+    }
+
+    if (data.filters.partialPaid && data.values.partialPaid) {
+      files = files.filter((file) => file.paymentStatus == "partial");
+    }
+
+    if (data.filters.fullPaid && data.values.fullPaid) {
+      files = files.filter((file) => file.paymentStatus == "full");
+    }
+
+    if (data.filters.notPaid && data.values.notPaid) {
+      files = files.filter((file) => file.paymentStatus == "pending");
+    }
+    setFilesData(files.reverse());
+    setTableData(files.reverse());
+    setShowFiltersModel(false);
   };
   //Open BlockChainView
   const viewBlockChainView = (row) => {
@@ -313,10 +381,7 @@ export default function FilesList(props) {
           ),
           select: (
             <div className="actions">
-              <Checkbox
-                checked={isSelected}
-                onChange={() => select(prop)}
-              />
+              <Checkbox checked={isSelected} onChange={() => select(prop)} />
             </div>
           ),
           actions: (
@@ -384,8 +449,16 @@ export default function FilesList(props) {
       },
     })
       .then((response) => {
-        setFilesData(response.data.filter(f=>f.approveStatus == 'approved'));
-        setTableData(response.data.filter(f=>f.approveStatus == 'approved'));
+        setFormState((formState) => ({
+          ...formState,
+          files: response.data.filter((f) => f.approveStatus == "approved"),
+        }));
+        setFilesData(
+          response.data.filter((f) => f.approveStatus == "approved")
+        );
+        setTableData(
+          response.data.filter((f) => f.approveStatus == "approved")
+        );
         setIsLoading(false);
       })
       .catch((error) => {
@@ -425,16 +498,18 @@ export default function FilesList(props) {
       } else {
         filesData.map((file) => {
           if (!selected.includes(`${file.invoiceId}-${file.version}`)) {
-          selectedInvoices.push(`${file.invoiceId}-${file.version}`);
+            selectedInvoices.push(`${file.invoiceId}-${file.version}`);
           }
         });
       }
     } else {
-      console.log('Select');
+      console.log("Select");
       if (!selected.includes(`${invoice.invoiceId}-${invoice.version}`)) {
         selectedInvoices.push(`${invoice.invoiceId}-${invoice.version}`);
       } else {
-        const index = selectedInvoices.indexOf(`${invoice.invoiceId}-${invoice.version}`);
+        const index = selectedInvoices.indexOf(
+          `${invoice.invoiceId}-${invoice.version}`
+        );
         if (index > -1) {
           selectedInvoices.splice(index, 1);
         }
@@ -444,9 +519,9 @@ export default function FilesList(props) {
     console.log(selectedInvoices.length);
     setTableData(filesData);
   };
-  React.useEffect(()=>{
+  React.useEffect(() => {
     setTableData(filesData);
-  },[selected.length])
+  }, [selected.length]);
 
   //Set File Data
   const [fileData, setFileData] = React.useState();
@@ -647,84 +722,104 @@ export default function FilesList(props) {
           {/* Awesome Menu */}
           <MyAwesomeMenu />
           <GridContainer>
-        <GridItem xs={12} sm={6} md={6} lg={3}>
-          <Card>
-            <CardHeader color="info" stats icon>
-              <CardIcon color="info">
-                {/* <Store /> */}
-                <InsertDriveFileIcon />
-              </CardIcon>
-              <p className={classes.cardCategory}>Total Invoices</p>
-              <h3 className={classes.cardTitle}>70</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-              <InsertDriveFileIcon />
-                <Link >
-                Show All Invoices
-                </Link>
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={6} lg={3}>
-          <Card>
-            <CardHeader color="info" stats icon>
-              <CardIcon color="info">
-                {/* <Store /> */}
-                <InsertDriveFileIcon />
-              </CardIcon>
-              <p className={classes.cardCategory}>Payment in Process</p>
-              <h3 className={classes.cardTitle}>50</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-              <InsertDriveFileIcon />
-                <Link >
-                Show Payment in Proccess Invoices
-                </Link>
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={6} lg={3}>
-          <Card>
-            <CardHeader color="danger" stats icon>
-              <CardIcon color="danger">
-              <CenterFocusWeakIcon/>
-              </CardIcon>
-              <p className={classes.cardCategory}>Payment Due</p>
-              <h3 className={classes.cardTitle}>15</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-              <CenterFocusWeakIcon/>
-                <Link to="#">
-                  Show Payment Due Invoices
-                </Link>
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={6} lg={3}>
-          <Card>
-            <CardHeader color="info" stats icon>
-              <CardIcon color="info">
-              <CenterFocusStrongIcon />
-              </CardIcon>
-              <p className={classes.cardCategory}>Over Due</p>
-              <h3 className={classes.cardTitle}>5</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-              <CenterFocusStrongIcon />
-                <Link to="#">
-                  Show Over Due Invoices
-                </Link>
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
+            <GridItem xs={12} sm={6} md={6} lg={3}>
+              <Card>
+                <CardHeader color="info" stats icon>
+                  <CardIcon color="info">
+                    {/* <Store /> */}
+                    <InsertDriveFileIcon />
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Total Invoices</p>
+                  <h3 className={classes.cardTitle}>70</h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div style={{height:'62px'}} className={classes.stats}>
+                    <InsertDriveFileIcon />
+                    <Link>Show All Invoices</Link>
+                  </div>
+                </CardFooter>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={6} lg={3}>
+              <Card>
+                <CardHeader color="info" stats icon>
+                  <CardIcon color="info">
+                    {/* <Store /> */}
+                    <InsertDriveFileIcon />
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Payment in Process</p>
+                  <h3 className={classes.cardTitle}>50</h3>
+                </CardHeader>
+                <CardFooter  stats>
+                  <div style={{height:'62px'}} className={classes.stats}>
+                    <InsertDriveFileIcon />
+                    <Link>Show Payment in Proccess Invoices</Link>
+                  </div>
+                </CardFooter>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={6} lg={3}>
+              <Card>
+                <CardHeader color="danger" stats icon>
+                  <CardIcon color="danger">
+                    <CenterFocusWeakIcon />
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Payment Due</p>
+                  <h3 className={classes.cardTitle}>15</h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div
+                 
+                  className={classes.stats}
+                  >
+                    <Tooltip title="Today">
+                    <IconButton >
+                        <Avatar>T</Avatar>
+                    </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Tomorrow">
+                    <IconButton>
+                        <Avatar>TM</Avatar>
+                    </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Weekly">
+                    <IconButton>
+                        <Avatar>W</Avatar>
+                    </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Fornightly">
+                    <IconButton>
+                        <Avatar>F</Avatar>
+                    </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Monthly">
+                    <IconButton>
+                        <Avatar>M</Avatar>
+                    </IconButton>
+                    </Tooltip>
+                    {/* <CenterFocusWeakIcon />
+                    <Link to="#">Show Payment Due Invoices</Link> */}
+                  </div>
+                </CardFooter>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={6} lg={3}>
+              <Card>
+                <CardHeader color="info" stats icon>
+                  <CardIcon color="info">
+                    <CenterFocusStrongIcon />
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Over Due</p>
+                  <h3 className={classes.cardTitle}>5</h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div style={{height:'62px'}} className={classes.stats}>
+                    <CenterFocusStrongIcon />
+                    <Link to="#">Show Over Due Invoices</Link>
+                  </div>
+                </CardFooter>
+              </Card>
+            </GridItem>
             <GridItem xs={12}>
               <Card>
                 <CardHeader color="info" icon>
@@ -734,6 +829,15 @@ export default function FilesList(props) {
                   <p style={{ color: "gray" }}>
                     Note: Right click on any file to see multiple options
                   </p>
+                  <Button
+                    color="danger"
+                    round
+                    style={{ float: "right" }}
+                    className={classes.marginRight}
+                    onClick={() => setShowFiltersModel(true)}
+                  >
+                    Filters
+                  </Button>
                   <Button
                     color="danger"
                     round
@@ -816,6 +920,28 @@ export default function FilesList(props) {
       ) : (
         ""
       )}
+      <SwipeableDrawer
+        anchor={"right"}
+        open={showFiltersModel}
+        onClose={() => setShowFiltersModel(false)}
+        // onOpen={}
+      >
+        <Animated
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
+          animationInDuration={1000}
+          animationOutDuration={1000}
+          isVisible={showFiltersModel}
+        >
+          <Filters
+            filters={formState.filters}
+            values={formState.values}
+            closeModal={() => setShowFiltersModel(false)}
+            setFilters={setFilter}
+            isVendor={isVendor}
+          />
+        </Animated>
+      </SwipeableDrawer>
     </div>
   );
 }

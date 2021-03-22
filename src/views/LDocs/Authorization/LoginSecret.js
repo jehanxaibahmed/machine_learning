@@ -61,21 +61,23 @@ export default function LoginSecret(props) {
       },
     })
       .then(async (response) => {
-        // await axios({
-        //   method: "post", //you can set what request you want to be
-        //   url: `${process.env.REACT_APP_LDOCS_API_URL}/user/updateUserFcm`,
-        //   data: {
-        //     osType: os,
-        //     fcmToken: firebase_token,
-        //     deviceId: uuid,
-        //   },
-        //   headers: {
-        //     cooljwt: response.headers.cooljwt,
-        //   },
-        // });
-        setLoading(false);
         let token = response.headers.cooljwt;
         let decoded = jwt.decode(token);
+        if(!decoded.isTenant){
+        await axios({
+          method: "post", //you can set what request you want to be
+          url: `${process.env.REACT_APP_LDOCS_API_URL}/user/updateUserFcm`,
+          data: {
+            osType: os,
+            fcmToken: firebase_token,
+            deviceId: uuid,
+          },
+          headers: {
+            cooljwt: response.headers.cooljwt,
+          },
+        });
+        }
+        setLoading(false);
         setUserData(decoded);
         if (decoded.otp) {
           localStorage.setItem("cooljwt", token);
