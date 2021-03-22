@@ -21,7 +21,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../../../actions";
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
 import axios from "axios";
-import { getToken  } from "../../../firebase";
 
 const useStyles = makeStyles(styles);
 

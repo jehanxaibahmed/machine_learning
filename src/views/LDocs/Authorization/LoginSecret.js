@@ -22,7 +22,15 @@ import { getNotification } from "../../../actions";
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
-import { getToken } from "../../../firebase";
+import DeviceUUID, { getToken } from "views/LDocs/Functions/Functions";
+let uuid = new DeviceUUID().get();
+let os = new DeviceUUID().parse().os;
+let firebase_token;
+getToken().then((res) => {
+  firebase_token = res;
+  console.log(res);
+});
+
 const useStyles = makeStyles(styles);
 export default function LoginSecret(props) {
   const [twofa, setTwofa] = useState("");
@@ -53,11 +61,20 @@ export default function LoginSecret(props) {
       },
     })
       .then(async (response) => {
-        let firebase_token = await getToken();
-        console.log(firebase_token);
+        // await axios({
+        //   method: "post", //you can set what request you want to be
+        //   url: `${process.env.REACT_APP_LDOCS_API_URL}/user/updateUserFcm`,
+        //   data: {
+        //     osType: os,
+        //     fcmToken: firebase_token,
+        //     deviceId: uuid,
+        //   },
+        //   headers: {
+        //     cooljwt: response.headers.cooljwt,
+        //   },
+        // });
         setLoading(false);
         let token = response.headers.cooljwt;
-        console.log(token);
         let decoded = jwt.decode(token);
         setUserData(decoded);
         if (decoded.otp) {

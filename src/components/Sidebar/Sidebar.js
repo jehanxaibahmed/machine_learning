@@ -334,7 +334,6 @@ class Sidebar extends React.Component {
   }
   render() {
     const Token = localStorage.getItem("cooljwt");
-    console.log(jwt.decode(Token));
     const loginName = jwt.decode(Token).loginName || jwt.decode(Token).name ;
     const displayName = jwt.decode(Token).displayName || jwt.decode(Token).name;
     const {

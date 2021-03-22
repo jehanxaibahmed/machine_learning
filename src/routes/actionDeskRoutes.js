@@ -1,22 +1,21 @@
-
 // @material-ui/icons
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
-import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
-import AssignmentLateIcon from '@material-ui/icons/AssignmentLate';
-import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
-import FingerprintIcon from '@material-ui/icons/Fingerprint';
+import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
+import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
+import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
+import AssignmentLateIcon from "@material-ui/icons/AssignmentLate";
+import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
+import FingerprintIcon from "@material-ui/icons/Fingerprint";
 
 //Components
 import Dashboard from "views/LDocs/Dashboard/Dashboard";
 import Notifications from "views/LDocs/Notifications/Notifications";
 import Requested from "views/LDocs/Reviews/Requested";
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
+import FilesList from "views/LDocs/Invoices/ExportInvoices/FilesList";
 import SignatureStamp from "views/LDocs/SignatureStamp/SignatureStamp";
 import Verify from "views/LDocs/Verify/Verify";
-
-
+import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
 
 
 var actionRoutes = [
@@ -35,28 +34,36 @@ var actionRoutes = [
     icon: AssignmentIndIcon,
     state: "ActionDeskCollapse",
     views: [
-    {
-      path: "/my-requests",
-      name: "Review Tasks",
-      rtlName: "انهيار متعدد المستويات",
-      rtlMini: "ر",
-      component: Requested,
-      layout: "/action",
-      icon: AssignmentLateIcon,
-    },
-    {
-      path: "/approvals",
-      name: "Approval Tasks",
-      rtlName: "انهيار متعدد المستويات",
-      rtlMini: "ر",
-      icon: AssignmentTurnedInIcon,
-      component: ApprovalRequested,
-      layout: "/action",
-        }
-      ]
-    }
-  ,
-    {
+      {
+        path: "/my-requests",
+        name: "Review Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        component: Requested,
+        layout: "/action",
+        icon: AssignmentLateIcon,
+      },
+      {
+        path: "/approvals",
+        name: "Approval Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: AssignmentTurnedInIcon,
+        component: ApprovalRequested,
+        layout: "/action",
+      },
+      {
+        path: "/export",
+        name: "Export Invoices",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: SystemUpdateIcon,
+        component: FilesList,
+        layout: "/action",
+      },
+    ],
+  },
+  {
     path: "/verifier",
     name: "Tracking & Validate",
     rtlName: "أشكال عادية",

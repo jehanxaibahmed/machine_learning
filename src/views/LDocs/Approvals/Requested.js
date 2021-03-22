@@ -473,8 +473,8 @@ export default function ApprovalRequested() {
                                 </div>
                               </div>
                             </MenuItem>
-                            <MenuItem value="rejected">
-                              MARK AS REJECT&nbsp;&nbsp;
+                            <MenuItem value="correctionRequired">
+                              CORRECTION REQUIRED&nbsp;&nbsp;
                               <div className="fileinput text-center">
                                 <div className="thumbnail img-circle3">
                                   <img src={Pending} alt={"MARK AS REJECT"} />
@@ -482,7 +482,7 @@ export default function ApprovalRequested() {
                               </div>
                             </MenuItem>
                             <MenuItem value="rejectedFinal">
-                              MARK AS FINAL REJECT&nbsp;&nbsp;
+                              MARK AS REJECTED&nbsp;&nbsp;
                               <div className="fileinput text-center">
                                 <div className="thumbnail img-circle3">
                                   <img src={Rejected} alt={"MARK AS REJECT"} />

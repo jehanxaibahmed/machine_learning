@@ -272,10 +272,11 @@ export default function Step3(props) {
             >
               Choose User Role
             </MenuItem>
-            <MenuItem value={"Admin Desk"}>Organization Admin</MenuItem>
+            <MenuItem value={"Admin Desk"}>Admin Desk</MenuItem>
             <MenuItem value={"Invoice Desk"}>Invoice Desk</MenuItem>
-            <MenuItem value={"Finance Desk"}>Finance Desk</MenuItem>
+            {/* <MenuItem value={"Finance Desk"}>Finance Desk</MenuItem> */}
             <MenuItem value={"Action Desk"}>Action Desk</MenuItem>
+            <MenuItem value={"AVP Desk"}>AVP Desk</MenuItem>
           </TextField>
         </GridItem>
         <GridItem

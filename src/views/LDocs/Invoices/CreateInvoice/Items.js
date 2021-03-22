@@ -289,18 +289,19 @@ export default function Items(props) {
                     <StyledTableCell colSpan="2">
                       <TextField
                         fullWidth={true}
-                        error={Check(row.poInline)}
-                        helperText={
-                          formState.errors.receiptNumber === "error"
-                            ? "Valid Receipt Number is required"
-                            : null
-                        }
+                        // error={Check(row.receiptNumber)}
+                        // helperText={
+                        //   formState.errors.receiptNumber === "error"
+                        //     ? "Valid Receipt Number is required"
+                        //     : null
+                        // }
                         label="Receipt Number"
                         id="receiptNumber"
                         name="receiptNumber"
                         onChange={(event) => {
                           handleChange(event);
                         }}
+                        disabled={true}
                         type="text"
                         value={formState.values.receiptNumber || ""}
                       />
@@ -312,6 +313,7 @@ export default function Items(props) {
                         id="cat"
                         name="cat"
                         defaultValue="1"
+                        disabled={true}
                         value={category}
                         onChange={(event) => {
                           setCategory(event.target.value);
@@ -327,19 +329,20 @@ export default function Items(props) {
                       {category == 1 ? (
                         <TextField
                           fullWidth={true}
-                          error={Check(row.poInline)}
-                          helperText={
-                            formState.errors.poInline === "error"
-                              ? "Valid PO Number is required"
-                              : null
-                          }
+                          // error={Check(row.poInline)}
+                          // helperText={
+                          //   formState.errors.poInline === "error"
+                          //     ? "Valid PO Number is required"
+                          //     : null
+                          // }
                           label={`PO Number`}
                           id="poInline"
                           name="poInline"
+                          disabled={true}
                           onChange={(event) => {
                             handleChange(event);
                           }}
-                          value={formState.values.poInline || ""}
+                          value={formState.values.poNumber || ""}
                           select
                         >
                           {pos.map((po, index) => (
@@ -351,14 +354,15 @@ export default function Items(props) {
                       ) : (
                         <TextField
                           fullWidth={true}
-                          error={Check(row.expenseType)}
-                          helperText={
-                            formState.errors.expenseType === "error"
-                              ? "Valid Expense Type is required"
-                              : null
-                          }
-                          label="Expense Type"
+                          // error={Check(row.expenseType)}
+                          // helperText={
+                          //   formState.errors.expenseType === "error"
+                          //     ? "Valid Expense Type is required"
+                          //     : null
+                          // }
+                          // label="Expense Type"
                           id="expenseType"
+                          disabled={true}
                           name="expenseType"
                           value={formState.values.expenseType}
                           onChange={(event) => {
@@ -412,17 +416,19 @@ export default function Items(props) {
                 <React.Fragment>
                   <StyledTableRow key={row.itemName}>
                     <StyledTableCell style={{ width: 100 }}>
-                      {!Check(row.poInline || row.expenseType) &&
-                      !Check(row.receiptNumber)
-                        ? index + 1
-                        : 
-                        <Tooltip title="There is something missing.." aria-label="edit" >
-                          <IconButton
-                            onClick={() => handleEditItem(row, index)}
-                          >
-                            <ErrorOutlineIcon fontSize="small" style={{color:'orange'}} />
-                        </IconButton>
-                        </Tooltip>
+                      {
+                      // !Check(row.poInline || row.expenseType) &&
+                      // !Check(row.receiptNumber)
+                      //   ?
+                         index + 1
+                        // : 
+                        // <Tooltip title="There is something missing.." aria-label="edit" >
+                        //   <IconButton
+                        //     onClick={() => handleEditItem(row, index)}
+                        //   >
+                        //     <ErrorOutlineIcon fontSize="small" style={{color:'orange'}} />
+                        // </IconButton>
+                        // </Tooltip>
                         }
                     </StyledTableCell>
                     <StyledTableCell
@@ -612,15 +618,16 @@ export default function Items(props) {
                   <StyledTableCell colSpan="2">
                     <TextField
                       fullWidth={true}
-                      error={formState.errors.receiptNumber === "error"}
-                      helperText={
-                        formState.errors.receiptNumber === "error"
-                          ? "Valid Receipt Number is required"
-                          : null
-                      }
+                      // error={formState.errors.receiptNumber === "error"}
+                      // helperText={
+                      //   formState.errors.receiptNumber === "error"
+                      //     ? "Valid Receipt Number is required"
+                      //     : null
+                      // }
                       label="Receipt Number"
                       id="receiptNumber"
                       name="receiptNumber"
+                      disabled={true}
                       onChange={(event) => {
                         handleChange(event);
                       }}
@@ -635,6 +642,7 @@ export default function Items(props) {
                       id="cat"
                       name="cat"
                       value={category}
+                      disabled={true}
                       onChange={(event) => {
                         setCategory(event.target.value);
                       }}
@@ -648,19 +656,20 @@ export default function Items(props) {
                     {category == 1 ? (
                       <TextField
                         fullWidth={true}
-                        error={formState.errors.poInline === "error"}
-                        helperText={
-                          formState.errors.poInline === "error"
-                            ? "Valid PO Number is required"
-                            : null
-                        }
+                        // error={formState.errors.poInline === "error"}
+                        // helperText={
+                        //   formState.errors.poInline === "error"
+                        //     ? "Valid PO Number is required"
+                        //     : null
+                        // }
                         label="PO Number"
                         id="poInline"
                         name="poInline"
+                        disabled={true}
                         onChange={(event) => {
                           handleChange(event);
                         }}
-                        value={formState.values.poInline || ""}
+                        value={formState.values.poNumber || ""}
                         select
                         >
                           {pos.map((po, index) => (
@@ -680,6 +689,7 @@ export default function Items(props) {
                         }
                         label="Expense Type"
                         id="expenseType"
+                        disabled={true}
                         name="expenseType"
                         value={formState.values.expenseType}
                         onChange={(event) => {

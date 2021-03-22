@@ -20,7 +20,7 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
-import { checkIsActionDesk } from "views/LDocs/Authorization/checkAuthority";
+import { checkIsActionDesk, checkIsAVPDesk } from "views/LDocs/Authorization/checkAuthority";
 
 import routes from "routes/actionDeskRoutes";
 import UserProfile from "views/LDocs/Profile/Profile";

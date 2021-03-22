@@ -44,8 +44,8 @@ export default function Attachments(props) {
                 fontSize="large"
               />
               <Typography variant="body1" component="h6">
-                {file.title.substring(0, 7)} <br />{" "}
-                <sub>({file.file.type})</sub>
+                {file.attachmentTitle.substring(0, 7)}<br />{" "}
+                <sub>({file.type})</sub>
               </Typography>
             </CardBody>
             <CardFooter>

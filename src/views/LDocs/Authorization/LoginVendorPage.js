@@ -20,7 +20,13 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../../../actions";
-import { getToken } from "../../../firebase";
+import DeviceUUID , { getToken } from "views/LDocs/Functions/Functions";
+let uuid = new DeviceUUID().get();
+let os = new DeviceUUID().parse().os;
+let firebase_token;
+getToken().then(res=>{
+  firebase_token = res;
+});
 
 const useStyles = makeStyles(styles);
 export default function LoginVendorPage(props) {
@@ -52,9 +58,18 @@ export default function LoginVendorPage(props) {
         password: password,
       })
       .then(async (response) => {
-        let firebase_token = await getToken();
-        console.log(firebase_token);
-        console.log(window.navigator.platform);
+        // await axios({
+        //   method: "post", //you can set what request you want to be
+        //   url: `${process.env.REACT_APP_LDOCS_API_URL}/user/updateUserFcm`,
+        //   data: {
+        //     osType : os,
+        //     fcmToken:firebase_token,
+        //     deviceId:uuid
+        //   },
+        //   headers: {
+        //     cooljwt: response.data.token,
+        //   },
+        // });
         setlogging(false);
         localStorage.setItem("cooljwt", response.data.token);
         dispatch(setToken(response.data.token));
