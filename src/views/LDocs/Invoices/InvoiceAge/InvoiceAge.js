@@ -97,7 +97,6 @@ export default function InvoiceAge(props) {
     })
       .then((response) => {
         var data = response.data;
-        data.length = 5;
         setData(data);
         }).catch((err)=>{
         console.log(err);

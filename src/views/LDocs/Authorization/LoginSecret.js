@@ -25,6 +25,7 @@ import jwt from "jsonwebtoken";
 import DeviceUUID, { getToken } from "views/LDocs/Functions/Functions";
 let uuid = new DeviceUUID().get();
 let os = new DeviceUUID().parse().os;
+console.log(new DeviceUUID().parse());
 let firebase_token;
 getToken().then((res) => {
   firebase_token = res;

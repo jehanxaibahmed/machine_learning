@@ -782,6 +782,9 @@ export default function CreateInvoice(props) {
           overallDiscount: fileData.discountAmt,
           organizationId: fileData.organizationId,
           currency: fileData.FC_currency._id || currency,
+          paymentTerms: `NET-${fileData.paymentTerms}`,
+          poNumber: fileData.po,
+          receiptNumber: fileData.receiptNumber,
           selectedVendor: !isVendor
             ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
             : null,
@@ -806,7 +809,7 @@ export default function CreateInvoice(props) {
       var invoice_attachments = fileData.attachments.map((att) => {
         const a = {
           name: att.name,
-          base64: `${process.env.REACT_APP_LDOCS_API_URL}/${att.attachmentPath}`,
+          base64: null,
           type: att.attachmentPath.split(".").pop(),
           attachmentTitle: att.attachmentTitle,
           attachmentPath: `${process.env.REACT_APP_LDOCS_API_URL}/${att.attachmentPath}`,
@@ -1060,6 +1063,7 @@ export default function CreateInvoice(props) {
     let currency;
     let poNumber;
     let receiptNumber;
+    let paymentTerms;
     const Check = require("is-null-empty-or-undefined").Check;
     var error = false;
 
@@ -1087,12 +1091,14 @@ export default function CreateInvoice(props) {
       poNumber = "error";
       error = true;
     }
+    if (!isVendor) {
     if (!Check(formState.values.receiptNumber)) {
       receiptNumber = "success";
     } else {
       receiptNumber = "error";
       error = true;
     }
+  }
     if (isVendor) {
       if (!Check(formState.values.organizationId)) {
         vendor = "success";
@@ -1114,6 +1120,13 @@ export default function CreateInvoice(props) {
       currency = "error";
       error = true;
     }
+    if (!Check(formState.values.paymentTerms.split('-')[1])) {
+      paymentTerms = "success";
+    } else {
+      paymentTerms = "error";
+      error = true;
+    }
+    
     // if (
     //   items.filter((i) => Check(i.poInline) && Check(i.expenseType) == true)
     //     .length > 0
@@ -1136,6 +1149,7 @@ export default function CreateInvoice(props) {
         receiptNumber:receiptNumber,
         poNumber:poNumber,
         currency: currency,
+        paymentTerms: paymentTerms
       },
     }));
     if (error) {
@@ -1202,6 +1216,9 @@ export default function CreateInvoice(props) {
         LC_currency: userCurrency,
         description: formState.values.notes,
         createdByVendor: isVendor ? true : false,
+        po:formState.values.poNumber,
+        receiptNumber:formState.values.receiptNumber,
+        paymentTerms: formState.values.paymentTerms.split('-')[1]
       };
       //Axios Call
       axios({
@@ -1236,6 +1253,8 @@ export default function CreateInvoice(props) {
                 poNumber: "",
                 itemName: "",
                 unitCost: 0,
+                receiptNumber:'',
+                paymentTerms:"NET-",
                 quantity: 0,
                 discount: 0,
                 amount: 0,

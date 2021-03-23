@@ -148,8 +148,11 @@ export default function FilesList(props) {
   const [showFiltersModel, setShowFiltersModel] = React.useState(false);
   const [formState, setFormState] = React.useState({
     files:[],
+    vendors:[],
+    pos:[],
     filters: {
-      status: true,
+      supplierId: true,
+      poNumber: true,
       date: true,
       amount: true,
       partialPaid: true,
@@ -157,7 +160,8 @@ export default function FilesList(props) {
       notPaid: true,
     },
     values: {
-      status: [],
+      supplierId: null,
+      poNumber:null,
       submitStart: null,
       submitEnd: null,
       amountTo: null,
@@ -168,6 +172,41 @@ export default function FilesList(props) {
     },
   });
 
+  const getPos = () => {
+    axios({
+      method: "get", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then((res) => {
+        setFormState((formState) => ({
+          ...formState,
+          pos:res.data
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getVendors = () => {
+    let userDetails = jwt.decode(Token);
+    axios({
+      method: "get",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
+      headers: { cooljwt: Token },
+    })
+      .then((response) => {
+        setFormState((formState) => ({
+          ...formState,
+          vendors: response.data,
+        }));
+      }).catch((err)=>{
+        console.log(err);
+      })
+}
   //View File
   const viewFile = (row) => {
     setIsViewing(false);
@@ -186,6 +225,26 @@ export default function FilesList(props) {
       filters: data.filters,
     }));
     let files = formState.files;
+    if (
+      data.filters.supplierId &&
+      data.values.supplierId
+    ) {
+      files = files.filter(
+        (file) =>
+          file.vendorId == data.values.supplierId
+      );
+    }
+
+    if (
+      data.filters.poNumber &&
+      data.values.poNumber
+    ) {
+      files = files.filter(
+        (file) =>
+          file.po == data.values.poNumber
+      );
+    }
+
     if (
       data.filters.amount &&
       data.values.amountTo >= 1 &&
@@ -264,6 +323,8 @@ export default function FilesList(props) {
   //Use Effect Hook
   React.useEffect(() => {
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
+    getPos();
+    getVendors();
     setDecoded(userDetail);
     getMyFiles(userDetail, true);
   }, []);
@@ -296,7 +357,7 @@ export default function FilesList(props) {
               {formatDateTime(prop.createdDate)}
             </MenuProvider>
           ),
-          date: (
+          dueDate: (
             <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.dueDate)}
             </MenuProvider>
@@ -304,6 +365,21 @@ export default function FilesList(props) {
           vendorName: (
             <MenuProvider data={prop} id="menu_id">
               {prop.vendorName}
+            </MenuProvider>
+          ),
+          approvedDate:(
+            <MenuProvider data={prop} id="menu_id">
+              {formatDateTime(prop.approved)}
+            </MenuProvider>
+          ),
+          requester:(
+            <MenuProvider data={prop} id="menu_id">
+              {fileData.createdByVendor ? 'Supplier' : fileData.createdBy.split('@')[0]}
+            </MenuProvider>
+          ),
+          poNumber:(
+            <MenuProvider data={prop} id="menu_id">
+              {prop.po}
             </MenuProvider>
           ),
           customerName: (
@@ -873,32 +949,24 @@ export default function FilesList(props) {
                           filter: "fuzzyText",
                         },
                         {
-                          Header: "Status",
-                          accessor: "status",
-                        },
-                        {
                           Header: "Submit Date",
                           accessor: "createdDate",
+                        },
+                        {
+                          Header: "Due Date",
+                          accessor: "dueDate",
                         },
                         {
                           Header: "Supplier Name",
                           accessor: "vendorName",
                         },
                         {
+                          Header: "Po Number",
+                          accessor: "poNumber",
+                        },
+                        {
                           Header: "Amount",
                           accessor: "netAmt",
-                        },
-                        {
-                          Header: "Version",
-                          accessor: "version",
-                        },
-                        {
-                          Header: "Reviewed",
-                          accessor: "reviewed",
-                        },
-                        {
-                          Header: "Approved",
-                          accessor: "approved",
                         },
                         {
                           Header: "Actions",
@@ -936,6 +1004,8 @@ export default function FilesList(props) {
           <Filters
             filters={formState.filters}
             values={formState.values}
+            vendors={formState.vendors}
+            pos={formState.pos}
             closeModal={() => setShowFiltersModel(false)}
             setFilters={setFilter}
             isVendor={isVendor}

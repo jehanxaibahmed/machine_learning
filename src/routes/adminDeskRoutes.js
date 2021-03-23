@@ -70,13 +70,13 @@ var adminRoutes = [
         component: UsersList,
         layout: "/admin",
       },
-      {
-        path: "/warnings",
-        name: "Warnings",
-        icon: ErrorIcon,
-        component: Warnings,
-        layout: "/admin",
-      }
+      // {
+      //   path: "/warnings",
+      //   name: "Warnings",
+      //   icon: ErrorIcon,
+      //   component: Warnings,
+      //   layout: "/admin",
+      // }
     ],
   },
     {

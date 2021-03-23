@@ -316,12 +316,20 @@ const FileAdvanceView = forwardRef((props, ref) => {
                     secondary={`${addZeroes(fileData.discountPercent)}%`}
                   />
                   <ListItemText
+                    primary="Receipt Number"
+                    secondary={fileData.receiptNumber || 0 }
+                  />
+                  <ListItemText
                     primary="Gross Amount"
                     secondary={`${fileData.FC_currency.sign}${addZeroes(fileData.grossAmt)}`}
                   />
                   <ListItemText
                     primary="Net Amount"
                     secondary={`${fileData.FC_currency.sign}${addZeroes(fileData.netAmt)}`}
+                  />
+                  <ListItemText
+                    primary={`Created By ${fileData.createdByVendor ? 'Supplier' :'Requester'}`}
+                    secondary={`${fileData.createdBy}`}
                   />
                 </List>
               </GridItem>
@@ -334,6 +342,10 @@ const FileAdvanceView = forwardRef((props, ref) => {
                   <ListItemText
                     primary="Vendor Name"
                     secondary={fileData.vendorName}
+                  />
+                   <ListItemText
+                    primary="PO Number"
+                    secondary={fileData.po || 0}
                   />
                   <ListItemText
                       primary="Currency"

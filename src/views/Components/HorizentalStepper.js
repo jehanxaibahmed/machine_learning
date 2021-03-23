@@ -16,6 +16,7 @@ import { Tooltip } from "@material-ui/core";
 import DeviceHubIcon from '@material-ui/icons/DeviceHub';
 import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import MoneyIcon from '@material-ui/icons/Money';
 
 const useQontoStepIconStyles = makeStyles({
   root: {
@@ -122,11 +123,11 @@ function ColorlibStepIcon(props) {
   const { active, completed } = props;
 
   const icons = {
-    1: <QueryBuilderIcon />,
-    2: <SystemUpdateIcon />,
-    3: <DeviceHubIcon />,
-    4: <LocalAtmIcon />,
-    5: <ExitToAppIcon />,
+    1: <SystemUpdateIcon />,
+    2: <DeviceHubIcon />,
+    3: <LocalAtmIcon />,
+    4: <QueryBuilderIcon />,
+    5: <MoneyIcon />,
   };
 
   return (
@@ -174,11 +175,6 @@ export default function Horizentalteppers(props) {
   const [activeStep, setActiveStep] = React.useState(null);
   const [steps, setSteps] = React.useState([
     {
-      label: "Pending",
-      status: props.fileData.trackingStatus.pending.status || null,
-      comments: props.fileData.trackingStatus.pending.comment || null,
-    },
-    {
       label: props.fileData.trackingStatus.received.status == 'rejected' ? "Rejected" : "Entered",
       status: props.fileData.trackingStatus.received.status || null,
       comments: props.fileData.trackingStatus.received.comment || null,
@@ -194,50 +190,59 @@ export default function Horizentalteppers(props) {
       comments: props.fileData.trackingStatus.readyForPayment.comment || null,
     },
     {
-      label: "Exported To Fusion",
-      status: props.fileData.exported || null,
-      comments:  null,
+      label: "Payment In Process",
+      status: props.fileData.trackingStatus.paymentInProcess.status || null,
+      comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
+    },
+    {
+      label: "Paid",
+      status: props.fileData.trackingStatus.paid.status || null,
+      comments: props.fileData.trackingStatus.paid.comment || null,
     },
   ]);
 
   React.useEffect(() => {
-    if(props.fileData.exported){
-      setActiveStep(4);
-    }
-    else
-    {
     let currentStatus;
     switch (props.fileData.trackingStatus.current_status) {
-      case "pending":
-        currentStatus = props.fileData.trackingStatus.pending.status;
-        setActiveStep(0);
-        break;
       case "received":
         currentStatus = props.fileData.trackingStatus.received.status;
-        if (currentStatus && currentStatus !== "inProgress" ) {
+          setActiveStep(0);
+        break;
+      case "underReview":
+        currentStatus = props.fileData.trackingStatus.underReview.status;
+        if (currentStatus) {
           setActiveStep(1);
         } else {
           setActiveStep(0);
         }
         break;
-      case "underReview":
-        currentStatus = props.fileData.trackingStatus.underReview.status;
+      case "readyForPayment":
+        currentStatus = props.fileData.trackingStatus.readyForPayment.status;
         if (currentStatus) {
           setActiveStep(2);
         } else {
           setActiveStep(1);
         }
         break;
-      case "readyForPayment":
-        currentStatus = props.fileData.trackingStatus.readyForPayment.status;
-        if (currentStatus) {
-          setActiveStep(3);
-        } else {
-          setActiveStep(2);
-        }
-        break;
+        case "paymentInProcess":
+          currentStatus = props.fileData.trackingStatus.paymentInProcess.status;
+          if (currentStatus) {
+            setActiveStep(3);
+          } else {
+            setActiveStep(2);
+          }
+          break;
+          case "paid":
+            currentStatus = props.fileData.trackingStatus.paid.status;
+            if (currentStatus) {
+              setActiveStep(4);
+            } else {
+              setActiveStep(3);
+            }
+            break;
+      
+
     }
-  }
   }, []);
 
   return (

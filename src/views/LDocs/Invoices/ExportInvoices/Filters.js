@@ -47,15 +47,11 @@ const Check = require("is-null-empty-or-undefined").Check;
 
 export default function Filter(props) {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
-  const [customers, setCustomers] = useState([]);
   const decoded = jwt.decode(Token);
-  const isVendor = props.isVendor;
   const classes = useStyles();
+
   const sweetClass = sweetAlertStyle();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isViewWorkFlow, setIsViewWorkflow] = React.useState(false);
-  const [isInitWorkFlow, setIsInitWorkFlow] = React.useState(false);
-  const [isFileSame, setIsFileSame] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);;
   const [alert, setAlert] = React.useState(null);
   const dispatch = useDispatch();
 
@@ -121,7 +117,8 @@ export default function Filter(props) {
     props.setFilters(
     {
       filters:{
-      status:true,
+      supplierId:true,
+      poNumber:true,
       date:true,
       amount:true,
       partialPaid:true,
@@ -129,7 +126,8 @@ export default function Filter(props) {
       notPaid:true
     },
     values: {  
-    status:[],
+    supplierId:null,
+    poNumber:null,
     submitStart:null,
     submitEnd:null,
     amountTo:null,
@@ -177,6 +175,58 @@ export default function Filter(props) {
       <CardBody>
         <div>
               <GridContainer>
+              <GridItem 
+                 xs={12}
+                 sm={12}
+                 md={12}
+                 lg={12}
+                 style={{ marginTop: "10px" }}
+                >
+                <TextField
+                    className={classes.textField}
+                    fullWidth={true}
+                    label="Supplier Name"
+                    name="supplierId"
+                    defaultValue={0}
+                    select
+                    onChange={(event) => {
+                      handleChange(event);
+                    }}
+                    value={formState.values.supplierId || ""}
+                   >
+                    {props.vendors.map((v=>(
+                        <MenuItem value={v._id}>
+                          {v.level1.vendorName}
+                        </MenuItem>
+                     )))}
+                     </TextField>
+                </GridItem>
+                <GridItem 
+                 xs={12}
+                 sm={12}
+                 md={12}
+                 lg={12}
+                 style={{ marginTop: "10px" }}
+                >
+                <TextField
+                    className={classes.textField}
+                    fullWidth={true}
+                    label="PO Number"
+                    name="poNumber"
+                    defaultValue={0}
+                    select
+                    onChange={(event) => {
+                      handleChange(event);
+                    }}
+                    value={formState.values.poNumber || ""}
+                   >
+                     {props.pos.map((pos=>(
+                        <MenuItem value={pos.poNumber}>
+                          {pos.poNumber}
+                        </MenuItem>
+                     )))}
+                     </TextField>
+                </GridItem>
                 <GridItem
                   xs={12}
                   sm={12}
@@ -288,75 +338,7 @@ export default function Filter(props) {
                     value={formState.values.amountTo || ""}
                    />
                 </GridItem>
-                <GridItem
-                  xs={12}
-                  sm={12}
-                  md={12}
-                  lg={12}
-                  style={{ marginTop: "10px" }}
-                >
-                  <Typography varient="h6" component="h2" >
-                      Payment Status 
-                  </Typography>
-                </GridItem>
-                <GridItem
-                  xs={12}
-                  sm={12}
-                  md={4}
-                  lg={4}
-                  style={{ marginTop: "10px", marginBottom: "10px" }}
-                >
-                   <FormControlLabel
-                      control={
-                        <Checkbox
-                        checked={formState.values.notPaid}
-                        onChange={handleChange}
-                        name="notPaid"
-                        color="primary"
-                        />
-                      }
-                      label="Pending"
-                    />
-                </GridItem>
-                <GridItem
-                  xs={12}
-                  sm={12}
-                  md={4}
-                  lg={4}
-                  style={{ marginTop: "10px", marginBottom: "10px" }}
-                >
-                   <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formState.values.partialPaid}
-                          onChange={handleChange}
-                          name="partialPaid"
-                          color="primary"
-                        />
-                      }
-                      label="Partial"
-                    />
-                </GridItem>
-                <GridItem
-                  xs={12}
-                  sm={12}
-                  md={4}
-                  lg={4}
-                  style={{ marginTop: "10px", marginBottom: "10px" }}
-                >
-                   <FormControlLabel
-                      control={
-                        <Checkbox
-                        checked={formState.values.fullPaid}
-                        onChange={handleChange}
-                        name="fullPaid"
-                        color="primary"
-                        />
-                      }
-                      label="Full"
-                    />
-                </GridItem>
-               
+              
               </GridContainer>
               <span style={{ float: "right", marginTop:30 }}>
                 <React.Fragment>
