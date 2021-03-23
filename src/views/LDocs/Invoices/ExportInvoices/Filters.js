@@ -110,11 +110,11 @@ export default function Filter(props) {
   };
 
   const getValues = () => {
-    props.setFilters(formState);            
+    props.setFilters(0,formState);            
   }
 
   const clearFilters = () => {
-    props.setFilters(
+    props.setFilters(0,
     {
       filters:{
       supplierId:true,

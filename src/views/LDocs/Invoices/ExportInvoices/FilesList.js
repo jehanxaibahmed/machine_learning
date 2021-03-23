@@ -58,8 +58,8 @@ import CallReceivedIcon from "@material-ui/icons/CallReceived";
 import FiberNewIcon from "@material-ui/icons/FiberNew";
 import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import { addZeroes, formatDateTime } from "../../Functions/Functions";
 import {
   Menu,
@@ -89,6 +89,7 @@ import ViewModuleIcon from "@material-ui/icons/ViewModule";
 import { useDispatch, useSelector } from "react-redux";
 import ExportToFusion from "./ExportToFusion";
 import Filters from "./Filters";
+import { over } from "lodash";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -150,8 +151,13 @@ export default function FilesList(props) {
   const [showFiltersModel, setShowFiltersModel] = React.useState(false);
   const [formState, setFormState] = React.useState({
     files: [],
+    totalInvoices: 0,
+    paymentDue: 0,
+    overDue: 0,
+    paymentInProcess: 0,
     vendors: [],
     pos: [],
+    filter:null,
     filters: {
       supplierId: true,
       poNumber: true,
@@ -221,61 +227,100 @@ export default function FilesList(props) {
     setAnimateTable(false);
     setAnimatePdf(true);
   };
-  const setFilter = (data) => {
-    setFormState((formState) => ({
-      ...formState,
-      values: data.values,
-      filters: data.filters,
-    }));
-    let files = formState.files;
-    if (data.filters.supplierId && data.values.supplierId) {
-      files = files.filter((file) => file.vendorId == data.values.supplierId);
-    }
+  const setFilter = (from, data) => {
+    console.log(from);
+    //from 1 == internal , 0 == external
+    if (from == 0) {
+      setFormState((formState) => ({
+        ...formState,
+        values: data.values,
+        filters: data.filters,
+      }));
+      let files = formState.files;
+      if (data.filters.supplierId && data.values.supplierId) {
+        files = files.filter((file) => file.vendorId == data.values.supplierId);
+      }
 
-    if (data.filters.poNumber && data.values.poNumber) {
-      files = files.filter((file) => file.po == data.values.poNumber);
-    }
+      if (data.filters.poNumber && data.values.poNumber) {
+        files = files.filter((file) => file.po == data.values.poNumber);
+      }
 
-    if (
-      data.filters.amount &&
-      data.values.amountTo >= 1 &&
-      data.values.amountfrom >= 1
-    ) {
-      files = files.filter(
-        (file) =>
-          file.netAmt <= parseInt(data.values.amountTo) &&
-          file.netAmt >= parseInt(data.values.amountfrom)
-      );
-    }
+      if (
+        data.filters.amount &&
+        data.values.amountTo >= 1 &&
+        data.values.amountfrom >= 1
+      ) {
+        files = files.filter(
+          (file) =>
+            file.netAmt <= parseInt(data.values.amountTo) &&
+            file.netAmt >= parseInt(data.values.amountfrom)
+        );
+      }
 
-    if (
-      (data.filters.date && data.values.submitEnd !== null) ||
-      (undefined && data.values.submitStart !== null) ||
-      undefined
-    ) {
-      var endDate = new Date(data.values.submitEnd);
-      endDate.setDate(endDate.getDate() + 1);
-      files = files.filter(
-        (file) =>
-          new Date(file.createdDate) >= new Date(data.values.submitStart) &&
-          new Date(file.createdDate) <= new Date(endDate)
-      );
-    }
+      if (
+        (data.filters.date && data.values.submitEnd !== null) ||
+        (undefined && data.values.submitStart !== null) ||
+        undefined
+      ) {
+        var endDate = new Date(data.values.submitEnd);
+        endDate.setDate(endDate.getDate() + 1);
+        files = files.filter(
+          (file) =>
+            new Date(file.createdDate) >= new Date(data.values.submitStart) &&
+            new Date(file.createdDate) <= new Date(endDate)
+        );
+      }
 
-    if (data.filters.partialPaid && data.values.partialPaid) {
-      files = files.filter((file) => file.paymentStatus == "partial");
-    }
+      if (data.filters.partialPaid && data.values.partialPaid) {
+        files = files.filter((file) => file.paymentStatus == "partial");
+      }
 
-    if (data.filters.fullPaid && data.values.fullPaid) {
-      files = files.filter((file) => file.paymentStatus == "full");
-    }
+      if (data.filters.fullPaid && data.values.fullPaid) {
+        files = files.filter((file) => file.paymentStatus == "full");
+      }
 
-    if (data.filters.notPaid && data.values.notPaid) {
-      files = files.filter((file) => file.paymentStatus == "pending");
+      if (data.filters.notPaid && data.values.notPaid) {
+        files = files.filter((file) => file.paymentStatus == "pending");
+      }
+      setFilesData(files.reverse());
+      setTableData(files.reverse());
+      setShowFiltersModel(false);
     }
-    setFilesData(files.reverse());
-    setTableData(files.reverse());
-    setShowFiltersModel(false);
+    if (from == 1) {
+      let filter = "totalInvCount";
+      if (data.id == 0) {
+        filter = "totalInvCount";
+      }
+      if (data.id == 1) {
+        if (data.val == 0) {
+          filter = "paymentDueWeek";
+        }
+        if (data.val == 1) {
+          filter = "paymentDueMonth";
+        }
+        if (data.val == 2) {
+          filter = "paymentDueMonthAfter";
+        }
+      }
+      if (data.id == 2) {
+        if (data.val == 0) {
+          filter = "paymentOverDueWeek";
+        }
+        if (data.val == 1) {
+          filter = "paymentOverDueMonth";
+        }
+        if (data.val == 2) {
+          filter = "paymentOverDueMonthAfter";
+        }
+      }
+      if (data.id == 3) {
+        filter = "paymentInProcessCount";
+      }
+      setFormState((formState) => ({
+        ...formState,
+        filter: filter,
+      }));
+    }
   };
   //Open BlockChainView
   const viewBlockChainView = (row) => {
@@ -365,9 +410,7 @@ export default function FilesList(props) {
           ),
           requester: (
             <MenuProvider data={prop} id="menu_id">
-              {prop.createdByVendor
-                ? "Supplier"
-                : prop.createdBy.split("@")[0]}
+              {prop.createdByVendor ? "Supplier" : prop.createdBy.split("@")[0]}
             </MenuProvider>
           ),
           poNumber: (
@@ -511,24 +554,25 @@ export default function FilesList(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceCfoDetails/${user.orgDetail.organizationId}/${null}`,
+      url: `${
+        process.env.REACT_APP_LDOCS_API_URL
+      }/invoice/getInvoiceCfoDetails/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
       },
     })
       .then((response) => {
-        console.log(response);
         setFormState((formState) => ({
           ...formState,
-          files: response.data.invoicesApproved,
-        }));
-        setFilesData(
-          response.data.invoicesApproved
-        );
-        setTableData(
-          response.data.invoicesApproved
-        );
+          files: formState.filter == null ?response.data.invoicesApproved:response.data,
+          totalInvoices: formState.filter == null ?response.data.totalInvCount:formState.totalInvoices,
+          paymentDue: formState.filter == null ?response.data.paymentDueCount:formState.paymentDue,
+          overDue: formState.filter == null ?response.data.paymentOverDueCountL:formState.overDue,
+          paymentInProcess: formState.filter == null ?response.data.paymentInProcessCount:formState.paymentInProcess,
+        }))
+        setFilesData(formState.filter == null ?response.data.invoicesApproved:response.data);
+        setTableData(formState.filter == null ?response.data.invoicesApproved:response.data);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -592,6 +636,10 @@ export default function FilesList(props) {
   React.useEffect(() => {
     setTableData(filesData);
   }, [selected.length]);
+  React.useEffect(() => {
+    let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
+    getMyFiles(userDetail, true);
+  }, [formState.filter]);
 
   //Set File Data
   const [fileData, setFileData] = React.useState();
@@ -800,14 +848,22 @@ export default function FilesList(props) {
                     <InsertDriveFileIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Total Invoices</p>
-                  <h3 className={classes.cardTitle}>70</h3>
+                  <h3 className={classes.cardTitle}>
+                    {formState.totalInvoices}
+                  </h3>
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
                     <Tooltip title="show">
-                      <IconButton>
-                      <Typography varient="body2" component="h2">
-                        <CheckBoxIcon fontSize="large" />
+                      <IconButton
+                        style={formState.filter == 'totalInvCount' || null ? {background:'#9E2654', color:'white'}:{}}
+                        onClick={() =>
+                          setFilter(1, { id: 0, val: "totalInvCount" })
+                        }
+                      >
+                        <Typography varient="body2" component="h2">
+                          {formState.filter == 'totalInvCount' || null ? <CheckBoxIcon fontSize="large" />:
+                          <CheckBoxOutlineBlankIcon fontSize="large" />}
                         </Typography>
                       </IconButton>
                     </Tooltip>
@@ -822,26 +878,35 @@ export default function FilesList(props) {
                     <CenterFocusWeakIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Payment Due</p>
-                  <h3 className={classes.cardTitle}>15</h3>
+                  <h3 className={classes.cardTitle}>{formState.paymentDue}</h3>
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
                     <Tooltip title="0-7">
-                      <IconButton>
+                      <IconButton
+                        style={formState.filter == 'paymentDueWeek' ? {background:'#5a2c66', color:'white'}:{}}
+                        onClick={() => setFilter(1, { id: 1, val: 0 })}
+                      >
                         <Typography varient="body2" component="h2">
                           0-7
                         </Typography>
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="7-30">
-                      <IconButton>
+                      <IconButton 
+                        style={formState.filter == 'paymentDueMonth' ? {background:'#5a2c66', color:'white'}:{}}
+                        onClick={() => setFilter(1, { id: 1, val: 1 })}
+                      >
                         <Typography varient="body2" component="h2">
                           7-30
                         </Typography>
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="60+">
-                      <IconButton>
+                      <IconButton
+                        style={formState.filter == 'paymentDueMonthAfter' ? {background:'#5a2c66', color:'white'}:{}}
+                        onClick={() => setFilter(1, { id: 1, val: 2 })}
+                      >
                         <Typography varient="body2" component="h2">
                           30+
                         </Typography>
@@ -860,26 +925,35 @@ export default function FilesList(props) {
                     <CenterFocusStrongIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Over Due</p>
-                  <h3 className={classes.cardTitle}>5</h3>
+                  <h3 className={classes.cardTitle}>{formState.overDue}</h3>
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                  <Tooltip title="0-7">
-                      <IconButton>
+                    <Tooltip title="0-7">
+                      <IconButton
+                        style={formState.filter == 'paymentOverDueWeek' ? {background:'#9E2654', color:'white'}:{}}
+                        onClick={() => setFilter(1, { id: 2, val: 0 })}
+                      >
                         <Typography varient="body2" component="h2">
                           0-7
                         </Typography>
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="7-30">
-                      <IconButton>
+                      <IconButton
+                        style={formState.filter == 'paymentOverDueMonth' ? {background:'#9E2654', color:'white'}:{}}
+                        onClick={() => setFilter(1, { id: 2, val: 1 })}
+                      >
                         <Typography varient="body2" component="h2">
                           7-30
                         </Typography>
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="60+">
-                      <IconButton>
+                      <IconButton
+                        style={formState.filter == 'paymentOverDueMonthAfter' ? {background:'#9E2654', color:'white'}:{}}
+                        onClick={() => setFilter(1, { id: 2, val: 2 })}
+                      >
                         <Typography varient="body2" component="h2">
                           30+
                         </Typography>
@@ -897,15 +971,22 @@ export default function FilesList(props) {
                     <InsertDriveFileIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Payment in Process</p>
-                  <h3 className={classes.cardTitle}>50</h3>
+                  <h3 className={classes.cardTitle}>
+                    {formState.paymentInProcess}
+                  </h3>
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
                     <Tooltip title="show">
-                      <IconButton>
-                      <Typography varient="body2" component="h2">
-                        <CheckBoxOutlineBlankIcon fontSize="large" />
-                        </Typography>
+                      <IconButton
+                        style={formState.filter == 'paymentInProcessCount' ? {background:'#5a2c66', color:'white'}:{}}
+                        onClick={() =>
+                          setFilter(1, { id: 3, val: "paymentInProcessCount" })
+                        }
+                      >
+                        <Typography varient="body2" component="h2">
+                        {formState.filter == 'paymentInProcessCount' ? <CheckBoxIcon fontSize="large" />:
+                          <CheckBoxOutlineBlankIcon fontSize="large" />}                        </Typography>
                       </IconButton>
                     </Tooltip>
                   </div>
@@ -987,6 +1068,10 @@ export default function FilesList(props) {
                         {
                           Header: "Requested By",
                           accessor: "requester",
+                        },
+                        {
+                          Header : "Approval Date",
+                          accessor: "approvedDate"
                         },
                         {
                           Header: "Actions",
