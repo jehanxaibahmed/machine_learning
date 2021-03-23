@@ -291,7 +291,17 @@ export default function FilesList(props) {
                       </div>
                     </div>
                   </Tooltip>
-                ) : currentStatus.val == 0 ? (
+                ) :
+                currentStatus.status == "correctionRequired" ? (
+                  <Tooltip title="CORRECTION REQUIRED">
+                    <div className="fileinput text-center">
+                      <div className="thumbnail img-circle2">
+                        <img src={Rejected_Invoice} alt="rejected" />
+                      </div>
+                    </div>
+                  </Tooltip>
+                ) :
+                currentStatus.val == 0 ? (
                   <Tooltip title="PENDING">
                     <div className="fileinput text-center">
                       <div className="thumbnail img-circle2">

@@ -58,6 +58,8 @@ import CallReceivedIcon from "@material-ui/icons/CallReceived";
 import FiberNewIcon from "@material-ui/icons/FiberNew";
 import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import { addZeroes, formatDateTime } from "../../Functions/Functions";
 import {
   Menu,
@@ -147,9 +149,9 @@ export default function FilesList(props) {
   const [filesData, setFilesData] = React.useState([]);
   const [showFiltersModel, setShowFiltersModel] = React.useState(false);
   const [formState, setFormState] = React.useState({
-    files:[],
-    vendors:[],
-    pos:[],
+    files: [],
+    vendors: [],
+    pos: [],
     filters: {
       supplierId: true,
       poNumber: true,
@@ -161,7 +163,7 @@ export default function FilesList(props) {
     },
     values: {
       supplierId: null,
-      poNumber:null,
+      poNumber: null,
       submitStart: null,
       submitEnd: null,
       amountTo: null,
@@ -183,7 +185,7 @@ export default function FilesList(props) {
       .then((res) => {
         setFormState((formState) => ({
           ...formState,
-          pos:res.data
+          pos: res.data,
         }));
       })
       .catch((err) => {
@@ -203,10 +205,11 @@ export default function FilesList(props) {
           ...formState,
           vendors: response.data,
         }));
-      }).catch((err)=>{
-        console.log(err);
       })
-}
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   //View File
   const viewFile = (row) => {
     setIsViewing(false);
@@ -225,24 +228,12 @@ export default function FilesList(props) {
       filters: data.filters,
     }));
     let files = formState.files;
-    if (
-      data.filters.supplierId &&
-      data.values.supplierId
-    ) {
-      files = files.filter(
-        (file) =>
-          file.vendorId == data.values.supplierId
-      );
+    if (data.filters.supplierId && data.values.supplierId) {
+      files = files.filter((file) => file.vendorId == data.values.supplierId);
     }
 
-    if (
-      data.filters.poNumber &&
-      data.values.poNumber
-    ) {
-      files = files.filter(
-        (file) =>
-          file.po == data.values.poNumber
-      );
+    if (data.filters.poNumber && data.values.poNumber) {
+      files = files.filter((file) => file.po == data.values.poNumber);
     }
 
     if (
@@ -367,17 +358,19 @@ export default function FilesList(props) {
               {prop.vendorName}
             </MenuProvider>
           ),
-          approvedDate:(
+          approvedDate: (
             <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.approved)}
             </MenuProvider>
           ),
-          requester:(
+          requester: (
             <MenuProvider data={prop} id="menu_id">
-              {fileData.createdByVendor ? 'Supplier' : fileData.createdBy.split('@')[0]}
+              {prop.createdByVendor
+                ? "Supplier"
+                : prop.createdBy.split("@")[0]}
             </MenuProvider>
           ),
-          poNumber:(
+          poNumber: (
             <MenuProvider data={prop} id="menu_id">
               {prop.po}
             </MenuProvider>
@@ -518,22 +511,23 @@ export default function FilesList(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceTenant/${user.tenantId}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceCfoDetails/${user.orgDetail.organizationId}/${null}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
       },
     })
       .then((response) => {
+        console.log(response);
         setFormState((formState) => ({
           ...formState,
-          files: response.data.filter((f) => f.approveStatus == "approved"),
+          files: response.data.invoicesApproved,
         }));
         setFilesData(
-          response.data.filter((f) => f.approveStatus == "approved")
+          response.data.invoicesApproved
         );
         setTableData(
-          response.data.filter((f) => f.approveStatus == "approved")
+          response.data.invoicesApproved
         );
         setIsLoading(false);
       })
@@ -809,27 +803,14 @@ export default function FilesList(props) {
                   <h3 className={classes.cardTitle}>70</h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div style={{height:'62px'}} className={classes.stats}>
-                    <InsertDriveFileIcon />
-                    <Link>Show All Invoices</Link>
-                  </div>
-                </CardFooter>
-              </Card>
-            </GridItem>
-            <GridItem xs={12} sm={6} md={6} lg={3}>
-              <Card>
-                <CardHeader color="info" stats icon>
-                  <CardIcon color="info">
-                    {/* <Store /> */}
-                    <InsertDriveFileIcon />
-                  </CardIcon>
-                  <p className={classes.cardCategory}>Payment in Process</p>
-                  <h3 className={classes.cardTitle}>50</h3>
-                </CardHeader>
-                <CardFooter  stats>
-                  <div style={{height:'62px'}} className={classes.stats}>
-                    <InsertDriveFileIcon />
-                    <Link>Show Payment in Proccess Invoices</Link>
+                  <div className={classes.stats}>
+                    <Tooltip title="show">
+                      <IconButton>
+                      <Typography varient="body2" component="h2">
+                        <CheckBoxIcon fontSize="large" />
+                        </Typography>
+                      </IconButton>
+                    </Tooltip>
                   </div>
                 </CardFooter>
               </Card>
@@ -844,34 +825,27 @@ export default function FilesList(props) {
                   <h3 className={classes.cardTitle}>15</h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div
-                 
-                  className={classes.stats}
-                  >
-                    <Tooltip title="Today">
-                    <IconButton >
-                        <Avatar>T</Avatar>
-                    </IconButton>
+                  <div className={classes.stats}>
+                    <Tooltip title="0-7">
+                      <IconButton>
+                        <Typography varient="body2" component="h2">
+                          0-7
+                        </Typography>
+                      </IconButton>
                     </Tooltip>
-                    <Tooltip title="Tomorrow">
-                    <IconButton>
-                        <Avatar>TM</Avatar>
-                    </IconButton>
+                    <Tooltip title="7-30">
+                      <IconButton>
+                        <Typography varient="body2" component="h2">
+                          7-30
+                        </Typography>
+                      </IconButton>
                     </Tooltip>
-                    <Tooltip title="Weekly">
-                    <IconButton>
-                        <Avatar>W</Avatar>
-                    </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Fornightly">
-                    <IconButton>
-                        <Avatar>F</Avatar>
-                    </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Monthly">
-                    <IconButton>
-                        <Avatar>M</Avatar>
-                    </IconButton>
+                    <Tooltip title="60+">
+                      <IconButton>
+                        <Typography varient="body2" component="h2">
+                          30+
+                        </Typography>
+                      </IconButton>
                     </Tooltip>
                     {/* <CenterFocusWeakIcon />
                     <Link to="#">Show Payment Due Invoices</Link> */}
@@ -889,17 +863,59 @@ export default function FilesList(props) {
                   <h3 className={classes.cardTitle}>5</h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div style={{height:'62px'}} className={classes.stats}>
-                    <CenterFocusStrongIcon />
-                    <Link to="#">Show Over Due Invoices</Link>
+                  <div className={classes.stats}>
+                  <Tooltip title="0-7">
+                      <IconButton>
+                        <Typography varient="body2" component="h2">
+                          0-7
+                        </Typography>
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="7-30">
+                      <IconButton>
+                        <Typography varient="body2" component="h2">
+                          7-30
+                        </Typography>
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="60+">
+                      <IconButton>
+                        <Typography varient="body2" component="h2">
+                          30+
+                        </Typography>
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                </CardFooter>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={6} lg={3}>
+              <Card>
+                <CardHeader color="danger" stats icon>
+                  <CardIcon color="danger">
+                    {/* <Store /> */}
+                    <InsertDriveFileIcon />
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Payment in Process</p>
+                  <h3 className={classes.cardTitle}>50</h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div className={classes.stats}>
+                    <Tooltip title="show">
+                      <IconButton>
+                      <Typography varient="body2" component="h2">
+                        <CheckBoxOutlineBlankIcon fontSize="large" />
+                        </Typography>
+                      </IconButton>
+                    </Tooltip>
                   </div>
                 </CardFooter>
               </Card>
             </GridItem>
             <GridItem xs={12}>
               <Card>
-                <CardHeader color="info" icon>
-                  <CardIcon color="info">
+                <CardHeader color="danger" icon>
+                  <CardIcon color="danger">
                     <h4 className={classes.cardTitleText}>{componentName}</h4>
                   </CardIcon>
                   <p style={{ color: "gray" }}>
@@ -967,6 +983,10 @@ export default function FilesList(props) {
                         {
                           Header: "Amount",
                           accessor: "netAmt",
+                        },
+                        {
+                          Header: "Requested By",
+                          accessor: "requester",
                         },
                         {
                           Header: "Actions",

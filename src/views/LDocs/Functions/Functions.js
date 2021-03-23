@@ -87,8 +87,8 @@ export const currentTracking = (trackingStatus) => {
         activeStep = { val: 1, status: currentStatus };
       }
       break;
-    case "readyForPayment":
-      currentStatus = trackingStatus.readyForPayment.status;
+    case "underApprove":
+      currentStatus = trackingStatus.underApprove.status;
       if (currentStatus) {
         activeStep = { val: 3, status: currentStatus };
       } else {
@@ -103,14 +103,14 @@ export const currentTracking = (trackingStatus) => {
         activeStep = { val: 3, status: currentStatus };
       }
       break;
-    case "paid":
-      currentStatus = trackingStatus.paid.status;
-      if (currentStatus) {
-        activeStep = { val: 4, status: currentStatus };
-      } else {
-        activeStep = { val: 3, status: currentStatus };
-      }
-      break;
+    // case "paid":
+    //   currentStatus = trackingStatus.paid.status;
+    //   if (currentStatus) {
+    //     activeStep = { val: 4, status: currentStatus };
+    //   } else {
+    //     activeStep = { val: 3, status: currentStatus };
+    //   }
+    //   break;
   }
   return activeStep;
 };

@@ -175,30 +175,30 @@ export default function Horizentalteppers(props) {
   const [activeStep, setActiveStep] = React.useState(null);
   const [steps, setSteps] = React.useState([
     {
-      label: props.fileData.trackingStatus.received.status == 'rejected' ? "Rejected" : "Entered",
+      label: props.fileData.trackingStatus.received.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.received.status == 'correctionRequired' ? "Correction Required" :"Entered",
       status: props.fileData.trackingStatus.received.status || null,
       comments: props.fileData.trackingStatus.received.comment || null,
     },
     {
-      label: props.fileData.trackingStatus.underReview.status == 'rejected' ? "Rejected" : "Initiated",
+      label: props.fileData.trackingStatus.underReview.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underReview.status == "correctionRequired" ? "Correction Required" : "Under Review",
       status: props.fileData.trackingStatus.underReview.status || null,
       comments: props.fileData.trackingStatus.underReview.comment || null,
     },
     {
-      label: "Ready For Payment",
-      status: props.fileData.trackingStatus.readyForPayment.status || null,
-      comments: props.fileData.trackingStatus.readyForPayment.comment || null,
+      label: props.fileData.trackingStatus.underApprove.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underApprove.status == "correctionRequired" ? "Correction Required" : "Under Approval",
+      status: props.fileData.trackingStatus.underApprove.status || null,
+      comments: props.fileData.trackingStatus.underApprove.comment || null,
     },
     {
       label: "Payment In Process",
       status: props.fileData.trackingStatus.paymentInProcess.status || null,
       comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
     },
-    {
-      label: "Paid",
-      status: props.fileData.trackingStatus.paid.status || null,
-      comments: props.fileData.trackingStatus.paid.comment || null,
-    },
+    // {
+    //   label: "Paid",
+    //   status: props.fileData.trackingStatus.paid.status || null,
+    //   comments: props.fileData.trackingStatus.paid.comment || null,
+    // },
   ]);
 
   React.useEffect(() => {
@@ -216,8 +216,8 @@ export default function Horizentalteppers(props) {
           setActiveStep(0);
         }
         break;
-      case "readyForPayment":
-        currentStatus = props.fileData.trackingStatus.readyForPayment.status;
+      case "underApprove":
+        currentStatus = props.fileData.trackingStatus.underApprove.status;
         if (currentStatus) {
           setActiveStep(2);
         } else {
@@ -232,14 +232,14 @@ export default function Horizentalteppers(props) {
             setActiveStep(2);
           }
           break;
-          case "paid":
-            currentStatus = props.fileData.trackingStatus.paid.status;
-            if (currentStatus) {
-              setActiveStep(4);
-            } else {
-              setActiveStep(3);
-            }
-            break;
+          // case "paid":
+          //   currentStatus = props.fileData.trackingStatus.paid.status;
+          //   if (currentStatus) {
+          //     setActiveStep(4);
+          //   } else {
+          //     setActiveStep(3);
+          //   }
+          //   break;
       
 
     }

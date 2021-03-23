@@ -117,11 +117,11 @@ export default function Dashboard(props) {
       });
     },[tasks]);
   
-    useEffect(()=>{
-      notifications.filter(n=>checkTimeCompare(n.notificationDate) == true).map((notif,index)=>{
-        notify(`${notif.notificationItem ? notif.notificationItem.invoiceId : '' }-${notif.notifyMessage}`);
-      })
-    },[notifications]);
+    // useEffect(()=>{
+    //   notifications.filter(n=>checkTimeCompare(n.notificationDate) == true).map((notif,index)=>{
+    //     notify(`${notif.notificationItem ? notif.notificationItem.invoiceId : '' }-${notif.notifyMessage}`);
+    //   })
+    // },[notifications]);
   
 
  
