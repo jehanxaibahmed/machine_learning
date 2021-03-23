@@ -79,6 +79,7 @@ import Recieved_Invoice from "assets/img/statuses/Asset_4.png";
 import UnderReview_Invoice from "assets/img/statuses/Asset_3.png";
 import Approved_Invoice from "assets/img/statuses/Asset_5.png";
 import Rejected_Invoice from "assets/img/statuses/Asset_6.png";
+import Resubmit_Invoice from "assets/img/statuses/Asset_7.png";
 import Ready_Invoice from "assets/img/statuses/Asset_6.png";
 import Pending from "assets/img/statuses/Pending.png";
 import Success from "assets/img/statuses/Success.png";
@@ -296,7 +297,7 @@ export default function FilesList(props) {
                   <Tooltip title="CORRECTION REQUIRED">
                     <div className="fileinput text-center">
                       <div className="thumbnail img-circle2">
-                        <img src={Rejected_Invoice} alt="rejected" />
+                        <img src={Resubmit_Invoice} alt="resubmit" />
                       </div>
                     </div>
                   </Tooltip>
@@ -326,7 +327,7 @@ export default function FilesList(props) {
                     </div>
                   </Tooltip>
                 ) : currentStatus.val == 3 ? (
-                  <Tooltip title="READY FOR PAYMENT">
+                  <Tooltip title="UNDER APPROVAL">
                     <div className="fileinput text-center">
                       <div className="thumbnail img-circle2">
                         <img src={Approved_Invoice} alt="approved" />
