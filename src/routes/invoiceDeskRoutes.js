@@ -7,6 +7,7 @@ import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
 import WrapTextIcon from '@material-ui/icons/WrapText';
 import DescriptionIcon from '@material-ui/icons/Description';
 import FingerprintIcon from '@material-ui/icons/Fingerprint';
+import AssignmentLateIcon from "@material-ui/icons/AssignmentLate";
 
 
 //Components
@@ -20,6 +21,7 @@ import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import CreateInvoice from "views/LDocs/Invoices/CreateInvoice/CreateInvoice";
 import InvoiceTracking from "views/LDocs/Invoices/InvoiceTracking/InvoiceTracking";
 import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
+import Requested from "views/LDocs/Reviews/Requested";
 
 
 
@@ -68,6 +70,15 @@ var invoiceRoutes = [
         layout: "/invoice",
       }
     ]
+  },
+  {
+    path: "/my-requests",
+    name: "Review Tasks",
+    rtlName: "انهيار متعدد المستويات",
+    rtlMini: "ر",
+    component: Requested,
+    layout: "/invoice",
+    icon: AssignmentLateIcon,
   },
     {
     path: "/verifier",
