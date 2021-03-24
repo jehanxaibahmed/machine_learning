@@ -89,6 +89,7 @@ const [statistics, setStatistics] = React.useState({
 });
 const [graphData, setGraphData] = React.useState([]);
   const getGraphData = async () => {
+    if(!decoded.isVendor){
     var data = {
       tenantId:decoded.tenantId,
       Date : new Date(),
@@ -108,6 +109,7 @@ const [graphData, setGraphData] = React.useState([]);
         console.log(error);
       });
   }
+  }
   const [loadingStats, setLoadingStats] = React.useState(true);
   const getDashboardData = async () => {
     let stats = {
@@ -118,6 +120,7 @@ const [graphData, setGraphData] = React.useState([]);
     }
     setLoadingStats(true);
     //Open Invoices
+    if(!decoded.isVendor){
     await axios({
       method: "get",
       url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantOpenInvoice` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/openInvoice/${decoded.orgDetail.organizationId}`,
@@ -167,6 +170,7 @@ const [graphData, setGraphData] = React.useState([]);
         stats.pendingInvoices=0;
         setLoadingStats(false);
       });
+    }
       setStatistics(stats);
   };
 // const [locationDocs, setLocationDocs] = React.useState([]);
@@ -190,6 +194,7 @@ const [graphData, setGraphData] = React.useState([]);
 const [fileHistory, setFileHistory] = React.useState([]);
 const [loadingFiles, setLoadingFiles] = React.useState(true);
   const getFilesHistory = () => {
+    if(!decoded.isVendor){
     setLoadingFiles(true);
     axios({
       method: "get",
@@ -205,11 +210,13 @@ const [loadingFiles, setLoadingFiles] = React.useState(true);
         setFileHistory([]);
         setLoadingFiles(false);
       });
+    }
   };
 
 const [chartOneData, setChartOneData] = React.useState({});
 const [loadingChartOne, setLoadingChartOne] = React.useState(false);
   const getCountReviewChart = () => {
+    if(!decoded.isVendor){
     setLoadingChartOne(true);
     axios({
       method: "get",
@@ -237,11 +244,13 @@ const [loadingChartOne, setLoadingChartOne] = React.useState(false);
         setChartOneData([]);
         setLoadingChartOne(false);
       });
+    }
   };
 const [chartTwoData, setChartTwoData] = React.useState({});
 const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
 
   const getCountApproveChart = () => {
+    if(!decoded.isVendor){
     setLoadingChartTwo(true);
     axios({
       method: "get",
@@ -271,6 +280,7 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
         setChartTwoData([]);
         setLoadingChartTwo(false);
       });
+    }
   };
 
   

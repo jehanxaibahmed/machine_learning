@@ -648,11 +648,8 @@ export default function FilesList(props) {
   const viewBlockChainViewFromAwesomeMenu = ({ event, props }) => {
     viewBlockChainView(props);
   };
-  const exportInvoices = () => {
-    setFormState((formState) => ({
-      ...formState,
-      filter: null,
-    }));    
+  const exportInvoices = () => {   
+    let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     setExportToFusionModel(true);
     axios({
       method: "post",
@@ -663,7 +660,12 @@ export default function FilesList(props) {
       },
     })
       .then((response) => {
+        setFormState((formState) => ({
+          ...formState,
+          filter: null,
+        })); 
         setSelected([]);
+        getMyFiles(userDetail, false);
       }).catch((err)=>{
         console.log(err);
       })
@@ -1049,7 +1051,7 @@ export default function FilesList(props) {
                         {
                           Header: (
                             <Checkbox
-                              checked={filesData.length == selected.length}
+                              checked={filesData.length == selected.length && selected.length >= 0}
                               onChange={() => select()}
                             />
                           ),

@@ -13,7 +13,7 @@ var vendorRoutes = [
     name: "Dashboard",
     rtlName: "لوحة القيادة",
     icon: DashboardIcon,
-    component: ()=>{return('WELCOME TO VENDOR PORTAL')},
+    component: Dashboard,
     layout: "/vendor",
   },
   {
