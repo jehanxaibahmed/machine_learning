@@ -393,11 +393,11 @@ export default function FilesList(props) {
               {formatDateTime(prop.createdDate)}
             </MenuProvider>
           ),
-          dueDate: (
-            <MenuProvider data={prop} id="menu_id">
-              {formatDateTime(prop.dueDate)}
-            </MenuProvider>
-          ),
+          // dueDate: (
+          //   <MenuProvider data={prop} id="menu_id">
+          //     {formatDateTime(prop.dueDate)}
+          //   </MenuProvider>
+          // ),
           vendorName: (
             <MenuProvider data={prop} id="menu_id">
               {prop.vendorName}
@@ -649,7 +649,10 @@ export default function FilesList(props) {
     viewBlockChainView(props);
   };
   const exportInvoices = () => {
-    console.log(selected);
+    setFormState((formState) => ({
+      ...formState,
+      filter: null,
+    }));    
     setExportToFusionModel(true);
     axios({
       method: "post",

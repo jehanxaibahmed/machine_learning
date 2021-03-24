@@ -584,7 +584,7 @@ export default function FilesList(props) {
               ) : (
                 ""
               )}
-              {currentStatus.status == "rejected"  ? (
+              {currentStatus.status == "correctionRequired"  ? (
                 <Tooltip title="Edit" aria-label="edit">
                   <Button
                     justIcon
