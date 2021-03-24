@@ -393,11 +393,11 @@ export default function FilesList(props) {
               {formatDateTime(prop.createdDate)}
             </MenuProvider>
           ),
-          // dueDate: (
-          //   <MenuProvider data={prop} id="menu_id">
-          //     {formatDateTime(prop.dueDate)}
-          //   </MenuProvider>
-          // ),
+          dueDate: (
+            <MenuProvider data={prop} id="menu_id">
+              {formatDateTime(prop.dueDate)}
+            </MenuProvider>
+          ),
           vendorName: (
             <MenuProvider data={prop} id="menu_id">
               {prop.vendorName}
@@ -568,7 +568,7 @@ export default function FilesList(props) {
           files: formState.filter == null ?response.data.invoicesApproved:response.data,
           totalInvoices: formState.filter == null ?response.data.totalInvCount:formState.totalInvoices,
           paymentDue: formState.filter == null ?response.data.paymentDueCount:formState.paymentDue,
-          overDue: formState.filter == null ?response.data.paymentOverDueCountL:formState.overDue,
+          overDue: formState.filter == null ? response.data.paymentOverDueCount:formState.overDue,
           paymentInProcess: formState.filter == null ?response.data.paymentInProcessCount:formState.paymentInProcess,
         }))
         setFilesData(formState.filter == null ?response.data.invoicesApproved:response.data);
