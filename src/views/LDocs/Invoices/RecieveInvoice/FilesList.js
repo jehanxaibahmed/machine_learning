@@ -370,11 +370,11 @@ export default function FilesList(props) {
               {formatDateTime(prop.createdDate)}
             </MenuProvider>
           ),
-          date: (
-            <MenuProvider data={prop} id="menu_id">
-              {formatDateTime(prop.dueDate)}
-            </MenuProvider>
-          ),
+          // date: (
+          //   <MenuProvider data={prop} id="menu_id">
+          //     {formatDateTime(prop.dueDate)}
+          //   </MenuProvider>
+          // ),
           vendorName: (
             <MenuProvider data={prop} id="menu_id">
               {prop.vendorName}

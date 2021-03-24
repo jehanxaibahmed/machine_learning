@@ -651,20 +651,19 @@ export default function FilesList(props) {
   const exportInvoices = () => {
     console.log(selected);
     setExportToFusionModel(true);
-    // axios({
-    //   method: "post",
-    //   url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/export`,
-    //   data: selected,
-    //   headers: {
-    //     cooljwt: Token,
-    //   },
-    // })
-    //   .then((response) => {
-
-    //   }).catch((err)=>{
-    //     console.log(err);
-    //   })
-    setSelected([]);
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/exportInvoice`,
+      data: selected,
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then((response) => {
+        setSelected([]);
+      }).catch((err)=>{
+        console.log(err);
+      })
 
   }
   //Right Click Menu
