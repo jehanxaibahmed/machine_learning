@@ -368,7 +368,7 @@ export default function FilesList(props) {
   const setTableData = (response) => {
     setData(
       response.map((prop, index) => {
-        let isSelected = selected.includes(`${prop.invoiceId}-${prop.version}`);
+        let isSelected = selected.filter(s=> s.id == prop.invoiceId && s.version == prop.version && s.vendorId == prop.vendorId).length > 0 ? true : false;
         return {
           id: prop._id,
           invoiceId: prop.invoiceId,
@@ -611,26 +611,22 @@ export default function FilesList(props) {
         selectedInvoices = [];
       } else {
         filesData.map((file) => {
-          if (!selected.includes(`${file.invoiceId}-${file.version}`)) {
-            selectedInvoices.push(`${file.invoiceId}-${file.version}`);
+          if (selected.filter(s=> s.id == file.invoiceId && s.version == file.version && s.vendorId == file.vendorId).length < 1) {
+            selectedInvoices.push({id:file.invoiceId,version:file.version,vendorId:file.vendorId});
           }
         });
       }
     } else {
-      console.log("Select");
-      if (!selected.includes(`${invoice.invoiceId}-${invoice.version}`)) {
-        selectedInvoices.push(`${invoice.invoiceId}-${invoice.version}`);
+      if (selected.filter(s=> s.id == invoice.invoiceId && s.version == invoice.version && s.vendorId == invoice.vendorId).length < 1) {
+        selectedInvoices.push({id:invoice.invoiceId,version:invoice.version,vendorId:invoice.vendorId});
       } else {
-        const index = selectedInvoices.indexOf(
-          `${invoice.invoiceId}-${invoice.version}`
-        );
+        const index = selected.findIndex(s=> s.id == invoice.invoiceId && s.version == invoice.version && s.vendorId == invoice.vendorId);
         if (index > -1) {
           selectedInvoices.splice(index, 1);
         }
       }
     }
     setSelected(selectedInvoices);
-    console.log(selectedInvoices.length);
     setTableData(filesData);
   };
   React.useEffect(() => {
@@ -652,6 +648,25 @@ export default function FilesList(props) {
   const viewBlockChainViewFromAwesomeMenu = ({ event, props }) => {
     viewBlockChainView(props);
   };
+  const exportInvoices = () => {
+    console.log(selected);
+    setExportToFusionModel(true);
+    // axios({
+    //   method: "post",
+    //   url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/export`,
+    //   data: selected,
+    //   headers: {
+    //     cooljwt: Token,
+    //   },
+    // })
+    //   .then((response) => {
+
+    //   }).catch((err)=>{
+    //     console.log(err);
+    //   })
+    setSelected([]);
+
+  }
   //Right Click Menu
   const MyAwesomeMenu = () => (
     <Menu id="menu_id" theme={theme.dark} animation={animation.zoom}>
@@ -854,15 +869,15 @@ export default function FilesList(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title="show">
+                    <Tooltip title="All Invoices">
                       <IconButton
-                        style={formState.filter == 'totalInvCount' || null ? {background:'#9E2654', color:'white'}:{}}
+                        style={formState.filter == 'totalInvCount' ? {background:'#9E2654', color:'white'}:{}}
                         onClick={() =>
                           setFilter(1, { id: 0, val: "totalInvCount" })
                         }
                       >
                         <Typography varient="body2" component="h2">
-                          {formState.filter == 'totalInvCount' || null ? <CheckBoxIcon fontSize="large" />:
+                          {formState.filter == 'totalInvCount' ? <CheckBoxIcon fontSize="large" />:
                           <CheckBoxOutlineBlankIcon fontSize="large" />}
                         </Typography>
                       </IconButton>
@@ -1016,7 +1031,7 @@ export default function FilesList(props) {
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
-                    onClick={() => msgAlert("Working on this feature")}
+                    onClick={() => selected.length > 0 ? exportInvoices():msgAlert('Please Select a Invoice.')}
                   >
                     Export to Fusion ({selected.length})
                   </Button>
