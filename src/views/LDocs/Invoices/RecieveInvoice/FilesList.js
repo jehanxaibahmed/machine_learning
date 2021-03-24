@@ -284,8 +284,8 @@ export default function FilesList(props) {
           invoiceId: prop.invoiceId,
           status: (
             <MenuProvider data={prop} id="menu_id">
-              {isVendor ? (
-                currentStatus.status == "rejected" ? (
+              {/* {isVendor ? ( */}
+                {currentStatus.status == "rejected" ? (
                   <Tooltip title="REJECTED">
                     <div className="fileinput text-center">
                       <div className="thumbnail img-circle2">
@@ -352,7 +352,7 @@ export default function FilesList(props) {
                     </div>
                   </Tooltip>
                 )
-              ) : prop.markedAs == "unread" ? (
+              /* ) : prop.markedAs == "unread" ? (
                 <Chip
                   style={{ background: "#deb725", color: "#fff" }}
                   label="Pending"
@@ -363,7 +363,8 @@ export default function FilesList(props) {
                 <Chip color="secondary" label="Rejected" />
               ) : (
                 ""
-              )}
+              )} */
+              }
             </MenuProvider>
           ),
           createdDate: (
@@ -535,7 +536,7 @@ export default function FilesList(props) {
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
-              {prop.markedAs == "unread" && !isVendor ? (
+              {/* {prop.markedAs == "unread" && !isVendor ? (
                 <Tooltip title="Mark as Received" aria-label="received">
                   <Button
                     justIcon
@@ -550,8 +551,8 @@ export default function FilesList(props) {
                 </Tooltip>
               ) : (
                 ""
-              )}
-              {prop.approveStatus == "approved" && !isVendor ? (
+              )} */}
+              {/* {prop.approveStatus == "approved" && !isVendor ? (
                 <React.Fragment>
                   <Tooltip title="Initiate Payment" aria-label="initPayment">
                     <Button
@@ -564,8 +565,8 @@ export default function FilesList(props) {
                     >
                       <MonetizationOnIcon />
                     </Button>
-                  </Tooltip>
-                  {!prop.exported && !isVendor ? (
+                  </Tooltip> */}
+                  {/* {!prop.exported && !isVendor ? (
                     <Tooltip title="Export to Fusion" aria-label="export">
                       <Button
                         justIcon
@@ -581,10 +582,10 @@ export default function FilesList(props) {
                   ) : (
                     ""
                   )}
-                </React.Fragment>
+                 </React.Fragment>
               ) : (
                 ""
-              )}
+              )} */}
               {currentStatus.status == "correctionRequired"  ? (
                 <Tooltip title="Edit" aria-label="edit">
                   <Button
