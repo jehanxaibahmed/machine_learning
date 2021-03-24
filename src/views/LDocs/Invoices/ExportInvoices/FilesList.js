@@ -653,7 +653,7 @@ export default function FilesList(props) {
     setExportToFusionModel(true);
     axios({
       method: "post",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoices/exportInvoice`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/exportInvoices`,
       data: selected,
       headers: {
         cooljwt: Token,
