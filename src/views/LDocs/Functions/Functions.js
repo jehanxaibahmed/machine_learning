@@ -119,7 +119,7 @@ export const validateInvoice = (row, Token) => {
   return new Promise((res, rej) => {
     axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/validate-invoice/${row.invoiceId}-${row.version}`,
+      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/validate-invoice/${row.vendorId}-${row.invoiceId}-${row.version}`,
     })
       .then((blockchainRes) => {
         const blockchain = JSON.parse(blockchainRes.data.Record);
