@@ -226,7 +226,7 @@ export default function Horizentalteppers(props) {
         break;
         case "paymentInProcess":
           currentStatus = props.fileData.trackingStatus.paymentInProcess.status;
-          if (currentStatus) {
+          if (currentStatus && currentStatus !== 'inProgress') {
             setActiveStep(3);
           } else {
             setActiveStep(2);

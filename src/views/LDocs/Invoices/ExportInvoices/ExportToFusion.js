@@ -84,9 +84,9 @@ export default function ExportToFusion(props) {
   };
 
   React.useEffect(() => {
-      setTimeout(() => {
-        successAlert('Exported SuccessFully');
-      }, 3000);
+      // setTimeout(() => {
+      //   successAlert('Exported SuccessFully');
+      // }, 3000);
   }, []);
 
   return (
