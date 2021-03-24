@@ -80,7 +80,7 @@ import UnderReview_Invoice from "assets/img/statuses/Asset_3.png";
 import Approved_Invoice from "assets/img/statuses/Asset_5.png";
 import Rejected_Invoice from "assets/img/statuses/Asset_6.png";
 import Resubmit_Invoice from "assets/img/statuses/Asset_7.png";
-import Ready_Invoice from "assets/img/statuses/Asset_6.png";
+import Ready_Invoice from "assets/img/statuses/Asset_2.png";
 import Pending from "assets/img/statuses/Pending.png";
 import Success from "assets/img/statuses/Success.png";
 import Rejected from "assets/img/statuses/Rejected.png";
