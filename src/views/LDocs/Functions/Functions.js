@@ -128,8 +128,8 @@ export const validateInvoice = (row, Token) => {
       .then((invoiceRes) => {
         const invoice = invoiceRes.data.find(
           (inv) =>
-            inv.invoiceId == row.invoiceId,
-            inv.version == row.version,
+            inv.invoiceId == row.invoiceId &&
+            inv.version == row.version &&
             inv.invoiceHash == row.invoiceHash
         );
         axios({
