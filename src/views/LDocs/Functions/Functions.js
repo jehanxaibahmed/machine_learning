@@ -118,27 +118,27 @@ export const currentTracking = (trackingStatus) => {
 export const validateInvoice = (row, Token) => {
   return new Promise((res, rej) => {
     axios({
-      method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/validate-invoice/${row.vendorId}-${row.invoiceId}-${row.version}`,
+      method: "get", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceOrg/${row.organizationId}`,
+      data: { pagination: "1", page: "1" },
+      headers: {
+        cooljwt: Token,
+      },
     })
-      .then((blockchainRes) => {
-        const blockchain = JSON.parse(blockchainRes.data.Record);
+      .then((invoiceRes) => {
+        const invoice = invoiceRes.data.find(
+          (inv) =>
+            inv.invoiceId == row.invoiceId,
+            inv.version == row.version,
+            inv.invoiceHash == row.invoiceHash
+        );
         axios({
-          method: "get", //you can set what request you want to be
-          url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceOrg/${row.organizationId}`,
-          data: { pagination: "1", page: "1" },
-          headers: {
-            cooljwt: Token,
-          },
+          method: "get",
+          url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
         })
-          .then((invoiceRes) => {
-            console.log(invoiceRes);
-            if (invoiceRes.data !== null || undefined) {
-              const invoice = invoiceRes.data.find(
-                (invoice) =>
-                  invoice.invoiceId == row.invoiceId &&
-                  invoice.version == row.version
-              );
+          .then((blockchainRes) => {
+            const blockchain = JSON.parse(blockchainRes.data.Record);
+            if (invoice !== null || undefined) {
               let isInvoiceDateSame;
               let isVendorIDSame;
               let isItemCountSame;
