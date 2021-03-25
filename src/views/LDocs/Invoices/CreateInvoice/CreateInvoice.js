@@ -122,7 +122,7 @@ export default function CreateInvoice(props) {
     selectedVendor: null,
     values: {
       invoiceDate: getDateFormet(today),
-      InvoiceNumber: "INV-00",
+      InvoiceNumber: "INV-",
       dueDate: getDateFormet(duedate),
       poNumber: "",
       paymentTerms: "NET-",
@@ -678,7 +678,7 @@ export default function CreateInvoice(props) {
         ...formState,
         values: {
           ...formState.values,
-          InvoiceNumber: `INV-00${formState.values.selectedVendor.invoiceCount +
+          InvoiceNumber: `INV-${formState.values.selectedVendor.invoiceCount +
             1}`,
         },
       }));
@@ -729,7 +729,7 @@ export default function CreateInvoice(props) {
               ...formState,
               values: {
                 ...formState.values,
-                InvoiceNumber: `INV-00${response.data.result.invoiceCount + 1}`,
+                InvoiceNumber: `INV-${response.data.result.invoiceCount + 1}`,
               },
             }));
           })
@@ -1248,7 +1248,7 @@ export default function CreateInvoice(props) {
               selectedOrg: null,
               values: {
                 invoiceDate: getDateFormet(today),
-                InvoiceNumber: "INV-00",
+                InvoiceNumber: "INV-",
                 dueDate: getDateFormet(duedate),
                 poNumber: "",
                 itemName: "",

@@ -176,21 +176,25 @@ export default function Horizentalteppers(props) {
   const [steps, setSteps] = React.useState([
     {
       label: props.fileData.trackingStatus.received.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.received.status == 'correctionRequired' ? "Correction Required" :"Entered",
+      remarks:props.fileData.trackingStatus.received.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.received.status == 'correctionRequired' ? "Correction Required" :"Invoice is Entered in System",
       status: props.fileData.trackingStatus.received.status || null,
       comments: props.fileData.trackingStatus.received.comment || null,
     },
     {
-      label: props.fileData.trackingStatus.underReview.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underReview.status == "correctionRequired" ? "Correction Required" : "Under Review",
+      label: props.fileData.trackingStatus.underReview.status == 'completed' ? "Reviewed" :  "Under Review",
+      remarks: props.fileData.trackingStatus.underReview.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underReview.status == "correctionRequired" ? "Correction Required" :props.fileData.trackingStatus.underReview.status == "completed" ? "Invoice is Reviewed Successfully" : "Awaiting Review Process",
       status: props.fileData.trackingStatus.underReview.status || null,
       comments: props.fileData.trackingStatus.underReview.comment || null,
     },
     {
       label: props.fileData.trackingStatus.underApprove.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underApprove.status == "correctionRequired" ? "Correction Required" : "Under Approval",
+      remarks: props.fileData.trackingStatus.underApprove.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underApprove.status == "correctionRequired" ? "Correction Required" : props.fileData.trackingStatus.underApprove.status == "completed" ? "Invoice is Approved Successfully" : "Awaiting Approval Process",
       status: props.fileData.trackingStatus.underApprove.status || null,
       comments: props.fileData.trackingStatus.underApprove.comment || null,
     },
     {
       label: "Payment In Process",
+      remarks: props.fileData.trackingStatus.paymentInProcess.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.paymentInProcess.status == "correctionRequired" ? "Correction Required" : props.fileData.trackingStatus.paymentInProcess.status == "compeleted" ? "compeleted" : "Awaiting Completion Workflow",
       status: props.fileData.trackingStatus.paymentInProcess.status || null,
       comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
     },
@@ -259,7 +263,7 @@ export default function Horizentalteppers(props) {
           >
             <Step>
               <StepLabel StepIconComponent={ColorlibStepIcon}>
-                {step.label}
+                {step.label}<br/>{step.remarks}
               </StepLabel>
             </Step>
           </Tooltip>
