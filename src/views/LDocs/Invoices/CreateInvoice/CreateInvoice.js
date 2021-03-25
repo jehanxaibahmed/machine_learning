@@ -2088,10 +2088,12 @@ export default function CreateInvoice(props) {
                                 justifyContent: "left",
                               }}
                             >
-                              <Person
+                             {formState.values.selectedVendor !== '' || null || undefined && formState.values.selectedVendor.level1.logoUrl ? 
+                              <img src={formState.values.selectedVendor.level1.logoUrl} style={{width:'100px',marginLeft:10}} />
+                              :<Person
                                 fontSize="large"
                                 style={{ width: "100%", height: "100%" }}
-                              />
+                              />}
                             </GridItem>
                             <GridItem
                               xs="9"

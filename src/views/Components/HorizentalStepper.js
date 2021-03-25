@@ -187,7 +187,7 @@ export default function Horizentalteppers(props) {
       comments: props.fileData.trackingStatus.underReview.comment || null,
     },
     {
-      label: props.fileData.trackingStatus.underApprove.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underApprove.status == "correctionRequired" ? "Correction Required" : "Under Approval",
+      label: props.fileData.trackingStatus.underApprove.status == 'rejected' ? "Rejected"  : "Under Approval",
       remarks: props.fileData.trackingStatus.underApprove.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underApprove.status == "correctionRequired" ? "Correction Required" : props.fileData.trackingStatus.underApprove.status == "completed" ? "Invoice is Approved Successfully" : "Awaiting Approval Process",
       status: props.fileData.trackingStatus.underApprove.status || null,
       comments: props.fileData.trackingStatus.underApprove.comment || null,
