@@ -443,7 +443,7 @@ class Sidebar extends React.Component {
                     />
                   </NavLink>
                 </ListItem>
-                <ListItem className={classes.collapseItem}>
+                {/* <ListItem className={classes.collapseItem}>
                   <NavLink
                     to="/auth/login"
                     className={
@@ -460,7 +460,7 @@ class Sidebar extends React.Component {
                       className={collapseItemText}
                     />
                   </NavLink>
-                </ListItem>
+                </ListItem> */}
               </List>
             </Collapse>
           </ListItem>
