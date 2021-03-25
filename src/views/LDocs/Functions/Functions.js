@@ -68,7 +68,7 @@ export function addZeroes(num) {
 }
 
 export const formatDateTime = (date) => {
-  return dateFormat(date, "dd/mm/yyyy hh:mm:ss");
+  return dateFormat(date, "dd/mm/yyyy hh:mm:ss TT");
 };
 
 export const currentTracking = (trackingStatus) => {
