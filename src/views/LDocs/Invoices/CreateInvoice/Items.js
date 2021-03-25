@@ -236,7 +236,7 @@ export default function Items(props) {
                           handleChange(event);
                         }}
                         type="number"
-                        value={formState.values.discount}
+                        value={formState.values.discount || 0.00}
                         className={classes.textField}
                       />
                     </StyledTableCell>
@@ -285,7 +285,7 @@ export default function Items(props) {
                       </Tooltip>
                     </StyledTableCell>
                   </StyledTableRow>
-                  <StyledTableRow key={"Item"}>
+                  {/* <StyledTableRow key={"Item"}>
                     <StyledTableCell colSpan="2">
                       <TextField
                         fullWidth={true}
@@ -387,7 +387,7 @@ export default function Items(props) {
                     </Tooltip>
                     </StyledTableCell>
                     :""}
-                  </StyledTableRow>
+                  </StyledTableRow> */}
                   <StyledTableRow key={"AddingItem1"}>
                     <StyledTableCell colSpan="8">
                       <TextField
@@ -565,7 +565,7 @@ export default function Items(props) {
                         handleChange(event);
                       }}
                       type="number"
-                      value={formState.values.discount || ""}
+                      value={formState.values.discount || 0.00}
                       className={classes.textField}
                     />
                   </StyledTableCell>
@@ -614,7 +614,7 @@ export default function Items(props) {
                     </Tooltip>
                   </StyledTableCell>
                 </StyledTableRow>
-                <StyledTableRow key={"Item"}>
+                {/* <StyledTableRow key={"Item"}>
                   <StyledTableCell colSpan="2">
                     <TextField
                       fullWidth={true}
@@ -714,7 +714,7 @@ export default function Items(props) {
                     </Tooltip>
                     </StyledTableCell>
                     :""}
-                </StyledTableRow>
+                </StyledTableRow> */}
                 <StyledTableRow key={"AddingItem1"}>
                   <StyledTableCell colSpan="8">
                     <TextField

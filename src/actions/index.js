@@ -56,7 +56,22 @@ export const getUserDataAction = () => {
         headers: { cooljwt: Token },
       })
         .then((response) => {
-          if (typeof response.data.isVendor.level1 != "undefined") {
+          console.log(response);
+           if (typeof response.data.userDetail !== "undefined" || undefined || null) {
+            if (
+              response.data.userDetail.level1.profileImg == "" ||
+              typeof response.data.userDetail.level1.profileImg == "undefined"
+            ) {
+              response.data.userDetail.level1.profileImg = defaultAvatar;
+              dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
+            } else {
+              var base64Flag = `data:${response.data.userDetail.level1.profileImgT};base64,`;
+              let profileImage = base64Flag + response.data.userDetail.level1.profileImg;
+              response.data.level1.profileImg = profileImage;
+              dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
+            }
+          } 
+          else if (typeof response.data.isVendor !== "undefined" || undefined || null) {
             if (
               response.data.isVendor.level1.profileImg == "" ||
               typeof response.data.isVendor.level1.profileImg == "undefined"
@@ -70,20 +85,7 @@ export const getUserDataAction = () => {
               dispatch({ type: "GET_USER_DATA", response: response.data.isVendor });
             }
           }
-          else if (typeof response.data.userDetail.level1 != "undefined") {
-            if (
-              response.data.userDetail.level1.profileImg == "" ||
-              typeof response.data.userDetail.level1.profileImg == "undefined"
-            ) {
-              response.data.userDetail.level1.profileImg = defaultAvatar;
-              dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
-            } else {
-              var base64Flag = `data:${response.data.userDetail.level1.profileImgT};base64,`;
-              let profileImage = base64Flag + response.data.userDetail.level1.profileImg;
-              response.data.level1.profileImg = profileImage;
-              dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
-            }
-          } else {
+          else {
             let data = {
               level1: {
                 profileImg: defaultAvatar,
