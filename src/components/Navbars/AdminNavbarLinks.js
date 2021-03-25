@@ -42,6 +42,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { formatDateTime } from "../../views/LDocs/Functions/Functions";
 import jwt from "jsonwebtoken";
+import { setToken } from "actions";
 const useStyles = makeStyles(styles);
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -97,6 +98,7 @@ export default function HeaderLinks(props) {
   };
   const handleLogoutUser = () => {
     localStorage.clear();
+    dispatch(setToken(null));
     dispatch(logoutUserAction());
     setLogoutCheck(true);
   };

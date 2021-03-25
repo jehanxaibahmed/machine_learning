@@ -586,7 +586,7 @@ export default function FilesList(props) {
               ) : (
                 ""
               )} */}
-              {prop.workflowStatus == "correctionRequired"  ? (
+              {prop.workFlowStatus == "correctionRequired"  ? (
                 <Tooltip title="Edit" aria-label="edit">
                   <Button
                     justIcon
