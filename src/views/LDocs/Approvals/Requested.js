@@ -481,7 +481,7 @@ export default function ApprovalRequested() {
                                 </div>
                               </div>
                             </MenuItem>
-                            <MenuItem value="rejectedFinal">
+                            <MenuItem value="rejected">
                               MARK AS REJECTED&nbsp;&nbsp;
                               <div className="fileinput text-center">
                                 <div className="thumbnail img-circle3">

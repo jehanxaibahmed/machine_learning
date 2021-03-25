@@ -499,7 +499,7 @@ const goBack = () => {
                                 </div>
                               </div>
                             </MenuItem>
-                            <MenuItem value="rejectedFinal">
+                            <MenuItem value="rejected">
                               MARK AS REJECT&nbsp;&nbsp;
                               <div className="fileinput text-center">
                                 <div className="thumbnail img-circle3">
