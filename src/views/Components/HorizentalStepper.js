@@ -263,7 +263,10 @@ export default function Horizentalteppers(props) {
           >
             <Step>
               <StepLabel StepIconComponent={ColorlibStepIcon}>
-                {step.label}<br/>{step.remarks}
+                <div>
+                {step.label}<br/>
+                <small style={{color:step.remarks ==  'Correction Required' ? 'orange' : step.remarks ==  'Rejected' ? "red" : "inherted"}}>{step.remarks}</small>
+                </div>
               </StepLabel>
             </Step>
           </Tooltip>
