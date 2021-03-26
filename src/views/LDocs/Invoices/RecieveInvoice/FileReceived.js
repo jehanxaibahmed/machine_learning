@@ -217,6 +217,14 @@ export default function FileReceived(props) {
                                 </div>
                               </div>
                             </MenuItem>
+                            <MenuItem value="correctionRequired">
+                              CORRECTION REQUIRED&nbsp;&nbsp;
+                              <div className="fileinput text-center">
+                                <div className="thumbnail img-circle3">
+                                  <img src={Pending} alt={"MARK AS REJECT"} />
+                                </div>
+                              </div>
+                            </MenuItem>
                             <MenuItem value="rejected">
                               MARK AS REJECT&nbsp;&nbsp;
                               <div className="fileinput text-center">

@@ -13,10 +13,10 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import OpenInBrowserIcon from "@material-ui/icons/OpenInBrowser";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
 import { Tooltip } from "@material-ui/core";
-import DeviceHubIcon from '@material-ui/icons/DeviceHub';
-import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import MoneyIcon from '@material-ui/icons/Money';
+import DeviceHubIcon from "@material-ui/icons/DeviceHub";
+import SystemUpdateIcon from "@material-ui/icons/SystemUpdate";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import MoneyIcon from "@material-ui/icons/Money";
 
 const useQontoStepIconStyles = makeStyles({
   root: {
@@ -128,6 +128,7 @@ function ColorlibStepIcon(props) {
     3: <LocalAtmIcon />,
     4: <QueryBuilderIcon />,
     5: <MoneyIcon />,
+    5: <MoneyIcon />,
   };
 
   return (
@@ -175,26 +176,88 @@ export default function Horizentalteppers(props) {
   const [activeStep, setActiveStep] = React.useState(null);
   const [steps, setSteps] = React.useState([
     {
-      label: props.fileData.trackingStatus.received.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.received.status == 'correctionRequired' ? "Correction Required" :"Entered",
-      remarks:props.fileData.trackingStatus.received.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.received.status == 'correctionRequired' ? "Correction Required" :"Invoice is Entered in System",
+      label: "Invoice Creation",
+      remarks:
+        props.fileData.trackingStatus.received.status == "rejected"
+          ? "Rejected"
+          : props.fileData.trackingStatus.received.status ==
+            "correctionRequired"
+          ? "Correction Required"
+          : props.fileData.trackingStatus.received.status == "completed"
+          ? "Completed"
+          :props.fileData.trackingStatus.received.status ==
+            "inProgress"
+          ?
+          "In Progress": "Waiting",
       status: props.fileData.trackingStatus.received.status || null,
       comments: props.fileData.trackingStatus.received.comment || null,
     },
     {
-      label: props.fileData.trackingStatus.underReview.status == 'completed' ? "Reviewed" :  "Under Review",
-      remarks: props.fileData.trackingStatus.underReview.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underReview.status == "correctionRequired" ? "Correction Required" :props.fileData.trackingStatus.underReview.status == "completed" ? "Invoice is Reviewed Successfully" : "Awaiting Review Process",
+      label: "Initial Review",
+      remarks:
+        props.fileData.trackingStatus.initialReview.status == "rejected"
+          ? "Rejected"
+          : props.fileData.trackingStatus.initialReview.status ==
+            "correctionRequired"
+          ? "Correction Required"
+          : props.fileData.trackingStatus.initialReview.status == "completed"
+          ? "Completed"
+          :props.fileData.trackingStatus.initialReview.status ==
+          "inProgress"
+        ?
+        "In Progress": "Waiting",
+      status: props.fileData.trackingStatus.initialReview.status || null,
+      comments: props.fileData.trackingStatus.initialReview.comment || null,
+    },
+    {
+      label: "Account Review",
+      remarks:
+        props.fileData.trackingStatus.underReview.status == "rejected"
+          ? "Rejected"
+          : props.fileData.trackingStatus.underReview.status ==
+            "correctionRequired"
+          ? "Correction Required"
+          : props.fileData.trackingStatus.underReview.status == "completed"
+          ? "Completed"
+          :props.fileData.trackingStatus.underReview.status ==
+          "inProgress"
+        ?
+        "In Progress": "Waiting",
       status: props.fileData.trackingStatus.underReview.status || null,
       comments: props.fileData.trackingStatus.underReview.comment || null,
     },
     {
-      label: props.fileData.trackingStatus.underApprove.status == 'rejected' ? "Rejected"  : "Under Approval",
-      remarks: props.fileData.trackingStatus.underApprove.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.underApprove.status == "correctionRequired" ? "Correction Required" : props.fileData.trackingStatus.underApprove.status == "completed" ? "Invoice is Approved Successfully" : "Awaiting Approval Process",
+      label: "Acccount Approval",
+      remarks:
+        props.fileData.trackingStatus.underApprove.status == "rejected"
+          ? "Rejected"
+          : props.fileData.trackingStatus.underApprove.status ==
+            "correctionRequired"
+          ? "Correction Required"
+          : props.fileData.trackingStatus.underApprove.status == "completed"
+          ? "Completed"
+          :props.fileData.trackingStatus.underApprove.status ==
+          "inProgress"
+        ?
+        "In Progress": "Waiting",
       status: props.fileData.trackingStatus.underApprove.status || null,
       comments: props.fileData.trackingStatus.underApprove.comment || null,
     },
     {
-      label: "Payment In Process",
-      remarks: props.fileData.trackingStatus.paymentInProcess.status == 'rejected' ? "Rejected" : props.fileData.trackingStatus.paymentInProcess.status == "correctionRequired" ? "Correction Required" : props.fileData.trackingStatus.paymentInProcess.status == "compeleted" ? "compeleted" : "Awaiting Completion Workflow",
+      label: "Payment",
+      remarks:
+        props.fileData.trackingStatus.paymentInProcess.status == "rejected"
+          ? "Rejected"
+          : props.fileData.trackingStatus.paymentInProcess.status ==
+            "correctionRequired"
+          ? "Correction Required"
+          : props.fileData.trackingStatus.paymentInProcess.status ==
+            "compeleted"
+          ? "compeleted"
+          :props.fileData.trackingStatus.paymentInProcess.status ==
+          "inProgress"
+        ?
+        "In Progress": "Waiting",
       status: props.fileData.trackingStatus.paymentInProcess.status || null,
       comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
     },
@@ -210,42 +273,48 @@ export default function Horizentalteppers(props) {
     switch (props.fileData.trackingStatus.current_status) {
       case "received":
         currentStatus = props.fileData.trackingStatus.received.status;
-          setActiveStep(0);
+        setActiveStep(0);
         break;
-      case "underReview":
-        currentStatus = props.fileData.trackingStatus.underReview.status;
-        if (currentStatus) {
+      case "initialReview":
+        currentStatus = props.fileData.trackingStatus.initialReview.status;
+        if (currentStatus && currentStatus !== "correctionRequired") {
           setActiveStep(1);
         } else {
           setActiveStep(0);
         }
         break;
-      case "underApprove":
-        currentStatus = props.fileData.trackingStatus.underApprove.status;
-        if (currentStatus) {
+      case "underReview":
+        currentStatus = props.fileData.trackingStatus.underReview.status;
+        if (currentStatus && currentStatus !== "correctionRequired") {
           setActiveStep(2);
         } else {
           setActiveStep(1);
         }
         break;
-        case "paymentInProcess":
-          currentStatus = props.fileData.trackingStatus.paymentInProcess.status;
-          if (currentStatus && currentStatus !== 'inProgress') {
-            setActiveStep(3);
-          } else {
-            setActiveStep(2);
-          }
-          break;
-          // case "paid":
-          //   currentStatus = props.fileData.trackingStatus.paid.status;
-          //   if (currentStatus) {
-          //     setActiveStep(4);
-          //   } else {
-          //     setActiveStep(3);
-          //   }
-          //   break;
-      
-
+      case "underApprove":
+        currentStatus = props.fileData.trackingStatus.underApprove.status;
+        if (currentStatus && currentStatus !== "correctionRequired") {
+          setActiveStep(3);
+        } else {
+          setActiveStep(2);
+        }
+        break;
+      case "paymentInProcess":
+        currentStatus = props.fileData.trackingStatus.paymentInProcess.status;
+        if (currentStatus && currentStatus !== "correctionRequired") {
+          setActiveStep(4);
+        } else {
+          setActiveStep(3);
+        }
+        break;
+      // case "paid":
+      //   currentStatus = props.fileData.trackingStatus.paid.status;
+      //   if (currentStatus) {
+      //     setActiveStep(4);
+      //   } else {
+      //     setActiveStep(3);
+      //   }
+      //   break;
     }
   }, []);
 
@@ -264,8 +333,20 @@ export default function Horizentalteppers(props) {
             <Step>
               <StepLabel StepIconComponent={ColorlibStepIcon}>
                 <div>
-                {step.label}<br/>
-                <small style={{color:step.remarks ==  'Correction Required' ? 'orange' : step.remarks ==  'Rejected' ? "red" : "inherted"}}>{step.remarks}</small>
+                  {step.label}
+                  <br />
+                  <small
+                    style={{
+                      color:
+                        step.remarks == "Correction Required"
+                          ? "orange"
+                          : step.remarks == "Rejected"
+                          ? "red"
+                          : "inherted",
+                    }}
+                  >
+                    {step.remarks}
+                  </small>
                 </div>
               </StepLabel>
             </Step>

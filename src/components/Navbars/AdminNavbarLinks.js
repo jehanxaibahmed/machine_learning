@@ -40,9 +40,10 @@ import styles from "assets/jss/material-dashboard-pro-react/components/adminNavb
 import DeleteRecord from "../../views/LDocs/DeleteRecords/DeleteRecord";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { formatDateTime } from "../../views/LDocs/Functions/Functions";
+import DeviceUUID,{ formatDateTime } from "../../views/LDocs/Functions/Functions";
 import jwt from "jsonwebtoken";
 import { setToken } from "actions";
+let uuid = new DeviceUUID().get();
 const useStyles = makeStyles(styles);
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -97,10 +98,23 @@ export default function HeaderLinks(props) {
     setOpenProfile(null);
   };
   const handleLogoutUser = () => {
-    localStorage.clear();
-    dispatch(setToken(null));
-    dispatch(logoutUserAction());
-    setLogoutCheck(true);
+     axios({
+      method: "delete", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/user/deleteUserFcm`,
+      data: {
+        deviceId:uuid
+      },
+      headers: {
+        cooljwt: Token,
+      },
+    }).then((res)=>{
+      localStorage.clear();
+      dispatch(setToken(null));
+      dispatch(logoutUserAction());
+      setLogoutCheck(true);
+    }).catch((err)=>{
+      console.log(err);
+    });
   };
   const classes = useStyles();
   const { rtlActive } = props;

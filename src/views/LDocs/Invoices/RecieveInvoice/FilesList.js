@@ -312,7 +312,7 @@ export default function FilesList(props) {
                     </div>
                   </Tooltip>
                 ) : currentStatus.val == 1 ? (
-                  <Tooltip title="RECEIVED">
+                  <Tooltip title="UNDER INITIAL REVIEW">
                     <div className="fileinput text-center">
                       <div className="thumbnail img-circle2">
                         <img src={Recieved_Invoice} alt="recieved" />
@@ -536,7 +536,7 @@ export default function FilesList(props) {
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
-              {/* {prop.markedAs == "unread" && !isVendor ? (
+              {!prop.initWorkFLow && !isVendor && prop.markedAs == 'unread' ? (
                 <Tooltip title="Mark as Received" aria-label="received">
                   <Button
                     justIcon
@@ -551,7 +551,7 @@ export default function FilesList(props) {
                 </Tooltip>
               ) : (
                 ""
-              )} */}
+              )}
               {/* {prop.approveStatus == "approved" && !isVendor ? (
                 <React.Fragment>
                   <Tooltip title="Initiate Payment" aria-label="initPayment">

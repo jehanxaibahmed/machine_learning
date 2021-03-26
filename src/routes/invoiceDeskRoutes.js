@@ -71,15 +71,6 @@ var invoiceRoutes = [
       }
     ]
   },
-  {
-    path: "/my-requests",
-    name: "Review Tasks",
-    rtlName: "انهيار متعدد المستويات",
-    rtlMini: "ر",
-    component: Requested,
-    layout: "/invoice",
-    icon: AssignmentLateIcon,
-  },
     {
     path: "/verifier",
     name: "Tracking & Validate",
