@@ -77,7 +77,15 @@ export const currentTracking = (trackingStatus) => {
   switch (trackingStatus.current_status) {
     case "received":
       currentStatus = trackingStatus.received.status;
-      activeStep = { val: 1, status: currentStatus };
+      activeStep = { val: 0, status: currentStatus };
+      break;
+      case "initialReview":
+        currentStatus = trackingStatus.initialReview.status;
+      if (currentStatus) {
+        activeStep = { val: 1, status: currentStatus };
+      } else {
+        activeStep = { val: 0, status: currentStatus };
+      }
       break;
     case "underReview":
       currentStatus = trackingStatus.underReview.status;
