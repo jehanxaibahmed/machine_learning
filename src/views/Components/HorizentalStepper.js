@@ -17,6 +17,7 @@ import DeviceHubIcon from "@material-ui/icons/DeviceHub";
 import SystemUpdateIcon from "@material-ui/icons/SystemUpdate";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import MoneyIcon from "@material-ui/icons/Money";
+import FindInPageIcon from '@material-ui/icons/FindInPage';
 
 const useQontoStepIconStyles = makeStyles({
   root: {
@@ -124,11 +125,12 @@ function ColorlibStepIcon(props) {
 
   const icons = {
     1: <SystemUpdateIcon />,
-    2: <DeviceHubIcon />,
-    3: <LocalAtmIcon />,
-    4: <QueryBuilderIcon />,
-    5: <MoneyIcon />,
-    5: <MoneyIcon />,
+    2: <FindInPageIcon />,
+    3: <DeviceHubIcon />,
+    4: <LocalAtmIcon />,
+    5: <QueryBuilderIcon />,
+    6: <MoneyIcon />,
+    7: <MoneyIcon />,
   };
 
   return (
@@ -184,11 +186,11 @@ export default function Horizentalteppers(props) {
             "correctionRequired"
           ? "Correction Required"
           : props.fileData.trackingStatus.received.status == "completed"
-          ? "Completed"
+          ? "Done"
           :props.fileData.trackingStatus.received.status ==
             "inProgress"
           ?
-          "In Progress": "",
+          "In Process": "",
       status: props.fileData.trackingStatus.received.status || null,
       comments: props.fileData.trackingStatus.received.comment || null,
     },
@@ -201,11 +203,11 @@ export default function Horizentalteppers(props) {
             "correctionRequired"
           ? "Correction Required"
           : props.fileData.trackingStatus.initialReview.status == "completed"
-          ? "Completed"
+          ? "Done"
           :props.fileData.trackingStatus.initialReview.status ==
           "inProgress"
         ?
-        "In Progress": "",
+        "In Process": "",
       status: props.fileData.trackingStatus.initialReview.status || null,
       comments: props.fileData.trackingStatus.initialReview.comment || null,
     },
@@ -218,11 +220,11 @@ export default function Horizentalteppers(props) {
             "correctionRequired"
           ? "Correction Required"
           : props.fileData.trackingStatus.underReview.status == "completed"
-          ? "Completed"
+          ? "Done"
           :props.fileData.trackingStatus.underReview.status ==
           "inProgress"
         ?
-        "In Progress": "",
+        "In Process": "",
       status: props.fileData.trackingStatus.underReview.status || null,
       comments: props.fileData.trackingStatus.underReview.comment || null,
     },
@@ -234,12 +236,12 @@ export default function Horizentalteppers(props) {
           : props.fileData.trackingStatus.underApprove.status ==
             "correctionRequired"
           ? "Correction Required"
-          : props.fileData.trackingStatus.underApprove.status == "Completed"
-          ? "Completed"
+          : props.fileData.trackingStatus.underApprove.status == "completed"
+          ? "Done"
           :props.fileData.trackingStatus.underApprove.status ==
           "inProgress"
         ?
-        "In Progress": "",
+        "In Process": "",
       status: props.fileData.trackingStatus.underApprove.status || null,
       comments: props.fileData.trackingStatus.underApprove.comment || null,
     },
@@ -253,11 +255,11 @@ export default function Horizentalteppers(props) {
           ? "Correction Required"
           : props.fileData.trackingStatus.paymentInProcess.status ==
             "completed"
-          ? "Completed"
+          ? "Done"
           :props.fileData.trackingStatus.paymentInProcess.status ==
           "inProgress"
         ?
-        "In Progress": "",
+        "In Process": "",
       status: props.fileData.trackingStatus.paymentInProcess.status || null,
       comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
     },
@@ -342,10 +344,10 @@ export default function Horizentalteppers(props) {
                           ? "orange"
                           : step.remarks == "Rejected"
                           ? "red"
-                          : step.remarks == "Completed"
+                          : step.remarks == "Done"
                           ? "green" 
                           :
-                          step.remarks == "In Progress"
+                          step.remarks == "In Process"
                           ? "blue" 
                           :
                           "inherted",
