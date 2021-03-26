@@ -234,7 +234,7 @@ export default function Horizentalteppers(props) {
           : props.fileData.trackingStatus.underApprove.status ==
             "correctionRequired"
           ? "Correction Required"
-          : props.fileData.trackingStatus.underApprove.status == "completed"
+          : props.fileData.trackingStatus.underApprove.status == "Completed"
           ? "Completed"
           :props.fileData.trackingStatus.underApprove.status ==
           "inProgress"
@@ -252,8 +252,8 @@ export default function Horizentalteppers(props) {
             "correctionRequired"
           ? "Correction Required"
           : props.fileData.trackingStatus.paymentInProcess.status ==
-            "compeleted"
-          ? "compeleted"
+            "completed"
+          ? "Completed"
           :props.fileData.trackingStatus.paymentInProcess.status ==
           "inProgress"
         ?
@@ -342,7 +342,14 @@ export default function Horizentalteppers(props) {
                           ? "orange"
                           : step.remarks == "Rejected"
                           ? "red"
-                          : "inherted",
+                          : step.remarks == "Completed"
+                          ? "green" 
+                          :
+                          step.remarks == "In Progress"
+                          ? "blue" 
+                          :
+                          "inherted",
+                          
                     }}
                   >
                     {step.remarks}
