@@ -275,9 +275,12 @@ export default function FilesList(props) {
   const setTableData = (response) => {
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     let isVendor = userDetail.isVendor;
+    
     setData(
       response.reverse().map((prop, key) => {
         var currentStatus = currentTracking(prop.trackingStatus);
+        let isSubmitedByVendor = !prop.initWorkFLow && !isVendor && prop.markedAs == 'unread';
+        let isCorrectionRequiredInWorkflow = !isVendor && prop.workFlowStatus == "correctionRequired" ;
         console.log(currentStatus);
         return {
           id: prop._id,
@@ -536,8 +539,8 @@ export default function FilesList(props) {
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
-              {!prop.initWorkFLow && !isVendor && prop.markedAs == 'unread' ? (
-                <Tooltip title="Mark as Received" aria-label="received">
+              {isCorrectionRequiredInWorkflow || isSubmitedByVendor ? (
+                <Tooltip title={isSubmitedByVendor ? "Mark as Received" : isCorrectionRequiredInWorkflow ? "Send for Correction" : "Mark as Received"} aria-label="received">
                   <Button
                     justIcon
                     round
@@ -586,8 +589,24 @@ export default function FilesList(props) {
               ) : (
                 ""
               )} */}
-              {prop.workFlowStatus == "correctionRequired"  ? (
-                <Tooltip title="Edit" aria-label="edit">
+              {currentStatus.val == 1 && currentStatus.status == 'correctionRequired' && prop.createdByVendor && isVendor ? (
+                <Tooltip title="Re Submit" aria-label="edit">
+                  <Button
+                    justIcon
+                    round
+                    simple
+                    icon={EditOutlined}
+                    onClick={() => editSelectedInvoice(prop)}
+                    color="info"
+                  >
+                    <EditOutlined />
+                  </Button>
+                </Tooltip>
+              ) : (
+                ""
+              )}
+              {prop.workFlowStatus == "correctionRequired" && !prop.createdByVendor && !isVendor ? (
+                <Tooltip title="RE Submit" aria-label="edit">
                   <Button
                     justIcon
                     round
