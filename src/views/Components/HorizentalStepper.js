@@ -188,7 +188,7 @@ export default function Horizentalteppers(props) {
           :props.fileData.trackingStatus.received.status ==
             "inProgress"
           ?
-          "In Progress": "Waiting",
+          "In Progress": "",
       status: props.fileData.trackingStatus.received.status || null,
       comments: props.fileData.trackingStatus.received.comment || null,
     },
@@ -205,7 +205,7 @@ export default function Horizentalteppers(props) {
           :props.fileData.trackingStatus.initialReview.status ==
           "inProgress"
         ?
-        "In Progress": "Waiting",
+        "In Progress": "",
       status: props.fileData.trackingStatus.initialReview.status || null,
       comments: props.fileData.trackingStatus.initialReview.comment || null,
     },
@@ -222,7 +222,7 @@ export default function Horizentalteppers(props) {
           :props.fileData.trackingStatus.underReview.status ==
           "inProgress"
         ?
-        "In Progress": "Waiting",
+        "In Progress": "",
       status: props.fileData.trackingStatus.underReview.status || null,
       comments: props.fileData.trackingStatus.underReview.comment || null,
     },
@@ -239,7 +239,7 @@ export default function Horizentalteppers(props) {
           :props.fileData.trackingStatus.underApprove.status ==
           "inProgress"
         ?
-        "In Progress": "Waiting",
+        "In Progress": "",
       status: props.fileData.trackingStatus.underApprove.status || null,
       comments: props.fileData.trackingStatus.underApprove.comment || null,
     },
@@ -257,7 +257,7 @@ export default function Horizentalteppers(props) {
           :props.fileData.trackingStatus.paymentInProcess.status ==
           "inProgress"
         ?
-        "In Progress": "Waiting",
+        "In Progress": "",
       status: props.fileData.trackingStatus.paymentInProcess.status || null,
       comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
     },
