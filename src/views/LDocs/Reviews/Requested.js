@@ -85,10 +85,14 @@ export default function Requested() {
   }, [show]);
 
   const getInvoiceDetails = (row) => {
-     axios({
-       method: "get", //you can set what request you want to be
-       url:  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceOrg/${row.organizationId}`,
-       data: { pagination: "1", page: "1" },
+      axios({
+        method: "post", //you can set what request you want to be
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+        data: { 
+          invoiceId:row.invoiceId,
+          version:row.version,
+          vendorId:row.vendorId
+         },
        headers: {
          cooljwt: Token,
        },
@@ -97,7 +101,7 @@ export default function Requested() {
          console.log(row);
          console.log(response.data);
          if(response.data !== null || undefined){
-             const invoice = response.data.find(invoice=>invoice.invoiceId == row.invoiceId && invoice.version == row.version);
+             const invoice = response.data;
             setIsAdvanceView(false);
             setInvoiceData(invoice);
             setAnimateTable(false);

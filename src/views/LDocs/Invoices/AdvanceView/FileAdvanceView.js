@@ -159,6 +159,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
       headers: { cooljwt: Token },
     })
       .then((response) => {
+        console.log(response.data);
         setVersions(response.data);
       })
       .catch((err) => {
@@ -312,24 +313,24 @@ const FileAdvanceView = forwardRef((props, ref) => {
                     secondary={fileData.invoiceId}
                   />
                   <ListItemText
-                    primary="Discount"
-                    secondary={`${addZeroes(fileData.discountPercent)}%`}
-                  />
-                  <ListItemText
                     primary="Receipt Number"
                     secondary={fileData.receiptNumber || 0 }
                   />
                   <ListItemText
                     primary="Gross Amount"
-                    secondary={`${fileData.FC_currency.sign}${addZeroes(fileData.grossAmt)}`}
+                    secondary={`${fileData.FC_currency.sign} ${addZeroes(fileData.grossAmt)}`}
+                  />
+                  <ListItemText
+                    primary="Discount (-)"
+                    secondary={`${fileData.FC_currency.sign} ${addZeroes((fileData.discountPercent*fileData.grossAmt)/100)} (${fileData.discountPercent}%)`}
+                  />
+                   <ListItemText
+                    primary="Tax (+)"
+                    secondary={`${fileData.FC_currency.sign} ${addZeroes(fileData.taxAmt)} (${(fileData.taxAmt*100)/fileData.grossAmt}%)`}
                   />
                   <ListItemText
                     primary="Net Amount"
-                    secondary={`${fileData.FC_currency.sign}${addZeroes(fileData.netAmt)}`}
-                  />
-                  <ListItemText
-                    primary={`Created By ${fileData.createdByVendor ? 'Supplier' :'Requester'}`}
-                    secondary={`${fileData.createdBy}`}
+                    secondary={`${fileData.FC_currency.sign} ${addZeroes(fileData.netAmt)}`}
                   />
                 </List>
               </GridItem>
@@ -351,10 +352,11 @@ const FileAdvanceView = forwardRef((props, ref) => {
                       primary="Currency"
                       secondary={fileData.FC_currency.Name.toUpperCase()}
                     />
-                  <ListItemText
-                    primary="Created Date"
-                    secondary={formatDateTime(fileData.invoiceDate)}
+                   <ListItemText
+                    primary={`Created By`}
+                    secondary={`${fileData.createdBy} ${fileData.createdByVendor ? '(Supplier)' :'(Requester)'}`}
                   />
+
                 </List>
               </GridItem>
               <GridItem
