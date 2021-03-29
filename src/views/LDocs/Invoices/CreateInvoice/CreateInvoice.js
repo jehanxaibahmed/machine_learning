@@ -195,9 +195,14 @@ export default function CreateInvoice(props) {
       });
   };
   const getPos = () => {
+    const userDetails = jwt.decode(Token);
     axios({
-      method: "get", //you can set what request you want to be
+      method: "post", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+      data:{
+        organizationId: isVendor ? formState.selectedOrg._id : userDetails.orgDetail.organizationId,
+        vendorId: isVendor ? userDetails.id : formState.selectedVendor
+      },
       headers: {
         cooljwt: Token,
       },
@@ -626,6 +631,7 @@ export default function CreateInvoice(props) {
     if (error) {
       return false;
     } else {
+      getPos();
       setVendorModal(false);
     }
   };
@@ -757,7 +763,6 @@ export default function CreateInvoice(props) {
         });
     }
     getLookUp();
-    getPos();
   }, []);
   const setInvoice = () => {
     if (edit) {
@@ -819,13 +824,13 @@ export default function CreateInvoice(props) {
         };
         return a;
       });
-      console.log(fileData.attachments);
-      console.log(invoice_attachments);
 
       setFormState((formState) => ({
         ...formState,
         attachments: invoice_attachments,
       }));
+
+      getPos();
     }
   };
   const viewPO = () => {
@@ -2348,6 +2353,9 @@ export default function CreateInvoice(props) {
                             value={formState.values.poNumber || ""}
                             select
                           >
+                            <MenuItem key={''} value={'Without PO'}>
+                                WITHOUT PO    
+                            </MenuItem>
                             {pos.map((po, index) => (
                               <MenuItem key={index} value={po.poNumber}>
                                 {po.poNumber}

@@ -159,7 +159,6 @@ const FileAdvanceView = forwardRef((props, ref) => {
       headers: { cooljwt: Token },
     })
       .then((response) => {
-        console.log(response.data);
         setVersions(response.data);
       })
       .catch((err) => {
@@ -216,7 +215,6 @@ const FileAdvanceView = forwardRef((props, ref) => {
   //Step Content
   function getStepContent(stp, ind) {
     var step = JSON.parse(stp.Record);
-    console.log(step);
     return (
       <Card variant="outlined" style={{ padding: "10px", marginTop: -5 }}>
         <CardHeader>
@@ -313,6 +311,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                     secondary={fileData.invoiceId}
                   />
                   <ListItemText
+                    onClick={()=>console.log('SHOW Recipt NO')}
                     primary="Receipt Number"
                     secondary={fileData.receiptNumber || 0 }
                   />
@@ -345,6 +344,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                     secondary={fileData.vendorName}
                   />
                    <ListItemText
+                    onClick={()=>console.log('SHOW PO')}
                     primary="PO Number"
                     secondary={fileData.po || 0}
                   />
