@@ -35,7 +35,7 @@ import jwt from "jsonwebtoken";
 import { sendNotification, getNotification, sendEventLog } from "actions";
 import { useSelector, useDispatch } from "react-redux";
 import { DateRangePicker, DateRange } from "materialui-daterange-picker";
-import { filters } from "./GlobalFilters";
+import {filters} from "./FiltersJson";
 
 //Animation
 // style for this view
@@ -232,7 +232,7 @@ export default function Filter(props) {
                     }):
                     formState.statusOptions.map((o, index) => {
                       return (
-                        <MenuItem key={index} value={o._id}>
+                        <MenuItem key={index} value={o.id}>
                           {o.value}
                         </MenuItem>
                       )
@@ -350,75 +350,7 @@ export default function Filter(props) {
                     value={formState.values.amountTo || ""}
                    />
                 </GridItem>
-                <GridItem
-                  xs={12}
-                  sm={12}
-                  md={12}
-                  lg={12}
-                  style={{ marginTop: "10px" }}
-                >
-                  <Typography varient="h6" component="h2" >
-                      Payment Status 
-                  </Typography>
-                </GridItem>
-                <GridItem
-                  xs={12}
-                  sm={12}
-                  md={4}
-                  lg={4}
-                  style={{ marginTop: "10px", marginBottom: "10px" }}
-                >
-                   <FormControlLabel
-                      control={
-                        <Checkbox
-                        checked={formState.values.notPaid}
-                        onChange={handleChange}
-                        name="notPaid"
-                        color="primary"
-                        />
-                      }
-                      label="Pending"
-                    />
-                </GridItem>
-                <GridItem
-                  xs={12}
-                  sm={12}
-                  md={4}
-                  lg={4}
-                  style={{ marginTop: "10px", marginBottom: "10px" }}
-                >
-                   <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formState.values.partialPaid}
-                          onChange={handleChange}
-                          name="partialPaid"
-                          color="primary"
-                        />
-                      }
-                      label="Partial"
-                    />
-                </GridItem>
-                <GridItem
-                  xs={12}
-                  sm={12}
-                  md={4}
-                  lg={4}
-                  style={{ marginTop: "10px", marginBottom: "10px" }}
-                >
-                   <FormControlLabel
-                      control={
-                        <Checkbox
-                        checked={formState.values.fullPaid}
-                        onChange={handleChange}
-                        name="fullPaid"
-                        color="primary"
-                        />
-                      }
-                      label="Full"
-                    />
-                </GridItem>
-               
+
               </GridContainer>
               <span style={{ float: "right", marginTop:30 }}>
                 <React.Fragment>

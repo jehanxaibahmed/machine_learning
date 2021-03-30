@@ -2,7 +2,7 @@ import React from "react";
 // react component for creating dynamic tables
 import ReactTable from "react-table";
 
-import { filters } from "./GlobalFilters";
+import { filters } from "./FiltersJson";
 
 import Iframe from "react-iframe";
 
@@ -275,12 +275,14 @@ export default function FilesList(props) {
   const setTableData = (response) => {
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     let isVendor = userDetail.isVendor;
-    
+
     setData(
       response.reverse().map((prop, key) => {
         var currentStatus = currentTracking(prop.trackingStatus);
-        let isSubmitedByVendor = !prop.initWorkFLow && !isVendor && prop.markedAs == 'unread';
-        let isCorrectionRequiredInWorkflow = !isVendor && prop.workFlowStatus == "correctionRequired" ;
+        let isSubmitedByVendor =
+          !prop.initWorkFLow && !isVendor && prop.markedAs == "unread";
+        let isCorrectionRequiredInWorkflow =
+          !isVendor && prop.workFlowStatus == "correctionRequired";
         console.log(currentStatus);
         return {
           id: prop._id,
@@ -288,73 +290,71 @@ export default function FilesList(props) {
           status: (
             <MenuProvider data={prop} id="menu_id">
               {/* {isVendor ? ( */}
-                {currentStatus.status == "rejected" ? (
-                  <Tooltip title="REJECTED">
-                    <div className="fileinput text-center">
-                      <div className="thumbnail img-circle2">
-                        <img src={Rejected_Invoice} alt="rejected" />
-                      </div>
+              {currentStatus.status == "rejected" ? (
+                <Tooltip title="REJECTED">
+                  <div className="fileinput text-center">
+                    <div className="thumbnail img-circle2">
+                      <img src={Rejected_Invoice} alt="rejected" />
                     </div>
-                  </Tooltip>
-                ) :
-                currentStatus.status == "correctionRequired" ? (
-                  <Tooltip title="CORRECTION REQUIRED">
-                    <div className="fileinput text-center">
-                      <div className="thumbnail img-circle2">
-                        <img src={Resubmit_Invoice} alt="resubmit" />
-                      </div>
+                  </div>
+                </Tooltip>
+              ) : currentStatus.status == "correctionRequired" ? (
+                <Tooltip title="CORRECTION REQUIRED">
+                  <div className="fileinput text-center">
+                    <div className="thumbnail img-circle2">
+                      <img src={Resubmit_Invoice} alt="resubmit" />
                     </div>
-                  </Tooltip>
-                ) :
-                currentStatus.val == 0 ? (
-                  <Tooltip title="PENDING">
-                    <div className="fileinput text-center">
-                      <div className="thumbnail img-circle2">
-                        <img src={Pending_Invoice} alt="pending" />
-                      </div>
+                  </div>
+                </Tooltip>
+              ) : currentStatus.val == 0 ? (
+                <Tooltip title="PENDING">
+                  <div className="fileinput text-center">
+                    <div className="thumbnail img-circle2">
+                      <img src={Pending_Invoice} alt="pending" />
                     </div>
-                  </Tooltip>
-                ) : currentStatus.val == 1 ? (
-                  <Tooltip title="UNDER INITIAL REVIEW">
-                    <div className="fileinput text-center">
-                      <div className="thumbnail img-circle2">
-                        <img src={Recieved_Invoice} alt="recieved" />
-                      </div>
+                  </div>
+                </Tooltip>
+              ) : currentStatus.val == 1 ? (
+                <Tooltip title="UNDER INITIAL REVIEW">
+                  <div className="fileinput text-center">
+                    <div className="thumbnail img-circle2">
+                      <img src={Recieved_Invoice} alt="recieved" />
                     </div>
-                  </Tooltip>
-                ) : currentStatus.val == 2 ? (
-                  <Tooltip title="UNDER REVIEW">
-                    <div className="fileinput text-center">
-                      <div className="thumbnail img-circle2">
-                        <img src={UnderReview_Invoice} alt="underreview" />
-                      </div>
+                  </div>
+                </Tooltip>
+              ) : currentStatus.val == 2 ? (
+                <Tooltip title="UNDER REVIEW">
+                  <div className="fileinput text-center">
+                    <div className="thumbnail img-circle2">
+                      <img src={UnderReview_Invoice} alt="underreview" />
                     </div>
-                  </Tooltip>
-                ) : currentStatus.val == 3 ? (
-                  <Tooltip title="UNDER APPROVAL">
-                    <div className="fileinput text-center">
-                      <div className="thumbnail img-circle2">
-                        <img src={Approved_Invoice} alt="approved" />
-                      </div>
+                  </div>
+                </Tooltip>
+              ) : currentStatus.val == 3 ? (
+                <Tooltip title="UNDER APPROVAL">
+                  <div className="fileinput text-center">
+                    <div className="thumbnail img-circle2">
+                      <img src={Approved_Invoice} alt="approved" />
                     </div>
-                  </Tooltip>
-                ) : currentStatus.val == 4 ? (
-                  <Tooltip title="DONE">
-                    <div className="fileinput text-center">
-                      <div className="thumbnail img-circle2">
-                        <img src={Ready_Invoice} alt="ready" />
-                      </div>
+                  </div>
+                </Tooltip>
+              ) : currentStatus.val == 4 ? (
+                <Tooltip title="DONE">
+                  <div className="fileinput text-center">
+                    <div className="thumbnail img-circle2">
+                      <img src={Ready_Invoice} alt="ready" />
                     </div>
-                  </Tooltip>
-                ) : (
-                  <Tooltip title="NO STATUS">
-                    <div className="fileinput text-center">
-                      <div className="thumbnail img-circle2">
-                        <img src={NoStatus} alt={prop.reviewedStatus} />
-                      </div>
+                  </div>
+                </Tooltip>
+              ) : (
+                <Tooltip title="NO STATUS">
+                  <div className="fileinput text-center">
+                    <div className="thumbnail img-circle2">
+                      <img src={NoStatus} alt={prop.reviewedStatus} />
                     </div>
-                  </Tooltip>
-                )
+                  </div>
+                </Tooltip>
+              )
               /* ) : prop.markedAs == "unread" ? (
                 <Chip
                   style={{ background: "#deb725", color: "#fff" }}
@@ -540,7 +540,16 @@ export default function FilesList(props) {
                 </Button>
               </Tooltip>
               {isCorrectionRequiredInWorkflow || isSubmitedByVendor ? (
-                <Tooltip title={isSubmitedByVendor ? "Mark as Received" : isCorrectionRequiredInWorkflow ? "Send for Correction" : "Mark as Received"} aria-label="received">
+                <Tooltip
+                  title={
+                    isSubmitedByVendor
+                      ? "Mark as Received"
+                      : isCorrectionRequiredInWorkflow
+                      ? "Send for Correction"
+                      : "Mark as Received"
+                  }
+                  aria-label="received"
+                >
                   <Button
                     justIcon
                     round
@@ -569,7 +578,7 @@ export default function FilesList(props) {
                       <MonetizationOnIcon />
                     </Button>
                   </Tooltip> */}
-                  {/* {!prop.exported && !isVendor ? (
+              {/* {!prop.exported && !isVendor ? (
                     <Tooltip title="Export to Fusion" aria-label="export">
                       <Button
                         justIcon
@@ -589,7 +598,10 @@ export default function FilesList(props) {
               ) : (
                 ""
               )} */}
-              {currentStatus.val == 1 && currentStatus.status == 'correctionRequired' && prop.createdByVendor && isVendor ? (
+              {currentStatus.val == 1 &&
+              currentStatus.status == "correctionRequired" &&
+              prop.createdByVendor &&
+              isVendor ? (
                 <Tooltip title="Re Submit" aria-label="edit">
                   <Button
                     justIcon
@@ -605,7 +617,9 @@ export default function FilesList(props) {
               ) : (
                 ""
               )}
-              {prop.workFlowStatus == "correctionRequired" && !prop.createdByVendor && !isVendor ? (
+              {prop.workFlowStatus == "correctionRequired" &&
+              !prop.createdByVendor &&
+              !isVendor ? (
                 <Tooltip title="RE Submit" aria-label="edit">
                   <Button
                     justIcon
@@ -710,43 +724,102 @@ export default function FilesList(props) {
       data.values.status.length != 0 &&
       !data.values.status.includes(0)
     ) {
-     
       const statusFilter = filters.filter((f) =>
-        data.values.status.includes(f._id)
+        data.values.status.includes(f.id)
       );
-      console.log(data.values.status);
       var filteredFiles = [];
       files.map((f) => {
-        if(!isVendor){
-        statusFilter.map((s) => {
-          if (s.p_id == 1) {
-            if (f.markedAs == s.id) {
+        //If !Vendor Use These Statuses & f = Invoice
+        if (!isVendor) {
+          statusFilter.map((s) => {
+            //s = Filter Status
+            const currentStatus = currentTracking(f.trackingStatus);
+            //Waiting for Acceptance
+            if (
+              s.id == 1 &&
+              currentStatus.val == 1 &&
+              currentStatus.status == "inProgress"
+            ) {
+              if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
+                //fi == If !exit in Filtered Files Push else !
+                filteredFiles.push(f);
+              }
+            }
+            //Accepted Intial Review
+            if (
+              s.id == 2 &&
+              currentStatus.val == 2 &&
+              currentStatus.status == "inProgress"
+            ) {
+              if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
+                //fi == If !exit in Filtered Files Push else !
+                filteredFiles.push(f);
+              }
+            }
+            //Pending Review
+            if (
+              s.id == 3 &&
+              currentStatus.val == 2 &&
+              currentStatus.status == "inProgress"
+            ) {
+              if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
+                //fi == If !exit in Filtered Files Push else !
+                filteredFiles.push(f);
+              }
+            }
+            //Reviewed
+            if (
+              s.id == 4 &&
+              currentStatus.val == 3 &&
+              currentStatus.status == "inProgress"
+            ) {
+              if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
+                //fi == If !exit in Filtered Files Push else !
+                filteredFiles.push(f);
+              }
+            }
+            //Pending Approval
+            if (
+              s.id == 5 &&
+              currentStatus.val == 3 &&
+              currentStatus.status == "inProgress"
+            ) {
+              if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
+                //fi == If !exit in Filtered Files Push else !
+                filteredFiles.push(f);
+              }
+            }
+            //Approved
+            if (
+              s.id == 6 &&
+              currentStatus.val == 3 &&
+              currentStatus.status == "completed"
+            ) {
+              if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
+                //fi == If !exit in Filtered Files Push else !
+                filteredFiles.push(f);
+              }
+            }
+            //Correction Required
+            if (s.id == 7 && currentStatus.status == "correctionRequired") {
               if (filteredFiles.find((ff) => ff._id == f._id) == undefined) {
                 filteredFiles.push(f);
               }
             }
-          } else if (s.p_id == 2) {
-            if (f.reviewStatus == s.id) {
+            //Rejected
+            if (s.id == 8 && currentStatus.status == "rejected") {
               if (filteredFiles.find((ff) => ff._id == f._id) == undefined) {
                 filteredFiles.push(f);
               }
             }
-          } else if (s.p_id == 3) {
-            if (f.approveStatus == s.id) {
-              if (filteredFiles.find((ff) => ff._id == f._id) == undefined) {
-                filteredFiles.push(f);
-              }
+          });
+        } else {
+          data.values.status.map((s) => {
+            if (f.organizationId == s) {
+              filteredFiles.push(f);
             }
-          }
-        })
-      }
-      else{
-        data.values.status.map((s) => {
-          if (f.organizationId == s) {
-            filteredFiles.push(f);
-          }
-        })
-      }
+          });
+        }
       });
       files = filteredFiles;
     }
@@ -775,18 +848,6 @@ export default function FilesList(props) {
           new Date(file.createdDate) >= new Date(data.values.submitStart) &&
           new Date(file.createdDate) <= new Date(endDate)
       );
-    }
-
-    if (data.filters.partialPaid && data.values.partialPaid) {
-      files = files.filter((file) => file.paymentStatus == "partial");
-    }
-
-    if (data.filters.fullPaid && data.values.fullPaid) {
-      files = files.filter((file) => file.paymentStatus == "full");
-    }
-
-    if (data.filters.notPaid && data.values.notPaid) {
-      files = files.filter((file) => file.paymentStatus == "pending");
     }
 
     setTableData(files.reverse());
@@ -834,22 +895,28 @@ export default function FilesList(props) {
   //Right Click Menu
   const MyAwesomeMenu = () => (
     <Menu id="menu_id" theme={theme.dark} animation={animation.zoom}>
-      {!isVendor ?
-      <Item onClick={viewBlockChainViewFromAwesomeMenu}>
-        <ClearAllIcon />
-        &nbsp;&nbsp;BlockChain View
-      </Item>:''}
+      {!isVendor ? (
+        <Item onClick={viewBlockChainViewFromAwesomeMenu}>
+          <ClearAllIcon />
+          &nbsp;&nbsp;BlockChain View
+        </Item>
+      ) : (
+        ""
+      )}
       <Separator />
       <Item onClick={viewQrViewFromAwesomeMenu}>
         <ViewModuleIcon />
         &nbsp;&nbsp;Invoice View
       </Item>
       <Separator />
-      {!isVendor ?
-      <Item onClick={initWorkFLow}>
-        <Send />
-        &nbsp;&nbsp;Initialize WorkFlow
-      </Item>:''}
+      {!isVendor ? (
+        <Item onClick={initWorkFLow}>
+          <Send />
+          &nbsp;&nbsp;Initialize WorkFlow
+        </Item>
+      ) : (
+        ""
+      )}
     </Menu>
   );
   return (

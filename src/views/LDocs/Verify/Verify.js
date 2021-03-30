@@ -84,8 +84,8 @@ export default function Verify() {
           if(typeof fileObject.fileId !== "undefined" && !Check(fileObject.fileId)){
             axios({
               method: "get", //you can set what request you want to be
-              // url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/queryhistory/${fileObject.fileId}`
-              url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/queryhistory/4b41a3475132bd861b30a878e30aa56a-waqas-sample_pdf_27.pdf`
+              url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/queryhistory/${fileObject.fileId}`
+              //url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/queryhistory/4b41a3475132bd861b30a878e30aa56a-waqas-sample_pdf_27.pdf`
             })
               .then((response) => {
                 setBlockChainData(response.data)
@@ -115,7 +115,7 @@ export default function Verify() {
     const classes = useStyles();
 
     const getFile = () => {
-        const selectedOption = invoices.find(i=>i.invoiceId + '-V' + i.version == fileName.name);
+        const selectedOption = invoices.find(i=>i.invoiceId == fileName.name);
         setBlockChainData(null);
         setSelected(null);
         setFile(null);
@@ -178,7 +178,7 @@ export default function Verify() {
               await sleep(130);
               const result = await response.data.result;
               setInvoices(result);
-              setOptions(result.map((item) =>{ return {name: item.invoiceId + '-V' + item.version} } ));
+              setOptions(result.map((item) =>{ return {name: item.invoiceId} } ));
             }).catch(err=>{
               console.log(err);
             });
