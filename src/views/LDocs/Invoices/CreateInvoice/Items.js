@@ -399,7 +399,7 @@ export default function Items(props) {
                     :""}
                   </StyledTableRow> */}
                   <StyledTableRow key={"AddingItem1"}>
-                    {formState.isReceipt ? (
+                    {formState.isReceipt || !formState.isPo ? (
                       <React.Fragment>
                         <StyledTableCell colSpan="2">
                           <Select
@@ -438,7 +438,10 @@ export default function Items(props) {
                         </StyledTableCell>
                         <StyledTableCell style={{ paddingTop: 30 }} colSpan="1">
                           <Tooltip title="Create Receipt">
-                            <IconButton onClick={createReceipts} style={{ background: "lightgrey" }}>
+                            <IconButton
+                              onClick={createReceipts}
+                              style={{ background: "lightgrey" }}
+                            >
                               <AddCircleOutlineIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
@@ -474,18 +477,23 @@ export default function Items(props) {
                 <React.Fragment>
                   <StyledTableRow key={row.itemName}>
                     <StyledTableCell style={{ width: 100 }}>
-                      {row.receiptNumber.length < 1 && !isVendor 
-                      ? 
-                      <Tooltip title="Receipt Number is Missing.." aria-label="edit" >
-                       <IconButton
-                          onClick={() => handleEditItem(row, index)}
+                      {row.receiptNumber.length < 1 && !isVendor ? (
+                        <Tooltip
+                          title="Receipt Number is Missing.."
+                          aria-label="edit"
                         >
-                          <ErrorOutlineIcon fontSize="small" style={{color:'orange'}} />
-                      </IconButton>
-                      </Tooltip>
-                       :
-                       index + 1
-                      }
+                          <IconButton
+                            onClick={() => handleEditItem(row, index)}
+                          >
+                            <ErrorOutlineIcon
+                              fontSize="small"
+                              style={{ color: "orange" }}
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      ) : (
+                        index + 1
+                      )}
                     </StyledTableCell>
                     <StyledTableCell
                       style={{ width: 400 }}
@@ -775,7 +783,7 @@ export default function Items(props) {
                     :""}
                 </StyledTableRow> */}
                 <StyledTableRow key={"AddingItem1"}>
-                  {formState.isReceipt ? (
+                  {formState.isReceipt || !formState.isPo ? (
                     <React.Fragment>
                       <StyledTableCell style={{ paddingTop: 30 }} colSpan="2">
                         <Select
@@ -813,7 +821,10 @@ export default function Items(props) {
                         </Select>
                       </StyledTableCell>
                       <StyledTableCell style={{ paddingTop: 30 }} colSpan="1">
-                        <Tooltip onClick={createReceipts} title="Create Receipt">
+                        <Tooltip
+                          onClick={createReceipts}
+                          title="Create Receipt"
+                        >
                           <IconButton style={{ background: "lightgrey" }}>
                             <AddCircleOutlineIcon fontSize="small" />
                           </IconButton>

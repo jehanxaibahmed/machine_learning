@@ -1461,7 +1461,7 @@ export default function CreateInvoice(props) {
         .catch((err) => {
           console.log(err);
           setIsSavingInvoice(false);
-          errorAlert("There is some Issue.");
+          errorAlert(err.message ? err.message : "There is some Issue ..");
         });
     }
   };
@@ -2600,12 +2600,12 @@ export default function CreateInvoice(props) {
                             >
                               <TextField
                                 fullWidth={true}
-                                error={formState.errors.poNumber}
-                                helperText={
-                                  formState.errors.poNumber == "error"
-                                    ? "Valid PO Number is required"
-                                    : null
-                                }
+                                // error={formState.errors.poNumber}
+                                // helperText={
+                                //   formState.errors.poNumber == "error"
+                                //     ? "Valid PO Number is required"
+                                //     : null
+                                // }
                                 label={`PO Number`}
                                 id="poNumber"
                                 name="poNumber"
