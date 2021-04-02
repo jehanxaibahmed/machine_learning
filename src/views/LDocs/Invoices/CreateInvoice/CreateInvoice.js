@@ -1277,7 +1277,7 @@ export default function CreateInvoice(props) {
       currency = "error";
       error = true;
     }
-    if (!formState.isPo) {
+    if (formState.isPo) {
       if (!Check(formState.values.paymentTerms.split("-")[1])) {
         paymentTerms = "success";
       } else {
