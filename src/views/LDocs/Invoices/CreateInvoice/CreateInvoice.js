@@ -12,6 +12,9 @@ import {
   LinearProgress,
   Tooltip,
   IconButton,
+  FormGroup,
+  FormControlLabel,
+  Checkbox
 } from "@material-ui/core";
 import SweetAlert from "react-bootstrap-sweetalert";
 // core components
@@ -42,7 +45,7 @@ import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertSty
 import Attachments from "./Attachments";
 import Items from "./Items";
 import { addZeroes, formatDateTime } from "../../Functions/Functions";
-import { Person, Visibility, VisibilityOff } from "@material-ui/icons";
+import { Add, Person, Visibility, VisibilityOff } from "@material-ui/icons";
 import Step1 from "../../Vendor/steps/level1";
 import { defaultCurrency, VendorSites } from "./GlobalValues";
 import { Autocomplete } from "@material-ui/lab";
@@ -109,6 +112,7 @@ export default function CreateInvoice(props) {
   const [category, setCategory] = useState(1);
   const [currencyLookups, setCurrencyLookups] = useState([]);
   const [pos, setPos] = useState([]);
+  const [receipts, setReceipts] = useState([]);
   const [po, setPO] = useState(null);
   const [receipt, setReceipt] = useState(null);
   const [poModal, setPoModal] = useState(false);
@@ -118,9 +122,14 @@ export default function CreateInvoice(props) {
   let duedate = new Date();
   let today = new Date();
   duedate = duedate.setDate(today.getDate() + 15);
+  const isVendor = jwt.decode(Token).isVendor;
   const [formState, setFormState] = useState({
     vendors: [],
     organizations: [],
+    attachments: [],
+    expenseTypes:[],
+    isPo:true,
+    isReceipt:isVendor ? false : true,
     selectedOrg: null,
     selectedVendor: null,
     values: {
@@ -148,11 +157,10 @@ export default function CreateInvoice(props) {
       taxType: 1,
       poInline: "",
       expenseType: "",
-      receiptNumber: "",
+      receiptNumber: [],
       site: "",
       organizationId: "",
     },
-    attachments: [],
     errors: {
       invoiceDate: "",
       InvoiceNumber: "",
@@ -179,8 +187,8 @@ export default function CreateInvoice(props) {
       organizationId: "",
     },
   });
-  const isVendor = jwt.decode(Token).isVendor;
   const getLookUp = () => {
+    //Get Currencies
     axios({
       method: "get", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/getLookups/1`,
@@ -196,6 +204,24 @@ export default function CreateInvoice(props) {
       .catch((err) => {
         console.log(err);
       });
+      //Get ExpenseTypes
+      axios({
+        method: "get", //you can set what request you want to be
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/getLookups/3`,
+        headers: {
+          cooljwt: Token,
+        },
+      })
+      .then((response) => {
+          setFormState((formState) => ({
+            ...formState,
+            expenseTypes:response.data.result,
+            })
+        )
+      }) 
+        .catch((err) => {
+          console.log(err);
+        });
   };
   const getPos = () => {
     const userDetails = jwt.decode(Token);
@@ -204,7 +230,7 @@ export default function CreateInvoice(props) {
       url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
         organizationId: isVendor
-          ? formState.selectedOrg._id
+          ? formState.selectedOrg.organizationId
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
       },
@@ -213,6 +239,7 @@ export default function CreateInvoice(props) {
       },
     })
       .then((res) => {
+        console.log(res.data);
         setPos(res.data);
       })
       .catch((err) => {
@@ -256,9 +283,59 @@ export default function CreateInvoice(props) {
     setAlert(null);
   };
 
+  const getReceipts = (p) => {
+    //p = PO Number
+    const userDetails = jwt.decode(Token);
+    axios({
+      method: "post", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceipts`,
+      data: {
+        poNumber : p,
+        organizationId: isVendor
+          ? formState.selectedOrg._id
+          : userDetails.orgDetail.organizationId,
+        vendorId: isVendor ? userDetails.id : formState.selectedVendor,
+      },
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then((res) => {
+        setReceipts(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setReceipts([]);
+      });
+
+  }
   const classes = useStyles();
   const handleChange = (event) => {
     event.persist();
+    if (event.target.name == 'isPo' || 'isReceipt') {
+      setFormState((formState) => ({
+        ...formState,
+        [event.target.name] : event.target.name == 'isPo' ? !formState.isPo : !formState.isReceipt
+      }));
+    }
+    
+    if (event.target.name == 'poNumber') {
+      let po = pos.find(
+        (po) =>
+          po.poNumber == event.target.value
+      );
+      if(po){
+      setFormState((formState) => ({
+        ...formState,
+        values: {
+          ...formState.values,
+          paymentTerms: `NET-${po.paymentTerm.split(' ')[1]}`
+        },
+      }));
+      }
+      getReceipts(event.target.value);
+    }
+
     setFormState((formState) => ({
       ...formState,
       values: {
@@ -267,6 +344,39 @@ export default function CreateInvoice(props) {
       },
     }));
   };
+
+  const createReceipts = () => {
+    const Check = require("is-null-empty-or-undefined").Check;
+    if (Check(formState.selectedVendor) || Check(formState.values.poNumber)) {
+      errorAlert('Please Select Valid Vendor and PO Number');
+    }
+    else{
+      const userDetails = jwt.decode(Token);
+      axios({
+        method: "post", //you can set what request you want to be
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceipt`,
+        data:
+          {
+            receiptDate : new Date (),
+            organizationId : userDetails.orgDetail.organizationId,
+            vendorId : formState.selectedVendor,
+            poNumber : formState.values.poNumber,
+            receivedBy : userDetails.email
+        },
+        headers: {
+          cooljwt: Token,
+        },
+      })
+        .then((res) => {
+          setReceipts(res.data);
+          successAlert('Receipt Has Been Generated In Oracle Fusion.');
+        }).catch((err)=>{
+          console.log(err);
+          errorAlert('Unable To Generate RECEIPT.');
+        })
+    }
+  }
+
   const removeAttachment = (fileIndex) => {
     let attachments = formState.attachments.filter(
       (a, index) => index !== fileIndex
@@ -635,7 +745,8 @@ export default function CreateInvoice(props) {
     }
     if (error) {
       return false;
-    } else {
+    } 
+    else {
       getPos();
       setVendorModal(false);
     }
@@ -670,15 +781,18 @@ export default function CreateInvoice(props) {
       },
     }));
   };
+  //On Currency Currency 
   React.useEffect(() => {
     setCurrency(
       currencyLookups.find((l) => l._id == formState.values.currency) ||
         defaultCurrency
     );
   }, [formState.values.currency, currencyLookups]);
+  //Update Total 
   React.useEffect(() => {
     updateTotal();
   }, [items, formState.values.overallDiscount, formState.values.overallTax]);
+  //On Change Vendor
   React.useEffect(() => {
     if (
       typeof formState.values.selectedVendor == "object" &&
@@ -695,6 +809,7 @@ export default function CreateInvoice(props) {
       }));
     }
   }, [formState.values.selectedVendor]);
+  //On Load Component
   React.useEffect(() => {
     setIsLoading(true);
     window.scrollTo(0, 0);
@@ -769,6 +884,9 @@ export default function CreateInvoice(props) {
     }
     getLookUp();
   }, []);
+
+
+
   const setInvoice = () => {
     if (edit) {
       console.log(fileData);
@@ -780,6 +898,8 @@ export default function CreateInvoice(props) {
               (org) => org.organizationId == fileData.organizationId
             )
           : null,
+          isPo:fileData.isPo,
+          isReceipt:file.isReceipt,
         values: {
           ...formState.values,
           InvoiceNumber: fileData.invoiceId,
@@ -794,7 +914,6 @@ export default function CreateInvoice(props) {
           currency: fileData.FC_currency._id || currency,
           paymentTerms: `NET-${fileData.paymentTerms}`,
           poNumber: fileData.po,
-          receiptNumber: fileData.receiptNumber,
           selectedVendor: !isVendor
             ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
             : null,
@@ -859,20 +978,18 @@ export default function CreateInvoice(props) {
   };
 
   const viewReceipt = () => {
-    let receipt = pos.find(
-      (po) =>
-        po.poNumber == formState.values.poInline || formState.values.poNumber
+    let receipt = receipts.find(
+      (re) =>
+        re.receiptNumber == formState.values.receiptNumber
     );
     if (receipt) {
       setReceipt([
-        // { name: "Date of Issue", value: formatDateTime(po.dateOfIssue) },
-        // { name: "Payment Terms", value: po.paymentTerm },
-        // { name: "Date of Expiry", value: formatDateTime(po.dateOfExpiry) },
-        // {
-        //   name: "PO Amount:",
-        //   value: `${currency.sign + addZeroes(po.poAmount)}`,
-        // },
-        // { name: "Partial Delivery:", value: po.partialDelivery ? "YES" : "NO" },
+        { name: "Receipt Number", value: receipts.receiptNumber},
+        { name: "Vendor ID", value: receipts.vendorId},
+        { name: "Organization ID", value: receipts.organizationId},
+        { name: "Receipt Date", value: formatDateTime(receipts.receiptDate)},
+        { name: "PO Number", value: formatDateTime(receipts.poNumber)},
+        { name: "Request By", value: formatDateTime(receipts.receivedBy)}
       ]);
       setReceiptModal(true);
     }
@@ -1018,12 +1135,14 @@ export default function CreateInvoice(props) {
     //     error = true;
     //   }
     // }
-    // if (!Check(formState.values.receiptNumber)) {
-    //   receiptNumber = "success";
-    // } else {
-    //   receiptNumber = "error";
-    //   error = true;
-    // }
+    if(!isVendor){
+    if (!Check(formState.values.receiptNumber)) {
+      receiptNumber = "success";
+    } else {
+      receiptNumber = "error";
+      error = true;
+    }
+  }
 
     setFormState((formState) => ({
       ...formState,
@@ -1035,7 +1154,7 @@ export default function CreateInvoice(props) {
         discount: discount,
         // poInline: poInline,
         // expenseType: expenseType,
-        // receiptNumber: receiptNumber,
+        receiptNumber: receiptNumber,
         additionalDetails: additionalDetails,
       },
     }));
@@ -1237,7 +1356,7 @@ export default function CreateInvoice(props) {
           : formState.values.selectedVendor.level1.contactPerson,
         createdBy: userData.email,
         balanceDue: formState.values.total,
-        items: JSON.stringify(items),
+        items: items,
         attachments: formState.attachments,
         vendorName: isVendor
           ? userData.name
@@ -1253,8 +1372,11 @@ export default function CreateInvoice(props) {
         description: formState.values.notes,
         createdByVendor: isVendor ? true : false,
         po: formState.values.poNumber,
-        receiptNumber: formState.values.receiptNumber,
+        // receiptNumber: formState.values.receiptNumber,
         paymentTerms: formState.values.paymentTerms.split("-")[1],
+        isReceipt:formState.isPo,
+        isPo:formState.isReceipt,
+        requesterId:userData.email
       };
       //Axios Call
       axios({
@@ -1282,6 +1404,8 @@ export default function CreateInvoice(props) {
             setFormState({
               selectedVendor: null,
               selectedOrg: null,
+              isReceipt:false,
+              isPo:true,
               values: {
                 invoiceDate: getDateFormet(today),
                 InvoiceNumber: "INV-",
@@ -2220,6 +2344,40 @@ export default function CreateInvoice(props) {
                           </GridContainer>
                         )}
                       </Card>
+                    {!isVendor ?
+                      <GridItem
+                          xs={12}
+                          sm={12}
+                          md={12}
+                          lg={12}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        >
+                          <FormGroup row>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={!formState.isReceipt}
+                                onChange={handleChange}
+                                name="isReceipt"
+                                color="primary"
+                              />
+                            }
+                            label="Pre Payment"
+                          />
+                           <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={formState.isReceipt}
+                                onChange={handleChange}
+                                name="isReceipt"
+                                color="primary"
+                              />
+                            }
+                            label="With Receipt"
+                          />
+                          </FormGroup>
+                        </GridItem>
+                        :""}
                     </GridItem>
                     <GridItem
                       xs={12}
@@ -2361,10 +2519,46 @@ export default function CreateInvoice(props) {
                           </TextField>
                         </GridItem>
                         <GridItem
+                          xs={12}
+                          sm={13}
+                          md={12}
+                          lg={12}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        >
+                          <FormGroup row>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={formState.isPo}
+                                onChange={handleChange}
+                                name="isPo"
+                                color="primary"
+                              />
+                            }
+                            label="Purchase Order"
+                          />
+                          {!isVendor ? 
+                           <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={!formState.isPo}
+                                onChange={handleChange}
+                                name="isPo"
+                                color="primary"
+                              />
+                            }
+                            label="Expense"
+                          />
+                          :''}
+                          </FormGroup>
+                        </GridItem>
+                        {formState.isPo ?
+                        <React.Fragment>
+                        <GridItem
                           xs={10}
                           sm={10}
-                          md={3}
-                          lg={3}
+                          md={5}
+                          lg={5}
                           style={{ marginTop: "10px", marginBottom: "10px" }}
                         >
                           <TextField
@@ -2414,11 +2608,45 @@ export default function CreateInvoice(props) {
                             </IconButton>
                           </Tooltip>
                         </GridItem>
+                        </React.Fragment>
+                        :
+                        <GridItem
+                        xs={12}
+                        sm={12}
+                        md={6}
+                        lg={6}
+                        style={{ marginTop: "10px", marginBottom: "10px" }}
+                        >
+                        <TextField
+                        fullWidth={true}
+                        error={formState.errors.expenseType === "error"}
+                        helperText={
+                          formState.errors.expenseType === "error"
+                            ? "Valid Expense Type is required"
+                            : null
+                        }
+                        label="Expense Type"
+                        id="expenseType"
+                        name="expenseType"
+                        value={formState.values.expenseType}
+                        onChange={(event) => {
+                          handleChange(event);
+                        }}
+                        select
+                      >
+                        {formState.expenseTypes.map((exp, index) => (
+                          <MenuItem key={index} value={exp._id}>
+                            {exp.Name}
+                          </MenuItem>
+                        ))}
+                        </TextField>
+                        </GridItem>
+                        }
                         <GridItem
                           xs={12}
                           sm={12}
-                          md={4}
-                          lg={4}
+                          md={6}
+                          lg={6}
                           style={{ marginTop: "10px", marginBottom: "10px" }}
                         >
                           <TextField
@@ -2441,7 +2669,7 @@ export default function CreateInvoice(props) {
                             className={classes.textField}
                           />
                         </GridItem>
-                        <GridItem
+                        {/* <GridItem
                           xs={10}
                           sm={10}
                           md={3}
@@ -2451,7 +2679,7 @@ export default function CreateInvoice(props) {
                           <Autocomplete
                             id="free-solo-demo"
                             freeSolo
-                            options={pos.map((option) => option.poNumber)}
+                            options={receipts.map((option) => option.receiptNumber                              )}
                             renderInput={(params) => (
                               <TextField
                                 fullWidth={true}
@@ -2477,7 +2705,7 @@ export default function CreateInvoice(props) {
                               />
                             )}
                           />
-                        </GridItem>
+                        </GridItem> 
                         <GridItem
                           xs={2}
                           sm={2}
@@ -2493,11 +2721,17 @@ export default function CreateInvoice(props) {
                               {receiptModal ? (
                                 <VisibilityOff fontSize="small" />
                               ) : (
-                                <Visibility fontSize="small" />
+                                <div>
+                                {receipts.length  < 1 ? 
+                                  <Add  fontSize="small" /> :
+                                  <Visibility fontSize="small" />
+                                }
+                                </div>
                               )}
                             </IconButton>
                           </Tooltip>
                         </GridItem>
+                        */}
                       </GridContainer>
                     </GridItem>
                   </GridContainer>
@@ -2520,8 +2754,10 @@ export default function CreateInvoice(props) {
                       category={category}
                       currency={currency || {}}
                       viewPO={viewPO}
+                      receipts={receipts}
                       pos={pos}
                       isVendor={isVendor}
+                      createReceipts={createReceipts}
                     />
                     <GridItem
                       style={{

@@ -180,6 +180,7 @@ export default function Horizentalteppers(props) {
     {
       label: "Invoice Creation",
       remarks:
+      props.fileData.trackingStatus.received ? 
         props.fileData.trackingStatus.received.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.received.status ==
@@ -190,13 +191,14 @@ export default function Horizentalteppers(props) {
           :props.fileData.trackingStatus.received.status ==
             "inProgress"
           ?
-          "In Process": "",
+          "In Process": "" : "",
       status: props.fileData.trackingStatus.received.status || null,
       comments: props.fileData.trackingStatus.received.comment || null,
     },
     {
       label: "Initial Review",
       remarks:
+      props.fileData.trackingStatus.initialReview ?
         props.fileData.trackingStatus.initialReview.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.initialReview.status ==
@@ -207,13 +209,14 @@ export default function Horizentalteppers(props) {
           :props.fileData.trackingStatus.initialReview.status ==
           "inProgress"
         ?
-        "In Process": "",
+        "In Process": "" : "",
       status: props.fileData.trackingStatus.initialReview.status || null,
       comments: props.fileData.trackingStatus.initialReview.comment || null,
     },
     {
       label: "Account Review",
       remarks:
+      props.fileData.trackingStatus.underReview ?
         props.fileData.trackingStatus.underReview.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.underReview.status ==
@@ -224,13 +227,14 @@ export default function Horizentalteppers(props) {
           :props.fileData.trackingStatus.underReview.status ==
           "inProgress"
         ?
-        "In Process": "",
+        "In Process": "" : "",
       status: props.fileData.trackingStatus.underReview.status || null,
       comments: props.fileData.trackingStatus.underReview.comment || null,
     },
     {
       label: "Acccount Approval",
       remarks:
+      props.fileData.trackingStatus.underApprove ?
         props.fileData.trackingStatus.underApprove.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.underApprove.status ==
@@ -241,13 +245,14 @@ export default function Horizentalteppers(props) {
           :props.fileData.trackingStatus.underApprove.status ==
           "inProgress"
         ?
-        "In Process": "",
+        "In Process": "" : "",
       status: props.fileData.trackingStatus.underApprove.status || null,
       comments: props.fileData.trackingStatus.underApprove.comment || null,
     },
     {
       label: "Payment",
       remarks:
+      props.fileData.trackingStatus.paymentInProcess ?
         props.fileData.trackingStatus.paymentInProcess.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.paymentInProcess.status ==
@@ -258,8 +263,8 @@ export default function Horizentalteppers(props) {
           ? "Done"
           :props.fileData.trackingStatus.paymentInProcess.status ==
           "inProgress"
-        ?
-        "In Process": "",
+        ? 
+        "In Process": "" : "",
       status: props.fileData.trackingStatus.paymentInProcess.status || null,
       comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
     },

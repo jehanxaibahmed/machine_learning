@@ -22,7 +22,7 @@ import {
   withStyles,
   Typography,
   SwipeableDrawer,
-  Chip,
+  Chip
 } from "@material-ui/core";
 // @material-ui/icons
 import {
@@ -524,7 +524,7 @@ export default function FilesList(props) {
               ) : (
                 ""
               )}
-              <Tooltip title="Invoice View" aria-label="advanceDocumentView">
+              <Tooltip title="360&#176; View" aria-label="advanceDocumentView">
                 <Button
                   justIcon
                   round
@@ -823,7 +823,7 @@ export default function FilesList(props) {
       });
       files = filteredFiles;
     }
-
+    //Amount
     if (
       data.filters.amount &&
       data.values.amountTo >= 1 &&
@@ -835,7 +835,7 @@ export default function FilesList(props) {
           file.netAmt >= parseInt(data.values.amountfrom)
       );
     }
-
+    //Date
     if (
       (data.filters.date && data.values.submitEnd !== null) ||
       (undefined && data.values.submitStart !== null) ||
@@ -1231,7 +1231,7 @@ export default function FilesList(props) {
               <Card>
                 <CardHeader color="info" icon>
                   <CardIcon color="info">
-                    <h4 className={classes.cardTitleText}>Invoice View</h4>
+                    <h4 className={classes.cardTitleText}>360&#176; View</h4>
                   </CardIcon>
                   <Button
                     color="danger"

@@ -198,7 +198,7 @@ export default function Requested() {
                       <VisibilityIcon />
                     </Button>
                   </Tooltip>
-                  <Tooltip title="View Invoice View" aria-label="viewfile">
+                  <Tooltip title="360&#176; View" aria-label="viewfile">
                     <Button
                       justIcon
                       round
@@ -649,7 +649,7 @@ const goBack = () => {
                 <CardHeader color="info" icon>
                   <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>
-                      Invoice View:{" "}
+                      360&#176; View:{" "}
                       {InvoiceData.invoiceId}
                     </h4>
                   </CardIcon>

@@ -8,6 +8,8 @@ import {
   withStyles,
   MenuItem,
   Typography,
+  Select,
+  Input,
 } from "@material-ui/core";
 // core components
 import GridItem from "components/Grid/GridItem.js";
@@ -24,9 +26,11 @@ import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import CreateIcon from "@material-ui/icons/Create";
 import { useDispatch, useSelector } from "react-redux";
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import axios from "axios";
 import { Visibility } from "@material-ui/icons";
+import { Autocomplete } from "@material-ui/lab";
+
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -41,7 +45,7 @@ const styles = {
     minWidth: "100%",
   },
   itemName: {
-    width: 400,
+    width: 300,
   },
   itemNumber: {
     width: "55%",
@@ -92,7 +96,9 @@ export default function Items(props) {
     currency,
     viewPO,
     pos,
-    isVendor
+    isVendor,
+    createReceipts,
+    receipts,
   } = props;
   const classes = useStyles();
   const [lookups, setLookups] = useState([]);
@@ -134,17 +140,21 @@ export default function Items(props) {
             <TableRow>
               <StyledTableCell>#</StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
-              <StyledTableCell align="right">Unit Cost ({currency.sign || "$"})</StyledTableCell>
+              <StyledTableCell align="right">
+                Unit Cost ({currency.sign || "$"})
+              </StyledTableCell>
               <StyledTableCell align="right">Quantity</StyledTableCell>
               <StyledTableCell align="right">Discount (%)</StyledTableCell>
-              <StyledTableCell align="right">Amount ({currency.sign || '$'})</StyledTableCell>
+              <StyledTableCell align="right">
+                Amount ({currency.sign || "$"})
+              </StyledTableCell>
               <StyledTableCell> </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {items.map((row, index) =>
               editIndex == index ? (
-                <React.Fragment >
+                <React.Fragment>
                   <StyledTableRow key={"AddingItem"}>
                     <StyledTableCell style={{ width: 100 }}>
                       <TextField
@@ -157,7 +167,7 @@ export default function Items(props) {
                       />
                     </StyledTableCell>
                     <StyledTableCell
-                      style={{ minWidth: 400 }}
+                      style={{ minWidth: 300 }}
                       component="th"
                       scope="row"
                     >
@@ -236,7 +246,7 @@ export default function Items(props) {
                           handleChange(event);
                         }}
                         type="number"
-                        value={formState.values.discount || 0.00}
+                        value={formState.values.discount || 0.0}
                         className={classes.textField}
                       />
                     </StyledTableCell>
@@ -389,7 +399,55 @@ export default function Items(props) {
                     :""}
                   </StyledTableRow> */}
                   <StyledTableRow key={"AddingItem1"}>
-                    <StyledTableCell colSpan="8">
+                    {formState.isReceipt ? (
+                      <React.Fragment>
+                        <StyledTableCell colSpan="2">
+                          <Select
+                            className={classes.textField}
+                            multiple
+                            fullWidth={true}
+                            error={formState.errors.receiptNumber === "error"}
+                            helperText={
+                              formState.errors.receiptNumber === "error"
+                                ? "Valid Receipt Number required"
+                                : null
+                            }
+                            label="Receipt Number"
+                            id="receiptNumber"
+                            name="receiptNumber"
+                            onChange={(event) => {
+                              handleChange(event);
+                            }}
+                            // variant="outlined"
+                            value={formState.values.receiptNumber || []}
+                            input={<Input />}
+                            // MenuProps={MenuProps}
+                            select
+                          >
+                            <MenuItem disabled={true} key={"disabled"}>
+                              Receipt Number
+                            </MenuItem>
+                            {receipts.map((r, index) => {
+                              return (
+                                <MenuItem key={index} value={r.receiptNumber}>
+                                  {r.receiptNumber}
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </StyledTableCell>
+                        <StyledTableCell style={{ paddingTop: 30 }} colSpan="1">
+                          <Tooltip title="Create Receipt">
+                            <IconButton onClick={createReceipts} style={{ background: "lightgrey" }}>
+                              <AddCircleOutlineIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </StyledTableCell>
+                      </React.Fragment>
+                    ) : (
+                      ""
+                    )}
+                    <StyledTableCell colSpan={formState.isReceipt ? "5" : "8"}>
                       <TextField
                         fullWidth={true}
                         error={formState.errors.additionalDetails === "error"}
@@ -405,7 +463,7 @@ export default function Items(props) {
                           handleChange(event);
                         }}
                         multiline
-                        rows={2}
+                        rows={1}
                         type="text"
                         value={formState.values.additionalDetails || ""}
                       />
@@ -416,20 +474,19 @@ export default function Items(props) {
                 <React.Fragment>
                   <StyledTableRow key={row.itemName}>
                     <StyledTableCell style={{ width: 100 }}>
-                      {
-                      // !Check(row.poInline || row.expenseType) &&
+                      {// !Check(row.poInline || row.expenseType) &&
                       // !Check(row.receiptNumber)
                       //   ?
-                         index + 1
-                        // : 
-                        // <Tooltip title="There is something missing.." aria-label="edit" >
-                        //   <IconButton
-                        //     onClick={() => handleEditItem(row, index)}
-                        //   >
-                        //     <ErrorOutlineIcon fontSize="small" style={{color:'orange'}} />
-                        // </IconButton>
-                        // </Tooltip>
-                        }
+                      index + 1
+                      // :
+                      // <Tooltip title="There is something missing.." aria-label="edit" >
+                      //   <IconButton
+                      //     onClick={() => handleEditItem(row, index)}
+                      //   >
+                      //     <ErrorOutlineIcon fontSize="small" style={{color:'orange'}} />
+                      // </IconButton>
+                      // </Tooltip>
+                      }
                     </StyledTableCell>
                     <StyledTableCell
                       style={{ width: 400 }}
@@ -439,7 +496,8 @@ export default function Items(props) {
                       {row.itemName}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                    {currency.sign}{addZeroes(row.unitCost)}
+                      {currency.sign}
+                      {addZeroes(row.unitCost)}
                     </StyledTableCell>
                     <StyledTableCell align="right">
                       {addZeroes(row.quantity)}
@@ -448,7 +506,8 @@ export default function Items(props) {
                       {addZeroes(row.discount)}%
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                    {currency.sign}{addZeroes(row.amount)}
+                      {currency.sign}
+                      {addZeroes(row.amount)}
                     </StyledTableCell>
                     <StyledTableCell style={{ width: 100 }} align="right">
                       <Tooltip title="Edit Item" aria-label="edit">
@@ -486,7 +545,7 @@ export default function Items(props) {
                     />
                   </StyledTableCell>
                   <StyledTableCell
-                    style={{ minWidth: 400 }}
+                    style={{ minWidth: 300 }}
                     component="th"
                     scope="row"
                   >
@@ -509,6 +568,7 @@ export default function Items(props) {
                       className={classes.itemName}
                     />
                   </StyledTableCell>
+
                   <StyledTableCell align="right">
                     <TextField
                       fullWidth={true}
@@ -565,7 +625,7 @@ export default function Items(props) {
                         handleChange(event);
                       }}
                       type="number"
-                      value={formState.values.discount || 0.00}
+                      value={formState.values.discount || ""}
                       className={classes.textField}
                     />
                   </StyledTableCell>
@@ -716,7 +776,55 @@ export default function Items(props) {
                     :""}
                 </StyledTableRow> */}
                 <StyledTableRow key={"AddingItem1"}>
-                  <StyledTableCell colSpan="8">
+                  {formState.isReceipt ? (
+                    <React.Fragment>
+                      <StyledTableCell style={{ paddingTop: 30 }} colSpan="2">
+                        <Select
+                          className={classes.textField}
+                          multiple
+                          fullWidth={true}
+                          error={formState.errors.receiptNumber === "error"}
+                          helperText={
+                            formState.errors.receiptNumber === "error"
+                              ? "Valid Receipt Number required"
+                              : null
+                          }
+                          label="Receipt Number"
+                          id="receiptNumber"
+                          name="receiptNumber"
+                          onChange={(event) => {
+                            handleChange(event);
+                          }}
+                          // variant="outlined"
+                          value={formState.values.receiptNumber || []}
+                          input={<Input />}
+                          // MenuProps={MenuProps}
+                          select
+                        >
+                          <MenuItem disabled={true} key={"disabled"}>
+                            Receipt Number
+                          </MenuItem>
+                          {receipts.map((r, index) => {
+                            return (
+                              <MenuItem key={index} value={r.receiptNumber}>
+                                {r.receiptNumber}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </StyledTableCell>
+                      <StyledTableCell style={{ paddingTop: 30 }} colSpan="1">
+                        <Tooltip onClick={createReceipts} title="Create Receipt">
+                          <IconButton style={{ background: "lightgrey" }}>
+                            <AddCircleOutlineIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </StyledTableCell>
+                    </React.Fragment>
+                  ) : (
+                    ""
+                  )}
+                  <StyledTableCell colSpan={formState.isReceipt ? "5" : "8"}>
                     <TextField
                       fullWidth={true}
                       error={formState.errors.additionalDetails === "error"}
@@ -732,7 +840,7 @@ export default function Items(props) {
                         handleChange(event);
                       }}
                       multiline
-                      rows={3}
+                      rows={1}
                       type="text"
                       value={formState.values.additionalDetails || ""}
                     />

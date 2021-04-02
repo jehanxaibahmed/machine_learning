@@ -333,7 +333,7 @@ export default function Verify() {
                  <Card>
                  <CardHeader color="info" icon>
                     <CardIcon color="info">
-                    <h4 className={classes.cardTitleText}>Invoice View</h4>
+                    <h4 className={classes.cardTitleText}>360&#176; View</h4>
                     </CardIcon>
                 </CardHeader>
                 <CardBody>

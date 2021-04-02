@@ -34,6 +34,7 @@ import {
   Send,
   Edit,
   EditOutlined,
+  Done,
 } from "@material-ui/icons";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -157,7 +158,7 @@ export default function FilesList(props) {
     paymentInProcess: 0,
     vendors: [],
     pos: [],
-    filter:null,
+    filter: null,
     filters: {
       supplierId: true,
       poNumber: true,
@@ -368,7 +369,15 @@ export default function FilesList(props) {
   const setTableData = (response) => {
     setData(
       response.map((prop, index) => {
-        let isSelected = selected.filter(s=> s.id == prop.invoiceId && s.version == prop.version && s.vendorId == prop.vendorId).length > 0 ? true : false;
+        let isSelected =
+          selected.filter(
+            (s) =>
+              s.id == prop.invoiceId &&
+              s.version == prop.version &&
+              s.vendorId == prop.vendorId
+          ).length > 0
+            ? true
+            : false;
         return {
           id: prop._id,
           invoiceId: prop.invoiceId,
@@ -528,7 +537,7 @@ export default function FilesList(props) {
                   <ClearAllIcon />
                 </Button>
               </Tooltip>
-              <Tooltip title="Invoice View" aria-label="advanceDocumentView">
+              <Tooltip title="360&#176; View" aria-label="advanceDocumentView">
                 <Button
                   justIcon
                   round
@@ -554,9 +563,7 @@ export default function FilesList(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${
-        process.env.REACT_APP_LDOCS_API_URL
-      }/invoice/getInvoiceCfoDetails/${user.orgDetail.organizationId}/${formState.filter}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceCfoDetails/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
@@ -565,14 +572,37 @@ export default function FilesList(props) {
       .then((response) => {
         setFormState((formState) => ({
           ...formState,
-          files: formState.filter == null ?response.data.invoicesApproved:response.data,
-          totalInvoices: formState.filter == null ?response.data.totalInvCount:formState.totalInvoices,
-          paymentDue: formState.filter == null ?response.data.paymentDueCount:formState.paymentDue,
-          overDue: formState.filter == null ? response.data.paymentOverDueCount:formState.overDue,
-          paymentInProcess: formState.filter == null ?response.data.paymentInProcessCount:formState.paymentInProcess,
-        }))
-        setFilesData(formState.filter == null ?response.data.invoicesApproved:response.data);
-        setTableData(formState.filter == null ?response.data.invoicesApproved:response.data);
+          files:
+            formState.filter == null
+              ? response.data.invoicesApproved
+              : response.data,
+          totalInvoices:
+            formState.filter == null
+              ? response.data.totalInvCount
+              : formState.totalInvoices,
+          paymentDue:
+            formState.filter == null
+              ? response.data.paymentDueCount
+              : formState.paymentDue,
+          overDue:
+            formState.filter == null
+              ? response.data.paymentOverDueCount
+              : formState.overDue,
+          paymentInProcess:
+            formState.filter == null
+              ? response.data.paymentInProcessCount
+              : formState.paymentInProcess,
+        }));
+        setFilesData(
+          formState.filter == null
+            ? response.data.invoicesApproved
+            : response.data
+        );
+        setTableData(
+          formState.filter == null
+            ? response.data.invoicesApproved
+            : response.data
+        );
         setIsLoading(false);
       })
       .catch((error) => {
@@ -611,16 +641,43 @@ export default function FilesList(props) {
         selectedInvoices = [];
       } else {
         filesData.map((file) => {
-          if (selected.filter(s=> s.id == file.invoiceId && s.version == file.version && s.vendorId == file.vendorId).length < 1) {
-            selectedInvoices.push({id:file.invoiceId,version:file.version,vendorId:file.vendorId});
+          if (
+            selected.filter(
+              (s) =>
+                s.id == file.invoiceId &&
+                s.version == file.version &&
+                s.vendorId == file.vendorId
+            ).length < 1
+          ) {
+            selectedInvoices.push({
+              id: file.invoiceId,
+              version: file.version,
+              vendorId: file.vendorId,
+            });
           }
         });
       }
     } else {
-      if (selected.filter(s=> s.id == invoice.invoiceId && s.version == invoice.version && s.vendorId == invoice.vendorId).length < 1) {
-        selectedInvoices.push({id:invoice.invoiceId,version:invoice.version,vendorId:invoice.vendorId});
+      if (
+        selected.filter(
+          (s) =>
+            s.id == invoice.invoiceId &&
+            s.version == invoice.version &&
+            s.vendorId == invoice.vendorId
+        ).length < 1
+      ) {
+        selectedInvoices.push({
+          id: invoice.invoiceId,
+          version: invoice.version,
+          vendorId: invoice.vendorId,
+        });
       } else {
-        const index = selected.findIndex(s=> s.id == invoice.invoiceId && s.version == invoice.version && s.vendorId == invoice.vendorId);
+        const index = selected.findIndex(
+          (s) =>
+            s.id == invoice.invoiceId &&
+            s.version == invoice.version &&
+            s.vendorId == invoice.vendorId
+        );
         if (index > -1) {
           selectedInvoices.splice(index, 1);
         }
@@ -648,7 +705,7 @@ export default function FilesList(props) {
   const viewBlockChainViewFromAwesomeMenu = ({ event, props }) => {
     viewBlockChainView(props);
   };
-  const exportInvoices = () => {   
+  const exportInvoices = () => {
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     setExportToFusionModel(true);
     axios({
@@ -663,15 +720,15 @@ export default function FilesList(props) {
         setFormState((formState) => ({
           ...formState,
           filter: null,
-        })); 
+        }));
         setSelected([]);
         getMyFiles(userDetail, false);
         setExportToFusionModel(false);
-      }).catch((err)=>{
-        console.log(err);
       })
-
-  }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   //Right Click Menu
   const MyAwesomeMenu = () => (
     <Menu id="menu_id" theme={theme.dark} animation={animation.zoom}>
@@ -708,7 +765,7 @@ export default function FilesList(props) {
                 <CardHeader color="info" icon>
                   <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>
-                      Invoice:{" "}
+                      Invoice:
                       {pdfModalData.invoiceId +
                         " Version: " +
                         pdfModalData.version}
@@ -826,7 +883,7 @@ export default function FilesList(props) {
               <Card>
                 <CardHeader color="info" icon>
                   <CardIcon color="info">
-                    <h4 className={classes.cardTitleText}>Invoice View</h4>
+                    <h4 className={classes.cardTitleText}>360&#176; View</h4>
                   </CardIcon>
                   <Button
                     color="danger"
@@ -875,17 +932,26 @@ export default function FilesList(props) {
                 <CardFooter stats>
                   <div className={classes.stats}>
                     <Tooltip title="All Invoices">
-                      <IconButton
-                        style={formState.filter == 'totalInvCount' ? {background:'#9E2654', color:'white'}:{}}
-                        onClick={() =>
-                          setFilter(1, { id: 0, val: "totalInvCount" })
-                        }
-                      >
-                        <Typography varient="body2" component="h2">
-                          {formState.filter == 'totalInvCount' ? <CheckBoxIcon fontSize="large" />:
-                          <CheckBoxOutlineBlankIcon fontSize="large" />}
-                        </Typography>
-                      </IconButton>
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "totalInvCount"
+                              ? {
+                                  background: "#9E2654",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                }
+                          }
+                          onClick={() =>
+                            setFilter(1, { id: 0, val: "totalInvCount" })
+                          }
+                        >
+                        <Done  fontSize="large" />
+                        </Avatar>
+                      </Typography>
                     </Tooltip>
                   </div>
                 </CardFooter>
@@ -902,35 +968,69 @@ export default function FilesList(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title="0-7">
-                      <IconButton
-                        style={formState.filter == 'paymentDueWeek' ? {background:'#5a2c66', color:'white'}:{}}
-                        onClick={() => setFilter(1, { id: 1, val: 0 })}
-                      >
-                        <Typography varient="body2" component="h2">
-                          0-7
-                        </Typography>
-                      </IconButton>
+                    <Tooltip title="Weekly">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "paymentDueWeek"
+                              ? {
+                                  background: "#5a2c66",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                  marginRight: 5,
+                                }
+                          }
+                          onClick={() => setFilter(1, { id: 1, val: 0 })}
+                        >
+                          W
+                        </Avatar>
+                      </Typography>
                     </Tooltip>
-                    <Tooltip title="7-30">
-                      <IconButton 
-                        style={formState.filter == 'paymentDueMonth' ? {background:'#5a2c66', color:'white'}:{}}
-                        onClick={() => setFilter(1, { id: 1, val: 1 })}
-                      >
-                        <Typography varient="body2" component="h2">
-                          7-30
-                        </Typography>
-                      </IconButton>
+                    <Tooltip title="Monthly">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "paymentDueMonth"
+                              ? {
+                                  background: "#5a2c66",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                  marginRight: 5,
+                                }
+                          }
+                          onClick={() => setFilter(1, { id: 1, val: 1 })}
+                        >
+                          {" "}
+                          M
+                        </Avatar>
+                      </Typography>
                     </Tooltip>
-                    <Tooltip title="60+">
-                      <IconButton
-                        style={formState.filter == 'paymentDueMonthAfter' ? {background:'#5a2c66', color:'white'}:{}}
-                        onClick={() => setFilter(1, { id: 1, val: 2 })}
-                      >
-                        <Typography varient="body2" component="h2">
-                          30+
-                        </Typography>
-                      </IconButton>
+                    <Tooltip title="Above Month">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "paymentDueMonthAfter"
+                              ? {
+                                  background: "#5a2c66",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                  marginRight: 5,
+                                }
+                          }
+                          onClick={() => setFilter(1, { id: 1, val: 2 })}
+                        >
+                          +
+                        </Avatar>
+                      </Typography>
                     </Tooltip>
                     {/* <CenterFocusWeakIcon />
                     <Link to="#">Show Payment Due Invoices</Link> */}
@@ -949,35 +1049,69 @@ export default function FilesList(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title="0-7">
-                      <IconButton
-                        style={formState.filter == 'paymentOverDueWeek' ? {background:'#9E2654', color:'white'}:{}}
-                        onClick={() => setFilter(1, { id: 2, val: 0 })}
-                      >
-                        <Typography varient="body2" component="h2">
-                          0-7
-                        </Typography>
-                      </IconButton>
+                    <Tooltip title="Weekly">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "paymentOverDueWeek"
+                              ? {
+                                  background: "#9E2654",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                  marginRight: 5,
+                                }
+                          }
+                          onClick={() => setFilter(1, { id: 2, val: 0 })}
+                        >
+                          {" "}
+                          W
+                        </Avatar>
+                      </Typography>
                     </Tooltip>
-                    <Tooltip title="7-30">
-                      <IconButton
-                        style={formState.filter == 'paymentOverDueMonth' ? {background:'#9E2654', color:'white'}:{}}
-                        onClick={() => setFilter(1, { id: 2, val: 1 })}
-                      >
-                        <Typography varient="body2" component="h2">
-                          7-30
-                        </Typography>
-                      </IconButton>
+                    <Tooltip title="Monthly">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "paymentOverDueMonth"
+                              ? {
+                                  background: "#9E2654",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                  marginRight: 5,
+                                }
+                          }
+                          onClick={() => setFilter(1, { id: 2, val: 1 })}
+                        >
+                          M
+                        </Avatar>
+                      </Typography>
                     </Tooltip>
-                    <Tooltip title="60+">
-                      <IconButton
-                        style={formState.filter == 'paymentOverDueMonthAfter' ? {background:'#9E2654', color:'white'}:{}}
-                        onClick={() => setFilter(1, { id: 2, val: 2 })}
-                      >
-                        <Typography varient="body2" component="h2">
-                          30+
-                        </Typography>
-                      </IconButton>
+                    <Tooltip title="Above Month">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "paymentOverDueMonthAfter"
+                              ? {
+                                  background: "#9E2654",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                  marginRight: 5,
+                                }
+                          }
+                          onClick={() => setFilter(1, { id: 2, val: 2 })}
+                        >
+                          +
+                        </Avatar>
+                      </Typography>
                     </Tooltip>
                   </div>
                 </CardFooter>
@@ -997,17 +1131,24 @@ export default function FilesList(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title="show">
-                      <IconButton
-                        style={formState.filter == 'paymentInProcessCount' ? {background:'#5a2c66', color:'white'}:{}}
-                        onClick={() =>
-                          setFilter(1, { id: 3, val: "paymentInProcessCount" })
-                        }
-                      >
-                        <Typography varient="body2" component="h2">
-                        {formState.filter == 'paymentInProcessCount' ? <CheckBoxIcon fontSize="large" />:
-                          <CheckBoxOutlineBlankIcon fontSize="large" />}                        </Typography>
-                      </IconButton>
+                    <Tooltip title="Payment in Process">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "paymentInProcessCount"
+                              ? { background: "#5a2c66", color: "white" }
+                              : { cursor: "pointer" }
+                          }
+                          onClick={() =>
+                            setFilter(1, {
+                              id: 3,
+                              val: "paymentInProcessCount",
+                            })
+                          }
+                        >
+                          <Done fontSize="large"/>
+                        </Avatar>
+                      </Typography>
                     </Tooltip>
                   </div>
                 </CardFooter>
@@ -1036,7 +1177,11 @@ export default function FilesList(props) {
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
-                    onClick={() => selected.length > 0 ? exportInvoices():msgAlert('Please Select a Invoice.')}
+                    onClick={() =>
+                      selected.length > 0
+                        ? exportInvoices()
+                        : msgAlert("Please Select a Invoice.")
+                    }
                   >
                     Export to Fusion ({selected.length})
                   </Button>
@@ -1052,7 +1197,10 @@ export default function FilesList(props) {
                         {
                           Header: (
                             <Checkbox
-                              checked={filesData.length == selected.length && selected.length >= 0}
+                              checked={
+                                filesData.length == selected.length &&
+                                selected.length >= 0
+                              }
                               onChange={() => select()}
                             />
                           ),
@@ -1090,8 +1238,8 @@ export default function FilesList(props) {
                           accessor: "requester",
                         },
                         {
-                          Header : "Approval Date",
-                          accessor: "approvedDate"
+                          Header: "Approval Date",
+                          accessor: "approvedDate",
                         },
                         {
                           Header: "Actions",
