@@ -1249,6 +1249,15 @@ export default function CreateInvoice(props) {
         receiptNumber = "error";
         error = true;
       }
+      if (
+        items.filter((i) => i.receiptNumber.length < 1)
+          .length > 0
+      ) {
+        item = "error";
+        error = true;
+      } else {
+        item = "success";
+      }
     }
     if (isVendor) {
       if (!Check(formState.values.organizationId)) {
@@ -1278,15 +1287,7 @@ export default function CreateInvoice(props) {
       error = true;
     }
 
-    if (
-      items.filter((i) => i.receiptNumber.length < 1)
-        .length > 0
-    ) {
-      item = "error";
-      error = true;
-    } else {
-      item = "success";
-    }
+    
 
     setFormState((formState) => ({
       ...formState,
