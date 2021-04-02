@@ -1056,7 +1056,7 @@ export default function CreateInvoice(props) {
         itemName: "",
         unitCost: 0,
         quantity: 0,
-        expenseType: "",
+        // expenseType: "",
         // receiptNumber: "",
         poInline: "",
         discount: 0,
