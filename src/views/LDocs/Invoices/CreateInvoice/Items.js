@@ -399,7 +399,7 @@ export default function Items(props) {
                     :""}
                   </StyledTableRow> */}
                   <StyledTableRow key={"AddingItem1"}>
-                    {formState.isReceipt && formState.isPo ? (
+                    {!isVendor && formState.isReceipt && formState.isPo ? (
                       <React.Fragment>
                         <StyledTableCell colSpan="2">
                           <Select
@@ -450,7 +450,7 @@ export default function Items(props) {
                     ) : (
                       ""
                     )}
-                    <StyledTableCell colSpan={formState.isReceipt ? "5" : "8"}>
+                    <StyledTableCell colSpan={!isVendor && formState.isReceipt && formState.isPo ? "5" : "8"}>
                       <TextField
                         fullWidth={true}
                         error={formState.errors.additionalDetails === "error"}
@@ -477,7 +477,7 @@ export default function Items(props) {
                 <React.Fragment>
                   <StyledTableRow key={row.itemName}>
                     <StyledTableCell style={{ width: 100 }}>
-                      {row.receiptNumber.length < 1 && !isVendor ? (
+                      {row.receiptNumber.length < 1 && !isVendor && formState.isReceipt && formState.isPo ? (
                         <Tooltip
                           title="Receipt Number is Missing.."
                           aria-label="edit"
@@ -783,7 +783,7 @@ export default function Items(props) {
                     :""}
                 </StyledTableRow> */}
                 <StyledTableRow key={"AddingItem1"}>
-                  {formState.isReceipt || !formState.isPo ? (
+                  {!isVendor && formState.isReceipt && formState.isPo ? (
                     <React.Fragment>
                       <StyledTableCell style={{ paddingTop: 30 }} colSpan="2">
                         <Select
@@ -834,7 +834,7 @@ export default function Items(props) {
                   ) : (
                     ""
                   )}
-                  <StyledTableCell colSpan={formState.isReceipt ? "5" : "8"}>
+                  <StyledTableCell colSpan={!isVendor && formState.isReceipt && formState.isPo ? "5" : "8"}>
                     <TextField
                       fullWidth={true}
                       error={formState.errors.additionalDetails === "error"}

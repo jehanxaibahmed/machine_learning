@@ -1131,7 +1131,7 @@ export default function CreateInvoice(props) {
     //     error = true;
     //   }
     // }
-    if (!isVendor) {
+    if (!isVendor && formState.isReceipt && formState.isPo) {
       if (!Check(formState.values.receiptNumber)) {
         receiptNumber = "success";
       } else {
@@ -1237,19 +1237,13 @@ export default function CreateInvoice(props) {
       dueDate = "error";
       error = true;
     }
-    if (!Check(formState.values.poNumber)) {
-      poNumber = "success";
-    } else {
-      poNumber = "error";
-      error = true;
-    }
-    if (!isVendor) {
-      if (!Check(formState.values.receiptNumber)) {
-        receiptNumber = "success";
-      } else {
-        receiptNumber = "error";
-        error = true;
-      }
+    // if (!Check(formState.values.poNumber)) {
+    //   poNumber = "success";
+    // } else {
+    //   poNumber = "error";
+    //   error = true;
+    // }
+    if (!isVendor && !formState.isPo && !formState.isReceipt ) {
       if (
         items.filter((i) => i.receiptNumber.length < 1)
           .length > 0
@@ -2404,6 +2398,7 @@ export default function CreateInvoice(props) {
                                   onChange={handleChange}
                                   name="isReceipt"
                                   color="primary"
+                                  disabled={!formState.isPo}
                                 />
                               }
                               label="With Receipt"
