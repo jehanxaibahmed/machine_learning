@@ -138,7 +138,7 @@ export default function FileReceived(props) {
                 cooljwt: Token,
             },
         }).then(async (response) => {
-                await props.loadFiles(decoded, false);
+                props.loadFiles ? await props.loadFiles(decoded, false) : '';
                 setIsLoading(false);
                 props.closeFileReceivedModal();
             })
