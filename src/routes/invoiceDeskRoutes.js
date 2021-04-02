@@ -1,14 +1,16 @@
 // @material-ui/icons
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
-import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
-import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
-import WrapTextIcon from '@material-ui/icons/WrapText';
-import DescriptionIcon from '@material-ui/icons/Description';
-import FingerprintIcon from '@material-ui/icons/Fingerprint';
+import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import NoteAddIcon from "@material-ui/icons/NoteAdd";
+import SystemUpdateIcon from "@material-ui/icons/SystemUpdate";
+import WrapTextIcon from "@material-ui/icons/WrapText";
+import DescriptionIcon from "@material-ui/icons/Description";
+import FingerprintIcon from "@material-ui/icons/Fingerprint";
 import AssignmentLateIcon from "@material-ui/icons/AssignmentLate";
-
+import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
+import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
+import ApprovalRequested from "views/LDocs/Approvals/Requested";
 
 //Components
 
@@ -17,14 +19,11 @@ import Dashboard from "views/LDocs/Dashboard/Dashboard";
 import Notifications from "views/LDocs/Notifications/Notifications";
 import SignatureStamp from "views/LDocs/SignatureStamp/SignatureStamp";
 import Verify from "views/LDocs/Verify/Verify";
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
+import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import CreateInvoice from "views/LDocs/Invoices/CreateInvoice/CreateInvoice";
 import InvoiceTracking from "views/LDocs/Invoices/InvoiceTracking/InvoiceTracking";
 import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
 import Requested from "views/LDocs/Reviews/Requested";
-
-
-
 
 var invoiceRoutes = [
   {
@@ -46,16 +45,16 @@ var invoiceRoutes = [
         path: "/create",
         name: "Create Invoice",
         rtlName: "عالتسعير",
-        icon:NoteAddIcon,
+        icon: NoteAddIcon,
         rtlMini: "ع",
         component: CreateInvoice,
         layout: "/invoice",
       },
       {
-        path: "/received", 
+        path: "/received",
         name: "Received Invoice",
         rtlName: "عالتسعير",
-        icon:SystemUpdateIcon,
+        icon: SystemUpdateIcon,
         rtlMini: "ع",
         component: FilesList,
         layout: "/invoice",
@@ -64,14 +63,41 @@ var invoiceRoutes = [
         path: "/aging",
         name: "Invoice Aging",
         rtlName: "عالتسعير",
-        icon:DescriptionIcon,
+        icon: DescriptionIcon,
         rtlMini: "ع",
         component: InvoiceAge,
         layout: "/invoice",
-      }
-    ]
+      },
+    ],
   },
-    {
+  {
+    collapse: true,
+    name: "Action Desk",
+    rtlName: "المكونات",
+    icon: AssignmentIndIcon,
+    state: "ActionDeskCollapse",
+    views: [
+      {
+        path: "/my-requests",
+        name: "Review Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        component: Requested,
+        layout: "/action",
+        icon: AssignmentLateIcon,
+      },
+      {
+        path: "/approvals",
+        name: "Approval Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: AssignmentTurnedInIcon,
+        component: ApprovalRequested,
+        layout: "/action",
+      }
+    ],
+  },
+  {
     path: "/verifier",
     name: "Tracking & Validate",
     rtlName: "أشكال عادية",
