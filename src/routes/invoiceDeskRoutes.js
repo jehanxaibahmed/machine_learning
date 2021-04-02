@@ -83,7 +83,7 @@ var invoiceRoutes = [
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         component: Requested,
-        layout: "/action",
+        layout: "/invoice",
         icon: AssignmentLateIcon,
       },
       {
@@ -93,7 +93,7 @@ var invoiceRoutes = [
         rtlMini: "ر",
         icon: AssignmentTurnedInIcon,
         component: ApprovalRequested,
-        layout: "/action",
+        layout: "/invoice",
       }
     ],
   },
