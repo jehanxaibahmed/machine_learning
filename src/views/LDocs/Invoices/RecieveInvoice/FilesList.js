@@ -163,6 +163,7 @@ export default function FilesList(props) {
   const [view, setView] = React.useState("read");
   const [showFiltersModel, setShowFiltersModel] = React.useState(false);
   const [filesData, setFilesData] = React.useState([]);
+  const [editHandler, setEdithandler] = React.useState(null);
   const [formState, setFormState] = React.useState({
     filters: {
       status: true,
@@ -204,7 +205,10 @@ export default function FilesList(props) {
     setExportToFusionModel(true);
   };
   //Edit Invoice
-  const editSelectedInvoice = (row) => {
+  const editSelectedInvoice = (row, i) => {
+    //if i = 1 ? Edit  
+    //if i = 2 ? Resubmission 
+    setEdithandler(i); 
     setRow(row);
     setAnimateTable(false);
     setEditInvoiceModel(true);
@@ -564,6 +568,25 @@ export default function FilesList(props) {
               ) : (
                 ""
               )}
+              {currentStatus.val == 1 && currentStatus.status == 'inProgress' ? (
+                <Tooltip
+                  title={"Edit Invoice"}
+                  aria-label="received"
+                >
+                  <Button
+                    justIcon
+                    round
+                    simple
+                    icon={EditOutlined}
+                    onClick={() => editSelectedInvoice(prop, 1)}
+                    color="info"
+                  >
+                    <EditOutlined />
+                  </Button>
+                </Tooltip>
+              ) : (
+                ""
+              )}
               {/* {prop.approveStatus == "approved" && !isVendor ? (
                 <React.Fragment>
                   <Tooltip title="Initiate Payment" aria-label="initPayment">
@@ -608,7 +631,7 @@ export default function FilesList(props) {
                     round
                     simple
                     icon={EditOutlined}
-                    onClick={() => editSelectedInvoice(prop)}
+                    onClick={() => editSelectedInvoice(prop, 2)}
                     color="info"
                   >
                     <EditOutlined />
@@ -703,6 +726,7 @@ export default function FilesList(props) {
     setinitPaymentModel(false);
   };
   const closeInvoiceModel = () => {
+    setEditInvoiceModel(null);
     setEditInvoiceModel(false);
     setAnimateTable(true);
   };
@@ -1489,6 +1513,7 @@ export default function FilesList(props) {
             edit={editInvoice}
             loadFiles={getMyFiles}
             closeModal={closeInvoiceModel}
+            editHandler={editHandler}
             fileData={row}
           />
         </Animated>

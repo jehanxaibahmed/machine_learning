@@ -90,6 +90,7 @@ const getDateFormet = (date) => {
 };
 
 export default function CreateInvoice(props) {
+
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
@@ -899,7 +900,7 @@ export default function CreateInvoice(props) {
             )
           : null,
           isPo:fileData.isPo,
-          isReceipt:file.isReceipt,
+          isReceipt:fileData.isReceipt,
         values: {
           ...formState.values,
           InvoiceNumber: fileData.invoiceId,
@@ -1194,6 +1195,7 @@ export default function CreateInvoice(props) {
   };
 
   const createInvoice = () => {
+    const isEdit = props.editHandler == 1 ? true : false;
     //Creating Invoice
     setIsSavingInvoice(true);
     const userData = jwt.decode(Token);
@@ -1385,7 +1387,9 @@ export default function CreateInvoice(props) {
         // url: edit
         //   ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
         //   : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
+        url: isEdit ? 
+          `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice` :
+          `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
         data: formData,
         headers: {
           //"Content-Type": "multipart/form-data",
