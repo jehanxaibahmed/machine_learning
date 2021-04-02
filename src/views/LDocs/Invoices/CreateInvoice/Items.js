@@ -399,7 +399,7 @@ export default function Items(props) {
                     :""}
                   </StyledTableRow> */}
                   <StyledTableRow key={"AddingItem1"}>
-                    {formState.isReceipt || formState.isPo ? (
+                    {formState.isReceipt && formState.isPo ? (
                       <React.Fragment>
                         <StyledTableCell colSpan="2">
                           <Select
