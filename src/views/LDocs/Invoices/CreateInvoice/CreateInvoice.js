@@ -1249,7 +1249,7 @@ export default function CreateInvoice(props) {
     //   poNumber = "error";
     //   error = true;
     // }
-    if (!isVendor && !formState.isPo && !formState.isReceipt ) {
+    if (!isVendor && formState.isPo && formState.isReceipt ) {
       if (
         items.filter((i) => i.receiptNumber.length < 1)
           .length > 0
