@@ -913,6 +913,7 @@ export default function CreateInvoice(props) {
           selectedVendor: !isVendor
             ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
             : null,
+          expenseType:fileData.expenseType
         },
       }));
       var invoice_items = fileData.items.map((item) => {
