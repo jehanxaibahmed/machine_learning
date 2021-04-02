@@ -474,18 +474,17 @@ export default function Items(props) {
                 <React.Fragment>
                   <StyledTableRow key={row.itemName}>
                     <StyledTableCell style={{ width: 100 }}>
-                      {// !Check(row.poInline || row.expenseType) &&
-                      // !Check(row.receiptNumber)
-                      //   ?
-                      index + 1
-                      // :
-                      // <Tooltip title="There is something missing.." aria-label="edit" >
-                      //   <IconButton
-                      //     onClick={() => handleEditItem(row, index)}
-                      //   >
-                      //     <ErrorOutlineIcon fontSize="small" style={{color:'orange'}} />
-                      // </IconButton>
-                      // </Tooltip>
+                      {row.receiptNumber.length < 1 && !isVendor 
+                      ? 
+                      <Tooltip title="Receipt Number is Missing.." aria-label="edit" >
+                       <IconButton
+                          onClick={() => handleEditItem(row, index)}
+                        >
+                          <ErrorOutlineIcon fontSize="small" style={{color:'orange'}} />
+                      </IconButton>
+                      </Tooltip>
+                       :
+                       index + 1
                       }
                     </StyledTableCell>
                     <StyledTableCell

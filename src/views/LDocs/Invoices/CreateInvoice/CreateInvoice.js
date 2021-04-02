@@ -949,7 +949,7 @@ export default function CreateInvoice(props) {
         ...formState,
         attachments: invoice_attachments,
       }));
-
+      getReceipts(fileData.po);
       getPos();
     }
   };
@@ -1278,15 +1278,15 @@ export default function CreateInvoice(props) {
       error = true;
     }
 
-    // if (
-    //   items.filter((i) => Check(i.poInline) && Check(i.expenseType) == true)
-    //     .length > 0
-    // ) {
-    //   item = "error";
-    //   error = true;
-    // } else {
-    //   item = "success";
-    // }
+    if (
+      items.filter((i) => i.receiptNumber.length < 1)
+        .length > 0
+    ) {
+      item = "error";
+      error = true;
+    } else {
+      item = "success";
+    }
 
     setFormState((formState) => ({
       ...formState,
@@ -1296,8 +1296,8 @@ export default function CreateInvoice(props) {
         InvoiceNumber: InvoiceNumber,
         dueDate: dueDate,
         vendor: vendor,
-        // items: item,
-        receiptNumber: receiptNumber,
+        items: item,
+        // receiptNumber: receiptNumber,
         poNumber: poNumber,
         currency: currency,
         paymentTerms: paymentTerms,
@@ -2601,7 +2601,7 @@ export default function CreateInvoice(props) {
                                 fullWidth={true}
                                 error={formState.errors.poNumber}
                                 helperText={
-                                  formState.errors.poNumber === "error"
+                                  formState.errors.poNumber == "error"
                                     ? "Valid PO Number is required"
                                     : null
                                 }
