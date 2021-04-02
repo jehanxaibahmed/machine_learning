@@ -1988,13 +1988,13 @@ export default function CreateInvoice(props) {
                                 >
                                   Choose Supplier
                                 </MenuItem>
-                                {formState.vendors.map((vendor, index) => {
+                                {formState.vendors ? formState.vendors.map((vendor, index) => {
                                   return (
                                     <MenuItem key={index} value={vendor._id}>
                                       {vendor.level1.vendorName}
                                     </MenuItem>
                                   );
-                                })}
+                                }):''}
                               </TextField>
                             </GridItem>
                             <GridItem
@@ -2118,7 +2118,7 @@ export default function CreateInvoice(props) {
                                 >
                                   Choose Customer
                                 </MenuItem>
-                                {formState.organizations.map((org, index) => {
+                                {formState.organizations ? formState.organizations.map((org, index) => {
                                   return (
                                     <MenuItem
                                       key={index}
@@ -2127,7 +2127,7 @@ export default function CreateInvoice(props) {
                                       {org.organizationName}
                                     </MenuItem>
                                   );
-                                })}
+                                }):''}
                               </TextField>
                             </GridItem>
                             <GridItem
