@@ -1070,7 +1070,7 @@ export default function CreateInvoice(props) {
         quantity: "",
         discount: "",
         amount: "",
-        expenseType: "",
+        // expenseType: "",
         // receiptNumber: "",
         poInline: "",
         additionalDetails: "",
@@ -1163,7 +1163,7 @@ export default function CreateInvoice(props) {
         quantity: formState.values.quantity,
         discount: formState.values.discount,
         poInline: formState.values.poInline,
-        expenseType: formState.values.expenseType,
+        // expenseType: formState.values.expenseType,
         category: category,
         receiptNumber: formState.values.receiptNumber,
         amount:
