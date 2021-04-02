@@ -809,8 +809,8 @@ export default function CreateInvoice(props) {
       }));
     }
   }, [formState.values.selectedVendor]);
-  //On Load Component
-  React.useEffect(() => {
+
+  const getData = () => {
     setIsLoading(true);
     window.scrollTo(0, 0);
     const userDetails = jwt.decode(Token);
@@ -883,6 +883,10 @@ export default function CreateInvoice(props) {
         });
     }
     getLookUp();
+  }
+  //On Load Component
+  React.useEffect(() => {
+    getData();
   }, []);
 
   const setInvoice = () => {
@@ -1285,9 +1289,6 @@ export default function CreateInvoice(props) {
         error = true;
       }
     }
-    
-
-    
 
     setFormState((formState) => ({
       ...formState,
@@ -1371,8 +1372,8 @@ export default function CreateInvoice(props) {
         po: formState.values.poNumber,
         // receiptNumber: formState.values.receiptNumber,
         paymentTerms: formState.values.paymentTerms.split("-")[1],
-        isReceipt: formState.isPo,
-        isPo: formState.isReceipt,
+        isPo: formState.isPo,
+        isReceipt: formState.isReceipt,
         requesterId: userData.email,
         expenseType : formState.values.expenseType
 
@@ -1404,6 +1405,7 @@ export default function CreateInvoice(props) {
             setMarkAsReceivedModel(true);
           }
           if (!edit) {
+            getData();
             setItems([]);
             setFormState({
               selectedVendor: null,
@@ -2677,11 +2679,11 @@ export default function CreateInvoice(props) {
                               }}
                               select
                             >
-                              {formState.expenseTypes.map((exp, index) => (
+                              {formState.expenseTypes ? formState.expenseTypes.map((exp, index) => (
                                 <MenuItem key={index} value={exp._id}>
                                   {exp.Name}
                                 </MenuItem>
-                              ))}
+                              )):''}
                             </TextField>
                           </GridItem>
                         )}
