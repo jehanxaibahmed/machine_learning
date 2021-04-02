@@ -543,7 +543,7 @@ export default function FilesList(props) {
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
-              {isCorrectionRequiredInWorkflow || isSubmitedByVendor ? (
+              {isCorrectionRequiredInWorkflow ? (
                 <Tooltip
                   title={
                     isSubmitedByVendor
