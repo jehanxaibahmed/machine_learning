@@ -319,6 +319,8 @@ export default function CreateInvoice(props) {
           event.target.name == "isPo" ? !formState.isPo : !formState.isReceipt,
       }));
     }
+    
+    
 
     if (event.target.name == "poNumber") {
       let po = pos.find((po) => po.poNumber == event.target.value);
@@ -2703,7 +2705,7 @@ export default function CreateInvoice(props) {
                             }}
                             type="text"
                             // variant="outlined"
-                            value={formState.values.paymentTerms || ""}
+                            value={!formState.isPo ? 'NET-0' : formState.values.paymentTerms || ""}
                             className={classes.textField}
                           />
                         </GridItem>
