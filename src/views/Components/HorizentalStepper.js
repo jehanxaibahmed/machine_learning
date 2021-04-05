@@ -349,7 +349,7 @@ export default function Horizentalteppers(props) {
                           ? "orange"
                           : step.remarks == "Rejected"
                           ? "red"
-                          : step.remarks == "Done"
+                          : step.remarks == "Done" || "Ready to Pay"
                           ? "green" 
                           :
                           step.remarks == "In Process"
