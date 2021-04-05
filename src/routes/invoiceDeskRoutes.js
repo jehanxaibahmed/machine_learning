@@ -22,6 +22,7 @@ import Verify from "views/LDocs/Verify/Verify";
 import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import CreateInvoice from "views/LDocs/Invoices/CreateInvoice/CreateInvoice";
 import InvoiceTracking from "views/LDocs/Invoices/InvoiceTracking/InvoiceTracking";
+import ExportList from "views/LDocs/Invoices/ExportInvoices/FilesList";
 import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
 import Requested from "views/LDocs/Reviews/Requested";
 import jwt from "jsonwebtoken";
@@ -98,7 +99,7 @@ var invoiceRoutes = [
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         icon: SystemUpdateIcon,
-        component: FilesList,
+        component: ExportList,
         layout: "/invoice",
       }
       :{

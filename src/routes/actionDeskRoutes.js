@@ -12,7 +12,7 @@ import Dashboard from "views/LDocs/Dashboard/Dashboard";
 import Notifications from "views/LDocs/Notifications/Notifications";
 import Requested from "views/LDocs/Reviews/Requested";
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
-import FilesList from "views/LDocs/Invoices/ExportInvoices/FilesList";
+import ExportList from "views/LDocs/Invoices/ExportInvoices/FilesList";
 import SignatureStamp from "views/LDocs/SignatureStamp/SignatureStamp";
 import Verify from "views/LDocs/Verify/Verify";
 import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
@@ -58,7 +58,7 @@ var actionRoutes = [
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         icon: SystemUpdateIcon,
-        component: FilesList,
+        component: ExportList,
         layout: "/action",
       },
     ],
