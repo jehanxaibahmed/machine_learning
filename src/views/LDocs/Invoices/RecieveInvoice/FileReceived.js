@@ -141,10 +141,9 @@ export default function FileReceived(props) {
                 cooljwt: Token,
             },
         }).then(async (response) => {
-                setIsMarked(true);
+                setIsLoading(false);
+                props.closeFileReceivedModal();
                 // props.loadFiles ? await props.loadFiles(decoded, false) : '';
-                // setIsLoading(false);
-                // props.closeFileReceivedModal();
 
             })
             .catch((error) => {
@@ -163,7 +162,6 @@ export default function FileReceived(props) {
   return (
     <GridContainer>
       {alert}
-      {isMarked ? <Redirect to="/invoice/received" /> : ''}
       <GridItem xs={12} sm={12} md={12}>
                     <Card>
                       <CardHeader color="info" icon>
