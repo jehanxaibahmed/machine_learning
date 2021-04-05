@@ -1403,7 +1403,13 @@ export default function CreateInvoice(props) {
               ? `Invoice Resubmitted SuccessFully. `:
                "Invoice Submited SuccessFully."
           )}else{
-            setMarkAsReceivedModel(true);
+            if (edit) {
+              setMarkAsReceivedModel(true);
+            }else{
+              successAlert(
+                   "Invoice Submited SuccessFully."
+              )
+            }
           }
           if (!edit) {
             getData();
