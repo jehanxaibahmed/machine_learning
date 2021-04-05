@@ -568,7 +568,7 @@ export default function FilesList(props) {
               ) : (
                 ""
               )} */}
-              {currentStatus.val == 1 && currentStatus.status == 'inProgress' && prop.createdByVendor ? (
+              {currentStatus.val == 1 && currentStatus.status == 'correctionRequired' && prop.createdByVendor ? (
                 <Tooltip
                   title={"Edit Invoice"}
                   aria-label="received"
