@@ -92,7 +92,7 @@ var invoiceRoutes = [
         layout: "/invoice",
         icon: AssignmentLateIcon,
       },
-      decoded.title == "ACCOUNTANT" ? 
+      decoded ? decoded.title == "ACCOUNTANT" ? 
       {
         path: "/export",
         name: "Export Invoices",
@@ -100,6 +100,15 @@ var invoiceRoutes = [
         rtlMini: "ر",
         icon: SystemUpdateIcon,
         component: ExportList,
+        layout: "/invoice",
+      }
+      :{
+        path: "/approvals",
+        name: "Approval Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: AssignmentTurnedInIcon,
+        component: ApprovalRequested,
         layout: "/invoice",
       }
       :{
