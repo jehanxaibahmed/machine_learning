@@ -82,7 +82,7 @@ export default function Step1(props) {
                         <TableCell >{item.itemName}</TableCell>
                         <TableCell className={classesList.TableCell}>{addZeroes(item.quantity)}</TableCell>
                         <TableCell className={classesList.TableCell}>{props.currency.sign} {addZeroes(item.unitCost)}</TableCell>
-                        <TableCell className={classesList.TableCell}>{props.currency.sign} {addZeroes((item.discount*item.unitCost)/100*item.quantity)} <sub>({item.discount}%)</sub></TableCell>
+                        <TableCell className={classesList.TableCell}>{props.currency.sign} {addZeroes((item.discount*item.unitCost)/100*item.quantity).toFixed(2)} <sub>({item.discount}%)</sub></TableCell>
                         <TableCell className={classesList.TableCell}>{props.currency.sign} {addZeroes(item.amount)}</TableCell>
                         
                     </TableRow>

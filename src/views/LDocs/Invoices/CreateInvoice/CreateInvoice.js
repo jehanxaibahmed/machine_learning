@@ -623,6 +623,7 @@ export default function CreateInvoice(props) {
                   : "",
                 discount: "0",
                 additionalDetails: "",
+                receiptNumber :[]
               };
               invoice_lineitems.push(obj);
             });
@@ -791,7 +792,7 @@ export default function CreateInvoice(props) {
   //Update Total
   React.useEffect(() => {
     updateTotal();
-  }, [items, formState.values.overallDiscount, formState.values.overallTax]);
+  }, [items, formState.values.overallDiscount, formState.values.overallTax,formState.values.taxType, formState.values.discountType ]);
   //On Change Vendor
   React.useEffect(() => {
     if (

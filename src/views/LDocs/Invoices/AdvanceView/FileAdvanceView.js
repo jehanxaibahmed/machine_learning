@@ -320,11 +320,11 @@ const FileAdvanceView = forwardRef((props, ref) => {
                     secondary={`${fileData.FC_currency.sign} ${addZeroes(fileData.grossAmt)}`}
                   />
                   <ListItemText
-                    primary="Discount (-)"
+                    primary="Discount"
                     secondary={`${fileData.FC_currency.sign} ${addZeroes((fileData.discountPercent*fileData.grossAmt)/100)} (${fileData.discountPercent}%)`}
                   />
                    <ListItemText
-                    primary="Tax (+)"
+                    primary="Tax"
                     secondary={`${fileData.FC_currency.sign} ${addZeroes(fileData.taxAmt)} (${(fileData.taxAmt*100)/fileData.grossAmt}%)`}
                   />
                   <ListItemText
