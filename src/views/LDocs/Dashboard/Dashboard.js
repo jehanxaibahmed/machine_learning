@@ -485,7 +485,7 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
                 hover
                 tableHeaderColor="info"
                 tableHead={["Invoice ID","Version","Submit Date", "Due Date", "Supplier Name", "Amount"]}
-                tableData={typeof fileHistory.recentInvoices !== "undefined" && fileHistory.recentInvoices.length > 0 ? fileHistory.recentInvoices.map((file,index)=>{return [file.invoiceId,file.version,formatDateTime(file.invoiceDate), formatDateTime(file.dueDate) ,file.vendorName,`$${addZeroes(file.netAmt)}`]}): []}
+                tableData={typeof fileHistory.recentInvoices !== "undefined" && fileHistory.recentInvoices.length > 0 ? fileHistory.recentInvoices.map((file,index)=>{return [file.invoiceId,file.version,formatDateTime(file.invoiceDate), formatDateTime(file.dueDate) ,file.vendorName,`${file.FC_currency ? file.FC_currency.sign : '$'}${addZeroes(file.netAmt)}`]}): []}
               />
               }
             </CardBody>

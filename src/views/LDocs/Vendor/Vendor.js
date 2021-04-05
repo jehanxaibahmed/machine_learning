@@ -22,6 +22,7 @@ import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 import RegisterVendor from "./RegisterVendor";
 import View from "./ViewVendor";
+import {useSelector } from "react-redux";
 import axios from "axios";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
@@ -29,8 +30,6 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import BuildNetwork from "./BuildNetwork.js";
-let token = localStorage.getItem("cooljwt");
-const userDetails = jwt.decode(token);
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -56,6 +55,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Vendor() {
+  const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
   const classes = useStyles();
   const [classicModal, setClassicModal] = React.useState(false);
   const [viewModal, setViewModal] = React.useState(false);
@@ -75,7 +75,7 @@ export default function Vendor() {
   
 
    React.useEffect(() => {
-    let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
+    let userDetail = jwt.decode(Token);
     getOrganizations(userDetail);
    },[]);
 
@@ -136,7 +136,7 @@ export default function Vendor() {
       method: "put",
       url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/updateVendorStatus`,
       data: bodyFormData,
-      headers: { cooljwt:token},
+      headers: { cooljwt:Token},
     })
       .then((response) => {
         let msg = "Supplier Status Changed Successfully!";
@@ -183,7 +183,7 @@ export default function Vendor() {
     axios({
       method: "get",
       url: `${process.env.REACT_APP_LDOCS_API_URL}/organization/getAllOrgBytenant`,
-      headers: { cooljwt: token },
+      headers: { cooljwt: Token },
     })
       .then((response) => {
         if (response.data.length > 0) {
@@ -208,7 +208,7 @@ export default function Vendor() {
         method: "get", //you can set what request you want to be
         url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/getLookups/1`,
         headers: {
-          cooljwt: token,
+          cooljwt: Token,
         },
       }).then(response=>{
           res(response.data.result);
@@ -224,7 +224,7 @@ export default function Vendor() {
     axios({
       method: "get",
       url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${org}`,
-      headers: { cooljwt: token },
+      headers: { cooljwt: Token },
     })
       .then((response) => {
         // setUpdatingStatus(null);

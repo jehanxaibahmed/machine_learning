@@ -182,22 +182,31 @@ export default function FilesList(props) {
   });
 
   const getPos = () => {
+    let userDetails = jwt.decode(Token);
     axios({
-      method: "get", //you can set what request you want to be
+      method: "post", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+      data: {
+        organizationId: userDetails.orgDetail.organizationId
+      },
       headers: {
         cooljwt: Token,
       },
     })
-      .then((res) => {
-        setFormState((formState) => ({
-          ...formState,
-          pos: res.data,
-        }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    .then((res) => {
+      console.log(res.data);
+      setFormState((formState) => ({
+        ...formState,
+        pos: res.data,
+      }));
+    })
+    .catch((err) => {
+      setFormState((formState) => ({
+        ...formState,
+        pos: [],
+      }));
+    });
+  
   };
 
   const getVendors = () => {

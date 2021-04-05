@@ -246,7 +246,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                       ? "green"
                       : "red",
                 }}
-                label={step.EventStatus == "pending" ? `SENT FOR ${step.Event.toUpperCase()}` :step.EventStatus.toUpperCase()}
+                label={step.EventStatus == "pending" ? `SENT FOR ${step.Event.toUpperCase()}` : step.EventStatus == 'correctionRequired' ? 'CORRECTION REQUIRED' : step.EventStatus.toUpperCase()}
               />
             </GridItem>
           </GridContainer>
