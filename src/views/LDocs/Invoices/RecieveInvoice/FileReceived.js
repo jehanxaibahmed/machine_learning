@@ -33,6 +33,7 @@ export default function FileReceived(props) {
   const sweetClass = sweetAlertStyle();
 //   const [isSavingTags, setIsSavingTags] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isMarked, setIsMarked] = React.useState(false);
   const [alert, setAlert] = React.useState(null);
   const [formState, setFormState] = React.useState({
     values: {
@@ -139,9 +140,10 @@ export default function FileReceived(props) {
                 cooljwt: Token,
             },
         }).then(async (response) => {
-                props.loadFiles ? await props.loadFiles(decoded, false) : '';
-                setIsLoading(false);
-                props.closeFileReceivedModal();
+                setIsMarked(true);
+                // props.loadFiles ? await props.loadFiles(decoded, false) : '';
+                // setIsLoading(false);
+                // props.closeFileReceivedModal();
 
             })
             .catch((error) => {
@@ -160,6 +162,7 @@ export default function FileReceived(props) {
   return (
     <GridContainer>
       {alert}
+      {isMarked ? <Redirect to="/invoice/received" /> : ''}
       <GridItem xs={12} sm={12} md={12}>
                     <Card>
                       <CardHeader color="info" icon>
