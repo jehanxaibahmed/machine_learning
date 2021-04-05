@@ -568,7 +568,7 @@ export default function FilesList(props) {
               ) : (
                 ""
               )} */}
-              {currentStatus.val == 1 && currentStatus.status == 'correctionRequired' && prop.createdByVendor ? (
+              {currentStatus.val == 1 || currentStatus.status == 'correctionRequired'  &&  prop.createdByVendor ? (
                 <Tooltip
                   title={"Edit Invoice"}
                   aria-label="received"
@@ -587,6 +587,7 @@ export default function FilesList(props) {
               ) : (
                 ""
               )}
+             
               {/* {prop.approveStatus == "approved" && !isVendor ? (
                 <React.Fragment>
                   <Tooltip title="Initiate Payment" aria-label="initPayment">
@@ -623,7 +624,7 @@ export default function FilesList(props) {
               )} */}
               {currentStatus.val == 1 &&
               currentStatus.status == "correctionRequired" &&
-              prop.createdByVendor &&
+              // prop.createdByVendor &&
               isVendor ? (
                 <Tooltip title="Re Submit" aria-label="edit">
                   <Button

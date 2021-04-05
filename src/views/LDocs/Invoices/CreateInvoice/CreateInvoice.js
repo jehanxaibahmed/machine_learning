@@ -17,6 +17,7 @@ import {
   Checkbox,
 } from "@material-ui/core";
 import SweetAlert from "react-bootstrap-sweetalert";
+import {  Redirect } from "react-router-dom";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -96,6 +97,7 @@ export default function CreateInvoice(props) {
     localStorage.getItem("cooljwt");
   const { edit, fileData, closeModal } = props;
   const [pdfModal, setPdfModal] = useState(false);
+  const [isMarked, setIsMarked] = useState(false);
   const [vendorModal, setVendorModal] = useState(false);
   const [viewFile, setViewFile] = useState(false);
   const [items, setItems] = useState([]);
@@ -377,6 +379,8 @@ export default function CreateInvoice(props) {
   };
   const closeMarkAsReceivedModel = () => {
     setMarkAsReceivedModel(false);
+    successAlert('Status Changed Successfully.');
+    // setIsMarked(true);
   };
   const removeAttachment = (fileIndex) => {
     let attachments = formState.attachments.filter(
@@ -1483,6 +1487,7 @@ export default function CreateInvoice(props) {
   return (
     <div>
       {alert}
+      {/* {isMarked ? <Redirect exact to="/invoice/received" /> : ''} */}
       {isCreateInvoice ? (
         <Animated
           animationIn="bounceInRight"
