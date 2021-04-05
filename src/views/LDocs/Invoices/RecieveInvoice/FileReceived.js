@@ -17,6 +17,7 @@ import ChipInput from "material-ui-chip-input";
 import Pending from "assets/img/statuses/Pending.png";
 import Success from "assets/img/statuses/Success.png";
 import Rejected from "assets/img/statuses/Rejected.png";
+
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
@@ -141,6 +142,7 @@ export default function FileReceived(props) {
                 props.loadFiles ? await props.loadFiles(decoded, false) : '';
                 setIsLoading(false);
                 props.closeFileReceivedModal();
+
             })
             .catch((error) => {
                 errorAlert(
