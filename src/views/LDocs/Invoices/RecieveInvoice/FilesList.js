@@ -31,6 +31,7 @@ import {
   Send,
   Edit,
   EditOutlined,
+  Refresh,
 } from "@material-ui/icons";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -43,6 +44,7 @@ import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import ClearAllIcon from "@material-ui/icons/ClearAll";
 import CardHeader from "components/Card/CardHeader.js";
 import axios from "axios";
+import RefreshIcon from '@material-ui/icons/Refresh';
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import dateFormat from "dateformat";
 import { Animated } from "react-animated-css";
@@ -568,7 +570,7 @@ export default function FilesList(props) {
               ) : (
                 ""
               )} */}
-              {currentStatus.val == 1 || currentStatus.status == 'correctionRequired'  &&  prop.createdByVendor ? (
+              {currentStatus.val == 1 && currentStatus.status == "inProgress" &&  prop.createdByVendor && !isVendor ? (
                 <Tooltip
                   title={"Edit Invoice"}
                   aria-label="received"
@@ -588,6 +590,63 @@ export default function FilesList(props) {
                 ""
               )}
              
+             {prop.workFlowStatus == "correctionRequired" &&
+             !isVendor
+              // && !prop.createdByVendor &&
+               ? (
+                 <React.Fragment>
+                <Tooltip title="RE SUBMIT" >
+                  <Button
+                    justIcon
+                    round
+                    simple
+                    icon={RefreshIcon}
+                    onClick={() => editSelectedInvoice(prop, 2)}
+                    color="info"
+                  >
+                    <RefreshIcon />
+                  </Button>
+                </Tooltip>
+                <Tooltip
+                title={"Edit Invoice"}
+                aria-label="received"
+              >
+                <Button
+                  justIcon
+                  round
+                  simple
+                  icon={EditOutlined}
+                  onClick={() => editSelectedInvoice(prop, 1)}
+                  color="info"
+                >
+                  <EditOutlined />
+                </Button>
+              </Tooltip>
+              </React.Fragment>
+              ) : (
+                ""
+              )}
+            {
+              currentStatus.val == 1 && currentStatus.status == "correctionRequired"
+              // && !prop.createdByVendor 
+              &&
+              isVendor
+               ? (
+                <Tooltip title="RE SUBMIT" >
+                  <Button
+                    justIcon
+                    round
+                    simple
+                    icon={RefreshIcon}
+                    onClick={() => editSelectedInvoice(prop, 2)}
+                    color="info"
+                  >
+                    <RefreshIcon />
+                  </Button>
+                </Tooltip>
+              ) : (
+                ""
+              )}
               {/* {prop.approveStatus == "approved" && !isVendor ? (
                 <React.Fragment>
                   <Tooltip title="Initiate Payment" aria-label="initPayment">
@@ -622,43 +681,6 @@ export default function FilesList(props) {
               ) : (
                 ""
               )} */}
-              {currentStatus.val == 1 &&
-              currentStatus.status == "correctionRequired" &&
-              // prop.createdByVendor &&
-              isVendor ? (
-                <Tooltip title="Re Submit" aria-label="edit">
-                  <Button
-                    justIcon
-                    round
-                    simple
-                    icon={EditOutlined}
-                    onClick={() => editSelectedInvoice(prop, 2)}
-                    color="info"
-                  >
-                    <EditOutlined />
-                  </Button>
-                </Tooltip>
-              ) : (
-                ""
-              )}
-              {prop.workFlowStatus == "correctionRequired" &&
-              !prop.createdByVendor &&
-              !isVendor ? (
-                <Tooltip title="RE Submit" aria-label="edit">
-                  <Button
-                    justIcon
-                    round
-                    simple
-                    icon={EditOutlined}
-                    onClick={() => editSelectedInvoice(prop)}
-                    color="info"
-                  >
-                    <EditOutlined />
-                  </Button>
-                </Tooltip>
-              ) : (
-                ""
-              )}
             </div>
           ),
         };
