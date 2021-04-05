@@ -24,6 +24,11 @@ import CreateInvoice from "views/LDocs/Invoices/CreateInvoice/CreateInvoice";
 import InvoiceTracking from "views/LDocs/Invoices/InvoiceTracking/InvoiceTracking";
 import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
 import Requested from "views/LDocs/Reviews/Requested";
+import jwt from "jsonwebtoken";
+const Token = localStorage.getItem('cooljwt');
+let decoded = jwt.decode(Token);
+console.log(decoded);
+
 
 var invoiceRoutes = [
   {
@@ -86,7 +91,17 @@ var invoiceRoutes = [
         layout: "/invoice",
         icon: AssignmentLateIcon,
       },
+      decoded.title == "ACCOUNTANT" ? 
       {
+        path: "/export",
+        name: "Export Invoices",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: SystemUpdateIcon,
+        component: FilesList,
+        layout: "/invoice",
+      }
+      :{
         path: "/approvals",
         name: "Approval Tasks",
         rtlName: "انهيار متعدد المستويات",
