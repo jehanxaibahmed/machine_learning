@@ -678,8 +678,7 @@ export default function CreateInvoice(props) {
                   : null,
               },
             }));
-            //Get PO's
-            getPos(vendorId);
+            
             //AddFileInAttachments
             let reader = new FileReader();
             reader.onloadend = () => {
@@ -702,6 +701,8 @@ export default function CreateInvoice(props) {
             };
             reader.readAsDataURL(file);
             setItems(invoice_lineitems);
+            //Get PO's
+            getPos();
             successAlert("Extracted Data Successfully.");
           }
         }
