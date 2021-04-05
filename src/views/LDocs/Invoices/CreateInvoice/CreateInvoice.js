@@ -1397,14 +1397,14 @@ export default function CreateInvoice(props) {
       })
         .then((response) => {
           setIsSavingInvoice(false);
-          if(!isEdit){
-          successAlert(
-            edit
-              ? `Invoice ${isEdit ? 'Edited' : 'Re-Submiited'} SuccessFully.`
-              : "Invoice Submited SuccessFully."
-          )}else{
+          // if(!isEdit){
+          // successAlert(
+          //   edit
+          //     ? `Invoice ${isEdit ? 'Edited' : 'Re-Submiited'} SuccessFully.`
+          //     : "Invoice Submited SuccessFully."
+          // )}else{
             setMarkAsReceivedModel(true);
-          }
+          // }
           if (!edit) {
             getData();
             setItems([]);

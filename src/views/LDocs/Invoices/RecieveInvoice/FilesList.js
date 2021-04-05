@@ -543,7 +543,7 @@ export default function FilesList(props) {
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
-              {isCorrectionRequiredInWorkflow && prop.createdByVendor ? (
+              {/* {isCorrectionRequiredInWorkflow && prop.createdByVendor ? (
                 <Tooltip
                   title={
                     isSubmitedByVendor
@@ -567,7 +567,7 @@ export default function FilesList(props) {
                 </Tooltip>
               ) : (
                 ""
-              )}
+              )} */}
               {currentStatus.val == 1 && currentStatus.status == 'inProgress' && prop.createdByVendor ? (
                 <Tooltip
                   title={"Edit Invoice"}
