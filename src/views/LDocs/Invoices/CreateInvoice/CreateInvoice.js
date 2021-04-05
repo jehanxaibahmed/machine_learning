@@ -658,12 +658,13 @@ export default function CreateInvoice(props) {
               invoice_tax: invoice_tax,
               invoice_supplier: invoice_supplier,
             };
+            let vendorId = formState.vendors.find(
+              (v) => v.level1.vendorName == invoice_companyowner
+            )._id;
             setFormState((formState) => ({
               ...formState,
               selectedVendor: !isVendor
-                ? formState.vendors.find(
-                    (v) => v.level1.vendorName == invoice_companyowner
-                  )._id || null
+                ? vendorId || null
                 : null,
               values: {
                 ...formState.values,
@@ -677,6 +678,8 @@ export default function CreateInvoice(props) {
                   : null,
               },
             }));
+            //Get PO's
+            getPos(vendorId);
             //AddFileInAttachments
             let reader = new FileReader();
             reader.onloadend = () => {
@@ -1213,7 +1216,7 @@ export default function CreateInvoice(props) {
     } else {
       userCurrency = defaultCurrency;
     }
-
+    let po = pos.find((po) => po.poNumber == formState.values.poNumber);
     let invoiceDate;
     let InvoiceNumber;
     let dueDate;
@@ -1375,7 +1378,7 @@ export default function CreateInvoice(props) {
         paymentTerms: formState.values.paymentTerms.split("-")[1],
         isPo: formState.isPo,
         isReceipt: formState.isReceipt,
-        requesterId: userData.email,
+        requesterId: isVendor ? po.requesterId : userData.email,
         expenseType : formState.values.expenseType
 
       };
