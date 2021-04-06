@@ -300,36 +300,54 @@ export default function FilesList(props) {
                 <Tooltip title="REJECTED">
                    <Chip
                     variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="REJECTED"
                     clickable
                     color="secondary"
                   />
                 </Tooltip>
-              ) : currentStatus.status == "correctionRequired" ? (
-                <Tooltip title="CORRECTION REQUIRED">
+              ) : currentStatus.status == "correctionRequired" && currentStatus.val == 1 ? (
+                <Tooltip title="SENT FOR CORRECTION">
                     <Chip
                     variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label="CORRECTION REQUIRED"
+                    label="SENT FOR CORRECTION"
                     clickable
-                    style={{border:'green 1px orange', color:'orange'}}
+                    style={{border:'orange 1px solid', color:'orange'}}
                   />
                 </Tooltip>
-              ) : currentStatus.val == 0 ? (
+              )
+              : 
+              currentStatus.status == "rejected" ? (
+                <Tooltip title="REJECTED">
+                   <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="REJECTED"
+                    clickable
+                    color="secondary"
+                  />
+                </Tooltip>
+              ) 
+              : currentStatus.val == 0 ? (
                 <Tooltip title="PENDING">
                    <Chip
                     variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="PENDING"
                     clickable
-                    style={{border:'green 1px orange', color:'orange'}}
+                    style={{border:'orange 1px solid', color:'orange'}}
                   />
                 </Tooltip>
               ) : currentStatus.val == 1 ? (
                 <Tooltip title="UNDER INITIAL REVIEW">
                   <Chip
                     variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="INITIAL REVIEW"
                     clickable
@@ -340,6 +358,7 @@ export default function FilesList(props) {
                 <Tooltip title="UNDER REVIEW">
                    <Chip
                     variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="UNDER REVIEW"
                     clickable
@@ -350,6 +369,7 @@ export default function FilesList(props) {
                 <Tooltip title="UNDER APPROVAL">
                   <Chip
                     variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="UNDER APPROVAL"
                     clickable
@@ -360,6 +380,7 @@ export default function FilesList(props) {
                 <Tooltip title="DONE">
                    <Chip
                     variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="APPROVAL DONE"
                     clickable
@@ -370,6 +391,7 @@ export default function FilesList(props) {
                 <Tooltip title="NO STATUS">
                    <Chip
                     variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="NO STATUS"
                     clickable
