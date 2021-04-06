@@ -17,7 +17,7 @@ import DeviceHubIcon from "@material-ui/icons/DeviceHub";
 import SystemUpdateIcon from "@material-ui/icons/SystemUpdate";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import MoneyIcon from "@material-ui/icons/Money";
-import FindInPageIcon from '@material-ui/icons/FindInPage';
+import FindInPageIcon from "@material-ui/icons/FindInPage";
 
 const useQontoStepIconStyles = makeStyles({
   root: {
@@ -179,92 +179,87 @@ export default function Horizentalteppers(props) {
   const [steps, setSteps] = React.useState([
     {
       label: "Invoice Creation",
-      remarks:
-      props.fileData.trackingStatus.received ? 
-        props.fileData.trackingStatus.received.status == "rejected"
+      remarks: props.fileData.trackingStatus.received
+        ? props.fileData.trackingStatus.received.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.received.status ==
             "correctionRequired"
           ? "Correction Required"
           : props.fileData.trackingStatus.received.status == "completed"
           ? "Done"
-          :props.fileData.trackingStatus.received.status ==
-            "inProgress"
-          ?
-          "In Process": "" : "",
+          : props.fileData.trackingStatus.received.status == "inProgress"
+          ? "In Process"
+          : ""
+        : "",
       status: props.fileData.trackingStatus.received.status || null,
       comments: props.fileData.trackingStatus.received.comment || null,
     },
     {
       label: "Initial Review",
-      remarks:
-      props.fileData.trackingStatus.initialReview ?
-        props.fileData.trackingStatus.initialReview.status == "rejected"
+      remarks: props.fileData.trackingStatus.initialReview
+        ? props.fileData.trackingStatus.initialReview.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.initialReview.status ==
             "correctionRequired"
           ? "Correction Required"
           : props.fileData.trackingStatus.initialReview.status == "completed"
           ? "Done"
-          :props.fileData.trackingStatus.initialReview.status ==
-          "inProgress"
-        ?
-        "In Process": "" : "",
+          : props.fileData.trackingStatus.initialReview.status == "inProgress"
+          ? "In Process"
+          : ""
+        : "",
       status: props.fileData.trackingStatus.initialReview.status || null,
       comments: props.fileData.trackingStatus.initialReview.comment || null,
     },
     {
       label: "Account Review",
-      remarks:
-      props.fileData.trackingStatus.underReview ?
-        props.fileData.trackingStatus.underReview.status == "rejected"
+      remarks: props.fileData.trackingStatus.underReview
+        ? props.fileData.trackingStatus.underReview.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.underReview.status ==
             "correctionRequired"
           ? "Correction Required"
           : props.fileData.trackingStatus.underReview.status == "completed"
           ? "Done"
-          :props.fileData.trackingStatus.underReview.status ==
-          "inProgress"
-        ?
-        "In Process": "" : "",
+          : props.fileData.trackingStatus.underReview.status == "inProgress"
+          ? "In Process"
+          : ""
+        : "",
       status: props.fileData.trackingStatus.underReview.status || null,
       comments: props.fileData.trackingStatus.underReview.comment || null,
     },
     {
       label: "Acccount Approval",
-      remarks:
-      props.fileData.trackingStatus.underApprove ?
-        props.fileData.trackingStatus.underApprove.status == "rejected"
+      remarks: props.fileData.trackingStatus.underApprove
+        ? props.fileData.trackingStatus.underApprove.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.underApprove.status ==
             "correctionRequired"
           ? "Correction Required"
           : props.fileData.trackingStatus.underApprove.status == "completed"
           ? "Done"
-          :props.fileData.trackingStatus.underApprove.status ==
-          "inProgress"
-        ?
-        "In Process": "" : "",
+          : props.fileData.trackingStatus.underApprove.status == "inProgress"
+          ? "In Process"
+          : ""
+        : "",
       status: props.fileData.trackingStatus.underApprove.status || null,
       comments: props.fileData.trackingStatus.underApprove.comment || null,
     },
     {
       label: "Payment",
-      remarks:
-      props.fileData.trackingStatus.paymentInProcess ?
-        props.fileData.trackingStatus.paymentInProcess.status == "rejected"
+      remarks: props.fileData.trackingStatus.paymentInProcess
+        ? props.fileData.trackingStatus.paymentInProcess.status == "rejected"
           ? "Rejected"
           : props.fileData.trackingStatus.paymentInProcess.status ==
             "correctionRequired"
           ? "Correction Required"
-          : props.fileData.trackingStatus.paymentInProcess.status ==
-            "completed"
+          : props.fileData.trackingStatus.paymentInProcess.status == "completed"
           ? "Ready to Pay"
-          :props.fileData.trackingStatus.paymentInProcess.status ==
-          "inProgress"
-        ? 
-        "In Process": "" : "",
+          : props.fileData.trackingStatus.paymentInProcess.status ==
+            "inProgress"
+          ? "In Process"
+          : ""
+        : "",
       status: props.fileData.trackingStatus.paymentInProcess.status || null,
       comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
     },
@@ -350,13 +345,10 @@ export default function Horizentalteppers(props) {
                           : step.remarks == "Rejected"
                           ? "red"
                           : step.remarks == "Done" || "Ready to Pay"
-                          ? "green" 
-                          :
-                          step.remarks == "In Process"
-                          ? "blue" 
-                          :
-                          "inherted",
-                          
+                          ? "green"
+                          : step.remarks == "In Process"
+                          ? "blue"
+                          : "inherted",
                     }}
                   >
                     {step.remarks}
