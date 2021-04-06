@@ -226,14 +226,15 @@ export default function CreateInvoice(props) {
         console.log(err);
       });
   };
-  const getPos = () => {
+  const getPos = (orgId) => {
+    console.log('Getting PO');
     const userDetails = jwt.decode(Token);
     axios({
       method: "post", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
         organizationId: isVendor
-          ? formState.selectedOrg.organizationId
+          ? orgId || formState.selectedOrg.organizationId 
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
       },
@@ -967,8 +968,8 @@ export default function CreateInvoice(props) {
         ...formState,
         attachments: invoice_attachments,
       }));
+      getPos(fileData.organizationId);
       getReceipts(fileData.po);
-      getPos();
     }
   };
   const viewPO = () => {
