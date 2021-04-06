@@ -611,7 +611,7 @@ export default function FilesList(props) {
               ) : (
                 ""
               )} */}
-              {currentStatus.val == 1 && currentStatus.status == "inProgress" &&  prop.createdByVendor && !isVendor ? (
+              {currentStatus.val == 1 && prop.workFlowStatus != "correctionRequired" && currentStatus.status == "inProgress" &&  prop.createdByVendor && !isVendor ? (
                 <Tooltip
                   title={"Edit Invoice"}
                   aria-label="received"
@@ -631,7 +631,7 @@ export default function FilesList(props) {
                 ""
               )}
              
-             {prop.workFlowStatus == "correctionRequired" &&
+             {prop.markedAs !== 'rejected' && prop.workFlowStatus == "correctionRequired" &&
              !isVendor
               // && !prop.createdByVendor &&
                ? (

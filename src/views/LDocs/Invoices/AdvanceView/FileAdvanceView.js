@@ -8,25 +8,28 @@ import {
   Chip,
   Divider,
   LinearProgress,
+  Dialog,
+  DialogContent,
   ListItemText,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
 // core components
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Card from "components/Card/Card.js";
+import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import SweetAlert from "react-bootstrap-sweetalert";
+import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
-import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import QRCode from "qrcode";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -43,7 +46,13 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import WizardView from "./WizardView";
 import Horizentalteppers from "../../../Components/HorizentalStepper";
-import { addZeroes, formatDateTime, validateInvoice } from "../../Functions/Functions";
+import {
+  addZeroes,
+  formatDateTime,
+  validateInvoice,
+} from "../../Functions/Functions";
+import Approve from "./approve";
+import Review from "./review";
 
 const useStyle = makeStyles(styles);
 const useStyles = makeStyles((theme) => ({
@@ -51,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
     color: "black",
   },
 }));
+const sweetAlertStyle = makeStyles(styles2);
 const FileAdvanceView = forwardRef((props, ref) => {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
@@ -59,7 +69,9 @@ const FileAdvanceView = forwardRef((props, ref) => {
   const classes = useStyle();
   const isVendor = props.isVendor;
   const classesList = useStyles();
+  const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [markModal, setMarkModal] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [qrCode, setQrCode] = useState(null);
   const [blockChainData, setBlockChainData] = useState([]);
@@ -138,11 +150,46 @@ const FileAdvanceView = forwardRef((props, ref) => {
       });
   };
 
-   //Get Validator
-   const getValidator = async () => {
-    await validateInvoice(fileData, Token).then(res=>{
+  const sweetClass = sweetAlertStyle();
+  const [alert, setAlert] = React.useState(null);
+  const successAlert = (msg) => {
+    setAlert(
+      <SweetAlert
+        success
+        style={{ display: "block", marginTop: "-100px" }}
+        title="Success!"
+        onConfirm={() => hideAlert()}
+        onCancel={() => hideAlert()}
+        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
+      >
+        {msg}
+      </SweetAlert>
+    );
+  };
+  const errorAlert = (msg) => {
+    setAlert(
+      <SweetAlert
+        error
+        style={{ display: "block", marginTop: "-100px" }}
+        title="Error!"
+        onConfirm={() => hideAlert()}
+        onCancel={() => hideAlert()}
+        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
+      >
+        {msg}
+        <br />
+        Unable To Review Invoice Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
+      </SweetAlert>
+    );
+  };
+  const hideAlert = () => {
+    setAlert(null);
+  };
+  //Get Validator
+  const getValidator = async () => {
+    await validateInvoice(fileData, Token).then((res) => {
       setValidation(res);
-    })
+    });
   };
 
   //Get File version
@@ -179,15 +226,46 @@ const FileAdvanceView = forwardRef((props, ref) => {
     setVersion(File.version);
     setIsLoading(false);
   };
-
+  const markIt = (event) => {
+    setMarkModal(true);
+    if (event == "approve") {
+      setEvent(event);
+    }
+    if (event == "review") {
+      setEvent(event);
+    }
+  };
+  const marked = async () => {
+    setMarkModal(false);
+    axios({
+      method: "post", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      data: { 
+        invoiceId:fileData.invoiceId,
+        version:fileData.version,
+        vendorId:fileData.vendorId
+       },
+    headers: {
+      cooljwt: Token,
+    },
+  })
+    .then((invoiceRes) => {
+      const invoice = invoiceRes.data;
+      setFileData(invoice);
+      loadFunctions();
+    }).catch((er)=>{
+      console.log(err);
+    })
+    successAlert(`Invoice is ${event}ed Successfully`);
+  };
   //Load All Functions
   const loadFunctions = async () => {
     setBlockChainData([]);
     setIsLoading(true);
     await getQrCode();
     await getFileVersions();
-    if(!isVendor){
-    await getValidator();
+    if (!isVendor) {
+      await getValidator();
     }
     if (fileData.initWorkFlow && !isVendor) {
       await getBlockChainData();
@@ -219,8 +297,8 @@ const FileAdvanceView = forwardRef((props, ref) => {
       <Card variant="outlined" style={{ padding: "10px", marginTop: -5 }}>
         <CardHeader>
           <Typography variant="subtitle2" component="h2">
-            {step.Event.toUpperCase()} STEP 
-                ({formatDateTime(step.EventInitDate)})
+            {step.Event.toUpperCase()} STEP (
+            {formatDateTime(step.EventInitDate)})
           </Typography>
         </CardHeader>
         <Divider />
@@ -228,16 +306,22 @@ const FileAdvanceView = forwardRef((props, ref) => {
           <GridContainer style={{ padding: "10px" }}>
             <GridItem xs={12} sm={12} md={6} lg={6}>
               <Tooltip title={step.EventFor.toUpperCase()}>
-              <Typography variant="subtitle2" component="h2">
-                {step.EventFor.split("@")[0].toUpperCase()}
-              </Typography>
+                <Typography variant="subtitle2" component="h2">
+                  {step.EventFor.split("@")[0].toUpperCase()}
+                </Typography>
               </Tooltip>
             </GridItem>
-            <GridItem xs={12} sm={12} md={6} lg={6} >
+            <GridItem xs={12} sm={12} md={6} lg={6}>
               <Chip
                 size="small"
+                clickable={
+                  step.EventStatus == "pending" &&
+                  step.EventFor == decoded.email
+                    ? true
+                    : false
+                }
                 style={{
-                  float:'right',
+                  float: "right",
                   color: "white",
                   background:
                     step.EventStatus == "pending"
@@ -246,39 +330,39 @@ const FileAdvanceView = forwardRef((props, ref) => {
                       ? "green"
                       : "red",
                 }}
-                label={step.EventStatus == "pending" ? `SENT FOR ${step.Event.toUpperCase()}` : step.EventStatus == 'correctionRequired' ? 'CORRECTION REQUIRED' : step.EventStatus.toUpperCase()}
+                onClick={() => markIt(step.Event)}
+                label={
+                  step.EventStatus == "pending"
+                    ? `SENT FOR ${step.Event.toUpperCase()}`
+                    : step.EventStatus == "correctionRequired"
+                    ? "CORRECTION REQUIRED"
+                    : step.EventStatus.toUpperCase()
+                }
               />
             </GridItem>
           </GridContainer>
         </CardBody>
         <Divider />
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-label="Expand"
-              aria-controls="additional-actions3-content"
-              id="additional-actions3-header"
-              style={{ border: "none", boxShadow:'none' }}
-            >
-              <Typography
-                variant="body1"
-                component="h2"
-              >
-                Comments
-              </Typography>
-              
-            </AccordionSummary>
-            <AccordionDetails>
-              <div>
-            <Typography
-             variant="body2"
-             component="h2"
-            >
-            {step.EventComments}
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-label="Expand"
+            aria-controls="additional-actions3-content"
+            id="additional-actions3-header"
+            style={{ border: "none", boxShadow: "none" }}
+          >
+            <Typography variant="body1" component="h2">
+              Comments
             </Typography>
-              </div>
-            </AccordionDetails>
-          </Accordion>
+          </AccordionSummary>
+          <AccordionDetails>
+            <div>
+              <Typography variant="body2" component="h2">
+                {step.EventComments}
+              </Typography>
+            </div>
+          </AccordionDetails>
+        </Accordion>
       </Card>
     );
   }
@@ -287,6 +371,38 @@ const FileAdvanceView = forwardRef((props, ref) => {
       <LinearProgress />
     ) : (
       <GridContainer ref={ref}>
+        {alert}
+        {markModal ? (
+          <Dialog
+            classes={{
+              root: classes.center + " " + classes.modalRoot,
+              paper: classes.modal,
+            }}
+            fullWidth={true}
+            maxWidth={"sm"}
+            open={markModal}
+            keepMounted
+            onClose={() => setMarkModal(false)}
+            aria-labelledby="pdf-modal-slide-title"
+            aria-describedby="pdf-modal-slide-description"
+          >
+            <DialogContent id="pdfupload" className={classes.modalBody}>
+              {event == "approve" ? 
+              <Approve 
+                close={()=>{setMarkModal(false)}}
+                invoiceData={fileData}
+                actionDone={marked}
+              /> :
+              <Review
+                close={()=>{setMarkModal(false)}}
+                invoiceData={fileData}
+                actionDone={marked}
+              />}
+            </DialogContent>
+          </Dialog>
+        ) : (
+          ""
+        )}
         <GridItem
           xs={12}
           sm={12}
@@ -311,25 +427,33 @@ const FileAdvanceView = forwardRef((props, ref) => {
                     secondary={fileData.invoiceId}
                   />
                   <ListItemText
-                    onClick={()=>console.log('SHOW Recipt NO')}
+                    onClick={() => console.log("SHOW Recipt NO")}
                     primary="Receipt Number"
-                    secondary={fileData.receiptNumber || 0 }
+                    secondary={fileData.receiptNumber || 0}
                   />
                   <ListItemText
                     primary="Gross Amount"
-                    secondary={`${fileData.FC_currency.sign} ${addZeroes(fileData.grossAmt)}`}
+                    secondary={`${fileData.FC_currency.sign} ${addZeroes(
+                      fileData.grossAmt
+                    )}`}
                   />
                   <ListItemText
                     primary="Discount"
-                    secondary={`${fileData.FC_currency.sign} ${addZeroes((fileData.discountPercent*fileData.grossAmt)/100)} (${fileData.discountPercent}%)`}
+                    secondary={`${fileData.FC_currency.sign} ${addZeroes(
+                      (fileData.discountPercent * fileData.grossAmt) / 100
+                    )} (${fileData.discountPercent}%)`}
                   />
-                   <ListItemText
+                  <ListItemText
                     primary="Tax"
-                    secondary={`${fileData.FC_currency.sign} ${addZeroes(fileData.taxAmt)} (${(fileData.taxAmt*100)/fileData.grossAmt}%)`}
+                    secondary={`${fileData.FC_currency.sign} ${addZeroes(
+                      fileData.taxAmt
+                    )} (${(fileData.taxAmt * 100) / fileData.grossAmt}%)`}
                   />
                   <ListItemText
                     primary="Net Amount"
-                    secondary={`${fileData.FC_currency.sign} ${addZeroes(fileData.netAmt)}`}
+                    secondary={`${fileData.FC_currency.sign} ${addZeroes(
+                      fileData.netAmt
+                    )}`}
                   />
                 </List>
               </GridItem>
@@ -343,20 +467,21 @@ const FileAdvanceView = forwardRef((props, ref) => {
                     primary="Vendor Name"
                     secondary={fileData.vendorName}
                   />
-                   <ListItemText
-                    onClick={()=>console.log('SHOW PO')}
+                  <ListItemText
+                    onClick={() => console.log("SHOW PO")}
                     primary="PO Number"
                     secondary={fileData.po || 0}
                   />
                   <ListItemText
-                      primary="Currency"
-                      secondary={fileData.FC_currency.Name.toUpperCase()}
-                    />
-                   <ListItemText
-                    primary={`Created By`}
-                    secondary={`${fileData.createdBy} ${fileData.createdByVendor ? '(Supplier)' :'(Requester)'}`}
+                    primary="Currency"
+                    secondary={fileData.FC_currency.Name.toUpperCase()}
                   />
-
+                  <ListItemText
+                    primary={`Created By`}
+                    secondary={`${fileData.createdBy} ${
+                      fileData.createdByVendor ? "(Supplier)" : "(Requester)"
+                    }`}
+                  />
                 </List>
               </GridItem>
               <GridItem
@@ -430,9 +555,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                 lg={12}
                 style={{ textAlign: "left", marginTop: 20 }}
               >
-                <Typography>
-                  {fileData.description}
-                </Typography>
+                <Typography>{fileData.description}</Typography>
               </GridItem>
               <GridItem
                 xs={12}
@@ -441,8 +564,26 @@ const FileAdvanceView = forwardRef((props, ref) => {
                 lg={12}
                 style={{ textAlign: "center", marginTop: 20 }}
               >
-                <Tooltip title={validation.Validate ? validation.Validate.isSame == false ? "Invoice has been modified":"Invoice Hash":"Invoice Hash"}>
-                <Chip style={{color:validation.Validate ? validation.Validate.isSame == false ? 'red' : '' :''}} size="small" label={fileData.invoiceHash} />
+                <Tooltip
+                  title={
+                    validation.Validate
+                      ? validation.Validate.isSame == false
+                        ? "Invoice has been modified"
+                        : "Invoice Hash"
+                      : "Invoice Hash"
+                  }
+                >
+                  <Chip
+                    style={{
+                      color: validation.Validate
+                        ? validation.Validate.isSame == false
+                          ? "red"
+                          : ""
+                        : "",
+                    }}
+                    size="small"
+                    label={fileData.invoiceHash}
+                  />
                 </Tooltip>
               </GridItem>
             </GridContainer>
