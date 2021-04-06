@@ -142,6 +142,9 @@ export default function FileReceived(props) {
             },
         }).then(async (response) => {
                 setIsLoading(false);
+                if (formState.values.status == 'read') {
+                  props.createInvoice();
+                }
                 props.closeFileReceivedModal();
                 // props.loadFiles ? await props.loadFiles(decoded, false) : '';
 
@@ -214,26 +217,26 @@ export default function FileReceived(props) {
                               Choose Status
                             </MenuItem>
                             <MenuItem value="read">
-                              MARK AS RECIEVED&nbsp;&nbsp;
+                            RE-SUBMIT&nbsp;&nbsp;
                               <div className="fileinput text-center">
                                 <div className="thumbnail img-circle3">
-                                  <img src={Success} alt={"MARK AS RECIEVED"} />
+                                  <img src={Success} alt={"RESUBMIT"} />
                                 </div>
                               </div>
                             </MenuItem>
                             <MenuItem value="correctionRequired">
-                              CORRECTION REQUIRED&nbsp;&nbsp;
+                            SENT FOR CORRECTION&nbsp;&nbsp;
                               <div className="fileinput text-center">
                                 <div className="thumbnail img-circle3">
-                                  <img src={Pending} alt={"MARK AS REJECT"} />
+                                  <img src={Pending} alt={"SENT FOR CORRECTION"} />
                                 </div>
                               </div>
                             </MenuItem>
                             <MenuItem value="rejected">
-                              MARK AS REJECT&nbsp;&nbsp;
+                              REJECT&nbsp;&nbsp;
                               <div className="fileinput text-center">
                                 <div className="thumbnail img-circle3">
-                                  <img src={Rejected} alt={"MARK AS REJECT"} />
+                                  <img src={Rejected} alt={"REJECT"} />
                                 </div>
                               </div>
                             </MenuItem>
@@ -258,7 +261,7 @@ export default function FileReceived(props) {
                                 ? "Comments is required"
                                 : null
                             }
-                            label="Received Comments"
+                            label="Comments"
                             name="reviewComments"
                             onChange={(event) => {
                               handleChange(event);

@@ -377,8 +377,10 @@ export default function CreateInvoice(props) {
         });
     }
   };
-  const closeMarkAsReceivedModel = () => {
-    setMarkAsReceivedModel(false);
+  const closeMarkAsReceivedModel = async () => {
+    const userData = jwt.decode(Token);
+    await setMarkAsReceivedModel(false);
+    await props.loadFiles(userData, false);
     successAlert('Status Changed Successfully.');
     // setIsMarked(true);
   };
@@ -1204,24 +1206,8 @@ export default function CreateInvoice(props) {
     }
   };
 
-  const createInvoice = () => {
-    const isEdit = props.editHandler == 1 ? true : false;
-    //Creating Invoice
-    setIsSavingInvoice(true);
-    const userData = jwt.decode(Token);
-    let userCurrency;
-    if (isVendor && formState.selectedOrg) {
-      userCurrency = currencyLookups.find(
-        (l) => l._id == formState.selectedOrg.currency
-      );
-    } else if (userData.currency && !isVendor) {
-      userCurrency = currencyLookups.find(
-        (l) => l._id == userData.currency.Currency_Base
-      );
-    } else {
-      userCurrency = defaultCurrency;
-    }
-    let po = pos.find((po) => po.poNumber == formState.values.poNumber);
+  const openPopup = () => {
+       
     let invoiceDate;
     let InvoiceNumber;
     let dueDate;
@@ -1323,6 +1309,33 @@ export default function CreateInvoice(props) {
       setIsSavingInvoice(false);
       return false;
     } else {
+      if (edit && !isVendor) {
+        setMarkAsReceivedModel(true);
+      }
+      else{
+        createInvoice();
+      }
+    }
+  }
+
+  const createInvoice = () => {
+    //Creating Invoice
+    setIsSavingInvoice(true);
+      const isEdit = props.editHandler == 1 ? true : false;
+      const userData = jwt.decode(Token);
+      let userCurrency;
+      if (isVendor && formState.selectedOrg) {
+        userCurrency = currencyLookups.find(
+          (l) => l._id == formState.selectedOrg.currency
+        );
+      } else if (userData.currency && !isVendor) {
+        userCurrency = currencyLookups.find(
+          (l) => l._id == userData.currency.Currency_Base
+        );
+      } else {
+        userCurrency = defaultCurrency;
+      }
+      let po = pos.find((po) => po.poNumber == formState.values.poNumber);
       let taxPercent =
         formState.values.taxType === 1
           ? (formState.values.overallTax * 100) / formState.values.subtotal
@@ -1405,20 +1418,11 @@ export default function CreateInvoice(props) {
       })
         .then((response) => {
           setIsSavingInvoice(false);
-          if(isVendor){
-          successAlert(
-            edit
-              ? `Invoice Resubmitted SuccessFully. `:
-               "Invoice Submited SuccessFully."
-          )}else{
-            if (edit) {
-              setMarkAsReceivedModel(true);
-            }else{
-              successAlert(
-                   "Invoice Submited SuccessFully."
-              )
-            }
+          if (edit && !isVendor) {
+            closeMarkAsReceivedModel();
           }
+          else{
+          successAlert("Invoice Submited SuccessFully.")}
           if (!edit) {
             getData();
             setItems([]);
@@ -1473,16 +1477,15 @@ export default function CreateInvoice(props) {
                 organizationId: "",
               },
             });
-          } else {
+          }
+          else {
             props.loadFiles(userData, false);
           }
         })
         .catch((err) => {
-          console.log(err);
           setIsSavingInvoice(false);
-          errorAlert(err.message ? err.message : "There is some Issue ..");
+          errorAlert(err.message ? err.message : "There is some Issue In Create Invoice");
         });
-    }
   };
   return (
     <div>
@@ -1850,6 +1853,7 @@ export default function CreateInvoice(props) {
                   <FileReceived
                     closeFileReceivedModal={closeMarkAsReceivedModel}
                     fileData={fileData}
+                    createInvoice={createInvoice}
                   />
                 </DialogContent>
               </Dialog>
@@ -3038,7 +3042,7 @@ export default function CreateInvoice(props) {
                         color="info"
                         size="small"
                         disabled={items.length == 0 ? true : false}
-                        onClick={createInvoice}
+                        onClick={openPopup}
                         round
                       >
                         {isSavingInvoice ? (

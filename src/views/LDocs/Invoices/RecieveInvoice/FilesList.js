@@ -298,67 +298,83 @@ export default function FilesList(props) {
               {/* {isVendor ? ( */}
               {currentStatus.status == "rejected" ? (
                 <Tooltip title="REJECTED">
-                  <div className="fileinput text-center">
-                    <div className="thumbnail img-circle2">
-                      <img src={Rejected_Invoice} alt="rejected" />
-                    </div>
-                  </div>
+                   <Chip
+                    variant="outlined"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="REJECTED"
+                    clickable
+                    color="secondary"
+                  />
                 </Tooltip>
               ) : currentStatus.status == "correctionRequired" ? (
                 <Tooltip title="CORRECTION REQUIRED">
-                  <div className="fileinput text-center">
-                    <div className="thumbnail img-circle2">
-                      <img src={Resubmit_Invoice} alt="resubmit" />
-                    </div>
-                  </div>
+                    <Chip
+                    variant="outlined"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="CORRECTION REQUIRED"
+                    clickable
+                    style={{border:'green 1px orange', color:'orange'}}
+                  />
                 </Tooltip>
               ) : currentStatus.val == 0 ? (
                 <Tooltip title="PENDING">
-                  <div className="fileinput text-center">
-                    <div className="thumbnail img-circle2">
-                      <img src={Pending_Invoice} alt="pending" />
-                    </div>
-                  </div>
+                   <Chip
+                    variant="outlined"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="PENDING"
+                    clickable
+                    style={{border:'green 1px orange', color:'orange'}}
+                  />
                 </Tooltip>
               ) : currentStatus.val == 1 ? (
                 <Tooltip title="UNDER INITIAL REVIEW">
-                  <div className="fileinput text-center">
-                    <div className="thumbnail img-circle2">
-                      <img src={Recieved_Invoice} alt="recieved" />
-                    </div>
-                  </div>
+                  <Chip
+                    variant="outlined"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="INITIAL REVIEW"
+                    clickable
+                    color="primary"
+                  />
                 </Tooltip>
               ) : currentStatus.val == 2 ? (
                 <Tooltip title="UNDER REVIEW">
-                  <div className="fileinput text-center">
-                    <div className="thumbnail img-circle2">
-                      <img src={UnderReview_Invoice} alt="underreview" />
-                    </div>
-                  </div>
+                   <Chip
+                    variant="outlined"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="UNDER REVIEW"
+                    clickable
+                    color="primary"
+                  />
                 </Tooltip>
               ) : currentStatus.val == 3 ? (
                 <Tooltip title="UNDER APPROVAL">
-                  <div className="fileinput text-center">
-                    <div className="thumbnail img-circle2">
-                      <img src={Approved_Invoice} alt="approved" />
-                    </div>
-                  </div>
+                  <Chip
+                    variant="outlined"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="UNDER APPROVAL"
+                    clickable
+                    color="primary"
+                  />
                 </Tooltip>
               ) : currentStatus.val == 4 ? (
                 <Tooltip title="DONE">
-                  <div className="fileinput text-center">
-                    <div className="thumbnail img-circle2">
-                      <img src={Ready_Invoice} alt="ready" />
-                    </div>
-                  </div>
+                   <Chip
+                    variant="outlined"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="APPROVAL DONE"
+                    clickable
+                    style={{border:'green 1px solid', color:'green'}}
+                  />
                 </Tooltip>
               ) : (
                 <Tooltip title="NO STATUS">
-                  <div className="fileinput text-center">
-                    <div className="thumbnail img-circle2">
-                      <img src={NoStatus} alt={prop.reviewedStatus} />
-                    </div>
-                  </div>
+                   <Chip
+                    variant="outlined"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="NO STATUS"
+                    clickable
+                    color="primary"
+                  />
                 </Tooltip>
               )
               /* ) : prop.markedAs == "unread" ? (
@@ -375,6 +391,9 @@ export default function FilesList(props) {
               )} */
               }
             </MenuProvider>
+          ),
+          po:(
+            prop.po
           ),
           createdDate: (
             <MenuProvider data={prop} id="menu_id">
@@ -595,7 +614,7 @@ export default function FilesList(props) {
               // && !prop.createdByVendor &&
                ? (
                  <React.Fragment>
-                <Tooltip title="RE SUBMIT" >
+                {/* <Tooltip title="RE SUBMIT" >
                   <Button
                     justIcon
                     round
@@ -606,7 +625,7 @@ export default function FilesList(props) {
                   >
                     <RefreshIcon />
                   </Button>
-                </Tooltip>
+                </Tooltip> */}
                 <Tooltip
                 title={"Edit Invoice"}
                 aria-label="received"
@@ -1458,8 +1477,11 @@ export default function FilesList(props) {
                                 accessor: "netAmt",
                               },
                               {
-                                Header: "Version",
-                                accessor: "version",
+                                Header: "PO Number",
+                                accessor: "po",
+                                filterable: true,
+                                filter: "fuzzyText",
+                                sortType: "basic",
                               },
                               {
                                 Header: "Reviewed",
@@ -1500,8 +1522,11 @@ export default function FilesList(props) {
                                 accessor: "netAmt",
                               },
                               {
-                                Header: "Version",
-                                accessor: "version",
+                                Header: "Po Number",
+                                accessor: "po",
+                                filterable: true,
+                                filter: "fuzzyText",
+                                sortType: "basic",
                               },
                               {
                                 Header: "Actions",
