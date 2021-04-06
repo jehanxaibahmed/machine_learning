@@ -98,9 +98,10 @@ export default function HeaderLinks(props) {
     setOpenProfile(null);
   };
   const handleLogoutUser = () => {
+    const usr = jwt.decode(Token);
      axios({
       method: "delete", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/user/deleteUserFcm`,
+      url: usr.isVendor ? `${process.env.REACT_APP_LDOCS_API_URL}/vendor/deleteFcm` : `${process.env.REACT_APP_LDOCS_API_URL}/user/deleteUserFcm`,
       data: {
         deviceId:uuid
       },
