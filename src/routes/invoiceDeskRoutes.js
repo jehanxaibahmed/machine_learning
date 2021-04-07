@@ -7,15 +7,18 @@ import SystemUpdateIcon from "@material-ui/icons/SystemUpdate";
 import WrapTextIcon from "@material-ui/icons/WrapText";
 import DescriptionIcon from "@material-ui/icons/Description";
 import FingerprintIcon from "@material-ui/icons/Fingerprint";
+import EqualizerIcon from '@material-ui/icons/Equalizer';
 import AssignmentLateIcon from "@material-ui/icons/AssignmentLate";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
+import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
 
 //Components
 
 import FilesList from "views/LDocs/Invoices/RecieveInvoice/FilesList";
 import Dashboard from "views/LDocs/Dashboard/Dashboard";
+import FinanceDashboard from "views/LDocs/Dashboard/FinanceDashboard";
 import Notifications from "views/LDocs/Notifications/Notifications";
 import SignatureStamp from "views/LDocs/SignatureStamp/SignatureStamp";
 import Verify from "views/LDocs/Verify/Verify";
@@ -91,8 +94,35 @@ var invoiceRoutes = [
         component: Requested,
         layout: "/invoice",
         icon: AssignmentLateIcon,
+      }
+      ,
+      {
+        path: "/approvals",
+        name: "Approval Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: AssignmentTurnedInIcon,
+        component: ApprovalRequested,
+        layout: "/invoice",
+      }
+    ]
+  },
+  {
+    collapse: true,
+    name: "Finance Desk",
+    rtlName: "المكونات",
+    icon: LocalAtmIcon,
+    state: "FinanceDeskCollapse",
+    views: [
+      {
+        path: "/financeDashboard",
+        name: "Finance Dashboard",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: EqualizerIcon,
+        component: FinanceDashboard,
+        layout: "/invoice",
       },
-      decoded ? decoded.title == "ACCOUNTANT" ? 
       {
         path: "/export",
         name: "Export Invoices",
@@ -102,27 +132,8 @@ var invoiceRoutes = [
         component: ExportList,
         layout: "/invoice",
       }
-      :{
-        path: "/approvals",
-        name: "Approval Tasks",
-        rtlName: "انهيار متعدد المستويات",
-        rtlMini: "ر",
-        icon: AssignmentTurnedInIcon,
-        component: ApprovalRequested,
-        layout: "/invoice",
-      }
-      :{
-        path: "/approvals",
-        name: "Approval Tasks",
-        rtlName: "انهيار متعدد المستويات",
-        rtlMini: "ر",
-        icon: AssignmentTurnedInIcon,
-        component: ApprovalRequested,
-        layout: "/invoice",
-      }
-    ],
-  },
-  {
+    ]}
+  ,{
     path: "/verifier",
     name: "Tracking & Validate",
     rtlName: "أشكال عادية",

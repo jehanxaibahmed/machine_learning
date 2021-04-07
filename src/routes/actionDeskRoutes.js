@@ -6,9 +6,10 @@ import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import AssignmentLateIcon from "@material-ui/icons/AssignmentLate";
 import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 import FingerprintIcon from "@material-ui/icons/Fingerprint";
-
+import EqualizerIcon from '@material-ui/icons/Equalizer';
 //Components
 import Dashboard from "views/LDocs/Dashboard/Dashboard";
+import FinanceDashboard from "views/LDocs/Dashboard/FinanceDashboard";
 import Notifications from "views/LDocs/Notifications/Notifications";
 import Requested from "views/LDocs/Reviews/Requested";
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
@@ -16,7 +17,7 @@ import ExportList from "views/LDocs/Invoices/ExportInvoices/FilesList";
 import SignatureStamp from "views/LDocs/SignatureStamp/SignatureStamp";
 import Verify from "views/LDocs/Verify/Verify";
 import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
-
+import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 
 var actionRoutes = [
   {
@@ -51,6 +52,24 @@ var actionRoutes = [
         icon: AssignmentTurnedInIcon,
         component: ApprovalRequested,
         layout: "/action",
+      }
+    ],
+  },
+  {
+    collapse: true,
+    name: "Finance Desk",
+    rtlName: "المكونات",
+    icon: LocalAtmIcon,
+    state: "FinanceDeskCollapse",
+    views: [
+      {
+        path: "/financeDashboard",
+        name: "Finance Dashboard",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: EqualizerIcon,
+        component: FinanceDashboard,
+        layout: "/action",
       },
       {
         path: "/export",
@@ -60,8 +79,8 @@ var actionRoutes = [
         icon: SystemUpdateIcon,
         component: ExportList,
         layout: "/action",
-      },
-    ],
+      }
+    ]
   },
   {
     path: "/verifier",
