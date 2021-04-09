@@ -1,6 +1,6 @@
 // @material-ui/icons
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import Dashboard from "views/LDocs/Dashboard/Dashboard";
+import VendorDashboard from "views/LDocs/Dashboard/VendorDashboard";
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import FilesList from "views/LDocs/Invoices/RecieveInvoice/FilesList";
 import NoteAddIcon from '@material-ui/icons/NoteAdd';
@@ -13,7 +13,7 @@ var vendorRoutes = [
     name: "Dashboard",
     rtlName: "لوحة القيادة",
     icon: DashboardIcon,
-    component: Dashboard,
+    component: VendorDashboard,
     layout: "/vendor",
   },
   {

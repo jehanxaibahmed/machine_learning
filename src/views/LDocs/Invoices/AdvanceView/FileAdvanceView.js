@@ -610,7 +610,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
           <GridItem xs={12} sm={12} md={12} lg={4}>
             <Card style={{ padding: "10px" }}>
               <Typography variant="h6" component="h2">
-                Workflow History
+                Workflow Logs
               </Typography>
               <Stepper orientation="vertical" connector={<QontoConnector />}>
                 {blockChainData.map((data, index) => (

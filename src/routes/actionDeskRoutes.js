@@ -64,7 +64,7 @@ var actionRoutes = [
     views: [
       {
         path: "/financeDashboard",
-        name: "Finance Dashboard",
+        name: "AP ANALYTICS",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         icon: EqualizerIcon,

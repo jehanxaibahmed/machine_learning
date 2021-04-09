@@ -7,7 +7,7 @@ export const data = {
     ],
     summaryOptions: {
       fill: {
-        colors: ["#35c72e"],
+        colors: ["#5a2c66"],
       },
   
       chart: {
@@ -65,62 +65,63 @@ export const data = {
   
     purchaseSeries: [
       {
-        data: [0.59, 0.34, 0.02, 0.01, 0.0],
+        data: [0, 0, 0, 0, 0],
       },
     ],
     purchaseOptions: {
-      chart: {
-        toolbar: {
-          show: false,
-        },
-  
-        type: "bar",
-        events: {
-          click: function (chart, w, e) {},
-        },
-      },
-      plotOptions: {
-        bar: {
-          columnWidth: "80%",
+            fill: {
+                colors: ["#9e2654"],
+            },
+          chart: {
+            toolbar: {
+              show: false,
+            },
+            type: "bar",
+          },
+          plotOptions: {
+            bar: {
+              columnWidth: "80%",
+              dataLabels: {
+                position: "top", // top, center, bottom
+              },
+            },
+          },
           dataLabels: {
-            position: "top", // top, center, bottom
+            offsetY: -20,
+            enabled: true,
+            style: {
+              fontSize: "12px",
+              colors: ["black"],
+            },
+          },
+          legend: {
+            show: false,
+          },
+          xaxis: {
+            categories: [
+              [""],
+              [""],
+              [""],
+              [""],
+              [""],
+            ],
+            labels: {
+              style: {
+                fontSize: "12px",
+              },
+            },
           },
         },
-      },
-      dataLabels: {
-        enabled: true,
-        offsetY: -20,
-        style: {
-          fontSize: "12px",
-          colors: ["black"],
-        },
-      },
-      legend: {
-        show: false,
-      },
-      xaxis: {
-        categories: [
-          ["MountainPro"],
-          ["CycleGo"],
-          ["Betol Parts"],
-          ["BC Hydro"],
-          ["Jose Designs"],
-        ],
-        labels: {
-          style: {
-            fontSize: "12px",
-          },
-        },
-      },
-    },
-  
     //Vendors By Amount Chart Data
     amountSeries: [
       {
-        data: [0.22, 0.15, 0.01, 0.0, 0.0],
+        data: [0, 0, 0, 0, 0],
       },
     ],
     amountOptions: {
+        fill: {
+            colors: ["#5a2c66"],
+        },
       chart: {
         toolbar: {
           show: false,
@@ -136,6 +137,7 @@ export const data = {
         },
       },
       dataLabels: {
+        offsetY: -20,
         enabled: true,
         style: {
           fontSize: "12px",
@@ -147,11 +149,11 @@ export const data = {
       },
       xaxis: {
         categories: [
-          ["CycleGo"],
-          ["MountainPro"],
-          ["Betol Parts"],
-          ["Jose Designs"],
-          ["Kendal Tub.."],
+          [""],
+          [""],
+          [""],
+          [""],
+          [""],
         ],
         labels: {
           style: {
@@ -166,21 +168,22 @@ export const data = {
       {
         name: "Purchased",
         type: "column",
-  
-        data: [44, 55, 41, 64, 22, 43, 44, 55, 41, 64, 21],
+        fill: {
+            colors: ["#5a2c66"],
+        },
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
+        fill: {
+            colors: ["#5a2c66"],
+        },
         name: "Paid",
         type: "column",
-        data: [53, 32, 44, 55, 41, 64, 33, 52, 13, 44, 32],
-      },
-      {
-        name: "Average Credit Terms",
-        // type: "line",
-        data: [53, 32, 44, 55, 55, 64, 33, 52, 13, 44, 32],
-      },
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      }
     ],
     TvPoptions: {
+        colors:['#5a2c66', '#9e2654'],
       chart: {
         type: "line",
         height: 350,
@@ -192,6 +195,9 @@ export const data = {
         width: [0, 4],
       },
       plotOptions: {
+        fill: {
+            colors:['#5a2c66', '#9e2654'],
+        },
         bar: {
           columnWidth: "70%",
         },
@@ -206,17 +212,17 @@ export const data = {
       },
       xaxis: {
         categories: [
-          ["Jul-2017"],
-          ["Aug-2017"],
-          ["Sep-2017"],
-          ["Oct-2017"],
-          ["Nov-2017"],
-          ["Dec-2017"],
-          ["Jan-2018"],
-          ["Feb-2018"],
-          ["Mar-2018"],
-          ["Apr-2018"],
-          ["May-2018"],
+          [""],
+          [""],
+          [""],
+          [""],
+          [""],
+          [""],
+          [""],
+          [""],
+          [""],
+          [""],
+          [""],
         ],
         labels: {
           style: {
@@ -225,5 +231,106 @@ export const data = {
         },
       },
     },
+
+    // purchase chart data
+  
+    quarterSeries: [
+      {
+        data: [0, 0, 0],
+      },
+    ],
+    quarterOptions: {
+            fill: {
+                colors: ["#9e2654"],
+            },
+          chart: {
+            toolbar: {
+              show: false,
+            },
+            type: "bar",
+          },
+          plotOptions: {
+            bar: {
+              columnWidth: "80%",
+              dataLabels: {
+                position: "top", // top, center, bottom
+              },
+            },
+          },
+          dataLabels: {
+            offsetY: -20,
+            enabled: true,
+            style: {
+              fontSize: "12px",
+              colors: ["black"],
+            },
+          },
+          legend: {
+            show: false,
+          },
+          xaxis: {
+            categories: [
+              ["Over Due"],
+              ["Un Paid"],
+              ["Ready To Pay"]
+            ],
+            labels: {
+              style: {
+                fontSize: "12px",
+              },
+            },
+          },
+        },
+    //Vendors By Amount Chart Data
+    byAmountSeries: [
+      {
+        data: [0, 0, 0],
+      },
+    ],
+    byAmountOptions: {
+        fill: {
+            colors: ["#5a2c66"],
+        },
+      chart: {
+        toolbar: {
+          show: false,
+        },
+        type: "bar",
+      },
+      plotOptions: {
+        bar: {
+          columnWidth: "80%",
+          dataLabels: {
+            position: "top", // top, center, bottom
+          },
+        },
+      },
+      dataLabels: {
+        offsetY: -20,
+        enabled: true,
+        style: {
+          fontSize: "12px",
+          colors: ["black"],
+        },
+      },
+      legend: {
+        show: false,
+      },
+      xaxis: {
+        categories: [
+          ["Over Due"],
+          ["Un Paid"],
+          ["Ready To Pay"]
+        ],
+        labels: {
+          style: {
+            fontSize: "12px",
+          },
+        },
+      },
+    },
+  
   };
+  
+
   
