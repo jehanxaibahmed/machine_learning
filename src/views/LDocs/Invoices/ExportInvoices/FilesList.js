@@ -513,7 +513,6 @@ export default function ExportList(props) {
               <Checkbox
                 disabled={
                   formState.filter == "totalInvCount" ||
-                  formState.filter == null ||
                   formState.filter == "paymentInProcessCount"
                 }
                 checked={isSelected}
@@ -1220,7 +1219,6 @@ export default function ExportList(props) {
                               onChange={() => select()}
                               disabled={
                                 formState.filter == "totalInvCount" ||
-                                formState.filter == null ||
                                 formState.filter == "paymentInProcessCount"
                               }
                             />
