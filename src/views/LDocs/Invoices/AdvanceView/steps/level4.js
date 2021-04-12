@@ -79,7 +79,7 @@ export default function Step4(props) {
                     <TableRow >
                         <TableCell className={classesList.TableCell}>{`P-1`}</TableCell>
                         <TableCell className={classesList.TableCell}>Exported</TableCell>
-                        <TableCell className={classesList.TableCell}>{props.isExported.updatedBy.toUpperCase()}</TableCell>
+                        <TableCell className={classesList.TableCell}>{props.isExported.updatedBy ? props.isExported.updatedBy.toUpperCase(): ''}</TableCell>
                         <TableCell className={classesList.TableCell}>{formatDateTime(props.isExported.date)}</TableCell>
                         
                     </TableRow>
