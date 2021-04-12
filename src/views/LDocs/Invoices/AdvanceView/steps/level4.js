@@ -1,13 +1,17 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 // @material-ui/icons
-import {
-  makeStyles,
-  TextField
-} from "@material-ui/core";
+import { makeStyles, TextField } from "@material-ui/core";
 // core components
 import { Animated } from "react-animated-css";
 import GridContainer from "components/Grid/GridContainer.js";
-import {Table,TableHead,TableRow,TableCell,TableBody,Card} from '@material-ui/core';
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Card,
+} from "@material-ui/core";
 import GridItem from "components/Grid/GridItem.js";
 import { formatDateTime, addZeroes } from "../../../Functions/Functions";
 
@@ -20,37 +24,41 @@ const useStyle = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     maxHeight: 500,
-    position: 'relative',
+    position: "relative",
     maxWidth: 360,
   },
   listSection: {
-    backgroundColor: 'inherit',
+    backgroundColor: "inherit",
   },
   ul: {
-    backgroundColor: 'inherit',
+    backgroundColor: "inherit",
     padding: 0,
   },
   table: {
-    minWidth: '100%',
-    border:1
+    minWidth: "100%",
+    border: 1,
   },
-  TableCell:{
-      width:'10%'
+  TableCell: {
+    width: "10%",
   },
-  TableRow:{
-      cursor:'pointer',
-      background:'white',
-      border:1, width:'100%'
-  }
-  
-  }));
+  TableRow: {
+    cursor: "pointer",
+    background: "white",
+    border: 1,
+    width: "100%",
+  },
+}));
 
 export default function Step4(props) {
   console.log(props);
   const classes = useStyles();
   const classesList = useStyle();
   const [animateStep, setAnimateStep] = useState(true);
-  const isExported = props.isExported.status ? props.isExported.status == 'completed' ? true : false : false;
+  const isExported = props.isExported.status
+    ? props.isExported.status == "completed"
+      ? true
+      : false
+    : false;
   console.log(isExported, props.isExported);
   return (
     <Animated
@@ -60,37 +68,48 @@ export default function Step4(props) {
       animationOutDuration={1000}
       isVisible={animateStep}
     >
-        <GridContainer>
-        <Table className={classesList.table} aria-label="simple table">
+      <GridContainer>
+        {isExported ? (
+          <Table className={classesList.table} aria-label="simple table">
             <TableHead>
-                    <TableRow className={classesList.TableRow}>
-                    <TableCell className={classesList.TableCell}>#</TableCell>
-                    <TableCell className={classesList.TableCell}>Status</TableCell>
-                    <TableCell className={classesList.TableCell}>Transaction By</TableCell>
-                    <TableCell className={classesList.TableCell}>Transaction Date</TableCell>
-                    
-                    
-                </TableRow>
+              <TableRow className={classesList.TableRow}>
+                <TableCell className={classesList.TableCell}>#</TableCell>
+                <TableCell className={classesList.TableCell}>Status</TableCell>
+                <TableCell className={classesList.TableCell}>
+                  Transaction By
+                </TableCell>
+                <TableCell className={classesList.TableCell}>
+                  Transaction Date
+                </TableCell>
+              </TableRow>
             </TableHead>
-            <TableBody style={{paddingBottom:5}}>
-                {/* {props.payments ? props.payments.map((item, index)=>{
+            <TableBody style={{ paddingBottom: 5 }}>
+              {/* {props.payments ? props.payments.map((item, index)=>{
                     let Payment = JSON.parse(item.Record);
                     return ( */}
-                    <TableRow >
-                        <TableCell className={classesList.TableCell}>{`P-1`}</TableCell>
-                        <TableCell className={classesList.TableCell}>Exported</TableCell>
-                        <TableCell className={classesList.TableCell}>{props.isExported.updatedBy ? props.isExported.updatedBy.toUpperCase(): ''}</TableCell>
-                        <TableCell className={classesList.TableCell}>{formatDateTime(props.isExported.date)}</TableCell>
-                        
-                    </TableRow>
-                {/* )
+              <TableRow>
+                <TableCell className={classesList.TableCell}>{`P-1`}</TableCell>
+                <TableCell className={classesList.TableCell}>
+                  Exported
+                </TableCell>
+                <TableCell className={classesList.TableCell}>
+                  {props.isExported.updatedBy
+                    ? props.isExported.updatedBy.toUpperCase()
+                    : ""}
+                </TableCell>
+                <TableCell className={classesList.TableCell}>
+                  {formatDateTime(props.isExported.date)}
+                </TableCell>
+              </TableRow>
+              {/* )
               }
                 ):''} */}
             </TableBody>
-            </Table> 
-        </GridContainer>
+          </Table>
+        ) : (
+          ""
+        )}
+      </GridContainer>
     </Animated>
   );
-  }
-
-
+}
