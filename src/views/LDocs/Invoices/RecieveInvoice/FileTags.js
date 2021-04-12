@@ -116,11 +116,28 @@ export default function FileTags(props) {
     })
       .then((response) => {
         if (response.data.invoiceTag.length > 0 && typeof response.data.invoiceTag != 'string') {
-          let result = response.data.invoiceTag.find(
-            (itm) => itm.email == decoded.email
-          );
+
+          let result = [];
+           response.data.invoiceTag.map(t=>{
+            //t == userBaseTags
+            t.tag.map((tag=>{
+              //tags 
+                 if (typeof tag == 'object') {
+                    result = result.concat(tag);
+                  }
+                  else if (typeof tag == 'string') {
+                    result = result.concat([tag]);
+                  }
+            }))
+           
+            // console.log(result.concat(t.tag));
+          });
+          // .find(
+          //   (itm) => itm.email == decoded.email
+          // );
           if (result) {
-            setMyChips(result.tag);
+            // setMyChips(result.tag);
+            setMyChips(result);
           }
         } else {
           setMyChips([]);

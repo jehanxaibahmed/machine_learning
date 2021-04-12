@@ -14,6 +14,7 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
 import dateFormat from "dateformat";
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import { Tooltip } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -60,7 +61,13 @@ export default function Validator(props) {
               <Typography variant="h6" component="h2">
                 {key}
               </Typography>
+              {value.onChainName ? 
+                <Tooltip title={value.onChain}>
+                  <Typography>{value.onChainName}</Typography>
+                </Tooltip>
+              :
               <Typography>{value.onChain}</Typography>
+              }
             </Paper>
           </TimelineOppositeContent>
           <TimelineSeparator>
@@ -78,7 +85,13 @@ export default function Validator(props) {
               <Typography variant="h6" component="h2">
                 {key}
               </Typography>
+              {value.offChainName ? 
+                <Tooltip title={value.offChain}>
+                  <Typography>{value.offChainName}</Typography>
+                </Tooltip>
+              :
               <Typography>{value.offChain}</Typography>
+              }
             </Paper>
           </TimelineContent>
         </TimelineItem>

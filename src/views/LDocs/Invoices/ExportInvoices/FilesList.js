@@ -187,26 +187,25 @@ export default function ExportList(props) {
       method: "post", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
-        organizationId: userDetails.orgDetail.organizationId
+        organizationId: userDetails.orgDetail.organizationId,
       },
       headers: {
         cooljwt: Token,
       },
     })
-    .then((res) => {
-      console.log(res.data);
-      setFormState((formState) => ({
-        ...formState,
-        pos: res.data,
-      }));
-    })
-    .catch((err) => {
-      setFormState((formState) => ({
-        ...formState,
-        pos: [],
-      }));
-    });
-  
+      .then((res) => {
+        console.log(res.data);
+        setFormState((formState) => ({
+          ...formState,
+          pos: res.data,
+        }));
+      })
+      .catch((err) => {
+        setFormState((formState) => ({
+          ...formState,
+          pos: [],
+        }));
+      });
   };
 
   const getVendors = () => {
@@ -511,7 +510,15 @@ export default function ExportList(props) {
           ),
           select: (
             <div className="actions">
-              <Checkbox checked={isSelected} onChange={() => select(prop)} />
+              <Checkbox
+                disabled={
+                  formState.filter == "totalInvCount" ||
+                  formState.filter == null ||
+                  formState.filter == "paymentInProcessCount"
+                }
+                checked={isSelected}
+                onChange={() => select(prop)}
+              />
             </div>
           ),
           actions: (
@@ -958,7 +965,7 @@ export default function ExportList(props) {
                             setFilter(1, { id: 0, val: "totalInvCount" })
                           }
                         >
-                        <Done  fontSize="large" />
+                          <Done fontSize="large" />
                         </Avatar>
                       </Typography>
                     </Tooltip>
@@ -1155,7 +1162,7 @@ export default function ExportList(props) {
                             })
                           }
                         >
-                          <Done fontSize="large"/>
+                          <Done fontSize="large" />
                         </Avatar>
                       </Typography>
                     </Tooltip>
@@ -1211,6 +1218,11 @@ export default function ExportList(props) {
                                 selected.length >= 0
                               }
                               onChange={() => select()}
+                              disabled={
+                                formState.filter == "totalInvCount" ||
+                                formState.filter == null ||
+                                formState.filter == "paymentInProcessCount"
+                              }
                             />
                           ),
                           accessor: "select",

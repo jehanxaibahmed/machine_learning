@@ -83,7 +83,7 @@ export default function WizardView(props) {
               currency={props.currency}
               validation={props.validation}
               isVendor={props.isVendor}
-
+              isExported={props.isExported}
               
            />
         </GridItem>

@@ -123,7 +123,7 @@ export const currentTracking = (trackingStatus) => {
   return activeStep;
 };
 
-export const validateInvoice = (row, Token) => {
+export const validateInvoice = async (row, Token) => {
   return new Promise((res, rej) => {
       axios({
         method: "post", //you can set what request you want to be
@@ -137,13 +137,13 @@ export const validateInvoice = (row, Token) => {
         cooljwt: Token,
       },
     })
-      .then((invoiceRes) => {
+      .then(async (invoiceRes) => {
         const invoice = invoiceRes.data;
         axios({
           method: "get",
           url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
         })
-          .then((blockchainRes) => {
+          .then(async (blockchainRes) => {
             const blockchain = JSON.parse(blockchainRes.data.Record);
             if (invoice !== null || undefined) {
               let isInvoiceDateSame;
@@ -158,6 +158,8 @@ export const validateInvoice = (row, Token) => {
               let isCreatedDateSame;
               let isCreatedBySame;
               let isValidate;
+              let BlockchainNames;
+              let InvoiceNames;
               if (
                 new Date(invoice.invoiceDate).getTime() ==
                 new Date(blockchain.InvoiceDate).getTime()
@@ -236,6 +238,41 @@ export const validateInvoice = (row, Token) => {
               } else {
                 isValidate = true;
               }
+              //Gettting Names
+              await axios({
+                method: "post", //you can set what request you want to be
+                url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getNameById`,
+                data: { 
+                  organizationId:invoice.organizationId,
+                  tenantId:invoice.tenantId,
+                  vendorId:invoice.vendorId,
+                  userId:invoice.createdBy
+                 },
+              headers: {
+                cooljwt: Token,
+              }}).then((res)=>{
+                 InvoiceNames =  res.data;
+              }).catch((err)=>{
+                console.log(err);
+              });
+               //Gettting Names BlockChain
+              await axios({
+                method: "post", //you can set what request you want to be
+                url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getNameById`,
+                data: { 
+                  organizationId:blockchain.OrganizationID,
+                  tenantId:blockchain.TenantID,
+                  vendorId:blockchain.VendorID,
+                  userId:blockchain.CreatedBy
+                 },
+              headers: {
+                cooljwt: Token,
+              }}).then((res)=>{
+                console.log(res);
+                BlockchainNames = res.data;
+              }).catch((err)=>{
+                console.log(err);
+              })
               const ValidationData = {
                 "Submit Date": {
                   onChain: formatDateTime(blockchain.InvoiceDate),
@@ -246,6 +283,8 @@ export const validateInvoice = (row, Token) => {
                   onChain: blockchain.VendorID,
                   offChain: invoice.vendorId,
                   isSame: isVendorIDSame,
+                  onChainName:BlockchainNames.vendorName,
+                  offChainName:InvoiceNames.vendorName,
                 },
                 "Item Count": {
                   onChain: blockchain.ItemCount,
@@ -263,6 +302,8 @@ export const validateInvoice = (row, Token) => {
                   onChain: blockchain.OrganizationID,
                   offChain: invoice.organizationId,
                   isSame: isOrganizationIDSame,
+                  onChainName:BlockchainNames.organizationName,
+                  offChainName:InvoiceNames.organizationName,
                 },
                 "Discount Percentage": {
                   onChain: `${blockchain.DiscountPercentage}%`,
@@ -287,6 +328,8 @@ export const validateInvoice = (row, Token) => {
                   onChain: blockchain.TenantID,
                   offChain: invoice.tenantId,
                   isSame: isTenantIDSame,
+                  onChainName:BlockchainNames.tenantName,
+                  offChainName:InvoiceNames.tenantName,
                 },
                 "Created Date": {
                   onChain: formatDateTime(blockchain.CreatedDate),
@@ -297,6 +340,8 @@ export const validateInvoice = (row, Token) => {
                   onChain: blockchain.CreatedBy,
                   offChain: invoice.createdBy,
                   isSame: isCreatedBySame,
+                  onChainName:BlockchainNames.userName,
+                  offChainName:InvoiceNames.userName,
                 },
                 Validate: {
                   isSame: isValidate,

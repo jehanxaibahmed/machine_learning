@@ -293,6 +293,8 @@ const FileAdvanceView = forwardRef((props, ref) => {
   //Step Content
   function getStepContent(stp, ind) {
     var step = JSON.parse(stp.Record);
+    console.log(blockChainData.length);
+    console.log(ind);
     return (
       <Card variant="outlined" style={{ padding: "10px", marginTop: -5 }}>
         <CardHeader>
@@ -316,6 +318,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                 size="small"
                 clickable={
                   step.EventStatus == "pending" &&
+                  ind+1 == blockChainData.length &&
                   step.EventFor == decoded.email
                     ? true
                     : false
@@ -323,6 +326,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                 style={{
                   float: "right",
                   color: "white",
+                  cursor : step.EventStatus == "pending" && ind+1 == blockChainData.length ? 'pointer': '',
                   background:
                     step.EventStatus == "pending"
                       ? "#c1a12f"
@@ -330,7 +334,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                       ? "green"
                       : "red",
                 }}
-                onClick={() => markIt(step.Event)}
+                onClick={() => step.EventStatus == "pending" && ind+1 == blockChainData.length ? markIt(step.Event): console.log('Completed')}
                 label={
                   step.EventStatus == "pending"
                     ? `SENT FOR ${step.Event.toUpperCase()}`
@@ -601,6 +605,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
                   currency={fileData.FC_currency}
                   validation={validation}
                   isVendor={isVendor}
+                  isExported={fileData.trackingStatus.paymentInProcess}
                 />
               </Card>
             </GridItem>

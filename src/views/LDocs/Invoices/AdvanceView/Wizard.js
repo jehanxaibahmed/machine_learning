@@ -228,6 +228,7 @@ class Wizard extends React.Component {
                     currency={this.props.currency}
                     validation={this.props.validation}
                     isVendor={this.props.isVendor}
+                    isExported={this.props.isExported}
 
                   />
                 </div>

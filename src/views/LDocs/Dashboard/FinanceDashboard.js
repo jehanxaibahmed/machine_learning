@@ -20,6 +20,7 @@ import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 import { data } from "./Data";
 import { useSelector } from "react-redux";
+import { addZeroes } from "../Functions/Functions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,11 +75,11 @@ export default function FinanceDashboard() {
     const purchaseSeries = [
       {
         data: [
-          graphData.topFiveVendor[0] ? graphData.topFiveVendor[0].totalAmount : 0, 
-          graphData.topFiveVendor[1] ? graphData.topFiveVendor[1].totalAmount : 0,
-          graphData.topFiveVendor[2] ? graphData.topFiveVendor[2].totalAmount : 0,
-          graphData.topFiveVendor[3] ? graphData.topFiveVendor[3].totalAmount : 0,
-          graphData.topFiveVendor[4] ? graphData.topFiveVendor[4].totalAmount : 0,
+          graphData.topFiveVendor[0] ? addZeroes(graphData.topFiveVendor[0].totalAmount).toFixed(2) : 0, 
+          graphData.topFiveVendor[1] ? addZeroes(graphData.topFiveVendor[1].totalAmount).toFixed(2) : 0,
+          graphData.topFiveVendor[2] ? addZeroes(graphData.topFiveVendor[2].totalAmount).toFixed(2) : 0,
+          graphData.topFiveVendor[3] ? addZeroes(graphData.topFiveVendor[3].totalAmount).toFixed(2) : 0,
+          graphData.topFiveVendor[4] ? addZeroes(graphData.topFiveVendor[4].totalAmount).toFixed(2) : 0,
         ],
       },
     ];
@@ -132,11 +133,11 @@ export default function FinanceDashboard() {
     const amountSeries = [
       {
         data: [
-          graphData.topFiveVendorsAmountDue[0] ? graphData.topFiveVendorsAmountDue[0].totalDueAmount : 0, 
-          graphData.topFiveVendorsAmountDue[1] ? graphData.topFiveVendorsAmountDue[1].totalDueAmount : 0,
-          graphData.topFiveVendorsAmountDue[2] ? graphData.topFiveVendorsAmountDue[2].totalDueAmount : 0,
-          graphData.topFiveVendorsAmountDue[3] ? graphData.topFiveVendorsAmountDue[3].totalDueAmount : 0,
-          graphData.topFiveVendorsAmountDue[4] ? graphData.topFiveVendorsAmountDue[4].totalDueAmount : 0,
+          graphData.topFiveVendorsAmountDue[0] ? addZeroes(graphData.topFiveVendorsAmountDue[0].totalDueAmount).toFixed(2) : 0, 
+          graphData.topFiveVendorsAmountDue[1] ? addZeroes(graphData.topFiveVendorsAmountDue[1].totalDueAmount).toFixed(2) : 0,
+          graphData.topFiveVendorsAmountDue[2] ? addZeroes(graphData.topFiveVendorsAmountDue[2].totalDueAmount).toFixed(2) : 0,
+          graphData.topFiveVendorsAmountDue[3] ? addZeroes(graphData.topFiveVendorsAmountDue[3].totalDueAmount).toFixed(2) : 0,
+          graphData.topFiveVendorsAmountDue[4] ? addZeroes(graphData.topFiveVendorsAmountDue[4].totalDueAmount).toFixed(2) : 0,
         ],
       },
     ];
@@ -204,18 +205,19 @@ export default function FinanceDashboard() {
             },
             // data: [44, 55, 41, 64, 22, 43, 44, 55, 41, 64, 21],
             data: [
-              purchased[0] ? purchased[0] : 0,
-              purchased[1] ? purchased[1] : 0,
-              purchased[2] ? purchased[2] : 0,
-              purchased[3] ? purchased[3] : 0,
-              purchased[4] ? purchased[4] : 0,
-              purchased[5] ? purchased[5] : 0,
-              purchased[6] ? purchased[6] : 0,
-              purchased[7] ? purchased[7] : 0,
-              purchased[8] ? purchased[8] : 0,
-              purchased[9] ? purchased[9] : 0,
-              purchased[10] ? purchased[10] : 0,
-              purchased[11] ? purchased[11] : 0,
+              purchased[0] ? addZeroes(purchased[0]).toFixed(2) : 0,
+              purchased[1] ? addZeroes(purchased[1]).toFixed(2) : 0,
+              purchased[2] ? addZeroes(purchased[2]).toFixed(2) : 0,
+              purchased[3] ? addZeroes(purchased[3]).toFixed(2) : 0,
+              purchased[4] ? addZeroes(purchased[4]).toFixed(2) : 0,
+              purchased[5] ? addZeroes(purchased[5]).toFixed(2) : 0,
+              purchased[6] ? addZeroes(purchased[6]).toFixed(2) : 0,
+              purchased[7] ? addZeroes(purchased[7]).toFixed(2) : 0,
+              purchased[8] ? addZeroes(purchased[8]).toFixed(2) : 0,
+              purchased[9] ? addZeroes(purchased[9]).toFixed(2) : 0,
+              purchased[10] ? addZeroes(purchased[10]).toFixed(2) : 0,
+              purchased[11] ? addZeroes(purchased[11]).toFixed(2) : 0,
+            
              
             ],
           },
@@ -226,18 +228,19 @@ export default function FinanceDashboard() {
             name: "Paid",
             type: "column",
             data: [
-              paid[0] ? paid[0] : 0,
-              paid[1] ? paid[1] : 0,
-              paid[2] ? paid[2] : 0,
-              paid[3] ? paid[3] : 0,
-              paid[4] ? paid[4] : 0,
-              paid[5] ? paid[5] : 0,
-              paid[6] ? paid[6] : 0,
-              paid[7] ? paid[7] : 0,
-              paid[8] ? paid[8] : 0,
-              paid[9] ? paid[9] : 0,
-              paid[10] ? paid[10] : 0,
-              paid[11] ? paid[11] : 0,
+              paid[0] ? addZeroes(paid[0]).toFixed(2) : 0,
+              paid[1] ? addZeroes(paid[1]).toFixed(2) : 0,
+              paid[2] ? addZeroes(paid[2]).toFixed(2) : 0,
+              paid[3] ? addZeroes(paid[3]).toFixed(2) : 0,
+              paid[4] ? addZeroes(paid[4]).toFixed(2) : 0,
+              paid[5] ? addZeroes(paid[5]).toFixed(2) : 0,
+              paid[6] ? addZeroes(paid[6]).toFixed(2) : 0,
+              paid[7] ? addZeroes(paid[7]).toFixed(2) : 0,
+              paid[8] ? addZeroes(paid[8]).toFixed(2) : 0,
+              paid[9] ? addZeroes(paid[9]).toFixed(2) : 0,
+              paid[10] ? addZeroes(paid[10]).toFixed(2) : 0,
+              paid[11] ? addZeroes(paid[11]).toFixed(2) : 0,
+             
             ]
           }
         ];
@@ -334,12 +337,12 @@ export default function FinanceDashboard() {
                   marginTop: "10px",
                 }}
               >
-                $
-                {graphData.totalDueInvoices && graphData.totalDueInvoices[0]
+                
+                {`SAR ${graphData.totalDueInvoices && graphData.totalDueInvoices[0]
                   ? parseFloat(
                       graphData.totalDueInvoices[0].totalAmount
                     ).toFixed(2)
-                  : 0}
+                  : 0}`}
               </Typography>
             </CardContent>
           </Card>
@@ -380,11 +383,11 @@ export default function FinanceDashboard() {
                     ? [
                         {
                           data: [
-                            parseFloat(graphData.AgeSummery.thirtyDays),
-                            parseFloat(graphData.AgeSummery.sixtyDays),
-                            parseFloat(graphData.AgeSummery.ninetyDays),
-                            parseFloat(graphData.AgeSummery.oneTwentyDays),
-                            parseFloat(graphData.AgeSummery.older),
+                            parseFloat(graphData.AgeSummery.thirtyDays).toFixed(2),
+                            parseFloat(graphData.AgeSummery.sixtyDays).toFixed(2),
+                            parseFloat(graphData.AgeSummery.ninetyDays).toFixed(2),
+                            parseFloat(graphData.AgeSummery.oneTwentyDays).toFixed(2),
+                            parseFloat(graphData.AgeSummery.older).toFixed(2),
                           ],
                         },
                       ]
