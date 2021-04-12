@@ -48,7 +48,14 @@ export default function FinanceDashboard() {
   const [purchaseOptions, setPurchaseOptions] = React.useState({purchaseOptions :data.purchaseOptions, purchaseSeries:data.purchaseSeries});
   const [amountOptions, setAmountOptions] = React.useState({amountOptions :data.amountOptions, amountSeries:data.amountSeries});
   const [tvpOptions, setTvpOptions] = React.useState({TvPoptions :data.TvPoptions, TvPseries:data.TvPseries});
-  const [loading, setLoading] = React.useState(true)
+  const [loading, setLoading] = React.useState(true);
+  const formatCash = n => {
+    if (n < 1e3) return n;
+    if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + "K";
+    if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + "M";
+    if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(1) + "B";
+    if (n >= 1e12) return +(n / 1e12).toFixed(1) + "T";
+  };
   const getChartData = async () => {
     await axios({
       method: "get",
@@ -332,16 +339,16 @@ export default function FinanceDashboard() {
             </CardHeader>
             <CardContent className={classes.cardContent}>
               <Typography
-                variant="h3"
+                variant="h4"
                 style={{
                   marginTop: "10px",
                 }}
               >
                 
                 {`SAR ${graphData.totalDueInvoices && graphData.totalDueInvoices[0]
-                  ? parseFloat(
+                  ? formatCash(
                       graphData.totalDueInvoices[0].totalAmount
-                    ).toFixed(2)
+                    )
                   : 0}`}
               </Typography>
             </CardContent>
@@ -354,15 +361,15 @@ export default function FinanceDashboard() {
             </CardHeader>
             <CardContent className={classes.cardContent}>
               <Typography
-                variant="h3"
+                variant="h4"
                 style={{
                   marginTop: "10px",
                 }}
               >
                 {`SAR ${graphData.totalInvoiceAmount && graphData.totalInvoiceAmount[0]
-                  ? parseFloat(
+                  ? formatCash(
                       graphData.totalInvoiceAmount[0].totalAmount
-                    ).toFixed(2)
+                    )
                   : 0}`}
               </Typography>
             </CardContent>
