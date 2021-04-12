@@ -246,7 +246,8 @@ export const validateInvoice = async (row, Token) => {
                   organizationId:invoice.organizationId,
                   tenantId:invoice.tenantId,
                   vendorId:invoice.vendorId,
-                  userId:invoice.createdBy
+                  userId:invoice.createdBy,
+                  isVendor:invoice.createdByVendor
                  },
               headers: {
                 cooljwt: Token,
@@ -263,7 +264,8 @@ export const validateInvoice = async (row, Token) => {
                   organizationId:blockchain.OrganizationID,
                   tenantId:blockchain.TenantID,
                   vendorId:blockchain.VendorID,
-                  userId:blockchain.CreatedBy
+                  userId:blockchain.CreatedBy,
+                  isVendor:invoice.createdByVendor
                  },
               headers: {
                 cooljwt: Token,
@@ -283,8 +285,8 @@ export const validateInvoice = async (row, Token) => {
                   onChain: blockchain.VendorID,
                   offChain: invoice.vendorId,
                   isSame: isVendorIDSame,
-                  onChainName:BlockchainNames.vendorName,
-                  offChainName:InvoiceNames.vendorName,
+                  onChainName:BlockchainNames.vendorName || null,
+                  offChainName:InvoiceNames.vendorName || null,
                 },
                 "Item Count": {
                   onChain: blockchain.ItemCount,
@@ -302,8 +304,8 @@ export const validateInvoice = async (row, Token) => {
                   onChain: blockchain.OrganizationID,
                   offChain: invoice.organizationId,
                   isSame: isOrganizationIDSame,
-                  onChainName:BlockchainNames.organizationName,
-                  offChainName:InvoiceNames.organizationName,
+                  onChainName:BlockchainNames.organizationName || null,
+                  offChainName:InvoiceNames.organizationName || null,
                 },
                 "Discount Percentage": {
                   onChain: `${blockchain.DiscountPercentage}%`,
@@ -328,8 +330,8 @@ export const validateInvoice = async (row, Token) => {
                   onChain: blockchain.TenantID,
                   offChain: invoice.tenantId,
                   isSame: isTenantIDSame,
-                  onChainName:BlockchainNames.tenantName,
-                  offChainName:InvoiceNames.tenantName,
+                  onChainName:BlockchainNames.tenantName || null,
+                  offChainName:InvoiceNames.tenantName || null,
                 },
                 "Created Date": {
                   onChain: formatDateTime(blockchain.CreatedDate),
@@ -340,8 +342,8 @@ export const validateInvoice = async (row, Token) => {
                   onChain: blockchain.CreatedBy,
                   offChain: invoice.createdBy,
                   isSame: isCreatedBySame,
-                  onChainName:BlockchainNames.userName,
-                  offChainName:InvoiceNames.userName,
+                  onChainName:BlockchainNames.userName || null,
+                  offChainName:InvoiceNames.userName || null,
                 },
                 Validate: {
                   isSame: isValidate,
