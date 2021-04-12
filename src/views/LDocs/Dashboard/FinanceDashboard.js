@@ -359,11 +359,11 @@ export default function FinanceDashboard() {
                   marginTop: "10px",
                 }}
               >
-                {graphData.totalInvoiceAmount && graphData.totalInvoiceAmount[0]
+                {`SAR ${graphData.totalInvoiceAmount && graphData.totalInvoiceAmount[0]
                   ? parseFloat(
                       graphData.totalInvoiceAmount[0].totalAmount
                     ).toFixed(2)
-                  : 0}
+                  : 0}`}
               </Typography>
             </CardContent>
           </Card>
