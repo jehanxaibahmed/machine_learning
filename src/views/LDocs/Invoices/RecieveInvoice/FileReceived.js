@@ -217,7 +217,7 @@ export default function FileReceived(props) {
                               Choose Status
                             </MenuItem>
                             <MenuItem value="read">
-                            MARK AS RECEIVED&nbsp;&nbsp;
+                            {fileData.workFlowStatus == "correctionRequired" ? 'RE-SUBMIT' : 'MARK AS RECEIVED'}&nbsp;&nbsp;
                               <div className="fileinput text-center">
                                 <div className="thumbnail img-circle3">
                                   <img src={Success} alt={"RESUBMIT"} />
