@@ -953,7 +953,7 @@ export default function CreateInvoice(props) {
       var invoice_attachments = fileData.attachments.map((att) => {
         const a = {
           name: att.name,
-          base64: null,
+          base64: `${process.env.REACT_APP_LDOCS_API_URL}/${att.attachmentPath}`,
           type: att.attachmentPath.split(".").pop(),
           attachmentTitle: att.attachmentTitle,
           attachmentPath: `${process.env.REACT_APP_LDOCS_API_URL}/${att.attachmentPath}`,
@@ -1056,6 +1056,7 @@ export default function CreateInvoice(props) {
     }
   };
   const viewFileHandler = (file) => {
+    console.log(file);
     setIsCreateInvoice(false);
     setFile(file);
     setViewFile(true);
