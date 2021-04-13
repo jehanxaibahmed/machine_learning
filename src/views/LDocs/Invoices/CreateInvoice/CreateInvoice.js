@@ -234,7 +234,7 @@ export default function CreateInvoice(props) {
       url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
         organizationId: isVendor
-          ? orgId || formState.selectedOrg.organizationId 
+          ? orgId || formState.selectedOrg ? formState.selectedOrg.organizationId : null 
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
       },
@@ -296,7 +296,7 @@ export default function CreateInvoice(props) {
       data: {
         poNumber: p,
         organizationId: isVendor
-          ? formState.selectedOrg._id
+          ? formState.selectedOrg._id || null
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
       },
@@ -336,7 +336,9 @@ export default function CreateInvoice(props) {
           },
         }));
       }
+      if(!isVendor){
       getReceipts(event.target.value);
+      }
     }
 
     setFormState((formState) => ({
@@ -644,6 +646,7 @@ export default function CreateInvoice(props) {
               "The Picture/Document is not a valid Invoice. Please try with correct Invoice"
             );
           } else {
+            const userData = jwt.decode(Token);
             let invoice_data = {
               invoiceData: result,
               invoice_number: invoice_number,
@@ -665,9 +668,9 @@ export default function CreateInvoice(props) {
               invoice_tax: invoice_tax,
               invoice_supplier: invoice_supplier,
             };
-            let vendorId = formState.vendors.find(
+            let vendorId = !isVendor ? formState.vendors.find(
               (v) => v.level1.vendorName == invoice_companyowner
-            )._id;
+            )._id : userData.id;
             setFormState((formState) => ({
               ...formState,
               selectedVendor: !isVendor
