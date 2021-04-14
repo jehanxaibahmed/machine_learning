@@ -1436,6 +1436,7 @@ export default function CreateInvoice(props) {
       isReceipt: formState.isReceipt,
       requesterId: isVendor ? (po ? po.requesterId : null) : userData.email,
       expenseType: formState.values.expenseType,
+      isPettyCash:formState.isPeetyCash
     };
     //Axios Call
     axios({
