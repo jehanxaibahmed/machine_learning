@@ -22,7 +22,7 @@ import {
   withStyles,
   Typography,
   SwipeableDrawer,
-  Chip
+  Chip,
 } from "@material-ui/core";
 // @material-ui/icons
 import {
@@ -44,7 +44,7 @@ import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import ClearAllIcon from "@material-ui/icons/ClearAll";
 import CardHeader from "components/Card/CardHeader.js";
 import axios from "axios";
-import RefreshIcon from '@material-ui/icons/Refresh';
+import RefreshIcon from "@material-ui/icons/Refresh";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import dateFormat from "dateformat";
 import { Animated } from "react-animated-css";
@@ -208,9 +208,9 @@ export default function FilesList(props) {
   };
   //Edit Invoice
   const editSelectedInvoice = (row, i) => {
-    //if i = 1 ? Edit  
-    //if i = 2 ? Resubmission 
-    setEdithandler(i); 
+    //if i = 1 ? Edit
+    //if i = 2 ? Resubmission
+    setEdithandler(i);
     setRow(row);
     setAnimateTable(false);
     setEditInvoiceModel(true);
@@ -298,7 +298,7 @@ export default function FilesList(props) {
               {/* {isVendor ? ( */}
               {currentStatus.status == "rejected" ? (
                 <Tooltip title="REJECTED">
-                   <Chip
+                  <Chip
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
@@ -307,22 +307,21 @@ export default function FilesList(props) {
                     color="secondary"
                   />
                 </Tooltip>
-              ) : currentStatus.status == "correctionRequired" && currentStatus.val == 1 ? (
+              ) : currentStatus.status == "correctionRequired" &&
+                currentStatus.val == 1 ? (
                 <Tooltip title="SENT FOR CORRECTION">
-                    <Chip
+                  <Chip
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="SENT FOR CORRECTION"
                     clickable
-                    style={{border:'orange 1px solid', color:'orange'}}
+                    style={{ border: "orange 1px solid", color: "orange" }}
                   />
                 </Tooltip>
-              )
-              : 
-              currentStatus.status == "rejected" ? (
+              ) : currentStatus.status == "rejected" ? (
                 <Tooltip title="REJECTED">
-                   <Chip
+                  <Chip
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
@@ -331,16 +330,15 @@ export default function FilesList(props) {
                     color="secondary"
                   />
                 </Tooltip>
-              ) 
-              : currentStatus.val == 0 ? (
+              ) : currentStatus.val == 0 ? (
                 <Tooltip title="PENDING">
-                   <Chip
+                  <Chip
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="PENDING"
                     clickable
-                    style={{border:'orange 1px solid', color:'orange'}}
+                    style={{ border: "orange 1px solid", color: "orange" }}
                   />
                 </Tooltip>
               ) : currentStatus.val == 1 ? (
@@ -356,7 +354,7 @@ export default function FilesList(props) {
                 </Tooltip>
               ) : currentStatus.val == 2 ? (
                 <Tooltip title="UNDER REVIEW">
-                   <Chip
+                  <Chip
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
@@ -378,18 +376,18 @@ export default function FilesList(props) {
                 </Tooltip>
               ) : currentStatus.val == 4 ? (
                 <Tooltip title="DONE">
-                   <Chip
+                  <Chip
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
                     label="APPROVAL DONE"
                     clickable
-                    style={{border:'green 1px solid', color:'green'}}
+                    style={{ border: "green 1px solid", color: "green" }}
                   />
                 </Tooltip>
               ) : (
                 <Tooltip title="NO STATUS">
-                   <Chip
+                  <Chip
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
@@ -414,9 +412,7 @@ export default function FilesList(props) {
               }
             </MenuProvider>
           ),
-          po:(
-            prop.po
-          ),
+          po: prop.po,
           createdDate: (
             <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.createdDate)}
@@ -611,11 +607,12 @@ export default function FilesList(props) {
               ) : (
                 ""
               )} */}
-              {currentStatus.val == 1 && prop.workFlowStatus != "correctionRequired" && currentStatus.status == "inProgress" &&  prop.createdByVendor && !isVendor ? (
-                <Tooltip
-                  title={"Edit Invoice"}
-                  aria-label="received"
-                >
+              {currentStatus.val == 1 &&
+              prop.workFlowStatus != "correctionRequired" &&
+              currentStatus.status == "inProgress" &&
+              prop.createdByVendor &&
+              !isVendor ? (
+                <Tooltip title={"Edit Invoice"} aria-label="received">
                   <Button
                     justIcon
                     round
@@ -630,13 +627,13 @@ export default function FilesList(props) {
               ) : (
                 ""
               )}
-             
-             {prop.markedAs !== 'rejected' && prop.workFlowStatus == "correctionRequired" &&
-             !isVendor
-              // && !prop.createdByVendor &&
-               ? (
-                 <React.Fragment>
-                {/* <Tooltip title="RE SUBMIT" >
+
+              {prop.markedAs !== "rejected" &&
+              prop.workFlowStatus == "correctionRequired" &&
+              !isVendor ? (
+                // && !prop.createdByVendor &&
+                <React.Fragment>
+                  {/* <Tooltip title="RE SUBMIT" >
                   <Button
                     justIcon
                     round
@@ -648,32 +645,27 @@ export default function FilesList(props) {
                     <RefreshIcon />
                   </Button>
                 </Tooltip> */}
-                <Tooltip
-                title={"Edit Invoice"}
-                aria-label="received"
-              >
-                <Button
-                  justIcon
-                  round
-                  simple
-                  icon={EditOutlined}
-                  onClick={() => editSelectedInvoice(prop, 1)}
-                  color="info"
-                >
-                  <EditOutlined />
-                </Button>
-              </Tooltip>
-              </React.Fragment>
+                  <Tooltip title={"Edit Invoice"} aria-label="received">
+                    <Button
+                      justIcon
+                      round
+                      simple
+                      icon={EditOutlined}
+                      onClick={() => editSelectedInvoice(prop, 1)}
+                      color="info"
+                    >
+                      <EditOutlined />
+                    </Button>
+                  </Tooltip>
+                </React.Fragment>
               ) : (
                 ""
               )}
-            {
-              currentStatus.val == 1 && currentStatus.status == "correctionRequired"
-              // && !prop.createdByVendor 
-              &&
-              isVendor
-               ? (
-                <Tooltip title="RE SUBMIT" >
+              {currentStatus.val == 1 &&
+              currentStatus.status == "correctionRequired" &&
+              // && !prop.createdByVendor
+              isVendor ? (
+                <Tooltip title="RE SUBMIT">
                   <Button
                     justIcon
                     round
