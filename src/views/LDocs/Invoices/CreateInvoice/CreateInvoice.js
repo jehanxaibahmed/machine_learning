@@ -17,7 +17,7 @@ import {
   Checkbox,
 } from "@material-ui/core";
 import SweetAlert from "react-bootstrap-sweetalert";
-import {  Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -134,6 +134,8 @@ export default function CreateInvoice(props) {
     expenseTypes: [],
     isPo: true,
     isReceipt: isVendor ? false : true,
+    isPeetyCash: false,
+    isExpense: false,
     selectedOrg: null,
     selectedVendor: null,
     values: {
@@ -144,6 +146,7 @@ export default function CreateInvoice(props) {
       paymentTerms: "NET-",
       currency: "",
       itemName: "",
+      inlineExpenseType: "",
       unitCost: 0,
       quantity: 0,
       discount: 0,
@@ -173,6 +176,7 @@ export default function CreateInvoice(props) {
       currency: "",
       poNumber: "",
       itemName: "",
+      inlineExpenseType: "",
       unitCost: "",
       quantity: "",
       discount: "",
@@ -227,14 +231,16 @@ export default function CreateInvoice(props) {
       });
   };
   const getPos = (orgId) => {
-    console.log('Getting PO');
+    console.log("Getting PO");
     const userDetails = jwt.decode(Token);
     axios({
       method: "post", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
         organizationId: isVendor
-          ? orgId || formState.selectedOrg ? formState.selectedOrg.organizationId : null 
+          ? orgId || formState.selectedOrg
+            ? formState.selectedOrg.organizationId
+            : null
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
       },
@@ -315,16 +321,49 @@ export default function CreateInvoice(props) {
   const classes = useStyles();
   const handleChange = (event) => {
     event.persist();
-    if (event.target.name == "isPo" || "isReceipt") {
+    if ( event.target.name == "invoiceType") {
+      if(event.target.value == "isPo"){
+        setFormState((formState) => ({
+          ...formState,
+          isExpense:false,
+          isPo:true,
+          isPeetyCash:false
+        }));
+      }
+      if (event.target.value == "isPeetyCash") {
+        setFormState((formState) => ({
+          ...formState,
+          isExpense:false,
+          isPo:false,
+          isPeetyCash:true
+        }));
+      }
+      if (event.target.value == "isExpense") {
+        setFormState((formState) => ({
+          ...formState,
+          isExpense:true,
+          isPo:false,
+          isPeetyCash:false
+        }));
+      }
       setFormState((formState) => ({
         ...formState,
         [event.target.name]:
-          event.target.name == "isPo" ? !formState.isPo : !formState.isReceipt,
+          event.target.value == "isPo"
+            ? !formState.isPo
+            : event.target.value == "isPeetyCash"
+            ? !formState.isPeetyCash
+            : event.target.value == "isExpense"
+            ? !formState.isExpense
+            : !formState.isReceipt,
       }));
     }
-    
-    
-
+    if (event.target.name == "isReceipt") {
+      setFormState((formState) => ({
+        ...formState,
+        [event.target.name]: !formState.isReceipt,
+      }));
+    }
     if (event.target.name == "poNumber") {
       let po = pos.find((po) => po.poNumber == event.target.value);
       if (po) {
@@ -336,8 +375,8 @@ export default function CreateInvoice(props) {
           },
         }));
       }
-      if(!isVendor){
-      getReceipts(event.target.value);
+      if (!isVendor) {
+        getReceipts(event.target.value);
       }
     }
 
@@ -384,7 +423,7 @@ export default function CreateInvoice(props) {
     const userData = jwt.decode(Token);
     await setMarkAsReceivedModel(false);
     await props.loadFiles(userData, false);
-    successAlert('Status Changed Successfully.');
+    successAlert("Status Changed Successfully.");
     // setIsMarked(true);
   };
   const removeAttachment = (fileIndex) => {
@@ -411,7 +450,7 @@ export default function CreateInvoice(props) {
         quantity: item.quantity,
         discount: item.discount,
         poInline: item.poInline,
-        expenseType: item.expenseType,
+        inlineExpenseType: item.expenseType,
         receiptNumber: item.receiptNumber,
         additionalDetails: item.additionalDetails,
       },
@@ -632,7 +671,7 @@ export default function CreateInvoice(props) {
                   : "",
                 discount: "0",
                 additionalDetails: "",
-                receiptNumber :[]
+                receiptNumber: [],
               };
               invoice_lineitems.push(obj);
             });
@@ -668,14 +707,14 @@ export default function CreateInvoice(props) {
               invoice_tax: invoice_tax,
               invoice_supplier: invoice_supplier,
             };
-            let vendorId = !isVendor ? formState.vendors.find(
-              (v) => v.level1.vendorName == invoice_companyowner
-            )._id : userData.id;
+            let vendorId = !isVendor
+              ? formState.vendors.find(
+                  (v) => v.level1.vendorName == invoice_companyowner
+                )._id
+              : userData.id;
             setFormState((formState) => ({
               ...formState,
-              selectedVendor: !isVendor
-                ? vendorId || null
-                : null,
+              selectedVendor: !isVendor ? vendorId || null : null,
               values: {
                 ...formState.values,
                 invoiceDate: invoice_date,
@@ -688,7 +727,7 @@ export default function CreateInvoice(props) {
                   : null,
               },
             }));
-            
+
             //AddFileInAttachments
             let reader = new FileReader();
             reader.onloadend = () => {
@@ -806,7 +845,13 @@ export default function CreateInvoice(props) {
   //Update Total
   React.useEffect(() => {
     updateTotal();
-  }, [items, formState.values.overallDiscount, formState.values.overallTax,formState.values.taxType, formState.values.discountType ]);
+  }, [
+    items,
+    formState.values.overallDiscount,
+    formState.values.overallTax,
+    formState.values.taxType,
+    formState.values.discountType,
+  ]);
   //On Change Vendor
   React.useEffect(() => {
     if (
@@ -898,7 +943,7 @@ export default function CreateInvoice(props) {
         });
     }
     getLookUp();
-  }
+  };
   //On Load Component
   React.useEffect(() => {
     getData();
@@ -934,7 +979,7 @@ export default function CreateInvoice(props) {
           selectedVendor: !isVendor
             ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
             : null,
-          expenseType:fileData.expenseType
+          expenseType: fileData.expenseType,
         },
       }));
       var invoice_items = fileData.items.map((item) => {
@@ -1078,8 +1123,8 @@ export default function CreateInvoice(props) {
         itemName: "",
         unitCost: 0,
         quantity: 0,
-        // expenseType: "",
-        // receiptNumber: "",
+        inlineExpenseType: "",
+        receiptNumber: [],
         poInline: "",
         discount: 0,
         amount: 0,
@@ -1092,8 +1137,8 @@ export default function CreateInvoice(props) {
         quantity: "",
         discount: "",
         amount: "",
-        // expenseType: "",
-        // receiptNumber: "",
+        inlineExpenseType: "",
+        receiptNumber: "",
         poInline: "",
         additionalDetails: "",
       },
@@ -1138,21 +1183,14 @@ export default function CreateInvoice(props) {
       discount = "error";
       error = true;
     }
-    // if (category == 1) {
-    //   if (!Check(formState.values.poInline)) {
-    //     poInline = "success";
-    //   } else {
-    //     poInline = "error";
-    //     error = true;
-    //   }
-    // } else {
-    //   if (!Check(formState.values.expenseType)) {
-    //     expenseType = "success";
-    //   } else {
-    //     expenseType = "error";
-    //     error = true;
-    //   }
-    // }
+    if (!isVendor && formState.isPeetyCash) {
+      if (!Check(formState.values.inlineExpenseType)) {
+        expenseType = "success";
+      } else {
+        expenseType = "error";
+        error = true;
+      }
+    }
     if (!isVendor && formState.isReceipt && formState.isPo) {
       if (!Check(formState.values.receiptNumber)) {
         receiptNumber = "success";
@@ -1170,8 +1208,8 @@ export default function CreateInvoice(props) {
         unitCost: unitCost,
         quantity: quantity,
         discount: discount,
+        inlineExpenseType: expenseType,
         // poInline: poInline,
-        // expenseType: expenseType,
         receiptNumber: receiptNumber,
         additionalDetails: additionalDetails,
       },
@@ -1185,7 +1223,7 @@ export default function CreateInvoice(props) {
         quantity: formState.values.quantity,
         discount: formState.values.discount,
         poInline: formState.values.poInline,
-        // expenseType: formState.values.expenseType,
+        expenseType: formState.values.inlineExpenseType,
         category: category,
         receiptNumber: formState.values.receiptNumber,
         amount:
@@ -1212,7 +1250,6 @@ export default function CreateInvoice(props) {
   };
 
   const openPopup = () => {
-       
     let invoiceDate;
     let InvoiceNumber;
     let dueDate;
@@ -1249,11 +1286,8 @@ export default function CreateInvoice(props) {
     //   poNumber = "error";
     //   error = true;
     // }
-    if (!isVendor && formState.isPo && formState.isReceipt ) {
-      if (
-        items.filter((i) => i.receiptNumber.length < 1)
-          .length > 0
-      ) {
+    if (!isVendor && formState.isPo && formState.isReceipt) {
+      if (items.filter((i) => i.receiptNumber.length < 1).length > 0) {
         item = "error";
         error = true;
       } else {
@@ -1316,181 +1350,180 @@ export default function CreateInvoice(props) {
     } else {
       if (edit && !isVendor) {
         setMarkAsReceivedModel(true);
-      }
-      else{
+      } else {
         createInvoice();
       }
     }
-  }
+  };
 
   const createInvoice = () => {
     //Creating Invoice
     setIsSavingInvoice(true);
-      const isEdit = props.editHandler == 1 ? true : false;
-      const userData = jwt.decode(Token);
-      let userCurrency;
-      if (isVendor && formState.selectedOrg) {
-        userCurrency = currencyLookups.find(
-          (l) => l._id == formState.selectedOrg.currency
-        );
-      } else if (userData.currency && !isVendor) {
-        userCurrency = currencyLookups.find(
-          (l) => l._id == userData.currency.Currency_Base
-        );
-      } else {
-        userCurrency = defaultCurrency;
-      }
-      let po = pos.find((po) => po.poNumber == formState.values.poNumber);
-      let taxPercent =
-        formState.values.taxType === 1
-          ? (formState.values.overallTax * 100) / formState.values.subtotal
-          : formState.values.overallTax;
-      let discountPercent =
-        formState.values.discountType === 1
-          ? (formState.values.overallDiscount * 100) / formState.values.subtotal
-          : formState.values.overallDiscount;
-      let taxAmt =
-        formState.values.taxType === 2
-          ? (formState.values.subtotal * formState.values.overallTax) / 100
-          : formState.values.overallTax;
-      let discountAmt =
-        formState.values.discountType === 2
-          ? (formState.values.subtotal * formState.values.overallDiscount) / 100
-          : formState.values.overallDiscount;
-      let formData = {
-        invoiceId: formState.values.InvoiceNumber,
-        invoiceDate: formState.values.invoiceDate,
-        dueDate: formState.values.dueDate,
-        grossAmt: formState.values.subtotal,
-        discountPercent: discountPercent,
-        discountAmt: discountAmt,
-        taxAmt: taxAmt,
-        taxPercent: taxPercent,
-        invoice_details: formState.values.notes,
-        netAmt: formState.values.total,
-        ref: formState.values.poNumber,
-        tenantId: isVendor ? formState.selectedOrg.tenantId : userData.tenantId,
-        organizationId: isVendor
-          ? formState.selectedOrg.organizationId
-          : userData.orgDetail.organizationId,
-        organizationName: isVendor
-          ? formState.selectedOrg.organizationName
-          : userData.orgDetail.organization,
-        contactPerson: isVendor
-          ? null
-          : formState.values.selectedVendor.level1.contactPerson,
-        createdBy: userData.email,
-        balanceDue: formState.values.total,
-        items: items,
-        attachments: formState.attachments,
-        vendorName: isVendor
-          ? userData.name
-          : formState.values.selectedVendor.level1.vendorName,
-        vendorId: isVendor ? userData.id : formState.values.selectedVendor._id,
-        vendorSite: isVendor ? "" : formState.values.site,
-        version: fileData ? fileData.version : "",
-        invoicePath: fileData ? fileData.invoicePath : "",
-        FC_currency: currencyLookups.find(
-          (l) => l._id == formState.values.currency
-        ),
-        LC_currency: userCurrency,
-        description: formState.values.notes,
-        createdByVendor: isVendor ? true : false,
-        po: formState.values.poNumber,
-        // receiptNumber: formState.values.receiptNumber,
-        paymentTerms: formState.values.paymentTerms.split("-")[1],
-        isPo: po ? formState.isPo : false,
-        isReceipt: formState.isReceipt,
-        requesterId: isVendor ? po ?  po.requesterId : null : userData.email,
-        expenseType : formState.values.expenseType
-
-      };
-      //Axios Call
-      axios({
-        method: "post",
-        // method: edit ? "put" : "post",
-        // url: edit
-        //   ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
-        //   : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
-        url: isEdit
-          ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
-          : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
-        data: formData,
-        headers: {
-          //"Content-Type": "multipart/form-data",
-          cooljwt: Token,
-        },
+    const isEdit = props.editHandler == 1 ? true : false;
+    const userData = jwt.decode(Token);
+    let userCurrency;
+    if (isVendor && formState.selectedOrg) {
+      userCurrency = currencyLookups.find(
+        (l) => l._id == formState.selectedOrg.currency
+      );
+    } else if (userData.currency && !isVendor) {
+      userCurrency = currencyLookups.find(
+        (l) => l._id == userData.currency.Currency_Base
+      );
+    } else {
+      userCurrency = defaultCurrency;
+    }
+    let po = pos.find((po) => po.poNumber == formState.values.poNumber);
+    let taxPercent =
+      formState.values.taxType === 1
+        ? (formState.values.overallTax * 100) / formState.values.subtotal
+        : formState.values.overallTax;
+    let discountPercent =
+      formState.values.discountType === 1
+        ? (formState.values.overallDiscount * 100) / formState.values.subtotal
+        : formState.values.overallDiscount;
+    let taxAmt =
+      formState.values.taxType === 2
+        ? (formState.values.subtotal * formState.values.overallTax) / 100
+        : formState.values.overallTax;
+    let discountAmt =
+      formState.values.discountType === 2
+        ? (formState.values.subtotal * formState.values.overallDiscount) / 100
+        : formState.values.overallDiscount;
+    let formData = {
+      invoiceId: formState.values.InvoiceNumber,
+      invoiceDate: formState.values.invoiceDate,
+      dueDate: formState.values.dueDate,
+      grossAmt: formState.values.subtotal,
+      discountPercent: discountPercent,
+      discountAmt: discountAmt,
+      taxAmt: taxAmt,
+      taxPercent: taxPercent,
+      invoice_details: formState.values.notes,
+      netAmt: formState.values.total,
+      ref: formState.values.poNumber,
+      tenantId: isVendor ? formState.selectedOrg.tenantId : userData.tenantId,
+      organizationId: isVendor
+        ? formState.selectedOrg.organizationId
+        : userData.orgDetail.organizationId,
+      organizationName: isVendor
+        ? formState.selectedOrg.organizationName
+        : userData.orgDetail.organization,
+      contactPerson: isVendor
+        ? null
+        : formState.values.selectedVendor.level1.contactPerson,
+      createdBy: userData.email,
+      balanceDue: formState.values.total,
+      items: items,
+      attachments: formState.attachments,
+      vendorName: isVendor
+        ? userData.name
+        : formState.values.selectedVendor.level1.vendorName,
+      vendorId: isVendor ? userData.id : formState.values.selectedVendor._id,
+      vendorSite: isVendor ? "" : formState.values.site,
+      version: fileData ? fileData.version : "",
+      invoicePath: fileData ? fileData.invoicePath : "",
+      FC_currency: currencyLookups.find(
+        (l) => l._id == formState.values.currency
+      ),
+      LC_currency: userCurrency,
+      description: formState.values.notes,
+      createdByVendor: isVendor ? true : false,
+      po: formState.values.poNumber,
+      // receiptNumber: formState.values.receiptNumber,
+      paymentTerms: formState.values.paymentTerms.split("-")[1],
+      isPo: po ? formState.isPo : false,
+      isReceipt: formState.isReceipt,
+      requesterId: isVendor ? (po ? po.requesterId : null) : userData.email,
+      expenseType: formState.values.expenseType,
+    };
+    //Axios Call
+    axios({
+      method: "post",
+      // method: edit ? "put" : "post",
+      // url: edit
+      //   ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
+      //   : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
+      url: isEdit
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
+      data: formData,
+      headers: {
+        //"Content-Type": "multipart/form-data",
+        cooljwt: Token,
+      },
+    })
+      .then((response) => {
+        setIsSavingInvoice(false);
+        if (edit && !isVendor) {
+          closeMarkAsReceivedModel();
+        } else {
+          successAlert("Invoice Submited SuccessFully.");
+        }
+        if (!edit) {
+          getData();
+          setItems([]);
+          setFormState({
+            selectedVendor: null,
+            selectedOrg: null,
+            isReceipt: false,
+            isPo: true,
+            values: {
+              invoiceDate: getDateFormet(today),
+              InvoiceNumber: "INV-",
+              dueDate: getDateFormet(duedate),
+              poNumber: "",
+              itemName: "",
+              unitCost: 0,
+              receiptNumber: "",
+              paymentTerms: "NET-",
+              quantity: 0,
+              discount: 0,
+              amount: 0,
+              additionalDetails: "",
+              overallDiscount: 0,
+              overallTax: 0,
+              notes: "",
+              selectedVendor: "",
+              subtotal: 0,
+              total: 0,
+              fileTitle: "",
+              fileDescription: "",
+              currency: "",
+              organizationId: "",
+            },
+            attachments: [],
+            errors: {
+              invoiceDate: "",
+              InvoiceNumber: "",
+              dueDate: "",
+              poNumber: "",
+              itemName: "",
+              unitCost: "",
+              quantity: "",
+              discount: "",
+              amount: "",
+              additionalDetails: "",
+              notes: "",
+              selectedVendor: "",
+              vendor: "",
+              currency: "",
+              items: "",
+              fileTitle: "",
+              fileDescription: "",
+              organizationId: "",
+            },
+          });
+        } else {
+          props.loadFiles(userData, false);
+        }
       })
-        .then((response) => {
-          setIsSavingInvoice(false);
-          if (edit && !isVendor) {
-            closeMarkAsReceivedModel();
-          }
-          else{
-          successAlert("Invoice Submited SuccessFully.")}
-          if (!edit) {
-            getData();
-            setItems([]);
-            setFormState({
-              selectedVendor: null,
-              selectedOrg: null,
-              isReceipt: false,
-              isPo: true,
-              values: {
-                invoiceDate: getDateFormet(today),
-                InvoiceNumber: "INV-",
-                dueDate: getDateFormet(duedate),
-                poNumber: "",
-                itemName: "",
-                unitCost: 0,
-                receiptNumber: "",
-                paymentTerms: "NET-",
-                quantity: 0,
-                discount: 0,
-                amount: 0,
-                additionalDetails: "",
-                overallDiscount: 0,
-                overallTax: 0,
-                notes: "",
-                selectedVendor: "",
-                subtotal: 0,
-                total: 0,
-                fileTitle: "",
-                fileDescription: "",
-                currency: "",
-                organizationId: "",
-              },
-              attachments: [],
-              errors: {
-                invoiceDate: "",
-                InvoiceNumber: "",
-                dueDate: "",
-                poNumber: "",
-                itemName: "",
-                unitCost: "",
-                quantity: "",
-                discount: "",
-                amount: "",
-                additionalDetails: "",
-                notes: "",
-                selectedVendor: "",
-                vendor: "",
-                currency: "",
-                items: "",
-                fileTitle: "",
-                fileDescription: "",
-                organizationId: "",
-              },
-            });
-          }
-          else {
-            props.loadFiles(userData, false);
-          }
-        })
-        .catch((err) => {
-          setIsSavingInvoice(false);
-          errorAlert(err.message ? err.message : "There is some Issue In Create Invoice");
-        });
+      .catch((err) => {
+        setIsSavingInvoice(false);
+        errorAlert(
+          err.message ? err.message : "There is some Issue In Create Invoice"
+        );
+      });
   };
   return (
     <div>
@@ -2014,13 +2047,18 @@ export default function CreateInvoice(props) {
                                 >
                                   Choose Supplier
                                 </MenuItem>
-                                {formState.vendors ? formState.vendors.map((vendor, index) => {
-                                  return (
-                                    <MenuItem key={index} value={vendor._id}>
-                                      {vendor.level1.vendorName}
-                                    </MenuItem>
-                                  );
-                                }):''}
+                                {formState.vendors
+                                  ? formState.vendors.map((vendor, index) => {
+                                      return (
+                                        <MenuItem
+                                          key={index}
+                                          value={vendor._id}
+                                        >
+                                          {vendor.level1.vendorName}
+                                        </MenuItem>
+                                      );
+                                    })
+                                  : ""}
                               </TextField>
                             </GridItem>
                             <GridItem
@@ -2144,16 +2182,20 @@ export default function CreateInvoice(props) {
                                 >
                                   Choose Customer
                                 </MenuItem>
-                                {formState.organizations ? formState.organizations.map((org, index) => {
-                                  return (
-                                    <MenuItem
-                                      key={index}
-                                      value={org.organizationId}
-                                    >
-                                      {org.organizationName}
-                                    </MenuItem>
-                                  );
-                                }):''}
+                                {formState.organizations
+                                  ? formState.organizations.map(
+                                      (org, index) => {
+                                        return (
+                                          <MenuItem
+                                            key={index}
+                                            value={org.organizationId}
+                                          >
+                                            {org.organizationName}
+                                          </MenuItem>
+                                        );
+                                      }
+                                    )
+                                  : ""}
                               </TextField>
                             </GridItem>
                             <GridItem
@@ -2426,7 +2468,7 @@ export default function CreateInvoice(props) {
                             <FormControlLabel
                               control={
                                 <Checkbox
-                                  checked={formState.isReceipt}
+                                  checked={!formState.isPo ? false : formState.isReceipt}
                                   onChange={handleChange}
                                   name="isReceipt"
                                   color="primary"
@@ -2435,6 +2477,18 @@ export default function CreateInvoice(props) {
                               }
                               label="With Receipt"
                             />
+                             <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      checked={formState.isPeetyCash}
+                                      onChange={handleChange}
+                                      value="isPeetyCash"
+                                      name="invoiceType"
+                                      color="primary"
+                                    />
+                                  }
+                                  label="Peety Cash"
+                                />
                           </FormGroup>
                         </GridItem>
                       ) : (
@@ -2593,36 +2647,116 @@ export default function CreateInvoice(props) {
                                 <Checkbox
                                   checked={formState.isPo}
                                   onChange={handleChange}
-                                  name="isPo"
+                                  value="isPo"
+                                  name="invoiceType"
                                   color="primary"
                                 />
                               }
                               label="Purchase Order"
                             />
                             {!isVendor ? (
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={!formState.isPo}
-                                    onChange={handleChange}
-                                    name="isPo"
-                                    color="primary"
-                                  />
-                                }
-                                label="Expense"
-                              />
+                              <React.Fragment>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      checked={formState.isExpense}
+                                      onChange={handleChange}
+                                      name="invoiceType"
+                                      color="primary"
+                                      value="isExpense"
+                                    />
+                                  }
+                                  label="Expense"
+                                />
+                                {/* <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      checked={formState.isPeetyCash}
+                                      onChange={handleChange}
+                                      value="isPeetyCash"
+                                      name="invoiceType"
+                                      color="primary"
+                                    />
+                                  }
+                                  label="Peety Cash"
+                                /> */}
+                              </React.Fragment>
                             ) : (
                               ""
                             )}
                           </FormGroup>
                         </GridItem>
-                        {formState.isPo ? (
-                          <React.Fragment>
+                        {!formState.isPeetyCash && !formState.isExpense && formState.isPo ? (
+                            <React.Fragment>
+                              <GridItem
+                                xs={10}
+                                sm={10}
+                                md={5}
+                                lg={5}
+                                style={{
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                <TextField
+                                  fullWidth={true}
+                                  // error={formState.errors.poNumber}
+                                  // helperText={
+                                  //   formState.errors.poNumber == "error"
+                                  //     ? "Valid PO Number is required"
+                                  //     : null
+                                  // }
+                                  label={`PO Number`}
+                                  id="poNumber"
+                                  name="poNumber"
+                                  onChange={(event) => {
+                                    handleChange(event);
+                                  }}
+                                  value={formState.values.poNumber || ""}
+                                  select
+                                >
+                                  <MenuItem key={""} disabled={true}>
+                                    PO NUMBER
+                                  </MenuItem>
+                                  {pos.map((po, index) => (
+                                    <MenuItem key={index} value={po.poNumber}>
+                                      {po.poNumber}
+                                    </MenuItem>
+                                  ))}
+                                </TextField>
+                              </GridItem>
+                              <GridItem
+                                xs={2}
+                                sm={2}
+                                md={1}
+                                lg={1}
+                                style={{
+                                  marginTop: "15px",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                <Tooltip title="View PO">
+                                  <IconButton
+                                    style={{ background: "lightgrey" }}
+                                    onClick={() => viewPO()}
+                                  >
+                                    {poModal ? (
+                                      <VisibilityOff fontSize="small" />
+                                    ) : (
+                                      <Visibility fontSize="small" />
+                                    )}
+                                  </IconButton>
+                                </Tooltip>
+                              </GridItem>
+                            </React.Fragment>
+                          ) : ''}
+                          {formState.isExpense && !formState.isPeetyCash && !formState.isPo ?
+                          (
                             <GridItem
-                              xs={10}
-                              sm={10}
-                              md={5}
-                              lg={5}
+                              xs={12}
+                              sm={12}
+                              md={6}
+                              lg={6}
                               style={{
                                 marginTop: "10px",
                                 marginBottom: "10px",
@@ -2630,87 +2764,33 @@ export default function CreateInvoice(props) {
                             >
                               <TextField
                                 fullWidth={true}
-                                // error={formState.errors.poNumber}
-                                // helperText={
-                                //   formState.errors.poNumber == "error"
-                                //     ? "Valid PO Number is required"
-                                //     : null
-                                // }
-                                label={`PO Number`}
-                                id="poNumber"
-                                name="poNumber"
+                                error={formState.errors.expenseType === "error"}
+                                helperText={
+                                  formState.errors.expenseType === "error"
+                                    ? "Valid Expense Type is required"
+                                    : null
+                                }
+                                label="Expense Type"
+                                id="expenseType"
+                                name="expenseType"
+                                value={formState.values.expenseType}
                                 onChange={(event) => {
                                   handleChange(event);
                                 }}
-                                value={formState.values.poNumber || ""}
                                 select
                               >
-                                <MenuItem key={""} value={"Without PO"}>
-                                  WITHOUT PO
-                                </MenuItem>
-                                {pos.map((po, index) => (
-                                  <MenuItem key={index} value={po.poNumber}>
-                                    {po.poNumber}
-                                  </MenuItem>
-                                ))}
+                                {formState.expenseTypes
+                                  ? formState.expenseTypes.map((exp, index) => (
+                                      <MenuItem key={index} value={exp._id}>
+                                        {exp.Name}
+                                      </MenuItem>
+                                    ))
+                                  : ""}
                               </TextField>
                             </GridItem>
-                            <GridItem
-                              xs={2}
-                              sm={2}
-                              md={1}
-                              lg={1}
-                              style={{
-                                marginTop: "15px",
-                                marginBottom: "10px",
-                              }}
-                            >
-                              <Tooltip title="View PO">
-                                <IconButton
-                                  style={{ background: "lightgrey" }}
-                                  onClick={() => viewPO()}
-                                >
-                                  {poModal ? (
-                                    <VisibilityOff fontSize="small" />
-                                  ) : (
-                                    <Visibility fontSize="small" />
-                                  )}
-                                </IconButton>
-                              </Tooltip>
-                            </GridItem>
-                          </React.Fragment>
-                        ) : (
-                          <GridItem
-                            xs={12}
-                            sm={12}
-                            md={6}
-                            lg={6}
-                            style={{ marginTop: "10px", marginBottom: "10px" }}
-                          >
-                            <TextField
-                              fullWidth={true}
-                              error={formState.errors.expenseType === "error"}
-                              helperText={
-                                formState.errors.expenseType === "error"
-                                  ? "Valid Expense Type is required"
-                                  : null
-                              }
-                              label="Expense Type"
-                              id="expenseType"
-                              name="expenseType"
-                              value={formState.values.expenseType}
-                              onChange={(event) => {
-                                handleChange(event);
-                              }}
-                              select
-                            >
-                              {formState.expenseTypes ? formState.expenseTypes.map((exp, index) => (
-                                <MenuItem key={index} value={exp._id}>
-                                  {exp.Name}
-                                </MenuItem>
-                              )):''}
-                            </TextField>
-                          </GridItem>
+                          )
+                         : (
+                          ""
                         )}
                         <GridItem
                           xs={12}
@@ -2735,7 +2815,11 @@ export default function CreateInvoice(props) {
                             }}
                             type="text"
                             // variant="outlined"
-                            value={!formState.isPo ? 'NET-0' : formState.values.paymentTerms || ""}
+                            value={
+                              !formState.isPo
+                                ? "NET-0"
+                                : formState.values.paymentTerms || ""
+                            }
                             className={classes.textField}
                           />
                         </GridItem>

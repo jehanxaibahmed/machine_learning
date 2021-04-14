@@ -450,7 +450,44 @@ export default function Items(props) {
                     ) : (
                       ""
                     )}
-                    <StyledTableCell colSpan={!isVendor && formState.isReceipt && formState.isPo ? "5" : "8"}>
+                    {!isVendor && formState.isPeetyCash ? (
+                      <StyledTableCell style={{ paddingTop: 30 }} colSpan="3">
+                        <TextField
+                          className={classes.textField}
+                          fullWidth={true}
+                          error={formState.errors.inlineExpenseType === "error"}
+                          helperText={
+                            formState.errors.inlineExpenseType === "error"
+                              ? "Valid Expense Type required"
+                              : null
+                          }
+                          label="ExpenseType"
+                          id="inlineExpenseType"
+                          name="inlineExpenseType"
+                          onChange={(event) => {
+                            handleChange(event);
+                          }}
+                          // variant="outlined"
+                          value={formState.values.inlineExpenseType}
+                          // MenuProps={MenuProps}
+                          select
+                        >
+                          <MenuItem disabled={true} key={"disabled"}>
+                            Expense Type
+                          </MenuItem>
+                          {formState.expenseTypes
+                                  ? formState.expenseTypes.map((exp, index) => (
+                                      <MenuItem key={index} value={exp._id}>
+                                        {exp.Name}
+                                      </MenuItem>
+                                    ))
+                          : ""}
+                        </TextField>
+                      </StyledTableCell>
+                  ) : (
+                    ""
+                  )}
+                    <StyledTableCell colSpan={!isVendor && formState.isPo || formState.isPeetyCash ? "5" : "8"}>
                       <TextField
                         fullWidth={true}
                         error={formState.errors.additionalDetails === "error"}
@@ -834,7 +871,44 @@ export default function Items(props) {
                   ) : (
                     ""
                   )}
-                  <StyledTableCell colSpan={!isVendor && formState.isReceipt && formState.isPo ? "5" : "8"}>
+                  {!isVendor && formState.isPeetyCash ? (
+                      <StyledTableCell style={{ paddingTop: 30 }} colSpan="3">
+                        <TextField
+                          className={classes.textField}
+                          fullWidth={true}
+                          error={formState.errors.inlineExpenseType === "error"}
+                          helperText={
+                            formState.errors.inlineExpenseType === "error"
+                              ? "Valid Expense Type required"
+                              : null
+                          }
+                          label="ExpenseType"
+                          id="inlineExpenseType"
+                          name="inlineExpenseType"
+                          onChange={(event) => {
+                            handleChange(event);
+                          }}
+                          // variant="outlined"
+                          value={formState.values.inlineExpenseType}
+                          // MenuProps={MenuProps}
+                          select
+                        >
+                          <MenuItem disabled={true} key={"disabled"}>
+                            Expense Type
+                          </MenuItem>
+                          {formState.expenseTypes
+                                  ? formState.expenseTypes.map((exp, index) => (
+                                      <MenuItem key={index} value={exp._id}>
+                                        {exp.Name}
+                                      </MenuItem>
+                                    ))
+                          : ""}
+                        </TextField>
+                      </StyledTableCell>
+                  ) : (
+                    ""
+                  )}
+                  <StyledTableCell colSpan={formState.isPo || formState.isPeetyCash ? "5" : "8"}>
                     <TextField
                       fullWidth={true}
                       error={formState.errors.additionalDetails === "error"}

@@ -144,7 +144,7 @@ export default function InvoiceAge(props) {
                         <TableCell align="right">Invoice Date</TableCell>
                         <TableCell align="right">Due Date</TableCell>
                         <TableCell style={{ width: 600 }}></TableCell>
-                        <TableCell align="right">Amount&nbsp;($)</TableCell>
+                        <TableCell align="right">Amount</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -192,7 +192,7 @@ export default function InvoiceAge(props) {
                             </div>
                           </TableCell>
                           <TableCell align="right">
-                            ${addZeroes(row.netAmt)}
+                            SAR {addZeroes(row.netAmt)}
                           </TableCell>
                         </TableRow>
                        )})}
