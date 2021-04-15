@@ -942,7 +942,11 @@ export default function CreateInvoice(props) {
 
   const setInvoice = () => {
     if (edit) {
-      console.log(fileData);
+      console.log("IS PO",fileData.isPo);
+      console.log("IS RECEIPT",fileData.isReceipt);
+      console.log("IS PREPAYMENT",fileData.isPrePayment);
+      console.log("IS EXPENSE",fileData.isExpense);
+      console.log("IS Patty Cash",fileData.isPettyCash);
       setFormState((formState) => ({
         ...formState,
         selectedVendor: fileData.vendorId,
@@ -953,8 +957,9 @@ export default function CreateInvoice(props) {
           : null,
         isPo: fileData.isPo,
         isReceipt: fileData.isReceipt,
-        isPattyCash: fileData.isPettyCash,
+        isPeetyCash: fileData.isPettyCash,
         isPrePayment: fileData.isPrePayment,
+        isExpense: fileData.isExpense,
         values: {
           ...formState.values,
           InvoiceNumber: fileData.invoiceId,
