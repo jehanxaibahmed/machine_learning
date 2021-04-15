@@ -66,7 +66,7 @@ export default function Step1(props) {
                     <TableRow className={classesList.TableRow}>
                     <TableCell className={classesList.TableID}>ID</TableCell>
                     <TableCell >Name</TableCell>
-                    <TableCell className={classesList.TableCell}>Receipt</TableCell>
+                    <TableCell className={classesList.TableCell}>Receipt / Expense Type</TableCell>
                     <TableCell className={classesList.TableCell}>Quantity</TableCell>
                     <TableCell className={classesList.TableCell}>Unit Cost ({props.currency.sign})</TableCell>
                     <TableCell className={classesList.TableCell}>Discount (%)</TableCell>
@@ -81,7 +81,7 @@ export default function Step1(props) {
                     <TableRow key={item.id}>
                         <TableCell className={classesList.TableID}>{index+1}</TableCell>
                         <TableCell >{item.itemName}</TableCell>
-                        <TableCell className={classesList.TableCell}>{item.receiptNumber[0] || ''}</TableCell>
+                        <TableCell className={classesList.TableCell}>{item.receiptNumber[0] || item.expenseType}</TableCell>
                         <TableCell className={classesList.TableCell}>{addZeroes(item.quantity)}</TableCell>
                         <TableCell className={classesList.TableCell}>{props.currency.sign} {addZeroes(item.unitCost)}</TableCell>
                         <TableCell className={classesList.TableCell}>{props.currency.sign} {parseFloat(addZeroes((item.discount*item.unitCost)/100*item.quantity)).toFixed(2)} <sub>({item.discount}%)</sub></TableCell>

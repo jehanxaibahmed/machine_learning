@@ -477,7 +477,7 @@ export default function Items(props) {
                           </MenuItem>
                           {formState.expenseTypes
                                   ? formState.expenseTypes.map((exp, index) => (
-                                      <MenuItem key={index} value={exp._id}>
+                                      <MenuItem key={index} value={exp.Name}>
                                         {exp.Name}
                                       </MenuItem>
                                     ))
@@ -898,7 +898,7 @@ export default function Items(props) {
                           </MenuItem>
                           {formState.expenseTypes
                                   ? formState.expenseTypes.map((exp, index) => (
-                                      <MenuItem key={index} value={exp._id}>
+                                      <MenuItem key={index} value={exp.Name}>
                                         {exp.Name}
                                       </MenuItem>
                                     ))

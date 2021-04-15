@@ -174,6 +174,7 @@ export default function FilesList(props) {
       partialPaid: true,
       fullPaid: true,
       notPaid: true,
+      invoiceType: true,
     },
     values: {
       status: [],
@@ -184,6 +185,7 @@ export default function FilesList(props) {
       partialPaid: false,
       fullPaid: false,
       notPaid: false,
+      invoiceType: null,
     },
   });
 
@@ -239,7 +241,6 @@ export default function FilesList(props) {
       method: "get", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice-workflow-history/${row.vendorId}-${row.invoiceId}-${row.version}`,
     }).then((response) => {
-      console.log(response);
       if (response.data.length !== 0) {
         setBlockChainData(response.data);
         setIsViewingBlockChainView(true);
@@ -289,7 +290,6 @@ export default function FilesList(props) {
           !prop.initWorkFLow && !isVendor && prop.markedAs == "unread";
         let isCorrectionRequiredInWorkflow =
           !isVendor && prop.workFlowStatus == "correctionRequired";
-        console.log(currentStatus);
         return {
           id: prop._id,
           invoiceId: prop.invoiceId,
@@ -413,7 +413,13 @@ export default function FilesList(props) {
             </MenuProvider>
           ),
           po: prop.po,
-					invoiceType : prop.isPo ? 'Purchase Order' : prop.isPettyCash ? "Patty Cash" : prop.isExpense ? "Expense" : "",
+          invoiceType: prop.isPo
+            ? "Purchase Order"
+            : prop.isPettyCash
+            ? "Patty Cash"
+            : prop.isExpense
+            ? "Expense"
+            : "",
           createdDate: (
             <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.createdDate)}
@@ -737,7 +743,6 @@ export default function FilesList(props) {
       },
     })
       .then((response) => {
-        console.log(response);
         setFilesData(user.isVendor ? response.data.result : response.data);
         setTableData(user.isVendor ? response.data.result : response.data);
         setIsLoading(false);
@@ -931,6 +936,35 @@ export default function FilesList(props) {
       );
     }
 
+		if (data.values.invoiceType == 1) {
+			files = files.filter(f => f.isPo != false);
+		}
+		if (data.values.invoiceType == 2) {
+			files = files.filter(f => f.isExpense != false);
+			console.log(files);
+		}
+		if (data.values.invoiceType == 3) {
+			files = files.filter(f => f.isPettyCash != false);
+		}
+    
+		//Invoice Type
+    // if (data.filters.invoiceType) {
+		// 	console.log(data.values.invoiceType);
+    //   switch (data.values.invoiceType) {
+    //     case 1:
+		// 			files = files.filter(f => f.isPo == true);
+    //       break;
+    //     case 2:
+		// 			files = files.filter(f => f.isExpense == true);
+    //       break;
+    //     case 3:
+		// 			files = files.filter(f => f.isPettyCash == true);
+    //       break;
+    //     default:
+		// 			files = files;
+    //       break;
+    //   }
+  	//  }
     setTableData(files.reverse());
     setShowFiltersModel(false);
   };
@@ -1491,7 +1525,7 @@ export default function FilesList(props) {
                                 Header: "Amount",
                                 accessor: "netAmt",
                               },
-															{
+                              {
                                 Header: "Invoice Type",
                                 accessor: "invoiceType",
                                 filterable: true,
