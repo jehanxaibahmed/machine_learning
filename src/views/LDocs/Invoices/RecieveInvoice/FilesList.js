@@ -413,6 +413,7 @@ export default function FilesList(props) {
             </MenuProvider>
           ),
           po: prop.po,
+					invoiceType : prop.isPo ? 'Purchase Order' : prop.isPettyCash ? "Patty Cash" : prop.isExpense ? "Expense" : "",
           createdDate: (
             <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.createdDate)}
@@ -1489,6 +1490,13 @@ export default function FilesList(props) {
                               {
                                 Header: "Amount",
                                 accessor: "netAmt",
+                              },
+															{
+                                Header: "Invoice Type",
+                                accessor: "invoiceType",
+                                filterable: true,
+                                filter: "fuzzyText",
+                                sortType: "basic",
                               },
                               {
                                 Header: "PO Number",

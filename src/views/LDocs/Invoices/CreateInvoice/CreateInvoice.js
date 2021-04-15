@@ -349,11 +349,11 @@ export default function CreateInvoice(props) {
       }
     }
     if (event.target.name == "isReceipt") {
-        setFormState((formState) => ({
-          ...formState,
-         isPrePayment:!formState.isPrePayment,
-         isReceipt:!formState.isReceipt
-        }));
+      setFormState((formState) => ({
+        ...formState,
+        isPrePayment: !formState.isPrePayment,
+        isReceipt: !formState.isReceipt,
+      }));
     }
     if (event.target.name == "poNumber") {
       let po = pos.find((po) => po.poNumber == event.target.value);
@@ -963,6 +963,7 @@ export default function CreateInvoice(props) {
           notes: fileData.description,
           taxType: 1,
           overallTax: fileData.taxAmt,
+          isExpense: fileData.isExpense,
           discountType: 1,
           overallDiscount: fileData.discountAmt,
           organizationId: fileData.organizationId,
@@ -1431,6 +1432,7 @@ export default function CreateInvoice(props) {
       expenseType: formState.values.expenseType,
       isPettyCash: formState.isPeetyCash,
       isPrePayment: formState.isPrePayment,
+      isExpense: formState.isExpense,
     };
     //Axios Call
     axios({
