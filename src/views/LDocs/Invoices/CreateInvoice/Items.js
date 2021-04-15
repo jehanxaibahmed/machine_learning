@@ -487,7 +487,7 @@ export default function Items(props) {
                   ) : (
                     ""
                   )}
-                    <StyledTableCell colSpan={!isVendor && formState.isPo || formState.isPeetyCash ? "5" : "8"}>
+                    <StyledTableCell colSpan={!isVendor && formState.isPo || formState.isPeetyCash ? formState.isPrePayment && formState.isPo ? "8" : "5" : "8"}>
                       <TextField
                         fullWidth={true}
                         error={formState.errors.additionalDetails === "error"}
@@ -908,7 +908,7 @@ export default function Items(props) {
                   ) : (
                     ""
                   )}
-                  <StyledTableCell colSpan={formState.isPo || formState.isPeetyCash ? "5" : "8"}>
+                    <StyledTableCell colSpan={!isVendor && formState.isPo || formState.isPeetyCash ? formState.isPrePayment && formState.isPo ? "8" : "5" : "8"}>
                     <TextField
                       fullWidth={true}
                       error={formState.errors.additionalDetails === "error"}
