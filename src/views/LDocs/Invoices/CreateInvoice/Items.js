@@ -450,7 +450,7 @@ export default function Items(props) {
                     ) : (
                       ""
                     )}
-                    {!isVendor && formState.isPeetyCash ? (
+                    {formState.isPeetyCash ? (
                       <StyledTableCell style={{ paddingTop: 30 }} colSpan="3">
                         <TextField
                           className={classes.textField}
@@ -871,7 +871,7 @@ export default function Items(props) {
                   ) : (
                     ""
                   )}
-                  {!isVendor && formState.isPeetyCash ? (
+                    {formState.isPeetyCash ? (
                       <StyledTableCell style={{ paddingTop: 30 }} colSpan="3">
                         <TextField
                           className={classes.textField}

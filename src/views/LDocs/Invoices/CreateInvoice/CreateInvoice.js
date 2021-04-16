@@ -1182,7 +1182,7 @@ export default function CreateInvoice(props) {
       discount = "error";
       error = true;
     }
-    if (!isVendor && formState.isPeetyCash) {
+    if (formState.isPeetyCash) {
       if (!Check(formState.values.inlineExpenseType)) {
         expenseType = "success";
       } else {
@@ -2446,8 +2446,7 @@ export default function CreateInvoice(props) {
                             </GridItem>
                           </GridContainer>
                         )}
-                      </Card>
-                      {!isVendor ? (
+                      </Card>    
                         <GridItem
                           xs={12}
                           sm={12}
@@ -2456,6 +2455,8 @@ export default function CreateInvoice(props) {
                           style={{ marginTop: "10px", marginBottom: "10px" }}
                         >
                           <FormGroup row>
+                          {!isVendor ? (
+                            <React.Fragment>
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -2485,6 +2486,10 @@ export default function CreateInvoice(props) {
                               }
                               label="With Receipt"
                             />
+                            </React.Fragment>
+                            ) : (
+                              ""
+                            )}
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -2499,9 +2504,6 @@ export default function CreateInvoice(props) {
                             />
                           </FormGroup>
                         </GridItem>
-                      ) : (
-                        ""
-                      )}
                     </GridItem>
                     <GridItem
                       xs={12}
