@@ -68,6 +68,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
   const decoded = jwt.decode(Token);
   const classes = useStyle();
   const isVendor = props.isVendor;
+  console.log("IS VENDOR ",isVendor);
   const classesList = useStyles();
   const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);

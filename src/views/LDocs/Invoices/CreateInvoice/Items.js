@@ -56,7 +56,7 @@ const useStyles = makeStyles(styles);
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.action.hover,
-    color: theme.palette.common.black,
+    // color: theme.palette.common.black,
   },
   body: {
     fontSize: 14,
@@ -65,9 +65,9 @@ const StyledTableCell = withStyles((theme) => ({
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
+    // "&:nth-of-type(odd)": {
+    //   backgroundColor: theme.palette.action.hover,
+    // },
   },
 }))(TableRow);
 

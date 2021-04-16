@@ -133,9 +133,9 @@ export default function CreateInvoice(props) {
     attachments: [],
     expenseTypes: [],
     isPo: true,
-    isReceipt: isVendor ? false : true,
+    isReceipt: false,
     isPeetyCash: false,
-    isPrePayment: false,
+    isPrePayment: true,
     isExpense: false,
     selectedOrg: null,
     selectedVendor: null,
@@ -323,36 +323,38 @@ export default function CreateInvoice(props) {
   const handleChange = (event) => {
     event.persist();
     if (event.target.name == "invoiceType") {
-      if (event.target.value == "isPo") {
+      if (event.target.value == "isReceipt") {
         setFormState((formState) => ({
           ...formState,
-          isExpense: false,
-          isPo: true,
+          isReceipt: true,
+          isPrePayment: false,
           isPeetyCash: false,
         }));
       }
       if (event.target.value == "isPeetyCash") {
         setFormState((formState) => ({
           ...formState,
-          isExpense: false,
-          isPo: false,
+          isReceipt: false,
+          isPrePayment: false,
           isPeetyCash: true,
+          isPo:false,
+          isExpense:false
         }));
       }
-      if (event.target.value == "isExpense") {
+      if (event.target.value == "isPrePayment") {
         setFormState((formState) => ({
           ...formState,
-          isExpense: true,
-          isPo: false,
+          isReceipt: false,
+          isPrePayment: true,
           isPeetyCash: false,
         }));
       }
     }
-    if (event.target.name == "isReceipt") {
+    if (event.target.name == "isPo") {
       setFormState((formState) => ({
         ...formState,
-        isPrePayment: !formState.isPrePayment,
-        isReceipt: !formState.isReceipt,
+        isPo: event.target.value == "isPo" && !formState.isPo ,
+        isExpense: event.target.value == "isExpense" && !formState.isExpense ,
       }));
     }
     if (event.target.name == "poNumber") {
@@ -2455,7 +2457,6 @@ export default function CreateInvoice(props) {
                           style={{ marginTop: "10px", marginBottom: "10px" }}
                         >
                           <FormGroup row>
-                          {!isVendor ? (
                             <React.Fragment>
                             <FormControlLabel
                               control={
@@ -2464,32 +2465,30 @@ export default function CreateInvoice(props) {
                                   onChange={handleChange}
                                   value="isPrePayment"
                                   color="primary"
-                                  name="isReceipt"
+                                  name="invoiceType"
                                 />
                               }
                               label="Pre Payment"
                             />
+                             {!isVendor ? (
                             <FormControlLabel
                               control={
                                 <Checkbox
                                   checked={
-                                    !formState.isPo
-                                      ? false
-                                      : formState.isReceipt
+                                   formState.isReceipt
                                   }
                                   onChange={handleChange}
-                                  name="isReceipt"
+                                  name="invoiceType"
                                   value="isReceipt"
                                   color="primary"
-                                  disabled={!formState.isPo}
                                 />
                               }
                               label="With Receipt"
                             />
-                            </React.Fragment>
                             ) : (
                               ""
                             )}
+                            </React.Fragment>  
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -2655,10 +2654,11 @@ export default function CreateInvoice(props) {
                             <FormControlLabel
                               control={
                                 <Checkbox
+                                  disabled={formState.isPeetyCash}
                                   checked={formState.isPo}
                                   onChange={handleChange}
                                   value="isPo"
-                                  name="invoiceType"
+                                  name="isPo"
                                   color="primary"
                                 />
                               }
@@ -2671,7 +2671,8 @@ export default function CreateInvoice(props) {
                                     <Checkbox
                                       checked={formState.isExpense}
                                       onChange={handleChange}
-                                      name="invoiceType"
+                                      name="isPo"
+                                      disabled={formState.isPeetyCash}
                                       color="primary"
                                       value="isExpense"
                                     />
@@ -2721,6 +2722,7 @@ export default function CreateInvoice(props) {
                                 label={`PO Number`}
                                 id="poNumber"
                                 name="poNumber"
+                                disabled={formState.isPeetyCash}
                                 onChange={(event) => {
                                   handleChange(event);
                                 }}
@@ -2787,6 +2789,7 @@ export default function CreateInvoice(props) {
                               }
                               label="Expense Type"
                               id="expenseType"
+                              disabled={formState.isPeetyCash}
                               name="expenseType"
                               value={formState.values.expenseType}
                               onChange={(event) => {
@@ -2824,16 +2827,13 @@ export default function CreateInvoice(props) {
                             label="Payment Terms"
                             id="paymentTerms"
                             name="paymentTerms"
+                            disabled={formState.isPeetyCash}
                             onChange={(event) => {
                               handleChange(event);
                             }}
                             type="text"
                             // variant="outlined"
-                            value={
-                              !formState.isPo
-                                ? "NET-0"
-                                : formState.values.paymentTerms || ""
-                            }
+                            value={formState.values.paymentTerms || ""}
                             className={classes.textField}
                           />
                         </GridItem>
