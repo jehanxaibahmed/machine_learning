@@ -245,7 +245,7 @@ export default function ChangePassword(props) {
                   color="info"
                   round
                   style={{
-                    backgroundColor: "#9E2654",
+                    backgroundColor: "#007f5e",
                     color: "white",
                     float: "right",
                   }}

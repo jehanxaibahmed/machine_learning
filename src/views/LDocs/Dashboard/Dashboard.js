@@ -225,11 +225,11 @@ const [loadingChartOne, setLoadingChartOne] = React.useState(false);
     })
       .then((response) => {
         let Pending = response.data.ByCountStatus.find(r=>r._id == 'pending');
-        Pending.color = am4core.color("#5A2C66");
+        Pending.color = am4core.color("#095392");
         let Reviewed = response.data.ByCountStatus.find(r=>r._id == 'reviewed');
-        Reviewed.color = am4core.color("#763A87");
+        Reviewed.color = am4core.color("#095392");
         let Rejected = response.data.ByCountStatus.find(r=>r._id == 'rejected');
-        Rejected.color = am4core.color("#9D4DB3");
+        Rejected.color = am4core.color("#095392");
         let Total = response.data.totalfilesforreview;
         var check = 
         {
@@ -259,11 +259,11 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
     })
       .then((response) => {
         let Pending = response.data.ByCountStatus.find(r=>r._id == 'pending');
-        Pending.color = am4core.color("#9E2654");
+        Pending.color = am4core.color("#007f5e");
         let Reviewed = response.data.ByCountStatus.find(r=>r._id == 'approved');
-        Reviewed.color = am4core.color("#BC2E65");
+        Reviewed.color = am4core.color("#007f5e");
         let Rejected = response.data.ByCountStatus.find(r=>r._id == 'rejected');
-        Rejected.color = am4core.color("#D34D80");
+        Rejected.color = am4core.color("#007f5e");
         let Total = response.data.totalfilesforreview;
         var check = 
         {

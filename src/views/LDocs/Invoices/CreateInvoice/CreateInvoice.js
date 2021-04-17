@@ -15,6 +15,7 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  Backdrop
 } from "@material-ui/core";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { Redirect } from "react-router-dom";
@@ -54,7 +55,7 @@ import { Autocomplete } from "@material-ui/lab";
 
 const sweetAlertStyle = makeStyles(styles2);
 
-const styles = {
+const styles = makeStyles((theme) => ({
   cardIconTitle: {
     ...cardTitle,
     marginTop: "15px",
@@ -73,7 +74,11 @@ const styles = {
   itemNumber: {
     width: "55%",
   },
-};
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  }
+}));
 
 let pdfInput = React.createRef();
 
@@ -81,7 +86,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const useStyles = makeStyles(styles);
 const getDateFormet = (date) => {
   var today = new Date(date);
   var dd = String(today.getDate()).padStart(2, "0");
@@ -103,7 +107,7 @@ export default function CreateInvoice(props) {
   const [items, setItems] = useState([]);
   const [addingItem, setAddingItem] = useState(false);
   const [file, setFile] = useState(null);
-  const [isCreateInvoice, setIsCreateInvoice] = useState(true);
+  const [isCreateInvoice, setIsCreateInvoice] = useState(edit ? false : true);
   const [isLoading, setIsLoading] = useState(false);
   const sweetClass = sweetAlertStyle();
   const [editIndex, setEditIndex] = useState(null);
@@ -319,7 +323,7 @@ export default function CreateInvoice(props) {
         setReceipts([]);
       });
   };
-  const classes = useStyles();
+  const classes = styles();
   const handleChange = (event) => {
     event.persist();
     if (event.target.name == "invoiceType") {
@@ -1019,6 +1023,7 @@ export default function CreateInvoice(props) {
       }));
       getPos(fileData.organizationId);
       getReceipts(fileData.po);
+      setIsCreateInvoice(true);
     }
   };
   const viewPO = () => {
@@ -3179,9 +3184,11 @@ export default function CreateInvoice(props) {
             </GridItem>
           </GridContainer>
         </Animated>
-      ) : (
-        ""
-      )}
+      ) : 
+        <Backdrop className={classes.backdrop} open={!isCreateInvoice}>
+          <CircularProgress  color="inherit" />
+        </Backdrop>
+        }
       {viewFile ? (
         <Animated
           animationIn="bounceInRight"

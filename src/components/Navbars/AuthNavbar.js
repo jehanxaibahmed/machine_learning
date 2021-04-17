@@ -105,13 +105,13 @@ export default function AuthNavbar(props) {
               {brandText}
             </Button>*/}
             {matches?
-            <img src={logo2} alt="logo" style={{ width:"25%", marginLeft: "0px" }}/>
+            <img src={logo2} alt="logo" style={{ width:"35%", marginLeft: "0px" }}/>
             :""}
           </div>
         </Hidden>
         <Hidden mdUp>
           <div className={classes.flex}>
-            <img src={logo2} alt="logo" style={{ width:"25%", marginLeft: "0px" }}/>
+            <img src={logo2} alt="logo" style={{ width:"35%", marginLeft: "0px" }}/>
           </div>
         </Hidden>
         <Hidden smDown>{list}</Hidden>

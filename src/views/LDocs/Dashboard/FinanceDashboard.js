@@ -92,7 +92,7 @@ export default function FinanceDashboard() {
     ];
     const purchaseOptions = {
       fill: {
-        colors: ["#9e2654"],
+        colors: ["#007f5e"],
       },
       chart: {
         toolbar: {
@@ -150,7 +150,7 @@ export default function FinanceDashboard() {
     ];
     const amountOptions = {
       fill: {
-        colors: ["#5a2c66"],
+        colors: ["#095392"],
       },
       chart: {
         toolbar: {
@@ -208,7 +208,7 @@ export default function FinanceDashboard() {
             name: "Purchased",
             type: "column",
             fill: {
-                colors: ["#5a2c66"],
+                colors: ["#095392"],
             },
             // data: [44, 55, 41, 64, 22, 43, 44, 55, 41, 64, 21],
             data: [
@@ -230,7 +230,7 @@ export default function FinanceDashboard() {
           },
           {
             fill: {
-                colors: ["#5a2c66"],
+                colors: ["#095392"],
             },
             name: "Paid",
             type: "column",
@@ -252,7 +252,7 @@ export default function FinanceDashboard() {
           }
         ];
         const TvPoptions = {
-            colors:['#5a2c66', '#9e2654'],
+            colors:['#095392', '#007f5e'],
           chart: {
             type: "line",
             height: 350,
@@ -265,7 +265,7 @@ export default function FinanceDashboard() {
           },
           plotOptions: {
             fill: {
-                colors:['#5a2c66', '#9e2654'],
+                colors:['#095392', '#007f5e'],
             },
             bar: {
               columnWidth: "70%",

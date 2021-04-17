@@ -333,7 +333,7 @@ export default function InitWorkflow(props) {
                   {
                     isLoading
                       ? <CircularProgress /> :
-                      <Avatar onClick={() => setIsViewWorkflow(!isViewWorkFlow)} style={{ background: '#5A2C66' }}>
+                      <Avatar onClick={() => setIsViewWorkflow(!isViewWorkFlow)} style={{ background: '#095392' }}>
                         {isViewWorkFlow ? <VisibilityIcon /> : <VisibilityOffIcon />}
                       </Avatar>
                   }

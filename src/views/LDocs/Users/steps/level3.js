@@ -388,7 +388,7 @@ export default function Step3(props) {
           >
             <Button
               style={{
-                backgroundColor: "#9E2654",
+                backgroundColor: "#007f5e",
                 color: "white",
               }}
               className={classes.registerButton}

@@ -45,7 +45,7 @@ class LineChartView extends Component {
       },
     ];
     
-    let colors = [am4core.color("#5A2C66"),am4core.color("#763A87"),am4core.color("#763A87"),am4core.color("#9D4DB3")];
+    let colors = [am4core.color("#095392"),am4core.color("#095392"),am4core.color("#095392"),am4core.color("#095392")];
 
     let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     categoryAxis.renderer.grid.template.location = 0;

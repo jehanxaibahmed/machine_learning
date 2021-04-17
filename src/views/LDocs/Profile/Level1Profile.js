@@ -387,7 +387,7 @@ export default function Level1Profile(props) {
         >
           <Button
             style={{
-              backgroundColor: "#9E2654",
+              backgroundColor: "#007f5e",
               color: "white",
             }}
             className={classes.registerButton}

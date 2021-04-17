@@ -6,6 +6,7 @@ import {
   LinearProgress,
   Typography,
   withStyles,
+  Backdrop
 } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -29,7 +30,7 @@ import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
 import { addZeroes, formatDateTime } from "views/LDocs/Functions/Functions";
 
-const styles = {
+const styles = makeStyles((theme) => ({
   cardIconTitle: {
     ...cardTitle,
     marginTop: "15px",
@@ -42,9 +43,12 @@ const styles = {
   table: {
     minWidth: 650,
   },
-};
-
-const useStyles = makeStyles(styles);
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  }
+})
+)
 
 function parseDate(str) {
   var mdy = str.split("/");
@@ -80,6 +84,7 @@ const calculateTimimg = d => {
 
 export default function InvoiceAge(props) {
   const [data, setData] = React.useState([]);
+  const [isLoading , setIsLoading] = React.useState(true);
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
@@ -98,6 +103,7 @@ export default function InvoiceAge(props) {
       .then((response) => {
         var data = response.data;
         setData(data);
+        setIsLoading(false);
         }).catch((err)=>{
         console.log(err);
         setData([]);
@@ -112,14 +118,15 @@ export default function InvoiceAge(props) {
       backgroundColor:  theme.palette.grey[400],
     },
     bar: {
-      backgroundColor:  '#7c1f44',
+      backgroundColor:  '#095392',
     }
   
   }))(LinearProgress);
 
-  const classes = useStyles();
+  const classes = styles();
   return (
     <div>
+      {!isLoading ?
       <Animated
         animationIn="bounceInRight"
         animationOut="bounceOutLeft"
@@ -202,8 +209,13 @@ export default function InvoiceAge(props) {
               </CardBody>
             </Card>
           </GridItem>
-        </GridContainer>
+        </GridContainer> 
       </Animated>
+       :
+        <Backdrop className={classes.backdrop} open={isLoading}>
+          <CircularProgress  color="inherit" />
+        </Backdrop>
+        }
     </div>
   );
 }
