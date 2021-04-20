@@ -96,6 +96,7 @@ import { partial } from "lodash";
 import CreateInvoice from "../CreateInvoice/CreateInvoice";
 import ExportToFusion from "./ExportToFusion";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { setIsTokenExpired } from "actions";
 
 const styles = {
   cardIconTitle: {
@@ -133,6 +134,7 @@ export default function FilesList(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+    const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
   const classes = useStyles();
@@ -748,6 +750,7 @@ export default function FilesList(props) {
         setIsLoading(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

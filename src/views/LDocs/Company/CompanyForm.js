@@ -28,6 +28,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
+import { setIsTokenExpired } from "actions";
 
 const styles = {
   cardIconTitle: {
@@ -59,7 +60,7 @@ export default function Company() {
   const [decoded, setDecoded] = React.useState(null);
   const [data, setData] = React.useState();
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
-
+  const dispatch = useDispatch();
   React.useEffect(() => {
     let userDetail = jwt.decode(Token);
     setDecoded(userDetail);
@@ -137,6 +138,7 @@ export default function Company() {
         setIsLoading(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

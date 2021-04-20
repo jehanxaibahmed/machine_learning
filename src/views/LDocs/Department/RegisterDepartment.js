@@ -26,6 +26,7 @@ import jwt from "jsonwebtoken";
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
+import { setIsTokenExpired } from "actions";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -98,6 +99,7 @@ export default function Register(props) {
           }));
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(`Unable to get Companies please contact at ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`)
         });
     };
@@ -124,6 +126,7 @@ export default function Register(props) {
         }
        })
        .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(`Unable to get Organizations please contact at ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`)
        });
    };
@@ -295,6 +298,7 @@ export default function Register(props) {
           successAlert(msg);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             message:

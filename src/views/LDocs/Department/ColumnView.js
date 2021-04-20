@@ -11,6 +11,7 @@ import ViewWorkflow from '../Invoices/InitWorkflow/ViewWorkflow';
 import { Card, Divider,IconButton,ListItem, ListItemText, Dialog,  Slide} from '@material-ui/core';
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { setIsTokenExpired } from 'actions';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -47,6 +48,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ColumnView(props) {
   const [workflow, setWorkflow] = React.useState(null);
   const [viewWorkflow, setViewWorkflow] = React.useState(false);
+  const dispatch = useDispatch();
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
 
   const showDetails = (workflow) => {
@@ -60,6 +62,7 @@ export default function ColumnView(props) {
         setViewWorkflow(true);       
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

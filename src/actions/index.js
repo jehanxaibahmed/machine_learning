@@ -28,6 +28,12 @@ export const setToken = (tk) => {
   }
 };
 
+export const setIsTokenExpired = (isExpired) => {
+  return (dispatch) => { 
+    dispatch({ type: "SET_IS_TOKEN_EXPIRE", response: isExpired });
+  }
+};
+
 export const setDarkMode = (isDark) => {
   return (dispatch) => { 
     dispatch({ type: "DARKMODE", response: isDark });

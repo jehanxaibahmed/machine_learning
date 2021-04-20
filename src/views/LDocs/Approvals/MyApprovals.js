@@ -28,7 +28,8 @@ import Success from "assets/img/statuses/Success.png";
 import Rejected from "assets/img/statuses/Rejected.png";
 import NoStatus from "assets/img/statuses/NoStatus.png";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setIsTokenExpired } from "actions";
 
 
 const styles = {
@@ -55,6 +56,7 @@ export default function MyReviews() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [pdfUrl, setPdfUrl] = React.useState(false);
   const [data, setData] = React.useState();
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     getRequests();
@@ -135,6 +137,7 @@ export default function MyReviews() {
         setIsLoading(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

@@ -26,6 +26,7 @@ import styles from "assets/jss/material-dashboard-pro-react/views/validationForm
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import jwt from "jsonwebtoken";
 import OtpCheck from "../Authorization/OtpCheck";
+import { setIsTokenExpired } from "actions";
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
 
@@ -96,6 +97,7 @@ export default function ViewComp(props) {
         }));
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setFormState((formState) => ({
           ...formState,
           message:
@@ -334,6 +336,7 @@ export default function ViewComp(props) {
           successAlert(msg);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             message:

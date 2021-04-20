@@ -32,6 +32,7 @@ import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView";
 import { addZeroes, formatDateTime } from "../Functions/Functions";
+import { setIsTokenExpired } from "actions";
 
 
 const styles = {
@@ -70,6 +71,7 @@ export default function Verify() {
     const loading = open && options.length === 0;
 
     const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+    const dispatch = useDispatch();
     const userDetails = jwt.decode(Token);
     
     
@@ -93,6 +95,7 @@ export default function Verify() {
               setFile(fileObject);
               })
               .catch((error) => {
+                error.response.status == 401 && dispatch(setIsTokenExpired(true));
                 setSelected(index);
               setFile(fileObject);
                 setBlockChainData(null)
@@ -142,6 +145,7 @@ export default function Verify() {
             setIsSearching(false);
           })
           .catch((error) => {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
             setFileData([]);
             console.log(
               typeof error.response != "undefined"

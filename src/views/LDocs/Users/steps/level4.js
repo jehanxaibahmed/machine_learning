@@ -26,6 +26,8 @@ import LevelFilegroup from "./modal/LevelFilegroup"
 import Slide from "@material-ui/core/Slide";
 import SignatureUpload from "./signatureUpload.js";
 import StampUpload from "./stampUpload.js";
+import { setIsTokenExpired } from "actions";
+import { useDispatch, useSelector } from "react-redux";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -39,6 +41,7 @@ export default function Step4(props) {
   const [authorizationModal , setauthorizationModal] = useState(false);
   const [accessgroupModal , setaccessgroupModal] = useState(false);
   const [filegroupModal, setfilegroupModal] = useState(false);
+  const dispatch = useDispatch();
   
   var row = props.userData.level3;
   var row4 = props.userData.level4;
@@ -179,6 +182,7 @@ export default function Step4(props) {
           successAlert(msg);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             isLoading: false,

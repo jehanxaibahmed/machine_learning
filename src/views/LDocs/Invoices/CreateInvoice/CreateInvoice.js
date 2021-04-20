@@ -52,6 +52,7 @@ import Step1 from "../../Vendor/steps/level1";
 import { defaultCurrency, VendorSites } from "./GlobalValues";
 import FileReceived from "../RecieveInvoice/FileReceived";
 import { Autocomplete } from "@material-ui/lab";
+import { setIsTokenExpired } from "actions";
 
 const sweetAlertStyle = makeStyles(styles2);
 
@@ -99,6 +100,7 @@ export default function CreateInvoice(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+    const dispatch = useDispatch();
   const { edit, fileData, closeModal } = props;
   const [pdfModal, setPdfModal] = useState(false);
   const [isMarked, setIsMarked] = useState(false);
@@ -214,8 +216,9 @@ export default function CreateInvoice(props) {
           setCurrencyLookups(res.data.result);
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
       });
     //Get ExpenseTypes
     axios({
@@ -231,8 +234,9 @@ export default function CreateInvoice(props) {
           expenseTypes: response.data.result,
         }));
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
       });
   };
   const getPos = (orgId) => {
@@ -257,8 +261,9 @@ export default function CreateInvoice(props) {
         console.log(res.data);
         setPos(res.data);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
         setPos([]);
       });
   };
@@ -318,8 +323,9 @@ export default function CreateInvoice(props) {
       .then((res) => {
         setReceipts(res.data);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
         setReceipts([]);
       });
   };
@@ -410,8 +416,9 @@ export default function CreateInvoice(props) {
           setReceipts(res.data);
           successAlert("Receipt Has Been Generated In Oracle Fusion.");
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          console.log(error);
           errorAlert("Unable To Generate RECEIPT.");
         });
     }
@@ -753,8 +760,9 @@ export default function CreateInvoice(props) {
           }
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
         errorAlert("There is some issue in Api");
         setPdfModal(false);
       });
@@ -895,8 +903,9 @@ export default function CreateInvoice(props) {
           }
           setIsLoading(false);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          console.log(error);
         });
     } else {
       if (!edit) {
@@ -916,8 +925,9 @@ export default function CreateInvoice(props) {
               },
             }));
           })
-          .catch((err) => {
-            console.log(err);
+          .catch((error) => {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            console.log(error);
           });
       }
       axios({
@@ -935,8 +945,9 @@ export default function CreateInvoice(props) {
           }));
           setInvoice();
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          console.log(error);
         });
     }
     getLookUp();
@@ -1527,10 +1538,11 @@ export default function CreateInvoice(props) {
           props.loadFiles(userData, false);
         }
       })
-      .catch((err) => {
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setIsSavingInvoice(false);
         errorAlert(
-          err.message ? err.message : "There is some Issue In Create Invoice"
+          error.message ? error.message : "There is some Issue In Create Invoice"
         );
       });
   };
@@ -2909,6 +2921,54 @@ export default function CreateInvoice(props) {
                     </GridItem>
                   </GridContainer>
                   <GridContainer>
+                  <GridItem
+                      style={{
+                        marginBottom: "40px",
+                        marginTop: "10px",
+                      }}
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                    >
+                      <Accordion>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-label="Expand"
+                          aria-controls="additional-actions3-content"
+                          id="additional-actions3-header"
+                          style={{ background: "#f5f5f5" }}
+                        >
+                          <Typography
+                            color="textSecondary"
+                            component="h2"
+                            variant="body2"
+                            style={{
+                              color: '#000000',
+                              fontWeight: 500,
+                              lineHeight: '1.5rem'}}
+                          >
+                            Invoice Description
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <TextField
+                            fullWidth={true}
+                            label="Description"
+                            id="notes"
+                            name="notes"
+                            onChange={(event) => {
+                              handleChange(event);
+                            }}
+                            // variant="outlined"
+                            multiline
+                            rows={4}
+                            type="text"
+                            value={formState.values.notes || ""}
+                          />
+                        </AccordionDetails>
+                      </Accordion>
+                    </GridItem>
                     <Items
                       formState={formState}
                       items={items}
@@ -2932,6 +2992,7 @@ export default function CreateInvoice(props) {
                       isVendor={isVendor}
                       createReceipts={createReceipts}
                     />
+                    
                     <GridItem
                       style={{
                         marginTop: "40px",
@@ -2952,50 +3013,11 @@ export default function CreateInvoice(props) {
                           <Typography
                             color="textSecondary"
                             component="h2"
-                            variant="body1"
-                          >
-                            Invoice Description
-                          </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <TextField
-                            fullWidth={true}
-                            label="Description"
-                            id="notes"
-                            name="notes"
-                            onChange={(event) => {
-                              handleChange(event);
-                            }}
-                            // variant="outlined"
-                            multiline
-                            rows={4}
-                            type="text"
-                            value={formState.values.notes || ""}
-                          />
-                        </AccordionDetails>
-                      </Accordion>
-                    </GridItem>
-                    <GridItem
-                      style={{
-                        marginTop: "40px",
-                      }}
-                      xs={12}
-                      sm={12}
-                      md={12}
-                      lg={12}
-                    >
-                      <Accordion>
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                          aria-label="Expand"
-                          aria-controls="additional-actions3-content"
-                          id="additional-actions3-header"
-                          style={{ background: "#f5f5f5" }}
-                        >
-                          <Typography
-                            color="textSecondary"
-                            component="h2"
-                            variant="body1"
+                            variant="body2"
+                            style={{
+                              color: '#000000',
+                              fontWeight: 500,
+                              lineHeight: '1.5rem'}}
                           >
                             Attachments
                           </Typography>

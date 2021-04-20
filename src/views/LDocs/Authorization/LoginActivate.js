@@ -17,7 +17,7 @@ import CardFooter from "components/Card/CardFooter.js";
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setToken } from "../../../actions";
+import { setIsTokenExpired, setToken } from "../../../actions";
 import jwt from "jsonwebtoken";
 import { Animated } from "react-animated-css";
 
@@ -88,6 +88,7 @@ export default function LoginSecret(props) {
         }
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
         setTwofaError("error");
         setIsloading(false);
         console.log(

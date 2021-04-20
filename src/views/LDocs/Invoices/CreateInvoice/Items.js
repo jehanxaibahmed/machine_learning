@@ -30,7 +30,7 @@ import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import axios from "axios";
 import { Visibility } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
-
+import { setIsTokenExpired } from "actions/index";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -75,6 +75,7 @@ export default function Items(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+    const dispatch = useDispatch();
   const Check = require("is-null-empty-or-undefined").Check;
 
   let {
@@ -115,8 +116,9 @@ export default function Items(props) {
         .then((response) => {
           setLookups(response.data.result);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          console.log(error);
           rej([]);
         });
     });
@@ -246,7 +248,7 @@ export default function Items(props) {
                           handleChange(event);
                         }}
                         type="number"
-                        value={formState.values.discount || 0.0}
+                        value={addZeroes(formState.values.discount) || 0.00}
                         className={classes.textField}
                       />
                     </StyledTableCell>

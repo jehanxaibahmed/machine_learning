@@ -9,7 +9,8 @@ import Button from "components/CustomButtons/Button.js";
 import defaultImage from "assets/img/image_placeholder.jpg";
 import defaultAvatar from "assets/img/placeholder.jpg";
 import axios from "axios";
-import {useSelector } from "react-redux";
+import {useSelector, useDispatch } from "react-redux";
+import { setIsTokenExpired } from "actions";
 
 export default function ImageUpload(props) {
   const [file, setFile] = React.useState(null);
@@ -17,6 +18,7 @@ export default function ImageUpload(props) {
   const [isUploading, setIsUploading] = React.useState(false);
   //Token
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
   const [imagePreviewUrl, setImagePreviewUrl] = React.useState(
     props.avatar
       ? defaultAvatar
@@ -59,6 +61,7 @@ export default function ImageUpload(props) {
         props.successAlert(msg);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
       setIsUploading(false);
         msg =
           typeof error.response != "undefined"

@@ -1,16 +1,17 @@
 import React, {useEffect} from "react";
 import cx from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDataAction, getNotification, getTasks, setDarkMode } from "../actions";
+import { getUserDataAction, getNotification, getTasks, setDarkMode, setIsTokenExpired } from "../actions";
 import {  Switch, Route, Redirect } from "react-router-dom";
 import { checkIsVendorDesk } from "../views/LDocs/Authorization/checkAuthority";
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
-import firebase from 'firebase/app';
 
 // @material-ui/core components
 import { makeStyles , ThemeProvider} from "@material-ui/core/styles";
+import SweetAlert from "react-bootstrap-sweetalert";
+import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import {
   createMuiTheme,
   CssBaseline,
@@ -56,8 +57,10 @@ const checkTimeCompare = (dat) => {
 
 export default function Dashboard(props) {
   const notifications = useSelector(state => state.userReducer.notifications);
+  const isTokenExpired = useSelector(state => state.userReducer.isTokenExpired);
   const tasks = useSelector(state => state.userReducer.tasks);
   const { ...rest } = props;
+  const sweetAlertStyle = makeStyles(styles2);  
   // states and functions
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [miniActive, setMiniActive] = React.useState(false);
@@ -117,6 +120,12 @@ export default function Dashboard(props) {
       });
     },[tasks]);
   
+    useEffect(()=>{
+      if(isTokenExpired){
+        msgAlert("Token Has been Expired Please Login Again");
+      }
+    },[isTokenExpired])
+
     // useEffect(()=>{
     //   notifications.filter(n=>checkTimeCompare(n.notificationDate) == true).map((notif,index)=>{
     //     notify(`${notif.notificationItem ? notif.notificationItem.invoiceId : '' }-${notif.notifyMessage}`);
@@ -251,6 +260,30 @@ export default function Dashboard(props) {
     if (window.innerWidth >= 960) {
       setMobileOpen(false);
     }
+  };
+
+  const sweetClass = sweetAlertStyle();
+  const [alert, setAlert] = React.useState(null);
+  //Msg Alert
+  const msgAlert = (msg) => {
+    setAlert(
+      <SweetAlert
+        alert
+        style={{ display: "block", marginTop: "-100px" }}
+        title="Info!"
+        onConfirm={() => hideErrorAlert()}
+        onCancel={() => hideErrorAlert()}
+        confirmBtnCssClass={sweetClass.button + " " + sweetClass.info}
+      >
+        {msg}
+      </SweetAlert>
+    );
+  };
+
+  const hideErrorAlert = () => {
+    localStorage.clear();
+    dispatch(setIsTokenExpired(false));
+    setAlert(null);
   };
 
   return (

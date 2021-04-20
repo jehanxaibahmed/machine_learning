@@ -11,11 +11,13 @@ import CardHeader from "components/Card/CardHeader.js";
 import axios from "axios";
 import { CircularProgress, LinearProgress } from "@material-ui/core";
 import FileAdvanceView from "../AdvanceView/FileAdvanceView";
+import { setIsTokenExpired } from "actions";
 
 export default function InvoiceDetail() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+    const dispatch = useDispatch();
     const logo = require("assets/img/logo.png");
     const [userDetails, setUserDetails] = useState(null);
     const [invoice, setInvoice] = useState(null);
@@ -54,9 +56,10 @@ export default function InvoiceDetail() {
         setInvoice(invoice);
         console.log(invoice);
       })
-      .catch((err) => {
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setInvoice(null);
-        console.log(err);
+        console.log(error);
       });
   }, []);
 

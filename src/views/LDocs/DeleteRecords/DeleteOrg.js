@@ -18,6 +18,7 @@ import axios from "axios";
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 
 import OtpCheck from "../Authorization/OtpCheck";
+import { setIsTokenExpired } from "actions";
 
 var Token = localStorage.getItem("cooljwt");
 
@@ -116,6 +117,7 @@ export default function DeleteOrg(props) {
           props.successAlert(msg);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
             setOTP("")
           setFormState((formState) => ({
             ...formState,

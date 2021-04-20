@@ -20,7 +20,8 @@ import axios from "axios";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import SignatureUpload from "./signatureUpload.js";
 import StampUpload from "./stampUpload.js";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsTokenExpired } from "actions/index.js";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -31,7 +32,7 @@ export default function Step3(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-
+  const dispatch = useDispatch();
   const [formState, setFormState] = useState({
     isLoading: false,
     values: {
@@ -156,6 +157,7 @@ export default function Step3(props) {
           successAlert(msg);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             isLoading: false,

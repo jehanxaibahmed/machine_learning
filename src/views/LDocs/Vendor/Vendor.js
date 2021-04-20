@@ -22,7 +22,7 @@ import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 import RegisterVendor from "./RegisterVendor";
 import View from "./ViewVendor";
-import {useSelector } from "react-redux";
+import {useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
@@ -30,6 +30,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import BuildNetwork from "./BuildNetwork.js";
+import { setIsTokenExpired } from "actions";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -56,6 +57,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Vendor() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [classicModal, setClassicModal] = React.useState(false);
   const [viewModal, setViewModal] = React.useState(false);
@@ -295,6 +297,7 @@ export default function Vendor() {
         });
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

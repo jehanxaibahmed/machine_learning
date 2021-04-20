@@ -92,6 +92,7 @@ export default function FileTags(props) {
         setIsSavingTags(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -145,6 +146,7 @@ export default function FileTags(props) {
         setIsLoading(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

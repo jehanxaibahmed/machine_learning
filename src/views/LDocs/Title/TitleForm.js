@@ -27,6 +27,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
+import { setIsTokenExpired } from "actions";
 
 const styles = {
   cardIconTitle: {
@@ -48,6 +49,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Title() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [classicModal, setClassicModal] = React.useState(false);
   const [viewModal, setViewModal] = React.useState(false);
@@ -122,6 +124,7 @@ export default function Title() {
         }
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(`Unable to get Companies please contact at ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`)
       });
   };
@@ -177,6 +180,7 @@ export default function Title() {
         setIsLoading(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

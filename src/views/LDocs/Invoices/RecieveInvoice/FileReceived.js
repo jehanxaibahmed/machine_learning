@@ -23,6 +23,7 @@ import {  Redirect } from "react-router-dom";
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import { useDispatch, useSelector } from "react-redux";
+import { setIsTokenExpired } from "actions";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -150,6 +151,7 @@ export default function FileReceived(props) {
 
             })
             .catch((error) => {
+              error.response.status == 401 && dispatch(setIsTokenExpired(true));
                 errorAlert(
                     typeof error.response != "undefined"
                         ? error.response.data

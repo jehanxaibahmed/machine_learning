@@ -17,6 +17,8 @@ import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {isMobile} from 'react-device-detect';
+import { setIsTokenExpired } from 'actions';
+import { used } from '@amcharts/amcharts4/.internal/core/utils/Utils';
 
 const useStyles = makeStyles((theme) => ({
   scroll:{
@@ -56,7 +58,7 @@ export default function ColumnView(props) {
   const [viewStep, setViewStep] = React.useState(false);
   const [loading, setisLoading] = React.useState(false);
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
-
+  const dispatch = useDispatch();
 
   const showDetails = (step) => {
     setStep(step);
@@ -81,6 +83,7 @@ export default function ColumnView(props) {
          }
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(
               typeof error.response != "undefined"
                      ? error.response.data
@@ -97,6 +100,7 @@ export default function ColumnView(props) {
           setisLoading(false);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(
             typeof error.response != "undefined"
               ? error.response.data

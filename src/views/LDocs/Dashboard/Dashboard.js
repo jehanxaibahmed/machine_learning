@@ -48,7 +48,8 @@ import LineChart from "./LineChart";
 import  Calendar from "../../Calendar/Calendar";
 import jwt from "jsonwebtoken";
 import _ from 'lodash';
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setIsTokenExpired } from "actions";
 
 const useStyles = makeStyles(styles);
 
@@ -72,7 +73,7 @@ export default function Dashboard() {
   let decoded = jwt.decode(Token);
   const classes = useStyles();
   const pendingApprovalIcon = require("assets/img/pendingApproval.png");
-
+  const dispatch = useDispatch();
   React.useEffect(() => {
     getDashboardData();
     getFilesHistory();
@@ -105,6 +106,7 @@ const [graphData, setGraphData] = React.useState([]);
         setGraphData(response.data);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setGraphData([]);
         console.log(error);
       });
@@ -130,6 +132,7 @@ const [graphData, setGraphData] = React.useState([]);
         stats.openInvoices = response.data.openInvoice
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         stats.openInvoices = 0
       });
        //Close Invoices
@@ -142,6 +145,7 @@ const [graphData, setGraphData] = React.useState([]);
         stats.closedInvoices=response.data.totalClosedInvoice
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         stats.closedInvoices=0;
       });
        //Total Invoices
@@ -154,6 +158,7 @@ const [graphData, setGraphData] = React.useState([]);
           stats.totalInvoice=response.data.totalInvoice;
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         stats.totalInvoice=0;
       });
      //Pending Invoices
@@ -167,6 +172,7 @@ const [graphData, setGraphData] = React.useState([]);
         setLoadingStats(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         stats.pendingInvoices=0;
         setLoadingStats(false);
       });

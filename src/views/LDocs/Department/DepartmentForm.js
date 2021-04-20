@@ -31,6 +31,7 @@ import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import ColumnView from "./ColumnView";
 import YoutubeSearchedForIcon from '@material-ui/icons/YoutubeSearchedFor';
+import { setIsTokenExpired } from "actions";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -50,6 +51,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Department() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [classicModal, setClassicModal] = React.useState(false);
   const [viewModal, setViewModal] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -142,6 +144,7 @@ export default function Department() {
         }
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(`Unable to get Companies please contact at ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`)
       });
   };
@@ -206,6 +209,7 @@ export default function Department() {
         setIsLoading(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

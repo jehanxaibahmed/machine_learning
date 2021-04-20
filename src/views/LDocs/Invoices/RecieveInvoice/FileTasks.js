@@ -22,7 +22,7 @@ import styles from "assets/jss/material-dashboard-pro-react/views/validationForm
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { getTasks } from "../../../../actions";
+import { getTasks, setIsTokenExpired } from "../../../../actions";
 
 
 const useStyles = makeStyles(styles);
@@ -98,6 +98,7 @@ export default function FileTasks(props) {
         setIsSavingTask(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

@@ -27,7 +27,8 @@ import { Animated } from "react-animated-css";
 import UpdateUser from "./UpdateUser";
 import axios from "axios";
 import jwt from "jsonwebtoken";
-import {useSelector } from "react-redux";
+import {useSelector, useDispatch } from "react-redux";
+import { setIsTokenExpired } from "actions";
 
 
 const styles = {
@@ -48,6 +49,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 export default function UsersList() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [classicModal, setClassicModal] = useState(false);
   const [userData, setUserData] = useState(false);
@@ -115,6 +117,7 @@ export default function UsersList() {
         }
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(`Unable to get Companies please contact at ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`)
       });
   };
@@ -233,6 +236,7 @@ export default function UsersList() {
              setIsLoading(false);
            })
            .catch((error) => {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
              console.log(
                typeof error.response != "undefined"
                  ? error.response.data

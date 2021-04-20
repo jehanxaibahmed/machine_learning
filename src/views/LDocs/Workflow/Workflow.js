@@ -39,9 +39,10 @@ import Switch from '@material-ui/core/Switch';
 import DragAndDropList from "./DragAndDropList";
 import jwt from "jsonwebtoken";
 import VerticalLinearStepper  from "../../Components/VerticalStepper";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ColumnView from "./ColumnView";
+import { setIsTokenExpired } from "actions";
 
 
 
@@ -56,6 +57,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function Workflow() {
 
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
   const userDetails = jwt.decode(Token);
   const classes = useStyles();
   const [animateTable, setAnimateTable] = React.useState(true);
@@ -328,6 +330,7 @@ const viewWorkflowColumnView = (row) => {
            setIsLoading(false);
          })
          .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
            console.log(
              typeof error.response != "undefined"
                ? error.response.data
@@ -444,6 +447,7 @@ const viewWorkflowColumnView = (row) => {
   //         setIsLoading(false);
   //       })
   //       .catch((error) => {
+  // error.response.status == 401 && dispatch(setIsTokenExpired(true));
   //         console.log(
   //           typeof error.response != "undefined"
   //             ? error.response.data
@@ -484,6 +488,7 @@ const viewWorkflowColumnView = (row) => {
         }
       },500)
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -507,6 +512,7 @@ const viewWorkflowColumnView = (row) => {
           }));
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             isError: true,
@@ -529,6 +535,7 @@ const viewWorkflowColumnView = (row) => {
           }));
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(
             typeof error.response != "undefined"
               ? error.response.data
@@ -695,6 +702,7 @@ const createWorkflow = () => {
           goBack();
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setIsSavingData(false);
         setOTP("");
         setIsLoading(false);

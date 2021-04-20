@@ -12,12 +12,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import { setIsTokenExpired } from "actions";
 export default function ImageUpload(props) {
   const [file, setFile] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
-
+  const dispatch = useDispatch();
   const [imagePreviewUrl, setImagePreviewUrl] = React.useState(
     props.avatar
       ? defaultAvatar
@@ -81,6 +82,7 @@ export default function ImageUpload(props) {
         props.successAlert(msg);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setIsUploading(false);
         msg =
           typeof error.response != "undefined"

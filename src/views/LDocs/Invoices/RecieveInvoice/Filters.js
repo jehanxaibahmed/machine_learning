@@ -172,8 +172,9 @@ export default function Filter(props) {
         .then((response) => {
           setCustomers(response.data.organizations);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          console.log(error);
         });
     }
   }, []);

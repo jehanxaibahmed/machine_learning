@@ -27,6 +27,7 @@ import Rejected from "assets/img/statuses/Rejected.png";
 import NoStatus from "assets/img/statuses/NoStatus.png";
 import { useDispatch, useSelector } from "react-redux";
 import jwt from "jsonwebtoken";
+import { setIsTokenExpired } from "actions";
 
 
 const styles = {
@@ -45,6 +46,7 @@ const useStyles = makeStyles(styles);
 
 export default function MyReviews() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
   const userDetails = jwt.decode(Token);
   const classes = useStyles();
   const [pdfModalData, setPdfModalData] = React.useState(false);
@@ -134,6 +136,7 @@ export default function MyReviews() {
         setIsLoading(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

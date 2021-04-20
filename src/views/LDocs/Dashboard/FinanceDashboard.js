@@ -19,8 +19,9 @@ import CardFooter from "components/Card/CardFooter.js";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 import { data } from "./Data";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { addZeroes } from "../Functions/Functions";
+import { setIsTokenExpired } from "actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,6 +50,7 @@ export default function FinanceDashboard() {
   const [amountOptions, setAmountOptions] = React.useState({amountOptions :data.amountOptions, amountSeries:data.amountSeries});
   const [tvpOptions, setTvpOptions] = React.useState({TvPoptions :data.TvPoptions, TvPseries:data.TvPseries});
   const [loading, setLoading] = React.useState(true);
+  const dispatch = useDispatch();
   const formatCash = n => {
     if (n < 1e3) return n;
     if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + "K";
@@ -68,6 +70,7 @@ export default function FinanceDashboard() {
         console.log(response.data);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setGraphData([]);
         setLoading(false);
         console.log(error);

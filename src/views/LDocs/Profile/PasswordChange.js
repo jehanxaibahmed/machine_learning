@@ -21,6 +21,7 @@ import { Animated } from "react-animated-css";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import jwt from "jsonwebtoken";
+import { setIsTokenExpired } from "actions";
 
 const useStyles = makeStyles(styles);
 
@@ -28,6 +29,7 @@ export default function ChangePassword(props) {
   const classes = useStyles();
   //Token
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
   const [animateProfile, setAnimateProfile] = useState(true);
   const [formState, setFormState] = useState({
     isLoading: false,
@@ -135,6 +137,7 @@ export default function ChangePassword(props) {
           props.successAlert("Password Changed Successfully!");
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             isLoading: false,

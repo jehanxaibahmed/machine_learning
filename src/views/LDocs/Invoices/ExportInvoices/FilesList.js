@@ -91,6 +91,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ExportToFusion from "./ExportToFusion";
 import Filters from "./Filters";
 import { over } from "lodash";
+import { setIsTokenExpired } from "actions";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -117,6 +118,7 @@ export default function ExportList(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+    const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
   const classes = useStyles();
@@ -200,7 +202,8 @@ export default function ExportList(props) {
           pos: res.data,
         }));
       })
-      .catch((err) => {
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setFormState((formState) => ({
           ...formState,
           pos: [],
@@ -221,8 +224,9 @@ export default function ExportList(props) {
           vendors: response.data,
         }));
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
       });
   };
   //View File
@@ -621,6 +625,7 @@ export default function ExportList(props) {
         setIsLoading(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -740,8 +745,9 @@ export default function ExportList(props) {
         getMyFiles(userDetail, false);
         setExportToFusionModel(false);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
       });
   };
   //Right Click Menu

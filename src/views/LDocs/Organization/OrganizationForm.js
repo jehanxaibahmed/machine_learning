@@ -26,6 +26,7 @@ import axios from "axios";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import { Animated } from "react-animated-css";
 import { useSelector, useDispatch } from "react-redux";
+import { setIsTokenExpired } from "actions";
 
 
 const styles = {
@@ -48,6 +49,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Organization() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [classicModal, setClassicModal] = React.useState(false);
   const [viewModal, setViewModal] = React.useState(false);
@@ -141,6 +143,7 @@ export default function Organization() {
       });
      })
      .catch((error) => {
+      error.response.status == 401 && dispatch(setIsTokenExpired(true));
        console.log(
          typeof error.response != "undefined"
            ? error.response.data

@@ -3,6 +3,8 @@ import "firebase/messaging";
 import axios from "axios";
 import dateFormat from "dateformat";
 import { firebaseConfig } from "../../../config/Firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsTokenExpired } from "actions";
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -125,6 +127,7 @@ export const currentTracking = (trackingStatus) => {
 
 export const validateInvoice = async (row, Token) => {
   return new Promise((res, rej) => {
+    const dispatch = useDispatch();
       axios({
         method: "post", //you can set what request you want to be
         url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
@@ -352,12 +355,14 @@ export const validateInvoice = async (row, Token) => {
               res(ValidationData);
             }
           })
-          .catch((err) => {
-            console.log(err);
+          .catch((error) => {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            console.log(error);
           });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
       });
   });
 };

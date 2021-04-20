@@ -39,6 +39,7 @@ import BlockchainAnimation from "components/BlockchainAnimation/BlockChainAnimat
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
+import { setIsTokenExpired } from "actions";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -145,6 +146,7 @@ export default function InitWorkflow(props) {
           setIsLoading(false);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(
             typeof error.response != "undefined"
               ? error.response.data
@@ -205,6 +207,7 @@ export default function InitWorkflow(props) {
         }));
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -258,6 +261,7 @@ export default function InitWorkflow(props) {
         await props.closeModal();
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

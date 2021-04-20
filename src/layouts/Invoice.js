@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import cx from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDataAction, getNotification, getTasks, setDarkMode } from "../actions";
+import { getUserDataAction, getNotification, getTasks, setDarkMode, setIsTokenExpired } from "../actions";
 import {  Switch, Route, Redirect } from "react-router-dom";
 import addNotification from 'react-push-notification';
 // creates a beautiful scrollbar
@@ -10,10 +10,14 @@ import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 // @material-ui/core components
 import { makeStyles , ThemeProvider} from "@material-ui/core/styles";
+import SweetAlert from "react-bootstrap-sweetalert";
+import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import {
   createMuiTheme,
   CssBaseline,
 } from "@material-ui/core";
+
+import { useHistory } from "react-router-dom";
 
 // core components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
@@ -56,6 +60,7 @@ const checkTimeCompare = (dat) => {
 
 export default function Dashboard(props) {
   const notifications = useSelector(state => state.userReducer.notifications);
+  const isTokenExpired = useSelector(state => state.userReducer.isTokenExpired);
   const tasks = useSelector(state => state.userReducer.tasks);
   const { ...rest } = props;
   // states and functions
@@ -65,10 +70,13 @@ export default function Dashboard(props) {
   const [image, setImage] = React.useState(require("assets/img/sidebar-1.jpg"));
   const [color, setColor] = React.useState("blue");
   const [bgColor, setBgColor] = React.useState("black");
+  const sweetAlertStyle = makeStyles(styles2);
+
   // const [hasImage, setHasImage] = React.useState(true);
+  const history = useHistory();
   const [fixedClasses, setFixedClasses] = React.useState("dropdown");
   const [logo, setLogo] = React.useState(require("assets/img/logo.png"));
-  const [darkLogo, setDarkLogo] = React.useState(require("assets/img/logoexxx.png"));
+  const [darkLogo, setDarkLogo] = React.useState(require("assets/img/logo.png"));
   const dispatch = useDispatch();
   const notify = (msg) => 
   toast(msg, {
@@ -93,7 +101,7 @@ export default function Dashboard(props) {
     });
     setInterval(() => {
         fetchData();     
-    }, 60000);
+    }, 60000); 
     if (checkIsInvoiceDesk()) { dispatch(getUserDataAction()); }
     },[]);
 
@@ -102,6 +110,12 @@ export default function Dashboard(props) {
       notify(`${task.invoiceId}-${task.taskDescription}`);
     });
   },[tasks]);
+
+  useEffect(()=>{
+    if(isTokenExpired){
+      msgAlert("Token Has been Expired Please Login Again");
+    }
+  },[isTokenExpired])
 
   // useEffect(()=>{
   //   notifications.filter(n=>checkTimeCompare(n.notificationDate) == true).map((notif,index)=>{
@@ -243,11 +257,35 @@ export default function Dashboard(props) {
       setMobileOpen(false);
     }
   };
+  const sweetClass = sweetAlertStyle();
+  const [alert, setAlert] = React.useState(null);
+  //Msg Alert
+  const msgAlert = (msg) => {
+    setAlert(
+      <SweetAlert
+        alert
+        style={{ display: "block", marginTop: "-100px" }}
+        title="Info!"
+        onConfirm={() => hideErrorAlert()}
+        onCancel={() => hideErrorAlert()}
+        confirmBtnCssClass={sweetClass.button + " " + sweetClass.info}
+      >
+        {msg}
+      </SweetAlert>
+    );
+  };
+
+  const hideErrorAlert = () => {
+    localStorage.clear();
+    dispatch(setIsTokenExpired(false));
+    setAlert(null);
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
     <div className={classes.wrapper}>
+      {alert}
       <Notifications />
       {!checkIsInvoiceDesk() ? <Redirect exact from="/" to="/auth/login" /> : 
       <React.Fragment>

@@ -20,12 +20,14 @@ import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertSty
 
 import { useDispatch, useSelector } from "react-redux";
 import jwt from "jsonwebtoken";
+import { setIsTokenExpired } from "actions";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
 
 export default function Level1Profile(props) {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [animateStep, setAnimateStep] = useState(true);
 
@@ -202,6 +204,7 @@ export default function Level1Profile(props) {
           successAlert(msg);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             isLoading: false,

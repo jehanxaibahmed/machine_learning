@@ -1,13 +1,14 @@
 import React, {useEffect} from "react";
 import cx from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDataAction, getNotification, getTasks, setDarkMode } from "../actions";
+import { getUserDataAction, getNotification, getTasks, setDarkMode, setIsTokenExpired } from "../actions";
 import {  Switch, Route, Redirect } from "react-router-dom";
 import addNotification from 'react-push-notification';
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
-
+import SweetAlert from "react-bootstrap-sweetalert";
+import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 // @material-ui/core components
 import { makeStyles , ThemeProvider} from "@material-ui/core/styles";
 import {
@@ -57,10 +58,12 @@ const checkTimeCompare = (dat) => {
 
 export default function Dashboard(props) {
   const notifications = useSelector(state => state.userReducer.notifications);
+  const isTokenExpired = useSelector(state => state.userReducer.isTokenExpired);
   const tasks = useSelector(state => state.userReducer.tasks);
   const { ...rest } = props;
   // states and functions
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const sweetAlertStyle = makeStyles(styles2);
   const [miniActive, setMiniActive] = React.useState(false);
   const [darkmood, setDarkMood] = React.useState(false);
   const [image, setImage] = React.useState(require("assets/img/sidebar-1.jpg"));
@@ -110,7 +113,11 @@ export default function Dashboard(props) {
     //     notify(`${notif.notificationItem ? notif.notificationItem.invoiceId : '' }-${notif.notifyMessage}`);
     //   })
     // },[notifications]);
-  
+    useEffect(()=>{
+      if(isTokenExpired){
+        msgAlert("Token Has been Expired Please Login Again");
+      }
+    },[isTokenExpired])
 
  
   const theme = createMuiTheme({
@@ -240,6 +247,31 @@ export default function Dashboard(props) {
       setMobileOpen(false);
     }
   };
+
+  const sweetClass = sweetAlertStyle();
+  const [alert, setAlert] = React.useState(null);
+  //Msg Alert
+  const msgAlert = (msg) => {
+    setAlert(
+      <SweetAlert
+        alert
+        style={{ display: "block", marginTop: "-100px" }}
+        title="Info!"
+        onConfirm={() => hideErrorAlert()}
+        onCancel={() => hideErrorAlert()}
+        confirmBtnCssClass={sweetClass.button + " " + sweetClass.info}
+      >
+        {msg}
+      </SweetAlert>
+    );
+  };
+
+  const hideErrorAlert = () => {
+    localStorage.clear();
+    dispatch(setIsTokenExpired(false));
+    setAlert(null);
+  };
+
 
   return (
     <ThemeProvider theme={theme}>

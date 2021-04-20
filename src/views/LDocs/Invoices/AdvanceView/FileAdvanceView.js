@@ -53,6 +53,7 @@ import {
 } from "../../Functions/Functions";
 import Approve from "./approve";
 import Review from "./review";
+import { setIsTokenExpired } from "actions";
 
 const useStyle = makeStyles(styles);
 const useStyles = makeStyles((theme) => ({
@@ -62,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 const sweetAlertStyle = makeStyles(styles2);
 const FileAdvanceView = forwardRef((props, ref) => {
+  const dispatch = useDispatch();
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
@@ -95,8 +97,9 @@ const FileAdvanceView = forwardRef((props, ref) => {
           setBlockChainData([]);
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
         setBlockChainData([]);
       });
   };
@@ -114,8 +117,9 @@ const FileAdvanceView = forwardRef((props, ref) => {
           setPaymentData([]);
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
         setPaymentData([]);
       });
   };
@@ -126,8 +130,9 @@ const FileAdvanceView = forwardRef((props, ref) => {
       .then((url) => {
         setQrCode(url);
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.error(error);
       });
   };
 
@@ -145,8 +150,9 @@ const FileAdvanceView = forwardRef((props, ref) => {
           setWorkflow([]);
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
         setWorkflow([]);
       });
   };
@@ -209,8 +215,9 @@ const FileAdvanceView = forwardRef((props, ref) => {
       .then((response) => {
         setVersions(response.data);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
       });
   };
 

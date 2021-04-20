@@ -1,5 +1,6 @@
 const initialState = {
   Token : null,
+  isTokenExpired: false,
   userListData: {},
   organizations: [],
   companies: [],
@@ -18,6 +19,9 @@ const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case "SET_TOKEN": {
       return { ...state, Token: action.response.token , userData : action.response.userData};
+    }
+    case 'SET_IS_TOKEN_EXPIRE' : {
+      return { ...state, isTokenExpired: action.response};
     }
     case "CHANGE": {
       return { ...state, userListData: action.response };

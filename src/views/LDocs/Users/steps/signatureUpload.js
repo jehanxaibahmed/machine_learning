@@ -8,15 +8,18 @@ import Button from "components/CustomButtons/Button.js";
 
 import defaultImage from "assets/img/image_placeholder.jpg";
 import defaultAvatar from "assets/img/placeholder.jpg";
-import {useSelector } from "react-redux";
+import {useSelector, useDispatch } from "react-redux";
 
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import { setIsTokenExpired } from "actions";
+import { used } from "@amcharts/amcharts4/.internal/core/utils/Utils";
 export default function ImageUpload(props) {
   const [file, setFile] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const dispatch = useDispatch();
 
   const [imagePreviewUrl, setImagePreviewUrl] = React.useState(
     props.avatar
@@ -82,6 +85,7 @@ export default function ImageUpload(props) {
         props.successAlert(msg);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setIsUploading(false);
         msg =
           typeof error.response != "undefined"

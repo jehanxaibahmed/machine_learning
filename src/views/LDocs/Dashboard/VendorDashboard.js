@@ -56,10 +56,11 @@ import LineChart from "./LineChart";
 import Calendar from "../../Calendar/Calendar";
 import jwt from "jsonwebtoken";
 import _ from "lodash";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Carousel from "react-material-ui-carousel";
 import ReactApexChart from "react-apexcharts";
 import { data } from "./Data";
+import { setIsTokenExpired } from "actions";
 const useStyles = makeStyles(styles);
 const useStyleBackDrop = makeStyles((theme) => ({
   backdrop: {
@@ -78,7 +79,8 @@ export default function VendorDashboard() {
   const pendingApprovalIcon = require("assets/img/pendingApproval.png");
   const [chartdata, setChartData] = React.useState(data);
   const [graphData, setGraphData] = React.useState({});
-  const [loading, setLoading] = React.useState(true)
+  const [loading, setLoading] = React.useState(true);
+  const dispatch = useDispatch();
 
   const getChartData = async () => {
     let dashboard_tables = [],
@@ -250,6 +252,7 @@ export default function VendorDashboard() {
         console.log({ dashboard_tables, quarter_tables });
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setGraphData({});
         setLoading(false);
         console.log(error);

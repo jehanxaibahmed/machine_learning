@@ -45,6 +45,7 @@ import Validator from "../../Components/Timeline";
 import { useSelector, useDispatch } from "react-redux";
 import { CallReceived, DoneAll } from "@material-ui/icons";
 import Alert from '@material-ui/lab/Alert';
+import { setIsTokenExpired } from "actions/index.js";
 
 
 
@@ -250,6 +251,7 @@ export default function ApprovalRequested() {
         setIsLoading(false);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -384,6 +386,7 @@ export default function ApprovalRequested() {
           }));
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
           console.log(
             typeof error.response != "undefined"
               ? error.response.data

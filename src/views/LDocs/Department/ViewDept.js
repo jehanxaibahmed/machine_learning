@@ -21,6 +21,7 @@ import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertSty
 import OtpCheck from "../Authorization/OtpCheck";
 import MultipleSelect from './MultiSelect';
 import jwt from "jsonwebtoken";
+import { setIsTokenExpired } from "actions";
 
 
 const useStyles = makeStyles(styles);
@@ -103,6 +104,7 @@ export default function ViewDept(props) {
         }));
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(`Unable to get Companies please contact at ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`)
       });
   };
@@ -123,6 +125,7 @@ export default function ViewDept(props) {
         setLoading(false);
        })
        .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(`Unable to get Organizations please contact at ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`);
         setLoading(false);
        });
@@ -294,6 +297,7 @@ const handleUpdate = () => {
         successAlert(msg);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setFormState((formState) => ({
           ...formState,
           isRegistering: false,

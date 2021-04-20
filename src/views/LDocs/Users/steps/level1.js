@@ -5,6 +5,7 @@ import {
   makeStyles,
   CircularProgress,
   TextField,
+  useForkRef,
 } from "@material-ui/core";
 // @material-ui/core components
 
@@ -18,6 +19,7 @@ import axios from "axios";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import defaultAvatar from "assets/img/placeholder.jpg";
 import { useDispatch, useSelector } from "react-redux";
+import { setIsTokenExpired } from "actions";
 
 
 const useStyles = makeStyles(styles);
@@ -27,7 +29,7 @@ export default function Step1(props) {
   const classes = useStyles();
   const [animateStep, setAnimateStep] = useState(true);
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
-  
+  const dispatch = useDispatch();
   var row = props.userData;
     const [formState, setFormState] = useState({
       isLoading: false,
@@ -210,6 +212,7 @@ export default function Step1(props) {
           successAlert(msg);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             isLoading: false,

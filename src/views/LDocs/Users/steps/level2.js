@@ -22,6 +22,7 @@ import axios from "axios";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import { useDispatch, useSelector } from "react-redux";
 import jwt from "jsonwebtoken";
+import { setIsTokenExpired } from "actions";
 
 
 const useStyles = makeStyles(styles);
@@ -32,7 +33,7 @@ export default function Step2(props) {
   const [animateStep, setAnimateStep] = useState(true);
   var row = props.userData.level2;
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
-
+  const dispatch = useDispatch();
   const [formState, setFormState] = useState({
     orgs: [],
     comp: [],
@@ -95,6 +96,7 @@ export default function Step2(props) {
       }, 500)
       
       .catch(error=>{
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(typeof error.response != "undefined"  ? error.response.data : error.message,
         "Unable to get Orgs please contact at contact@MateSol.io"
       );
@@ -114,6 +116,7 @@ const getCompanies = (org) => {
       }));
     })
     .catch((error) => {
+      error.response.status == 401 && dispatch(setIsTokenExpired(true));
       console.log(`Unable to get Companies please contact at ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`)
     });
 };
@@ -132,6 +135,7 @@ const getDepartments = (compId) => {
         }));
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -156,6 +160,7 @@ const getDepartments = (compId) => {
          }));
        })
        .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));
          console.log(
            typeof error.response != "undefined"
              ? error.response.data
@@ -383,6 +388,7 @@ const handleChange = (event) => {
           successAlert(msg);
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             isLoading: false,

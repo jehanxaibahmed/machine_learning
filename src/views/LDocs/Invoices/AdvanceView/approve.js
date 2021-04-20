@@ -40,6 +40,7 @@ import { sendNotification, getNotification } from "actions";
 import { useSelector, useDispatch } from "react-redux";
 import { CallReceived, DoneAll } from "@material-ui/icons";
 import Alert from '@material-ui/lab/Alert';
+import { setIsTokenExpired } from "actions";
 
 
 
@@ -197,6 +198,7 @@ export default function Approve({close, invoiceData, actionDone}) {
           }));
         })
         .catch((error) => {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(
             typeof error.response != "undefined"
               ? error.response.data

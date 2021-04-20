@@ -10,6 +10,8 @@ import defaultImage from "assets/img/image_placeholder.jpg";
 import defaultAvatar from "assets/img/placeholder.jpg";
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import { useSelector, useDispatch } from "react-redux";
+import { setIsTokenExpired } from "actions";
 export default function ImageUpload(props) {
   const [file, setFile] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -19,6 +21,7 @@ export default function ImageUpload(props) {
       ? defaultAvatar
       :  defaultImage
   );
+  const dispatch = useDispatch();
   React.useEffect(() => {
     if (typeof props.stampImg.level4 != "undefined") {
       if (typeof props.stampImg.level4.eStamp != "undefined") {
@@ -78,6 +81,7 @@ export default function ImageUpload(props) {
         props.successAlert(msg);
       })
       .catch((error) => {
+        error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
         setIsUploading(false);
         msg =
           typeof error.response != "undefined"
