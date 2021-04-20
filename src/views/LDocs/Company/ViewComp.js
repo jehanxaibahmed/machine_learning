@@ -97,7 +97,7 @@ export default function ViewComp(props) {
         }));
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setFormState((formState) => ({
           ...formState,
           message:
@@ -336,7 +336,7 @@ export default function ViewComp(props) {
           successAlert(msg);
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             message:

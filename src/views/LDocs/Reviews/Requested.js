@@ -245,7 +245,7 @@ export default function Requested() {
         setIsLoading(false);
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -372,7 +372,7 @@ const goBack = () => {
 
                 })
                 .catch((error) => {
-                  error.response.status == 401 && dispatch(setIsTokenExpired(true));
+                  error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
                     console.log(
                         typeof error.response != "undefined"
                             ? error.response.data

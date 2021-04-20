@@ -203,7 +203,7 @@ export default function ExportList(props) {
         }));
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setFormState((formState) => ({
           ...formState,
           pos: [],
@@ -225,7 +225,7 @@ export default function ExportList(props) {
         }));
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(error);
       });
   };
@@ -625,7 +625,7 @@ export default function ExportList(props) {
         setIsLoading(false);
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -746,7 +746,7 @@ export default function ExportList(props) {
         setExportToFusionModel(false);
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(error);
       });
   };

@@ -96,7 +96,7 @@ export default function Step2(props) {
       }, 500)
       
       .catch(error=>{
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(typeof error.response != "undefined"  ? error.response.data : error.message,
         "Unable to get Orgs please contact at contact@MateSol.io"
       );
@@ -116,7 +116,7 @@ const getCompanies = (org) => {
       }));
     })
     .catch((error) => {
-      error.response.status == 401 && dispatch(setIsTokenExpired(true));
+      error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
       console.log(`Unable to get Companies please contact at ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`)
     });
 };
@@ -135,7 +135,7 @@ const getDepartments = (compId) => {
         }));
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -160,7 +160,7 @@ const getDepartments = (compId) => {
          }));
        })
        .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
          console.log(
            typeof error.response != "undefined"
              ? error.response.data
@@ -388,7 +388,7 @@ const handleChange = (event) => {
           successAlert(msg);
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             isLoading: false,

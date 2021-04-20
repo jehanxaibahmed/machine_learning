@@ -65,12 +65,13 @@ export default function FinanceDashboard() {
       headers: { cooljwt: Token },
     })
       .then((response) => {
-        setGraphData(response.data);
+        console.log(response)
+        setGraphData(response ? response.data : []);
         setLoading(false);
-        console.log(response.data);
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        console.log(error);
+        // error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setGraphData([]);
         setLoading(false);
         console.log(error);
@@ -201,10 +202,10 @@ export default function FinanceDashboard() {
   }
   if(graphData.totalPurchasedVsPaid){
         //Total vs Paid Chart 
-        const purchased = Object.values(graphData.totalPurchasedVsPaid.PurchasedInvoice[0].data);
-        const purchasedMonths = Object.keys(graphData.totalPurchasedVsPaid.PurchasedInvoice[0].data);
-        const paidMonths = Object.keys(graphData.totalPurchasedVsPaid.PaidInvoice[0].data);
-        const paid = Object.values(graphData.totalPurchasedVsPaid.PaidInvoice[0].data);
+        const purchased = Object.values(graphData.totalPurchasedVsPaid.PurchasedInvoice[0] ? graphData.totalPurchasedVsPaid.PurchasedInvoice[0].data : []);
+        const purchasedMonths = Object.keys(graphData.totalPurchasedVsPaid.PurchasedInvoice[0] ? graphData.totalPurchasedVsPaid.PurchasedInvoice[0].data : []);
+        const paidMonths = Object.keys(graphData.totalPurchasedVsPaid.PaidInvoice[0] ? graphData.totalPurchasedVsPaid.PaidInvoice[0].data : []);
+        const paid = Object.values(graphData.totalPurchasedVsPaid.PaidInvoice[0] ? graphData.totalPurchasedVsPaid.PaidInvoice[0].data : []);
 
         const TvPseries =  [
           {
@@ -214,7 +215,7 @@ export default function FinanceDashboard() {
                 colors: ["#095392"],
             },
             // data: [44, 55, 41, 64, 22, 43, 44, 55, 41, 64, 21],
-            data: [
+            data: graphData.totalPurchasedVsPaid.PurchasedInvoice ?  [
               purchased[0] ? addZeroes(purchased[0]).toFixed(2) : 0,
               purchased[1] ? addZeroes(purchased[1]).toFixed(2) : 0,
               purchased[2] ? addZeroes(purchased[2]).toFixed(2) : 0,
@@ -229,7 +230,7 @@ export default function FinanceDashboard() {
               purchased[11] ? addZeroes(purchased[11]).toFixed(2) : 0,
             
              
-            ],
+            ]:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           },
           {
             fill: {
@@ -237,7 +238,7 @@ export default function FinanceDashboard() {
             },
             name: "Paid",
             type: "column",
-            data: [
+            data: graphData.totalPurchasedVsPaid.PaidInvoice ?  [
               paid[0] ? addZeroes(paid[0]).toFixed(2) : 0,
               paid[1] ? addZeroes(paid[1]).toFixed(2) : 0,
               paid[2] ? addZeroes(paid[2]).toFixed(2) : 0,
@@ -251,7 +252,7 @@ export default function FinanceDashboard() {
               paid[10] ? addZeroes(paid[10]).toFixed(2) : 0,
               paid[11] ? addZeroes(paid[11]).toFixed(2) : 0,
              
-            ]
+            ]:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           }
         ];
         const TvPoptions = {

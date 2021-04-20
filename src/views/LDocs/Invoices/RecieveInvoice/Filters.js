@@ -173,7 +173,7 @@ export default function Filter(props) {
           setCustomers(response.data.organizations);
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(error);
         });
     }
@@ -398,7 +398,7 @@ export default function Filter(props) {
                       name="invoiceType"
                     />
                   }
-                  label="Patty Cash"
+                  label="Petty Cash"
                 />
               </FormGroup>
             </GridItem>

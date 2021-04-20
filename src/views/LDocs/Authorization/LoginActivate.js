@@ -88,7 +88,7 @@ export default function LoginSecret(props) {
         }
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
         setTwofaError("error");
         setIsloading(false);
         console.log(

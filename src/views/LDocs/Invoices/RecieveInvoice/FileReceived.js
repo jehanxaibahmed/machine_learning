@@ -151,7 +151,7 @@ export default function FileReceived(props) {
 
             })
             .catch((error) => {
-              error.response.status == 401 && dispatch(setIsTokenExpired(true));
+              error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
                 errorAlert(
                     typeof error.response != "undefined"
                         ? error.response.data

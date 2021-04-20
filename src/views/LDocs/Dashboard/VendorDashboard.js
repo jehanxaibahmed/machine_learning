@@ -252,7 +252,7 @@ export default function VendorDashboard() {
         console.log({ dashboard_tables, quarter_tables });
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setGraphData({});
         setLoading(false);
         console.log(error);

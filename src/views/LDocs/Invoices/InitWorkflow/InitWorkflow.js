@@ -146,7 +146,7 @@ export default function InitWorkflow(props) {
           setIsLoading(false);
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(
             typeof error.response != "undefined"
               ? error.response.data
@@ -207,7 +207,7 @@ export default function InitWorkflow(props) {
         }));
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -261,7 +261,7 @@ export default function InitWorkflow(props) {
         await props.closeModal();
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

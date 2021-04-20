@@ -82,7 +82,7 @@ export default function ImageUpload(props) {
         props.successAlert(msg);
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setIsUploading(false);
         msg =
           typeof error.response != "undefined"

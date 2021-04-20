@@ -117,7 +117,7 @@ export default function Items(props) {
           setLookups(response.data.result);
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(error);
           rej([]);
         });

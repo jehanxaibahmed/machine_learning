@@ -418,7 +418,7 @@ export default function FilesList(props) {
           invoiceType: prop.isPo
             ? "Purchase Order"
             : prop.isPettyCash
-            ? "Patty Cash"
+            ? "Petty Cash"
             : prop.isExpense
             ? "Expense"
             : "",
@@ -750,7 +750,7 @@ export default function FilesList(props) {
         setIsLoading(false);
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

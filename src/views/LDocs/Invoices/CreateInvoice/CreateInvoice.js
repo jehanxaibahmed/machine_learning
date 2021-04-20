@@ -217,7 +217,7 @@ export default function CreateInvoice(props) {
         }
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(error);
       });
     //Get ExpenseTypes
@@ -235,7 +235,7 @@ export default function CreateInvoice(props) {
         }));
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(error);
       });
   };
@@ -262,7 +262,7 @@ export default function CreateInvoice(props) {
         setPos(res.data);
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(error);
         setPos([]);
       });
@@ -324,7 +324,7 @@ export default function CreateInvoice(props) {
         setReceipts(res.data);
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(error);
         setReceipts([]);
       });
@@ -417,7 +417,7 @@ export default function CreateInvoice(props) {
           successAlert("Receipt Has Been Generated In Oracle Fusion.");
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(error);
           errorAlert("Unable To Generate RECEIPT.");
         });
@@ -761,7 +761,7 @@ export default function CreateInvoice(props) {
         }
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(error);
         errorAlert("There is some issue in Api");
         setPdfModal(false);
@@ -904,7 +904,7 @@ export default function CreateInvoice(props) {
           setIsLoading(false);
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(error);
         });
     } else {
@@ -926,7 +926,7 @@ export default function CreateInvoice(props) {
             }));
           })
           .catch((error) => {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
             console.log(error);
           });
       }
@@ -946,7 +946,7 @@ export default function CreateInvoice(props) {
           setInvoice();
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(error);
         });
     }
@@ -1539,7 +1539,7 @@ export default function CreateInvoice(props) {
         }
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setIsSavingInvoice(false);
         errorAlert(
           error.message ? error.message : "There is some Issue In Create Invoice"

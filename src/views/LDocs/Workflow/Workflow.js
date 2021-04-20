@@ -330,7 +330,7 @@ const viewWorkflowColumnView = (row) => {
            setIsLoading(false);
          })
          .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
            console.log(
              typeof error.response != "undefined"
                ? error.response.data
@@ -447,7 +447,7 @@ const viewWorkflowColumnView = (row) => {
   //         setIsLoading(false);
   //       })
   //       .catch((error) => {
-  // error.response.status == 401 && dispatch(setIsTokenExpired(true));
+  // error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
   //         console.log(
   //           typeof error.response != "undefined"
   //             ? error.response.data
@@ -488,7 +488,7 @@ const viewWorkflowColumnView = (row) => {
         }
       },500)
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -512,7 +512,7 @@ const viewWorkflowColumnView = (row) => {
           }));
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           setFormState((formState) => ({
             ...formState,
             isError: true,
@@ -535,7 +535,7 @@ const viewWorkflowColumnView = (row) => {
           }));
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
           console.log(
             typeof error.response != "undefined"
               ? error.response.data
@@ -702,7 +702,7 @@ const createWorkflow = () => {
           goBack();
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
         setIsSavingData(false);
         setOTP("");
         setIsLoading(false);

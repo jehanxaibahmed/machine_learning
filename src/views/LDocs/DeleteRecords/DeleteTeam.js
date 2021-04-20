@@ -182,7 +182,7 @@ export default function DeleteTeam(props) {
           props.successAlert(msg);
         })
         .catch((error) => {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
             setOTP("")
           setFormState((formState) => ({
             ...formState,
