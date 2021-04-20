@@ -277,6 +277,7 @@ export default function Dashboard(props) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
     <div className={classes.wrapper}>
+    {alert}
       {/* <Notifications /> */}
       {!checkIsActionDesk () ? <Redirect exact from="/" to="/auth/login" /> : 
       <React.Fragment>

@@ -118,6 +118,7 @@ export default function Dashboard(props) {
   },[tasks]);
   useEffect(()=>{
     if(isTokenExpired){
+      console.log(isTokenExpired);
       msgAlert("Token Has been Expired Please Login Again");
     }
   },[isTokenExpired])
@@ -284,6 +285,7 @@ export default function Dashboard(props) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
     <div className={classes.wrapper}>
+      {alert}
       <Notifications />
       {!checkLogin() || !checkIsAdminDesk() ? <Redirect exact from="/" to="/auth/login" /> : 
       <React.Fragment>

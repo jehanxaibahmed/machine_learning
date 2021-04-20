@@ -290,6 +290,7 @@ export default function Dashboard(props) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
     <div className={classes.wrapper}>
+    {alert}
       {checkIsVendorDesk() ? <Redirect exact from="/" to="/auth/login" /> : 
       <React.Fragment>
       <Sidebar
