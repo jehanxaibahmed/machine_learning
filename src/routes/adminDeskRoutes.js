@@ -9,6 +9,8 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import DeviceHubIcon from '@material-ui/icons/DeviceHub';
 import PeopleIcon from '@material-ui/icons/People';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 
 //Components
 import UsersList from "views/LDocs/Users/UsersList";
@@ -21,8 +23,7 @@ import SignatureStamp from "views/LDocs/SignatureStamp/SignatureStamp";
 import  Warnings from "views/LDocs/Warnings/Warnings";
 import  Vendor from "views/LDocs/Vendor/Vendor";
 import Verify from "views/LDocs/Verify/Verify";
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
-
+import Currency from "views/LDocs/Currency/Currency";
 
 
 
@@ -68,6 +69,13 @@ var adminRoutes = [
         name: "Users",
         icon: SupervisedUserCircleIcon,
         component: UsersList,
+        layout: "/admin",
+      },
+      {
+        path: "/currency",
+        name: "Currency",
+        icon: MonetizationOnIcon,
+        component: Currency,
         layout: "/admin",
       },
       // {

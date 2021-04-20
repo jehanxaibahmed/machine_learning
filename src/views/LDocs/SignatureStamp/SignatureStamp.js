@@ -39,7 +39,7 @@ export default function SignatureStamp() {
   
   React.useEffect(() => {
     if (typeof user.level3 != "undefined") {
-        if (typeof user.level3.signatureURL != "undefined") {
+        if (typeof user.level3.signatureURL != "undefined" || '' || null || undefined || "null") {
           // var preImage = user.level4.signatureURL;
           // var base64Flag = `data:${user.level4.eSignatureT};base64,`;
           // let profileImage = base64Flag + preImage;
@@ -54,7 +54,7 @@ export default function SignatureStamp() {
         setSignIsLoaded(true);
       }
     if (typeof user.level3 != "undefined") {
-        if (typeof user.level3.stampURL != "undefined") {
+        if (typeof user.level3.stampURL != "undefined" || '' || null || undefined || "null") {
           // var preImage = user.level4.eStamp;
           // var base64Flag = `data:${user.level4.eStampT};base64,`;
           // let profileImage = base64Flag + preImage;

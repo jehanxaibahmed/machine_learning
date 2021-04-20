@@ -256,7 +256,7 @@ export default function Dashboard(props) {
       <SweetAlert
         alert
         style={{ display: "block", marginTop: "-100px" }}
-        title="Info!"
+        title="TOKEN EXPIRED!"
         onConfirm={() => hideErrorAlert()}
         onCancel={() => hideErrorAlert()}
         confirmBtnCssClass={sweetClass.button + " " + sweetClass.info}

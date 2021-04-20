@@ -9,7 +9,6 @@ import CardBody from "components/Card/CardBody.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
-import { useDispatch, useSelector } from "react-redux";
 import Button from "components/CustomButtons/Button.js";
 // core components
 import Wizard from "./Wizard.js";

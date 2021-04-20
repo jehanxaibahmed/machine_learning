@@ -258,6 +258,7 @@ export default function Dashboard(props) {
   };
 
   const sweetClass = sweetAlertStyle();
+  console.log(sweetClass);
   const [alert, setAlert] = React.useState(null);
   //Msg Alert
   const msgAlert = (msg) => {
@@ -265,10 +266,10 @@ export default function Dashboard(props) {
       <SweetAlert
         alert
         style={{ display: "block", marginTop: "-100px" }}
-        title="Info!"
+        title="TOKEN EXPIRED!"
         onConfirm={() => hideErrorAlert()}
         onCancel={() => hideErrorAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.info}
+        confirmBtnCssClass={sweetClass.button}
       >
         {msg}
       </SweetAlert>

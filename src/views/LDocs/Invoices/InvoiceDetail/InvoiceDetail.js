@@ -9,10 +9,11 @@ import CardBody from "components/Card/CardBody.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 import axios from "axios";
-import { CircularProgress, LinearProgress } from "@material-ui/core";
+import { CircularProgress, LinearProgress, makeStyles } from "@material-ui/core";
 import FileAdvanceView from "../AdvanceView/FileAdvanceView";
 import { setIsTokenExpired } from "actions";
-
+import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
+import SweetAlert from "react-bootstrap-sweetalert";
 export default function InvoiceDetail() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
@@ -30,6 +31,51 @@ export default function InvoiceDetail() {
         if (!results[2]) return "";
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     };
+
+    const sweetAlertStyle = makeStyles(styles2);
+
+    
+  const sweetClass = sweetAlertStyle();
+  const [alert, setAlert] = React.useState(null);
+  const successAlert = (msg) => {
+    setAlert(
+      <SweetAlert
+        success
+        style={{ display: "block", marginTop: "-100px" }}
+        title="Success!"
+        onConfirm={() => hideAlert()}
+        onCancel={() => hideAlert()}
+        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
+      >
+        {msg}
+      </SweetAlert>
+    );
+  };
+  const errorAlert = (msg) => {
+    setAlert(
+      <SweetAlert
+        error
+        style={{ display: "block", marginTop: "-100px" }}
+        title="Error!"
+        onConfirm={() => hideErrorAlert()}
+        onCancel={() => hideErrorAlert()}
+        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
+      >
+        {msg}
+        <br />
+        {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
+      </SweetAlert>
+    );
+  };
+
+  const hideAlert = () => {
+    setAlert(null);
+  };
+  const hideErrorAlert = () => {
+    setAlert(null);
+  };
+
+
   React.useEffect(() => {
     const userData = jwt.decode(Token);
     setUserDetails(userData);
@@ -57,24 +103,27 @@ export default function InvoiceDetail() {
         console.log(invoice);
       })
       .catch((error) => {
-        error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        error.response.status == 401 && errorAlert('TOKEN HAS BEEN EXPIRED!');
         setInvoice(null);
+        errorAlert('UNABLE TO FIND INVOICE IN SYSTEM');
         console.log(error);
       });
   }, []);
 
   return (
+    <React.Fragment>
+      {alert}
       <div style={{paddingLeft:20,paddingRight:20, textAlign:'center'}}>
           <img src={logo} width={300} />
+          </div>
           <Card >
             <CardBody>
               {invoice ? (
-                <FileAdvanceView fileData={invoice} isVendor={userDetails.isVendor} />
+                <FileAdvanceView fileData={invoice} isVendor={userDetails.isVendor ? userDetails.isVendor : false } />
               ) : (
                 <LinearProgress />
               )}
             </CardBody>
           </Card>
-        </div>
-  );
+          </React.Fragment>  );
 }

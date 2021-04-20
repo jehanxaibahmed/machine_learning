@@ -62,11 +62,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const sweetAlertStyle = makeStyles(styles2);
-const FileAdvanceView = forwardRef((props, ref) => {
-  const dispatch = useDispatch();
+export default function FileAdvanceView (props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+      const dispatch = useDispatch();
+
   const decoded = jwt.decode(Token);
   const classes = useStyle();
   const isVendor = props.isVendor;
@@ -382,7 +383,7 @@ const FileAdvanceView = forwardRef((props, ref) => {
     return isLoading ? (
       <LinearProgress />
     ) : (
-      <GridContainer ref={ref}>
+      <GridContainer >
         {alert}
         {markModal ? (
           <Dialog
@@ -643,6 +644,5 @@ const FileAdvanceView = forwardRef((props, ref) => {
       </GridContainer>
     );
   }
-});
+};
 
-export default FileAdvanceView;
