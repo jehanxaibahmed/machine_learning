@@ -117,7 +117,7 @@ export default function Items(props) {
           setLookups(response.data.result);
         })
         .catch((error) => {
-          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
           console.log(error);
           rej([]);
         });
@@ -671,7 +671,7 @@ export default function Items(props) {
                         handleChange(event);
                       }}
                       type="number"
-                      value={formState.values.discount || ""}
+                      value={formState.values.discount || 0.00}
                       className={classes.textField}
                     />
                   </StyledTableCell>

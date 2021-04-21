@@ -95,7 +95,7 @@ export default function Verify() {
               setFile(fileObject);
               })
               .catch((error) => {
-                error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+                if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
                 setSelected(index);
               setFile(fileObject);
                 setBlockChainData(null)
@@ -145,7 +145,7 @@ export default function Verify() {
             setIsSearching(false);
           })
           .catch((error) => {
-            error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
             setFileData([]);
             console.log(
               typeof error.response != "undefined"

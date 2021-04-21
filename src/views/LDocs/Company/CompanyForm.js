@@ -138,7 +138,7 @@ export default function Company() {
         setIsLoading(false);
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(
           typeof error.response != "undefined"
             ? error.response.data

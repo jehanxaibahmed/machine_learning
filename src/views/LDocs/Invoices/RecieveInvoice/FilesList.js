@@ -415,12 +415,12 @@ export default function FilesList(props) {
             </MenuProvider>
           ),
           po: prop.po,
-          invoiceType: prop.isPo
-            ? "Purchase Order"
+          invoiceType: prop.isPrePayment
+            ? "Pre-Payment"
             : prop.isPettyCash
             ? "Petty Cash"
-            : prop.isExpense
-            ? "Expense"
+            : prop.isReceipt
+            ? "With Receipt"
             : "",
           createdDate: (
             <MenuProvider data={prop} id="menu_id">
@@ -729,6 +729,30 @@ export default function FilesList(props) {
       })
     );
   };
+  const exportToCSV = () => {
+    axios({
+      method: "post", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/report/ExportToCsv`,
+      data: { organizationId : userDetail.orgDetail.organizationId },
+      headers: {
+        cooljwt: Token,
+        responseType: 'blob', //important
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        const downloadUrl = window.URL.createObjectURL(new Blob([data]));
+        console.log(downloadUrl);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.setAttribute('download', "File"); //any other extension
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }).catch((error)=>{
+        console.log(error)
+      })
+  }
   //Get Files
   const getMyFiles = async (user, loading) => {
     setIsLoading(loading);
@@ -750,7 +774,7 @@ export default function FilesList(props) {
         setIsLoading(false);
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));        ;
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };        ;
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -939,11 +963,12 @@ export default function FilesList(props) {
       );
     }
 
+  
 		if (data.values.invoiceType == 1) {
-			files = files.filter(f => f.isPo != false);
+			files = files.filter(f => f.isPrePayment != false);
 		}
 		if (data.values.invoiceType == 2) {
-			files = files.filter(f => f.isExpense != false);
+			files = files.filter(f => f.isReceipt != false);
 			console.log(files);
 		}
 		if (data.values.invoiceType == 3) {
@@ -1490,7 +1515,7 @@ export default function FilesList(props) {
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
-                    onClick={() => msgAlert("Working on this feature")}
+                    onClick={exportToCSV}
                   >
                     Export
                   </Button>

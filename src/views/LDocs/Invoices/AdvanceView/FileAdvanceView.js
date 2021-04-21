@@ -99,7 +99,7 @@ export default function FileAdvanceView (props) {
         }
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(error);
         setBlockChainData([]);
       });
@@ -119,7 +119,7 @@ export default function FileAdvanceView (props) {
         }
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(error);
         setPaymentData([]);
       });
@@ -132,7 +132,7 @@ export default function FileAdvanceView (props) {
         setQrCode(url);
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.error(error);
       });
   };
@@ -152,7 +152,7 @@ export default function FileAdvanceView (props) {
         }
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(error);
         setWorkflow([]);
       });
@@ -217,7 +217,7 @@ export default function FileAdvanceView (props) {
         setVersions(response.data);
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(error);
       });
   };

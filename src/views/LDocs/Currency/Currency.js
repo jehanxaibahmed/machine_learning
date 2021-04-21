@@ -190,7 +190,7 @@ export default function Currency() {
         setIsLoading(false);
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -214,7 +214,7 @@ export default function Currency() {
         successAlert('Currencies Updated Sucessfully');
       }).catch((error)=>{
         setIsLoading(false);
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         errorAlert('Error in Saving Currencies');
       })
   }

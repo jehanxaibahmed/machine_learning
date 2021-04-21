@@ -81,7 +81,7 @@ export default function RegisterVendor(props) {
         }));
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         setFormState((formState) => ({
           ...formState,
           isError: true,
@@ -320,7 +320,7 @@ export default function RegisterVendor(props) {
           successAlert(msg);
         })
         .catch((error) => {
-          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
           console.log(error);
           setFormState((formState) => ({
             ...formState,

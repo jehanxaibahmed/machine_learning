@@ -217,7 +217,7 @@ export default function CreateInvoice(props) {
         }
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(error);
       });
     //Get ExpenseTypes
@@ -235,7 +235,7 @@ export default function CreateInvoice(props) {
         }));
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(error);
       });
   };
@@ -262,7 +262,7 @@ export default function CreateInvoice(props) {
         setPos(res.data);
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(error);
         setPos([]);
       });
@@ -324,7 +324,7 @@ export default function CreateInvoice(props) {
         setReceipts(res.data);
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(error);
         setReceipts([]);
       });
@@ -417,7 +417,7 @@ export default function CreateInvoice(props) {
           successAlert("Receipt Has Been Generated In Oracle Fusion.");
         })
         .catch((error) => {
-          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
           console.log(error);
           errorAlert("Unable To Generate RECEIPT.");
         });
@@ -711,10 +711,11 @@ export default function CreateInvoice(props) {
               invoice_tax: invoice_tax,
               invoice_supplier: invoice_supplier,
             };
+            let vendor = formState.vendors ? formState.vendors.find(
+              (v) => v.level1.vendorName == invoice_companyowner
+            ) : null;
             let vendorId = !isVendor
-              ? formState.vendors.find(
-                  (v) => v.level1.vendorName == invoice_companyowner
-                )._id
+              ? vendor ? vendor._id : null
               : userData.id;
             setFormState((formState) => ({
               ...formState,
@@ -724,10 +725,8 @@ export default function CreateInvoice(props) {
                 invoiceDate: invoice_date,
                 dueDate: invoice_duedate,
                 overallTax: addZeroes(invoice_tax),
-                selectedVendor: !isVendor
-                  ? formState.vendors.find(
-                      (v) => v.level1.vendorName == invoice_companyowner
-                    ) || null
+                selectedVendor: !isVendor && vendor 
+                  ? vendor 
                   : null,
               },
             }));
@@ -761,7 +760,7 @@ export default function CreateInvoice(props) {
         }
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        // if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         console.log(error);
         errorAlert("There is some issue in Api");
         setPdfModal(false);
@@ -860,7 +859,8 @@ export default function CreateInvoice(props) {
   //On Change Vendor
   React.useEffect(() => {
     if (
-      typeof formState.values.selectedVendor == "object" &&
+      formState.values.selectedVendor &&
+      typeof formState.values.selectedVendor === "object" &&
       !edit &&
       !isVendor
     ) {
@@ -904,7 +904,7 @@ export default function CreateInvoice(props) {
           setIsLoading(false);
         })
         .catch((error) => {
-          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
           console.log(error);
         });
     } else {
@@ -926,7 +926,7 @@ export default function CreateInvoice(props) {
             }));
           })
           .catch((error) => {
-            error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
             console.log(error);
           });
       }
@@ -946,7 +946,7 @@ export default function CreateInvoice(props) {
           setInvoice();
         })
         .catch((error) => {
-          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
           console.log(error);
         });
     }
@@ -1194,12 +1194,12 @@ export default function CreateInvoice(props) {
       quantity = "error";
       error = true;
     }
-    if (!Check(formState.values.discount)) {
-      discount = "success";
-    } else {
-      discount = "error";
-      error = true;
-    }
+    // if (!Check(formState.values.discount)) {
+    //   discount = "success";
+    // } else {
+    //   discount = "error";
+    //   error = true;
+    // }
     if (formState.isPeetyCash) {
       if (!Check(formState.values.inlineExpenseType)) {
         expenseType = "success";
@@ -1539,7 +1539,7 @@ export default function CreateInvoice(props) {
         }
       })
       .catch((error) => {
-        error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         setIsSavingInvoice(false);
         errorAlert(
           error.message ? error.message : "There is some Issue In Create Invoice"
@@ -2412,11 +2412,9 @@ export default function CreateInvoice(props) {
                                 justifyContent: "left",
                               }}
                             >
-                              {formState.values.selectedVendor !== "" ||
-                              null ||
-                              (undefined &&
+                              {formState.values.selectedVendor &&
                                 formState.values.selectedVendor.level1
-                                  .logoUrl) ? (
+                                  .logoUrl ? (
                                 <img
                                   src={
                                     formState.values.selectedVendor.level1
@@ -2440,9 +2438,7 @@ export default function CreateInvoice(props) {
                                 // justifyContent: "left",
                               }}
                             >
-                              {formState.values.selectedVendor != "" ||
-                              null ||
-                              undefined ? (
+                              {formState.values.selectedVendor ? (
                                 <div>
                                   <Typography variant="h6" component="h2">
                                     {formState.values.selectedVendor.level1
@@ -2485,7 +2481,7 @@ export default function CreateInvoice(props) {
                                   name="invoiceType"
                                 />
                               }
-                              label="Pre Payment"
+                              label="Pre-Payment"
                             />
                              {!isVendor ? (
                             <FormControlLabel
@@ -2516,7 +2512,7 @@ export default function CreateInvoice(props) {
                                   color="primary"
                                 />
                               }
-                              label="Peety Cash"
+                              label="Petty Cash"
                             />
                           </FormGroup>
                         </GridItem>

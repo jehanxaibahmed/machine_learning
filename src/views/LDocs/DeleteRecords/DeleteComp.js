@@ -138,7 +138,7 @@ export default function DeleteComp(props) {
           props.successAlert(msg);
         })
         .catch((error) => {
-          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
             setOTP("")
           setFormState((formState) => ({
             ...formState,

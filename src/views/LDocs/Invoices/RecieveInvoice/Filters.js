@@ -173,7 +173,7 @@ export default function Filter(props) {
           setCustomers(response.data.organizations);
         })
         .catch((error) => {
-          error.response.status && error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
           console.log(error);
         });
     }
@@ -374,7 +374,7 @@ export default function Filter(props) {
                       name="invoiceType"
                     />
                   }
-                  label="Purchase Order"
+                  label="Pre-Payment"
                 />
                  <FormControlLabel
                   control={
@@ -386,7 +386,7 @@ export default function Filter(props) {
                       name="invoiceType"
                     />
                   }
-                  label="Expense"
+                  label="With Receipt"
                 />
                  <FormControlLabel
                   control={
