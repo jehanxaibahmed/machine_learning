@@ -170,22 +170,14 @@ export default function Currency() {
   const getCurrency = (org) => {
     axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${org}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/GetOrgCurrencies/${org}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
+        console.log(response);
        setState({
          ...state,
-          currencies:[{
-            organizationId: '123',
-            currencyId: '123',
-            name: 'Doller',
-            symbol: '$',
-            code: 'USD',
-            conversionRate: 123,
-            isEnabled: true
-          },
-        ] 
+          currencies:response.data
        })
         setIsLoading(false);
       })
@@ -205,7 +197,7 @@ export default function Currency() {
     setIsLoading(true);
     axios({
       method: "post",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/organization/saveCurrencies`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/SaveOrgCurrencies`,
       data: state.currencies,
       headers: { cooljwt:Token},
     })
@@ -297,8 +289,8 @@ export default function Currency() {
                     <ReactTable
                       data={state.currencies.map((prop, index) => {
                         return {
-                          name: prop.name || "",
-                          code: prop.code || "",
+                          name: prop.Currency || "",
+                          code: prop.Code || "",
                           rate: (
                             <div className="actions-right">
                               <TextField
@@ -311,7 +303,7 @@ export default function Currency() {
                               />
                             </div>
                           ),
-                          symbol: prop.symbol || "",
+                          symbol: prop.Symbol || "",
                           active: (
                             <Switch
                               checked={prop.isEnabled}

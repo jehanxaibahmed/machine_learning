@@ -310,7 +310,7 @@ export default function FilesList(props) {
                   />
                 </Tooltip>
               ) : currentStatus.status == "correctionRequired" &&
-                currentStatus.val == 1 ? (
+                currentStatus.val == 1 || isCorrectionRequiredInWorkflow ? (
                 <Tooltip title="SENT FOR CORRECTION">
                   <Chip
                     variant="outlined"
@@ -745,7 +745,7 @@ export default function FilesList(props) {
         console.log(downloadUrl);
         const link = document.createElement('a');
         link.href = downloadUrl;
-        link.setAttribute('download', "File"); //any other extension
+        link.setAttribute('download', "File.csv"); //any other extension
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -914,7 +914,7 @@ export default function FilesList(props) {
               }
             }
             //Correction Required
-            if (s.id == 7 && currentStatus.status == "correctionRequired") {
+            if (s.id == 7 && currentStatus.status == "correctionRequired" || f.workFlowStatus == "correctionRequired") {
               if (filteredFiles.find((ff) => ff._id == f._id) == undefined) {
                 filteredFiles.push(f);
               }
