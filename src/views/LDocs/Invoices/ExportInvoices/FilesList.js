@@ -340,7 +340,7 @@ export default function ExportList(props) {
     setIsViewingBlockChainView(false);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice-workflow-history/${row.invoiceId}-${row.version}`,
+      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice-workflow-history/${row.vendorId}-${row.invoiceId}-${row.version}`,
     }).then((response) => {
       if (response.data.length !== 0) {
         setBlockChainData(response.data);

@@ -176,9 +176,11 @@ export default function UserProfile() {
           ) : (
             ""
           )}
+          {!jwt.decode(Token).isVendor ?
           <GridItem  xs={12} sm={12} md={12} lg={12} >
             <SignatureStamp />
           </GridItem>
+          :""}
         </GridContainer>
       </div>
     </Animated>
