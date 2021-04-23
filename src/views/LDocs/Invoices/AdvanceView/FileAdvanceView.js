@@ -224,6 +224,7 @@ export default function FileAdvanceView (props) {
 
   //Use Effect Hook
   useEffect(() => {
+    console.log(fileData);
     loadFunctions();
   }, [fileData]);
 
@@ -615,6 +616,8 @@ export default function FileAdvanceView (props) {
                   validation={validation}
                   isVendor={isVendor}
                   isExported={fileData.trackingStatus.paymentInProcess}
+                  reviewStatus={fileData.reviewStatus}
+                  approveStatus={fileData.approveStatus}
                 />
               </Card>
             </GridItem>

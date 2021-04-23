@@ -229,6 +229,8 @@ class Wizard extends React.Component {
                     validation={this.props.validation}
                     isVendor={this.props.isVendor}
                     isExported={this.props.isExported}
+                    reviewStatus={this.props.reviewStatus}
+                    approveStatus={this.props.approveStatus}
 
                   />
                 </div>

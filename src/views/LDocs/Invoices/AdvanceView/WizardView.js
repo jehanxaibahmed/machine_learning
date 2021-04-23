@@ -35,6 +35,7 @@ const styles = {
 const useStyles = makeStyles(styles);
 
 export default function WizardView(props) {
+  console.log("Wizard", props);
   const classes = useStyles();
   const steps = [
     {
@@ -83,6 +84,8 @@ export default function WizardView(props) {
               validation={props.validation}
               isVendor={props.isVendor}
               isExported={props.isExported}
+              reviewStatus={props.reviewStatus}
+              approveStatus={props.approveStatus}
               
            />
         </GridItem>
