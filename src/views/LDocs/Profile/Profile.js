@@ -20,6 +20,7 @@ import { Animated } from "react-animated-css";
 import Level1Profile from "./Level1Profile.js";
 import PasswordChange from "./PasswordChange";
 import jwt from "jsonwebtoken";
+import SignatureStamp from "../SignatureStamp/SignatureStamp";
 
 const sweetAlertStyle = makeStyles(styles2);
 
@@ -175,6 +176,9 @@ export default function UserProfile() {
           ) : (
             ""
           )}
+          <GridItem  xs={12} sm={12} md={12} lg={12} >
+            <SignatureStamp />
+          </GridItem>
         </GridContainer>
       </div>
     </Animated>

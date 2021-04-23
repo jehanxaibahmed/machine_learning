@@ -957,6 +957,7 @@ export default function CreateInvoice(props) {
 
   const setInvoice = (orgs) => {
     if (edit) {
+      orgs = orgs || formState.organizations;
       let org = orgs.find(o => o.organizationId == fileData.organizationId);
       let vendor = formState.vendors.find((v) => v._id == fileData.vendorId);
       console.log(org);
