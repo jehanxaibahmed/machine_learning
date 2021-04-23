@@ -259,6 +259,7 @@ const goBack = () => {
   setPdfUrl();
   setIsViewing(false);
   setValidateModal(false);
+  getRequests();
   setAnimateTable(true);
   setAnimatePdf(false);
   setAnimateAdvanceView(false);

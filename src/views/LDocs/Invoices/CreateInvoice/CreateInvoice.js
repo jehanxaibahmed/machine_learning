@@ -240,16 +240,14 @@ export default function CreateInvoice(props) {
       });
   };
   const getPos = (orgId) => {
-    console.log("Getting PO");
     const userDetails = jwt.decode(Token);
     axios({
       method: "post", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
         organizationId: isVendor
-          ? orgId || formState.selectedOrg
-            ? formState.selectedOrg.organizationId
-            : null
+          ? formState.selectedOrg ?  
+          formState.selectedOrg._id : orgId
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
       },
@@ -938,12 +936,12 @@ export default function CreateInvoice(props) {
         },
       })
         .then((response) => {
-          console.log(response.data);
+          let orgs = response.data.organizations;
           setFormState((formState) => ({
             ...formState,
-            organizations: response.data.organizations,
+            organizations: orgs,
           }));
-          setInvoice();
+          setInvoice(orgs);
         })
         .catch((error) => {
           if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
@@ -957,21 +955,15 @@ export default function CreateInvoice(props) {
     getData();
   }, []);
 
-  const setInvoice = () => {
+  const setInvoice = (orgs) => {
     if (edit) {
-      console.log("IS PO",fileData.isPo);
-      console.log("IS RECEIPT",fileData.isReceipt);
-      console.log("IS PREPAYMENT",fileData.isPrePayment);
-      console.log("IS EXPENSE",fileData.isExpense);
-      console.log("IS Patty Cash",fileData.isPettyCash);
+      let org = orgs.find(o => o.organizationId == fileData.organizationId);
+      let vendor = formState.vendors.find((v) => v._id == fileData.vendorId);
+      console.log(org);
       setFormState((formState) => ({
         ...formState,
         selectedVendor: fileData.vendorId,
-        selectedOrg: isVendor
-          ? formState.organizations.find(
-              (org) => org.organizationId == fileData.organizationId
-            )
-          : null,
+        selectedOrg: isVendor ? org || null : null,
         isPo: fileData.isPo,
         isReceipt: fileData.isReceipt,
         isPeetyCash: fileData.isPettyCash,
@@ -992,10 +984,8 @@ export default function CreateInvoice(props) {
           currency: fileData.FC_currency._id || currency,
           paymentTerms: `NET-${fileData.paymentTerms}`,
           poNumber: fileData.po,
-          selectedVendor: !isVendor
-            ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
-            : null,
-          expenseType: fileData.expenseType,
+          selectedVendor: !isVendor ? vendor || null : null,
+          expenseType: fileData.expenseType
         },
       }));
       var invoice_items = fileData.items.map((item) => {
@@ -1033,7 +1023,9 @@ export default function CreateInvoice(props) {
         attachments: invoice_attachments,
       }));
       getPos(fileData.organizationId);
+      if(!isVendor){
       getReceipts(fileData.po);
+      }
       setIsCreateInvoice(true);
     }
   };

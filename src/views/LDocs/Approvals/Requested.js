@@ -265,6 +265,7 @@ export default function ApprovalRequested() {
     setIsViewing(false);
     setValidateModal(false);
     setIsAdvanceView(false);
+    getRequests();
     setAnimateTable(true);
     setAnimateAdvanceView(false);
     setAnimatePdf(false);
