@@ -92,7 +92,7 @@ export default function SignatureStamp() {
                 <CardBody profile>
                   {signIsLoaded ? (
                     <a href="#signature" onClick={(e) => e.preventDefault()}>
-                      <img style={{maxWidth:400}} src={signature} alt="..." />
+                      <img style={{maxWidth:400,height:300}} src={signature} alt="..." />
                     </a>
                   ) : (
                     <CircularProgress disableShrink />
@@ -112,7 +112,7 @@ export default function SignatureStamp() {
                 <CardBody profile>
                   {stampIsLoaded ? (
                     <a href="#stamp" onClick={(e) => e.preventDefault()}>
-                      <img  style={{maxWidth:400}} src={stamp} alt="..." />
+                      <img  style={{maxWidth:400,height:300}} src={stamp} alt="..." />
                     </a>
                   ) : (
                     <CircularProgress disableShrink />
