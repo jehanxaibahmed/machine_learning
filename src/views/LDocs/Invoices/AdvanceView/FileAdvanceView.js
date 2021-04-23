@@ -127,7 +127,7 @@ export default function FileAdvanceView (props) {
 
   //Get QrR Code
   const getQrCode = async () => {
-    await QRCode.toDataURL(fileData.invoiceId)
+    await QRCode.toDataURL(`https://app.matesol.net/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`)
       .then((url) => {
         setQrCode(url);
       })
@@ -534,7 +534,7 @@ export default function FileAdvanceView (props) {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} lg={12}>
                     <CopyToClipboard
-                      text={fileData.invoiceId}
+                      text={`https://app.matesol.net/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`}
                       onCopy={() => {
                         setIsCopied(!isCopied);
                       }}
@@ -544,7 +544,7 @@ export default function FileAdvanceView (props) {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} lg={12}>
                     <CopyToClipboard
-                      text={fileData.invoiceId}
+                      text={`https://app.matesol.net/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`}
                       onCopy={() => {
                         setIsCopied(!isCopied);
                       }}
