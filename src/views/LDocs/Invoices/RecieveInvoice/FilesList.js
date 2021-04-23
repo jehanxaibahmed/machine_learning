@@ -264,6 +264,7 @@ export default function FilesList(props) {
     setQrModal(false);
     setIsViewing(false);
     setIsViewingBlockChainView(false);
+    getMyFiles(userDetail, false);
     setAnimateTable(true);
     setAnimatePdf(false);
     setAnimateBlockChain(false);
