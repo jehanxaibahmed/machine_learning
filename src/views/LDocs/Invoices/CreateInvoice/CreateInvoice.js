@@ -960,11 +960,10 @@ export default function CreateInvoice(props) {
       orgs = orgs || formState.organizations;
       let org = orgs.find(o => o.organizationId == fileData.organizationId);
       let vendor = formState.vendors.find((v) => v._id == fileData.vendorId);
-      console.log(org);
+      console.log(vendor);
       setFormState((formState) => ({
         ...formState,
         selectedVendor: fileData.vendorId,
-        selectedOrg: isVendor ? org || null : null,
         isPo: fileData.isPo,
         isReceipt: fileData.isReceipt,
         isPeetyCash: fileData.isPettyCash,
@@ -985,9 +984,10 @@ export default function CreateInvoice(props) {
           currency: fileData.FC_currency._id || currency,
           paymentTerms: `NET-${fileData.paymentTerms}`,
           poNumber: fileData.po,
-          selectedVendor: !isVendor ? vendor || null : null,
+          selectedVendor: !isVendor ? formState.vendors.find((v) => v._id == fileData.vendorId) || null : null,
           expenseType: fileData.expenseType
         },
+        selectedOrg: isVendor ? org || null : null,
       }));
       var invoice_items = fileData.items.map((item) => {
         const i = {
