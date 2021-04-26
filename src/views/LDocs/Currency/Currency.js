@@ -56,6 +56,7 @@ export default function Currency() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+    const userDetails = jwt.decode(Token);
   const dispatch = useDispatch();
   const classes = useStyles();
   const [isLoading, setIsLoading] = React.useState(true);
@@ -65,7 +66,9 @@ export default function Currency() {
   const [animateTableView, setAnimateTableView] = React.useState(true);
   const [animateTable, setAnimateTable] = React.useState(true);
   const [state, setState] = React.useState({
-    currencies: []
+    currencies: [],
+    editIndex:null,
+    baseCurrency:null
   });
 
   React.useEffect(() => {
@@ -136,18 +139,26 @@ export default function Currency() {
           const orgs = response.data;
           setOrganizations(orgs);
           setOrganizationFilter(orgs[0]);
-          getCurrency(orgs[0]._id);
+          getCurrency(orgs[0]);
         } else {
           const orgs = response.data.filter(
             (org) => org._id == user.orgDetail.organizationId
           );
           setOrganizations(orgs);
-          getCurrency(orgs[0]._id);
+          getCurrency(orgs[0]);
           setOrganizationFilter(orgs[0]);
         }
       }
     }, 500);
   };
+
+  const setEditIndex = (event) => {
+    setState({
+      ...state,
+      editIndex: event.target.id,
+    });
+    console.log('Index Set' , event.target.id);
+  }
 
   const handleChange = (event) => {
     let currencies = state.currencies;
@@ -170,14 +181,15 @@ export default function Currency() {
   const getCurrency = (org) => {
     axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/GetOrgCurrencies/${org}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/GetOrgCurrencies/${org._id}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
-        console.log(response);
+        const baseCurrency = response.data.find(o=>o._id == org.Currency_Base);
        setState({
          ...state,
-          currencies:response.data
+          currencies:response.data,
+          baseCurrency:baseCurrency
        })
         setIsLoading(false);
       })
@@ -215,7 +227,7 @@ export default function Currency() {
     <div>
       {alert}
       <GridContainer justify="center">
-        <GridItem xs={12} sm={12} md={12} lg={12}>
+        <GridItem xs={12} sm={12} md={6} lg={6}>
           <Card>
             <CardHeader color="info" icon>
               <CardIcon color="info">
@@ -265,6 +277,55 @@ export default function Currency() {
             </CardBody>
           </Card>
         </GridItem>
+        <GridItem xs={12} sm={12} md={6} lg={6}>
+          <Card>
+            <CardHeader color="info" icon>
+              <CardIcon color="info">
+                <h4 className={classes.cardTitleText}>Base Currency</h4>
+              </CardIcon>
+            </CardHeader>
+            <CardBody>
+              <GridItem
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              >
+                <TextField
+                  className={classes.textField}
+                  fullWidth={true}
+                  label={`Base Currency of ${organizationFilter.organizationName}`}
+                  select
+                  disabled={true}
+                  value={organizationFilter && organizationFilter.Currency_Base || ""}
+                >
+                  <MenuItem
+                    disabled
+                    classes={{
+                      root: classes.selectMenuItem,
+                    }}
+                  >
+                    Choose Organization Base Currency
+                  </MenuItem>
+                  {/* {userDetails.isTenant ? (
+                    <MenuItem value={'SHOW ALL'}>
+                      SHOW ALL
+                    </MenuItem>) : ''} */}
+                  {state.currencies.map((cu, index) => {
+                    return (
+                      <MenuItem
+                      key={cu._id} 
+                      value={cu._id}>
+                      {`${cu.Currency.toUpperCase()} (${cu.Symbol})`} 
+                    </MenuItem>
+                    );
+                  })}
+                </TextField>
+              </GridItem>
+            </CardBody>
+          </Card>
+        </GridItem>
       </GridContainer>
       {animateTableView ? (
         <Animated
@@ -296,10 +357,11 @@ export default function Currency() {
                               <TextField
                                 variant="outlined"
                                 id={index}
+                                onClick={setEditIndex}
                                 onChange={handleChange}
                                 name="rate"
                                 type="number"
-                                value={parseFloat(prop.conversionRate) || 0.00}
+                                value={state.editIndex == index ? parseFloat(prop.conversionRate) : parseFloat(prop.conversionRate).toFixed(2)}
                               />
                             </div>
                           ),
@@ -335,7 +397,7 @@ export default function Currency() {
                           accessor: "active",
                         },
                         {
-                          Header: "",
+                          Header: "Conversion Rate",
                           accessor: "rate",
                         },
                       ]}

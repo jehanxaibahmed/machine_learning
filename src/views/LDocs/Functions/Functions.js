@@ -363,6 +363,14 @@ export const validateInvoice = async (row, Token) => {
   });
 };
 
+export const conversionRate = (fc, bc, currencies, amount) => {
+  const bC = currencies.find(c=>c._id == bc);
+  const fC = currencies.find(c=>c._id == fc);
+  const bcSymbol = bC ? bC.Symbol : "";
+  const fcRate = fC ? fC.conversionRate : "";
+  return fc !== bc ? ` (${bcSymbol} ${parseFloat(fcRate*amount).toFixed(2)})` : "";
+}
+
 export const appendScript = (scriptToAppend) => {
   const script = document.createElement("script");
   script.src = scriptToAppend;

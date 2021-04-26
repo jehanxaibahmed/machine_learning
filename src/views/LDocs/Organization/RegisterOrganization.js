@@ -289,13 +289,14 @@ export default function Register(props) {
   const getLookUp = () => {
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/getLookups/1`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/GetAllCurrencies`,
       headers: {
         cooljwt: Token,
       },
     }).then(res=>{
-      if(typeof res.data.result == 'object' ){
-        setCurrencyLookups(res.data.result);
+      console.log(res.data);
+      if(typeof res.data == 'object' ){
+        setCurrencyLookups(res.data);
       };
     }).catch(err=>{
       console.log(err);
@@ -568,7 +569,7 @@ export default function Register(props) {
                         <MenuItem
                           key={cu._id} 
                           value={cu._id}>
-                          {cu.Name.toUpperCase()}
+                          {`${cu.Currency.toUpperCase()} (${cu.Symbol})`} 
                         </MenuItem>
                       ))
                      }

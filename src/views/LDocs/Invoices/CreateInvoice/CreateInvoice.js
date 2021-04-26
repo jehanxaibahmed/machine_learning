@@ -15,7 +15,7 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
-  Backdrop
+  Backdrop,
 } from "@material-ui/core";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { Redirect } from "react-router-dom";
@@ -46,7 +46,11 @@ import ScanningDocumentAnimation from "components/ScanningDocumentAnimation/Scan
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import Attachments from "./Attachments";
 import Items from "./Items";
-import { addZeroes, formatDateTime } from "../../Functions/Functions";
+import {
+  addZeroes,
+  conversionRate,
+  formatDateTime,
+} from "../../Functions/Functions";
 import { Add, Person, Visibility, VisibilityOff } from "@material-ui/icons";
 import Step1 from "../../Vendor/steps/level1";
 import { defaultCurrency, VendorSites } from "./GlobalValues";
@@ -77,8 +81,8 @@ const styles = makeStyles((theme) => ({
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
-    color: '#fff',
-  }
+    color: "#fff",
+  },
 }));
 
 let pdfInput = React.createRef();
@@ -100,7 +104,7 @@ export default function CreateInvoice(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { edit, fileData, closeModal } = props;
   const [pdfModal, setPdfModal] = useState(false);
   const [isMarked, setIsMarked] = useState(false);
@@ -132,7 +136,9 @@ export default function CreateInvoice(props) {
   let duedate = new Date();
   let today = new Date();
   duedate = duedate.setDate(today.getDate() + 15);
-  const isVendor = jwt.decode(Token).isVendor;
+  const userDetails = jwt.decode(Token);
+  const isVendor = userDetails.isVendor;
+  const baseCurrency = !isVendor ? userDetails.currency.Currency_Base : "";
   const [formState, setFormState] = useState({
     vendors: [],
     organizations: [],
@@ -203,23 +209,30 @@ export default function CreateInvoice(props) {
     },
   });
   const getLookUp = () => {
+    const organizationId = !isVendor
+      ? userDetails.orgDetail.organizationId
+      : formState.values.organizationId;
     //Get Currencies
-    axios({
-      method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/getLookups/1`,
-      headers: {
-        cooljwt: Token,
-      },
-    })
-      .then((res) => {
-        if (typeof res.data.result == "object") {
-          setCurrencyLookups(res.data.result);
-        }
+    if (organizationId) {
+      axios({
+        method: "get", //you can set what request you want to be
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/GetOrgCurrencies/${organizationId}`,
+        headers: {
+          cooljwt: Token,
+        },
       })
-      .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
-        console.log(error);
-      });
+        .then((res) => {
+          if (typeof res.data == "object") {
+            setCurrencyLookups(res.data);
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
+          console.log(error);
+        });
+    }
     //Get ExpenseTypes
     axios({
       method: "get", //you can set what request you want to be
@@ -235,7 +248,9 @@ export default function CreateInvoice(props) {
         }));
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(error);
       });
   };
@@ -246,8 +261,9 @@ export default function CreateInvoice(props) {
       url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
         organizationId: isVendor
-          ? formState.selectedOrg ?  
-          formState.selectedOrg._id : orgId
+          ? formState.selectedOrg
+            ? formState.selectedOrg._id
+            : orgId
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
       },
@@ -256,11 +272,12 @@ export default function CreateInvoice(props) {
       },
     })
       .then((res) => {
-        console.log(res.data);
         setPos(res.data);
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(error);
         setPos([]);
       });
@@ -322,7 +339,9 @@ export default function CreateInvoice(props) {
         setReceipts(res.data);
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(error);
         setReceipts([]);
       });
@@ -345,8 +364,8 @@ export default function CreateInvoice(props) {
           isReceipt: false,
           isPrePayment: false,
           isPeetyCash: true,
-          isPo:false,
-          isExpense:false
+          isPo: false,
+          isExpense: false,
         }));
       }
       if (event.target.value == "isPrePayment") {
@@ -361,8 +380,8 @@ export default function CreateInvoice(props) {
     if (event.target.name == "isPo") {
       setFormState((formState) => ({
         ...formState,
-        isPo: event.target.value == "isPo" && !formState.isPo ,
-        isExpense: event.target.value == "isExpense" && !formState.isExpense ,
+        isPo: event.target.value == "isPo" && !formState.isPo,
+        isExpense: event.target.value == "isExpense" && !formState.isExpense,
       }));
     }
     if (event.target.name == "poNumber") {
@@ -415,7 +434,9 @@ export default function CreateInvoice(props) {
           successAlert("Receipt Has Been Generated In Oracle Fusion.");
         })
         .catch((error) => {
-          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
           console.log(error);
           errorAlert("Unable To Generate RECEIPT.");
         });
@@ -709,11 +730,15 @@ export default function CreateInvoice(props) {
               invoice_tax: invoice_tax,
               invoice_supplier: invoice_supplier,
             };
-            let vendor = formState.vendors ? formState.vendors.find(
-              (v) => v.level1.vendorName == invoice_companyowner
-            ) : null;
+            let vendor = formState.vendors
+              ? formState.vendors.find(
+                  (v) => v.level1.vendorName == invoice_companyowner
+                )
+              : null;
             let vendorId = !isVendor
-              ? vendor ? vendor._id : null
+              ? vendor
+                ? vendor._id
+                : null
               : userData.id;
             setFormState((formState) => ({
               ...formState,
@@ -723,9 +748,7 @@ export default function CreateInvoice(props) {
                 invoiceDate: invoice_date,
                 dueDate: invoice_duedate,
                 overallTax: addZeroes(invoice_tax),
-                selectedVendor: !isVendor && vendor 
-                  ? vendor 
-                  : null,
+                selectedVendor: !isVendor && vendor ? vendor : null,
               },
             }));
 
@@ -803,8 +826,17 @@ export default function CreateInvoice(props) {
     if (error) {
       return false;
     } else {
+      getLookUp();
       getPos();
       setVendorModal(false);
+      console.log(formState.selectedOrg);
+      setFormState((formState) => ({
+        ...formState,
+        values: {
+          ...formState.values,
+          currency: formState.selectedOrg.currency,
+        },
+      }));
     }
   };
 
@@ -902,7 +934,9 @@ export default function CreateInvoice(props) {
           setIsLoading(false);
         })
         .catch((error) => {
-          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
           console.log(error);
         });
     } else {
@@ -924,7 +958,9 @@ export default function CreateInvoice(props) {
             }));
           })
           .catch((error) => {
-            if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+            if (error.response) {
+              error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            }
             console.log(error);
           });
       }
@@ -944,7 +980,9 @@ export default function CreateInvoice(props) {
           setInvoice(orgs);
         })
         .catch((error) => {
-          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
           console.log(error);
         });
     }
@@ -958,7 +996,7 @@ export default function CreateInvoice(props) {
   const setInvoice = (orgs) => {
     if (edit) {
       orgs = orgs || formState.organizations;
-      let org = orgs.find(o => o.organizationId == fileData.organizationId);
+      let org = orgs.find((o) => o.organizationId == fileData.organizationId);
       let vendor = formState.vendors.find((v) => v._id == fileData.vendorId);
       console.log(vendor);
       setFormState((formState) => ({
@@ -984,8 +1022,10 @@ export default function CreateInvoice(props) {
           currency: fileData.FC_currency._id || currency,
           paymentTerms: `NET-${fileData.paymentTerms}`,
           poNumber: fileData.po,
-          selectedVendor: !isVendor ? formState.vendors.find((v) => v._id == fileData.vendorId) || null : null,
-          expenseType: fileData.expenseType
+          selectedVendor: !isVendor
+            ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
+            : null,
+          expenseType: fileData.expenseType,
         },
         selectedOrg: isVendor ? org || null : null,
       }));
@@ -1024,8 +1064,8 @@ export default function CreateInvoice(props) {
         attachments: invoice_attachments,
       }));
       getPos(fileData.organizationId);
-      if(!isVendor){
-      getReceipts(fileData.po);
+      if (!isVendor) {
+        getReceipts(fileData.po);
       }
       setIsCreateInvoice(true);
     }
@@ -1042,7 +1082,7 @@ export default function CreateInvoice(props) {
         { name: "Date of Expiry", value: formatDateTime(po.dateOfExpiry) },
         {
           name: "PO Amount:",
-          value: `${currency.sign + addZeroes(po.poAmount)}`,
+          value: `${currency.Symbol + addZeroes(po.poAmount)}`,
         },
         { name: "Partial Delivery:", value: po.partialDelivery ? "YES" : "NO" },
       ]);
@@ -1532,10 +1572,14 @@ export default function CreateInvoice(props) {
         }
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         setIsSavingInvoice(false);
         errorAlert(
-          error.message ? error.message : "There is some Issue In Create Invoice"
+          error.message
+            ? error.message
+            : "There is some Issue In Create Invoice"
         );
       });
   };
@@ -1748,7 +1792,7 @@ export default function CreateInvoice(props) {
                             select
                           >
                             <MenuItem value={1}>
-                              Amount ({currency.sign || "$"})
+                              Amount ({currency.Symbol || "$"})
                             </MenuItem>
                             <MenuItem value={2}>Percentage (%)</MenuItem>
                           </TextField>
@@ -1841,7 +1885,7 @@ export default function CreateInvoice(props) {
                             select
                           >
                             <MenuItem value={1}>
-                              Amount ({currency.sign || "$"})
+                              Amount ({currency.Symbol || "$"})
                             </MenuItem>
                             <MenuItem value={2}>Percentage (%)</MenuItem>
                           </TextField>
@@ -2406,8 +2450,7 @@ export default function CreateInvoice(props) {
                               }}
                             >
                               {formState.values.selectedVendor &&
-                                formState.values.selectedVendor.level1
-                                  .logoUrl ? (
+                              formState.values.selectedVendor.level1.logoUrl ? (
                                 <img
                                   src={
                                     formState.values.selectedVendor.level1
@@ -2454,16 +2497,16 @@ export default function CreateInvoice(props) {
                             </GridItem>
                           </GridContainer>
                         )}
-                      </Card>    
-                        <GridItem
-                          xs={12}
-                          sm={12}
-                          md={12}
-                          lg={12}
-                          style={{ marginTop: "10px", marginBottom: "10px" }}
-                        >
-                          <FormGroup row>
-                            <React.Fragment>
+                      </Card>
+                      <GridItem
+                        xs={12}
+                        sm={12}
+                        md={12}
+                        lg={12}
+                        style={{ marginTop: "10px", marginBottom: "10px" }}
+                      >
+                        <FormGroup row>
+                          <React.Fragment>
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -2476,39 +2519,37 @@ export default function CreateInvoice(props) {
                               }
                               label="Pre-Payment"
                             />
-                             {!isVendor ? (
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  checked={
-                                   formState.isReceipt
-                                  }
-                                  onChange={handleChange}
-                                  name="invoiceType"
-                                  value="isReceipt"
-                                  color="primary"
-                                />
-                              }
-                              label="With Receipt"
-                            />
+                            {!isVendor ? (
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={formState.isReceipt}
+                                    onChange={handleChange}
+                                    name="invoiceType"
+                                    value="isReceipt"
+                                    color="primary"
+                                  />
+                                }
+                                label="With Receipt"
+                              />
                             ) : (
                               ""
                             )}
-                            </React.Fragment>  
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  checked={formState.isPeetyCash}
-                                  onChange={handleChange}
-                                  value="isPeetyCash"
-                                  name="invoiceType"
-                                  color="primary"
-                                />
-                              }
-                              label="Petty Cash"
-                            />
-                          </FormGroup>
-                        </GridItem>
+                          </React.Fragment>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={formState.isPeetyCash}
+                                onChange={handleChange}
+                                value="isPeetyCash"
+                                name="invoiceType"
+                                color="primary"
+                              />
+                            }
+                            label="Petty Cash"
+                          />
+                        </FormGroup>
+                      </GridItem>
                     </GridItem>
                     <GridItem
                       xs={12}
@@ -2644,7 +2685,7 @@ export default function CreateInvoice(props) {
                             </MenuItem>
                             {currencyLookups.map((cu) => (
                               <MenuItem key={cu._id} value={cu._id}>
-                                {cu.Name.toUpperCase()}
+                                {`${cu.Currency.toUpperCase()} (${cu.Symbol})`}
                               </MenuItem>
                             ))}
                           </TextField>
@@ -2910,7 +2951,7 @@ export default function CreateInvoice(props) {
                     </GridItem>
                   </GridContainer>
                   <GridContainer>
-                  <GridItem
+                    <GridItem
                       style={{
                         marginBottom: "40px",
                         marginTop: "10px",
@@ -2933,9 +2974,10 @@ export default function CreateInvoice(props) {
                             component="h2"
                             variant="body2"
                             style={{
-                              color: '#000000',
+                              color: "#000000",
                               fontWeight: 500,
-                              lineHeight: '1.5rem'}}
+                              lineHeight: "1.5rem",
+                            }}
                           >
                             Invoice Description
                           </Typography>
@@ -2980,8 +3022,10 @@ export default function CreateInvoice(props) {
                       pos={pos}
                       isVendor={isVendor}
                       createReceipts={createReceipts}
+                      currencyLookups={currencyLookups}
+                      userData={userDetails}
                     />
-                    
+
                     <GridItem
                       style={{
                         marginTop: "40px",
@@ -3004,9 +3048,10 @@ export default function CreateInvoice(props) {
                             component="h2"
                             variant="body2"
                             style={{
-                              color: '#000000',
+                              color: "#000000",
                               fontWeight: 500,
-                              lineHeight: '1.5rem'}}
+                              lineHeight: "1.5rem",
+                            }}
                           >
                             Attachments
                           </Typography>
@@ -3042,10 +3087,19 @@ export default function CreateInvoice(props) {
                         >
                           <TableBody>
                             <TableRow>
-                              <TableCell>Sub Total</TableCell>
+                              <TableCell>
+                                Sub Total
+                                <br />
+                                {conversionRate(
+                                  formState.values.currency,
+                                  baseCurrency,
+                                  currencyLookups,
+                                  parseFloat(formState.values.subtotal)
+                                )}
+                              </TableCell>
                               <TableCell>
                                 <TextField
-                                  label={`Sub Total(${currency.sign || "$"})`}
+                                  label={`Sub Total(${currency.Symbol || "$"})`}
                                   id="subtotal"
                                   name="subtotal"
                                   disabled={true}
@@ -3064,10 +3118,23 @@ export default function CreateInvoice(props) {
                                 onClick={() => setIsDiscountModel(true)}
                               >
                                 Discount
+                                <br />
+                                {conversionRate(
+                                  formState.values.currency,
+                                  baseCurrency,
+                                  currencyLookups,
+                                  parseFloat(
+                                    formState.values.discountType == 1
+                                      ? formState.values.overallDiscount
+                                      : (formState.values.subtotal *
+                                          formState.values.overallDiscount) /
+                                          100
+                                  )
+                                )}
                               </TableCell>
                               <TableCell>
                                 <TextField
-                                  label={`Discount(${currency.sign || "$"})`}
+                                  label={`Discount(${currency.Symbol || "$"})`}
                                   id="discount"
                                   name="overallDiscount"
                                   onChange={(event) => {
@@ -3095,10 +3162,23 @@ export default function CreateInvoice(props) {
                                 onClick={() => setIsTaxModal(true)}
                               >
                                 Tax / VAT
+                                <br />
+                                {conversionRate(
+                                  formState.values.currency,
+                                  baseCurrency,
+                                  currencyLookups,
+                                  parseFloat(
+                                    formState.values.taxType == 1
+                                      ? formState.values.overallTax
+                                      : (formState.values.subtotal *
+                                          formState.values.overallTax) /
+                                          100
+                                  )
+                                )}
                               </TableCell>
                               <TableCell>
                                 <TextField
-                                  label={`Tax(${currency.sign || "$"})`}
+                                  label={`Tax(${currency.Symbol || "$"})`}
                                   id="tax"
                                   name="overallTax"
                                   onChange={(event) => {
@@ -3123,14 +3203,21 @@ export default function CreateInvoice(props) {
                             <TableRow>
                               <TableCell component="th" scope="row">
                                 Total
+                                  <br />
+                                {conversionRate(
+                                  formState.values.currency,
+                                  baseCurrency,
+                                  currencyLookups,
+                                  parseFloat(formState.values.total)
+                                )}
                               </TableCell>
                               <TableCell component="th" scope="row">
                                 <TextField
-                                  label={`Total(${currency.sign || "$"})`}
+                                  label={`Total(${currency.Symbol || "$"})`}
                                   id="total"
                                   name="total"
                                   disabled={true}
-                                  type="number"
+                                  type="text"
                                   variant="outlined"
                                   value={
                                     addZeroes(formState.values.total) || ""
@@ -3195,11 +3282,11 @@ export default function CreateInvoice(props) {
             </GridItem>
           </GridContainer>
         </Animated>
-      ) : 
+      ) : (
         <Backdrop className={classes.backdrop} open={!isCreateInvoice}>
-          <CircularProgress  color="inherit" />
+          <CircularProgress color="inherit" />
         </Backdrop>
-        }
+      )}
       {viewFile ? (
         <Animated
           animationIn="bounceInRight"

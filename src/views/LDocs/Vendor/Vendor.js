@@ -208,12 +208,12 @@ export default function Vendor() {
     return new Promise((res, rej) => {
        axios({
         method: "get", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/getLookups/1`,
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/GetAllCurrencies`,
         headers: {
           cooljwt: Token,
         },
       }).then(response=>{
-          res(response.data.result);
+          res(response.data);
       }).catch(err=>{
         console.log(err);
         rej([]);
@@ -239,7 +239,7 @@ export default function Vendor() {
               id:  `V-00${index+1}`,
               vendorName: prop.level1.vendorName,
               //organizationName: prop.organizationName,
-              currency: currency ? currency.Name.toUpperCase() : prop.Currency_Base,
+              currency: currency ? `${currency.Currency.toUpperCase()} ${currency.Symbol}` : prop.Currency_Base,
               licenseNumber: prop.level1.licenseNumber,
               email: prop.level1.email,
               referenceTicket: prop.level1.referenceTicket,

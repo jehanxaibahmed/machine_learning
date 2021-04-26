@@ -123,13 +123,13 @@ const [OTP, setOTP] = React.useState("");
     const getLookUp = () => {
       axios({
         method: "get", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/getLookups/1`,
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/GetAllCurrencies`,
         headers: {
           cooljwt: Token,
         },
       }).then(res=>{
-        if(typeof res.data.result == 'object' ){
-          setCurrencyLookups(res.data.result);
+        if(typeof res.data == 'object' ){
+          setCurrencyLookups(res.data);
         };
       }).catch(err=>{
         console.log(err);
@@ -640,7 +640,7 @@ const [OTP, setOTP] = React.useState("");
                         <MenuItem
                           key={cu._id} 
                           value={cu._id}>
-                           {cu.Name.toUpperCase()}
+                          {`${cu.Currency.toUpperCase()} (${cu.Symbol})`} 
                         </MenuItem>
                       ))
                      }

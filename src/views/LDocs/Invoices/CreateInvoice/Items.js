@@ -31,6 +31,7 @@ import axios from "axios";
 import { Visibility } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
 import { setIsTokenExpired } from "actions/index";
+import { conversionRate } from "views/LDocs/Functions/Functions";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -75,7 +76,7 @@ export default function Items(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const Check = require("is-null-empty-or-undefined").Check;
 
   let {
@@ -100,8 +101,11 @@ export default function Items(props) {
     isVendor,
     createReceipts,
     receipts,
+    currencyLookups,
+    userData,
   } = props;
   const classes = useStyles();
+  const baseCurrency = !isVendor ? userData.currency.Currency_Base : "";
   const [lookups, setLookups] = useState([]);
   //getLookups
   const getLookUp = async () => {
@@ -117,7 +121,9 @@ export default function Items(props) {
           setLookups(response.data.result);
         })
         .catch((error) => {
-          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
           console.log(error);
           rej([]);
         });
@@ -143,12 +149,12 @@ export default function Items(props) {
               <StyledTableCell>#</StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell align="right">
-                Unit Cost ({currency.sign || "$"})
+                Unit Cost ({currency.Symbol || "$"})
               </StyledTableCell>
               <StyledTableCell align="right">Quantity</StyledTableCell>
               <StyledTableCell align="right">Discount (%)</StyledTableCell>
               <StyledTableCell align="right">
-                Amount ({currency.sign || "$"})
+                Amount ({currency.Symbol || "$"})
               </StyledTableCell>
               <StyledTableCell> </StyledTableCell>
             </TableRow>
@@ -248,7 +254,7 @@ export default function Items(props) {
                           handleChange(event);
                         }}
                         type="number"
-                        value={addZeroes(formState.values.discount) || 0.00}
+                        value={addZeroes(formState.values.discount) || 0.0}
                         className={classes.textField}
                       />
                     </StyledTableCell>
@@ -478,18 +484,26 @@ export default function Items(props) {
                             Expense Type
                           </MenuItem>
                           {formState.expenseTypes
-                                  ? formState.expenseTypes.map((exp, index) => (
-                                      <MenuItem key={index} value={exp.Name}>
-                                        {exp.Name}
-                                      </MenuItem>
-                                    ))
-                          : ""}
+                            ? formState.expenseTypes.map((exp, index) => (
+                                <MenuItem key={index} value={exp.Name}>
+                                  {exp.Name}
+                                </MenuItem>
+                              ))
+                            : ""}
                         </TextField>
                       </StyledTableCell>
-                  ) : (
-                    ""
-                  )}
-                    <StyledTableCell colSpan={!isVendor && formState.isPo || formState.isPeetyCash ? formState.isPrePayment && formState.isPo ? "8" : "5" : "8"}>
+                    ) : (
+                      ""
+                    )}
+                    <StyledTableCell
+                      colSpan={
+                        (!isVendor && formState.isPo) || formState.isPeetyCash
+                          ? formState.isPrePayment && formState.isPo
+                            ? "8"
+                            : "5"
+                          : "8"
+                      }
+                    >
                       <TextField
                         fullWidth={true}
                         error={formState.errors.additionalDetails === "error"}
@@ -516,7 +530,10 @@ export default function Items(props) {
                 <React.Fragment>
                   <StyledTableRow key={row.itemName}>
                     <StyledTableCell style={{ width: 100 }}>
-                      {row.receiptNumber.length < 1 && !isVendor && formState.isReceipt && formState.isPo ? (
+                      {row.receiptNumber.length < 1 &&
+                      !isVendor &&
+                      formState.isReceipt &&
+                      formState.isPo ? (
                         <Tooltip
                           title="Receipt Number is Missing.."
                           aria-label="edit"
@@ -542,8 +559,16 @@ export default function Items(props) {
                       {row.itemName}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {currency.sign}
+                      {`${currency.Symbol} `} 
                       {addZeroes(row.unitCost)}
+                      <sub>
+                      {conversionRate(
+                        currency._id,
+                        baseCurrency,
+                        currencyLookups,
+                        row.unitCost
+                      )}
+                      </sub>
                     </StyledTableCell>
                     <StyledTableCell align="right">
                       {addZeroes(row.quantity)}
@@ -552,8 +577,16 @@ export default function Items(props) {
                       {addZeroes(row.discount)}%
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {currency.sign}
+                      {`${currency.Symbol} `} 
                       {addZeroes(row.amount)}
+                      <sub>
+                      {conversionRate(
+                        currency._id,
+                        baseCurrency,
+                        currencyLookups,
+                        row.amount
+                      )}
+                      </sub>
                     </StyledTableCell>
                     <StyledTableCell style={{ width: 100 }} align="right">
                       <Tooltip title="Edit Item" aria-label="edit">
@@ -671,7 +704,7 @@ export default function Items(props) {
                         handleChange(event);
                       }}
                       type="number"
-                      value={formState.values.discount || 0.00}
+                      value={formState.values.discount || 0.0}
                       className={classes.textField}
                     />
                   </StyledTableCell>
@@ -873,44 +906,52 @@ export default function Items(props) {
                   ) : (
                     ""
                   )}
-                    {formState.isPeetyCash ? (
-                      <StyledTableCell style={{ paddingTop: 30 }} colSpan="3">
-                        <TextField
-                          className={classes.textField}
-                          fullWidth={true}
-                          error={formState.errors.inlineExpenseType === "error"}
-                          helperText={
-                            formState.errors.inlineExpenseType === "error"
-                              ? "Valid Expense Type required"
-                              : null
-                          }
-                          label="ExpenseType"
-                          id="inlineExpenseType"
-                          name="inlineExpenseType"
-                          onChange={(event) => {
-                            handleChange(event);
-                          }}
-                          // variant="outlined"
-                          value={formState.values.inlineExpenseType}
-                          // MenuProps={MenuProps}
-                          select
-                        >
-                          <MenuItem disabled={true} key={"disabled"}>
-                            Expense Type
-                          </MenuItem>
-                          {formState.expenseTypes
-                                  ? formState.expenseTypes.map((exp, index) => (
-                                      <MenuItem key={index} value={exp.Name}>
-                                        {exp.Name}
-                                      </MenuItem>
-                                    ))
+                  {formState.isPeetyCash ? (
+                    <StyledTableCell style={{ paddingTop: 30 }} colSpan="3">
+                      <TextField
+                        className={classes.textField}
+                        fullWidth={true}
+                        error={formState.errors.inlineExpenseType === "error"}
+                        helperText={
+                          formState.errors.inlineExpenseType === "error"
+                            ? "Valid Expense Type required"
+                            : null
+                        }
+                        label="ExpenseType"
+                        id="inlineExpenseType"
+                        name="inlineExpenseType"
+                        onChange={(event) => {
+                          handleChange(event);
+                        }}
+                        // variant="outlined"
+                        value={formState.values.inlineExpenseType}
+                        // MenuProps={MenuProps}
+                        select
+                      >
+                        <MenuItem disabled={true} key={"disabled"}>
+                          Expense Type
+                        </MenuItem>
+                        {formState.expenseTypes
+                          ? formState.expenseTypes.map((exp, index) => (
+                              <MenuItem key={index} value={exp.Name}>
+                                {exp.Name}
+                              </MenuItem>
+                            ))
                           : ""}
-                        </TextField>
-                      </StyledTableCell>
+                      </TextField>
+                    </StyledTableCell>
                   ) : (
                     ""
                   )}
-                    <StyledTableCell colSpan={!isVendor && formState.isPo || formState.isPeetyCash ? formState.isPrePayment && formState.isPo ? "8" : "5" : "8"}>
+                  <StyledTableCell
+                    colSpan={
+                      (!isVendor && formState.isPo) || formState.isPeetyCash
+                        ? formState.isPrePayment && formState.isPo
+                          ? "8"
+                          : "5"
+                        : "8"
+                    }
+                  >
                     <TextField
                       fullWidth={true}
                       error={formState.errors.additionalDetails === "error"}

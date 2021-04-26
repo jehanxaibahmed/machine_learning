@@ -75,12 +75,12 @@ export default function Organization() {
     return new Promise((res, rej) => {
        axios({
         method: "get", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/getLookups/1`,
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/lookup/GetAllCurrencies`,
         headers: {
           cooljwt: Token,
         },
       }).then(response=>{
-          res(response.data.result);
+          res(response.data);
       }).catch(err=>{
         console.log(err);
         rej([]);
@@ -105,7 +105,7 @@ export default function Organization() {
              tradeLicenseNumber: prop.tradeLicenseNumber,
              primaryBusinessRepresentative: prop.primaryBusinessRepresentative,
              referenceTicket: prop.referenceTicket,
-             currency_Base: currency ? currency.Name.toUpperCase() : prop.Currency_Base ,
+             currency_Base: currency ? `${currency.Currency.toUpperCase()} ${currency.Symbol}` : prop.Currency_Base ,
              actions: (
                <div className="actions-right">
                  <Tooltip title="Update Level 1" aria-label="updateOrganization">
