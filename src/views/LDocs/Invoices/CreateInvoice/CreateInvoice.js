@@ -1304,14 +1304,14 @@ export default function CreateInvoice(props) {
           formState.values.currency,
           baseCurrency,
           currencyLookups,
-          formState.values.unitCost,
+          parseFloat(formState.values.unitCost),
           true
         ),
         amount_bc:conversionRate(
           formState.values.currency,
           baseCurrency,
           currencyLookups,
-          amount,
+          parseFloat(amount),
           true
         ),
         amount:amount,
@@ -1525,28 +1525,28 @@ export default function CreateInvoice(props) {
         formState.values.currency,
         baseCurrency,
         currencyLookups,
-        formState.values.subtotal,
+        parseFloat(formState.values.subtotal),
         true
       ),
       discountAmt_bc:conversionRate(
         formState.values.currency,
         baseCurrency,
         currencyLookups,
-        discountAmt,
+        parseFloat(discountAmt),
         true
       ),
       taxAmt_bc:conversionRate(
         formState.values.currency,
         baseCurrency,
         currencyLookups,
-        taxAmt,
+        parseFloat(taxAmt),
         true
       ),
       netAmt_bc:conversionRate(
         formState.values.currency,
         baseCurrency,
         currencyLookups,
-        formState.values.total,
+        parseFloat(formState.values.total),
         true
       )
     };
