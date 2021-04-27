@@ -446,6 +446,10 @@ export default function FilesList(props) {
           netAmt: (
             <MenuProvider data={prop} id="menu_id">
               {`${prop.FC_currency.sign}${addZeroes(prop.netAmt)}`}
+              <br />
+              <small>
+              {prop.FC_currency && prop.LC_currency ? prop.FC_currency._id !== prop.LC_currency._id ? `(${prop.LC_currency.sign || ""} ${prop.netAmt_bc || '0.00'})`: "":""}
+              </small>
             </MenuProvider>
           ),
           version: (
@@ -737,13 +741,12 @@ export default function FilesList(props) {
       data: { organizationId : userDetail.orgDetail.organizationId },
       headers: {
         cooljwt: Token,
-        responseType: 'blob', //important
+        // responseType: 'blob', 
       },
     })
       .then((response) => {
         console.log(response);
-        const downloadUrl = window.URL.createObjectURL(new Blob([data]));
-        console.log(downloadUrl);
+        const downloadUrl = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.path}`;
         const link = document.createElement('a');
         link.href = downloadUrl;
         link.setAttribute('download', "File.csv"); //any other extension
