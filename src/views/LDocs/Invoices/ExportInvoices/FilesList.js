@@ -446,7 +446,16 @@ export default function ExportList(props) {
           ),
           netAmt: (
             <MenuProvider data={prop} id="menu_id">
-              {`${prop.FC_currency.sign}${addZeroes(prop.netAmt)}`}
+              {`${prop.FC_currency.Symbol}${addZeroes(prop.netAmt)}`}
+              <br />
+              <small>
+                {prop.FC_currency && prop.LC_currency
+                  ? prop.FC_currency._id !== prop.LC_currency._id
+                    ? `(${prop.LC_currency.Symbol || ""} ${prop.netAmt_bc ||
+                        "0.00"})`
+                    : ""
+                  : ""}
+              </small>
             </MenuProvider>
           ),
           version: (

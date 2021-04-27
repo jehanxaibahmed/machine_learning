@@ -62,16 +62,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const sweetAlertStyle = makeStyles(styles2);
-export default function FileAdvanceView (props) {
+export default function FileAdvanceView(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-      const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const decoded = jwt.decode(Token);
   const classes = useStyle();
   const isVendor = props.isVendor;
-  console.log("IS VENDOR ",isVendor);
+  console.log("IS VENDOR ", isVendor);
   const classesList = useStyles();
   const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -99,7 +99,9 @@ export default function FileAdvanceView (props) {
         }
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(error);
         setBlockChainData([]);
       });
@@ -119,7 +121,9 @@ export default function FileAdvanceView (props) {
         }
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(error);
         setPaymentData([]);
       });
@@ -127,12 +131,16 @@ export default function FileAdvanceView (props) {
 
   //Get QrR Code
   const getQrCode = async () => {
-    await QRCode.toDataURL(`https://app.matesol.net/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`)
+    await QRCode.toDataURL(
+      `https://app.matesol.net/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`
+    )
       .then((url) => {
         setQrCode(url);
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.error(error);
       });
   };
@@ -152,7 +160,9 @@ export default function FileAdvanceView (props) {
         }
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(error);
         setWorkflow([]);
       });
@@ -186,7 +196,8 @@ export default function FileAdvanceView (props) {
       >
         {msg}
         <br />
-        Unable To Review Invoice Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
+        Unable To Review Invoice Please Contact{" "}
+        {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
       </SweetAlert>
     );
   };
@@ -217,7 +228,9 @@ export default function FileAdvanceView (props) {
         setVersions(response.data);
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(error);
       });
   };
@@ -250,22 +263,23 @@ export default function FileAdvanceView (props) {
     axios({
       method: "post", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
-      data: { 
-        invoiceId:fileData.invoiceId,
-        version:fileData.version,
-        vendorId:fileData.vendorId
-       },
-    headers: {
-      cooljwt: Token,
-    },
-  })
-    .then((invoiceRes) => {
-      const invoice = invoiceRes.data;
-      setFileData(invoice);
-      loadFunctions();
-    }).catch((er)=>{
-      console.log(err);
+      data: {
+        invoiceId: fileData.invoiceId,
+        version: fileData.version,
+        vendorId: fileData.vendorId,
+      },
+      headers: {
+        cooljwt: Token,
+      },
     })
+      .then((invoiceRes) => {
+        const invoice = invoiceRes.data;
+        setFileData(invoice);
+        loadFunctions();
+      })
+      .catch((er) => {
+        console.log(err);
+      });
     successAlert(`Invoice is ${event}ed Successfully`);
   };
   //Load All Functions
@@ -328,7 +342,7 @@ export default function FileAdvanceView (props) {
                 size="small"
                 clickable={
                   step.EventStatus == "pending" &&
-                  ind+1 == blockChainData.length &&
+                  ind + 1 == blockChainData.length &&
                   step.EventFor == decoded.email
                     ? true
                     : false
@@ -336,7 +350,11 @@ export default function FileAdvanceView (props) {
                 style={{
                   float: "right",
                   color: "white",
-                  cursor : step.EventStatus == "pending" && ind+1 == blockChainData.length ? 'pointer': '',
+                  cursor:
+                    step.EventStatus == "pending" &&
+                    ind + 1 == blockChainData.length
+                      ? "pointer"
+                      : "",
                   background:
                     step.EventStatus == "pending"
                       ? "#c1a12f"
@@ -344,7 +362,12 @@ export default function FileAdvanceView (props) {
                       ? "green"
                       : "red",
                 }}
-                onClick={() => step.EventStatus == "pending" && ind+1 == blockChainData.length ? markIt(step.Event): console.log('Completed')}
+                onClick={() =>
+                  step.EventStatus == "pending" &&
+                  ind + 1 == blockChainData.length
+                    ? markIt(step.Event)
+                    : console.log("Completed")
+                }
                 label={
                   step.EventStatus == "pending"
                     ? `SENT FOR ${step.Event.toUpperCase()}`
@@ -384,7 +407,7 @@ export default function FileAdvanceView (props) {
     return isLoading ? (
       <LinearProgress />
     ) : (
-      <GridContainer >
+      <GridContainer>
         {alert}
         {markModal ? (
           <Dialog
@@ -401,17 +424,23 @@ export default function FileAdvanceView (props) {
             aria-describedby="pdf-modal-slide-description"
           >
             <DialogContent id="pdfupload" className={classes.modalBody}>
-              {event == "approve" ? 
-              <Approve 
-                close={()=>{setMarkModal(false)}}
-                invoiceData={fileData}
-                actionDone={marked}
-              /> :
-              <Review
-                close={()=>{setMarkModal(false)}}
-                invoiceData={fileData}
-                actionDone={marked}
-              />}
+              {event == "approve" ? (
+                <Approve
+                  close={() => {
+                    setMarkModal(false);
+                  }}
+                  invoiceData={fileData}
+                  actionDone={marked}
+                />
+              ) : (
+                <Review
+                  close={() => {
+                    setMarkModal(false);
+                  }}
+                  invoiceData={fileData}
+                  actionDone={marked}
+                />
+              )}
             </DialogContent>
           </Dialog>
         ) : (
@@ -440,34 +469,69 @@ export default function FileAdvanceView (props) {
                     primary="Invoice ID"
                     secondary={fileData.invoiceId}
                   />
-                  <ListItemText
+                  {/* <ListItemText
                     onClick={() => console.log("SHOW Recipt NO")}
                     primary="Receipt Number"
                     secondary={fileData.receiptNumber || 0}
-                  />
+                  /> */}
                   <ListItemText
                     primary="Gross Amount"
-                    secondary={`${fileData.FC_currency.sign} ${addZeroes(
+                    secondary={`${fileData.FC_currency.Symbol} ${addZeroes(
                       fileData.grossAmt
-                    )}`}
+                    )}
+                    ${
+                      fileData.FC_currency && fileData.LC_currency
+                        ? fileData.FC_currency._id !== fileData.LC_currency._id
+                          ? ` / ${fileData.LC_currency.Symbol ||
+                              ""} ${addZeroes(fileData.grossAmt_bc) || "0.00"}`
+                          : ""
+                        : ""
+                    }
+                    `}
                   />
                   <ListItemText
                     primary="Discount"
-                    secondary={`${fileData.FC_currency.sign} ${addZeroes(
+                    secondary={`${fileData.FC_currency.Symbol} ${addZeroes(
                       (fileData.discountPercent * fileData.grossAmt) / 100
-                    )} (${fileData.discountPercent}%)`}
+                    )}
+                    ${
+                      fileData.FC_currency && fileData.LC_currency
+                        ? fileData.FC_currency._id !== fileData.LC_currency._id
+                          ? ` / ${fileData.LC_currency.Symbol ||
+                              ""} ${addZeroes(fileData.discountAmt_bc) || "0.00"}`
+                          : ""
+                        : ""
+                    }
+                    (${fileData.discountPercent}%)`}
                   />
                   <ListItemText
                     primary="Tax"
-                    secondary={`${fileData.FC_currency.sign} ${addZeroes(
+                    secondary={`${fileData.FC_currency.Symbol} ${addZeroes(
                       fileData.taxAmt
-                    )} (${(fileData.taxAmt * 100) / fileData.grossAmt}%)`}
+                    )}
+                    ${
+                      fileData.FC_currency && fileData.LC_currency
+                        ? fileData.FC_currency._id !== fileData.LC_currency._id
+                          ? ` / ${fileData.LC_currency.Symbol ||
+                              ""} ${addZeroes(fileData.taxAmt_bc) || "0.00"}`
+                          : ""
+                        : ""
+                    }
+                    (${(fileData.taxAmt * 100) / fileData.grossAmt}%)`}
                   />
                   <ListItemText
                     primary="Net Amount"
-                    secondary={`${fileData.FC_currency.sign} ${addZeroes(
+                    secondary={`${fileData.FC_currency.Symbol} ${addZeroes(
                       fileData.netAmt
-                    )}`}
+                    )}
+                    ${
+                      fileData.FC_currency && fileData.LC_currency
+                        ? fileData.FC_currency._id !== fileData.LC_currency._id
+                          ? ` / ${fileData.LC_currency.Symbol ||
+                              ""} ${fileData.netAmt_bc || "0.00"}`
+                          : ""
+                        : ""
+                    }`}
                   />
                 </List>
               </GridItem>
@@ -488,7 +552,7 @@ export default function FileAdvanceView (props) {
                   />
                   <ListItemText
                     primary="Currency"
-                    secondary={fileData.FC_currency.Name.toUpperCase()}
+                    secondary={fileData.FC_currency.Code.toUpperCase()}
                   />
                   <ListItemText
                     primary={`Created By`}
@@ -612,7 +676,7 @@ export default function FileAdvanceView (props) {
                   workflow={workflow}
                   attachments={fileData.attachments}
                   payments={paymentData}
-                  currency={fileData.FC_currency}
+                  currency={{fc:fileData.FC_currency,bc:fileData.LC_currency}}
                   validation={validation}
                   isVendor={isVendor}
                   isExported={fileData.trackingStatus.paymentInProcess}
@@ -647,5 +711,4 @@ export default function FileAdvanceView (props) {
       </GridContainer>
     );
   }
-};
-
+}

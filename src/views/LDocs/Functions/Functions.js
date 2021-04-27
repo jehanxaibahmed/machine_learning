@@ -302,9 +302,9 @@ export const validateInvoice = async (row, Token) => {
                 },
                 "Gross Amount": {
                   onChain:
-                    invoice.FC_currency.sign + addZeroes(blockchain.GrossAmt),
+                    invoice.FC_currency.Symbol + addZeroes(blockchain.GrossAmt),
                   offChain:
-                    invoice.FC_currency.sign + addZeroes(invoice.grossAmt),
+                    invoice.FC_currency.Symbol + addZeroes(invoice.grossAmt),
                   isSame: isGrossAmtSame,
                 },
                 "Organization ID": {
@@ -321,16 +321,16 @@ export const validateInvoice = async (row, Token) => {
                 },
                 "Tax Amount": {
                   onChain:
-                    invoice.FC_currency.sign + addZeroes(blockchain.TaxAmt),
+                    invoice.FC_currency.Symbol + addZeroes(blockchain.TaxAmt),
                   offChain:
-                    invoice.FC_currency.sign + addZeroes(invoice.taxAmt),
+                    invoice.FC_currency.Symbol + addZeroes(invoice.taxAmt),
                   isSame: isTaxAmtSame,
                 },
                 "Net Amount": {
                   onChain:
-                    invoice.FC_currency.sign + addZeroes(blockchain.NetAmt),
+                    invoice.FC_currency.Symbol + addZeroes(blockchain.NetAmt),
                   offChain:
-                    invoice.FC_currency.sign + addZeroes(invoice.netAmt),
+                    invoice.FC_currency.Symbol + addZeroes(invoice.netAmt),
                   isSame: isNetAmtSame,
                 },
                 "Tenant ID": {
@@ -375,6 +375,7 @@ export const conversionRate = (fc, bc, currencies, amount, isNotSymbol) => {
   const bcSymbol = bC ? bC.Symbol : "";
   const fcRate = fC ? fC.conversionRate : "";
   if (isNotSymbol) {
+    console.log(fcRate);
     return parseFloat(fcRate * amount).toFixed(2);
   } else {
     return fc !== bc

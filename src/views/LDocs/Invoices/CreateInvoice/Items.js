@@ -564,9 +564,10 @@ export default function Items(props) {
                       <sub>
                       {conversionRate(
                         currency._id,
-                        baseCurrency,
+                        !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '',
                         currencyLookups,
-                        row.unitCost
+                        row.unitCost,
+                        false
                       )}
                       </sub>
                     </StyledTableCell>
@@ -582,9 +583,10 @@ export default function Items(props) {
                       <sub>
                       {conversionRate(
                         currency._id,
-                        baseCurrency,
+                        !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '',
                         currencyLookups,
-                        row.amount
+                        row.amount,
+                        false
                       )}
                       </sub>
                     </StyledTableCell>

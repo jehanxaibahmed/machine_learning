@@ -32,6 +32,7 @@ import {
   Edit,
   EditOutlined,
   Refresh,
+  GetApp,
 } from "@material-ui/icons";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -134,7 +135,7 @@ export default function FilesList(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
   const classes = useStyles();
@@ -310,8 +311,9 @@ export default function FilesList(props) {
                     color="secondary"
                   />
                 </Tooltip>
-              ) : currentStatus.status == "correctionRequired" &&
-                currentStatus.val == 1 || isCorrectionRequiredInWorkflow ? (
+              ) : (currentStatus.status == "correctionRequired" &&
+                  currentStatus.val == 1) ||
+                isCorrectionRequiredInWorkflow ? (
                 <Tooltip title="SENT FOR CORRECTION">
                   <Chip
                     variant="outlined"
@@ -445,10 +447,15 @@ export default function FilesList(props) {
           ),
           netAmt: (
             <MenuProvider data={prop} id="menu_id">
-              {`${prop.FC_currency.sign}${addZeroes(prop.netAmt)}`}
+              {`${prop.FC_currency.Symbol}${addZeroes(prop.netAmt)}`}
               <br />
               <small>
-              {prop.FC_currency && prop.LC_currency ? prop.FC_currency._id !== prop.LC_currency._id ? `(${prop.LC_currency.sign || ""} ${prop.netAmt_bc || '0.00'})`: "":""}
+                {prop.FC_currency && prop.LC_currency
+                  ? prop.FC_currency._id !== prop.LC_currency._id
+                    ? `(${prop.LC_currency.Symbol || ""} ${prop.netAmt_bc ||
+                        "0.00"})`
+                    : ""
+                  : ""}
               </small>
             </MenuProvider>
           ),
@@ -576,6 +583,25 @@ export default function FilesList(props) {
                     className="Edit"
                   >
                     <ClearAllIcon />
+                  </Button>
+                </Tooltip>
+              ) : (
+                ""
+              )}
+              {!isVendor ? (
+                <Tooltip title="XLRS FILE" aria-label="export">
+                  <Button
+                    justIcon
+                    round
+                    simple
+                    icon={GetApp}
+                    onClick={() => {
+                      exportToCSV(prop);
+                    }}
+                    color="info"
+                    className="Edit"
+                  >
+                    <GetApp />
                   </Button>
                 </Tooltip>
               ) : (
@@ -734,29 +760,42 @@ export default function FilesList(props) {
       })
     );
   };
-  const exportToCSV = () => {
+  const exportToCSV = (file) => {
+    console.log(file);
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/report/ExportToCsv`,
-      data: { organizationId : userDetail.orgDetail.organizationId },
+      url:
+        file == undefined
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/report/ExportToCsv`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/report/InvoiceToXlsx`,
+      data:
+        file == undefined
+          ? { organizationId: userDetail.orgDetail.organizationId }
+          : {
+              tenantId: file.tenantId,
+              organizationId: file.organizationId,
+              invoiceId: file.invoiceId,
+              version: file.version,
+            },
       headers: {
         cooljwt: Token,
-        // responseType: 'blob', 
+        // responseType: 'blob',
       },
     })
       .then((response) => {
         console.log(response);
         const downloadUrl = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.path}`;
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = downloadUrl;
-        link.setAttribute('download', "File.csv"); //any other extension
+        link.setAttribute("download", ""); //any other extension
         document.body.appendChild(link);
         link.click();
         link.remove();
-      }).catch((error)=>{
-        console.log(error)
       })
-  }
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   //Get Files
   const getMyFiles = async (user, loading) => {
     setIsLoading(loading);
@@ -778,7 +817,9 @@ export default function FilesList(props) {
         setIsLoading(false);
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };        ;
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -918,7 +959,10 @@ export default function FilesList(props) {
               }
             }
             //Correction Required
-            if (s.id == 7 && currentStatus.status == "correctionRequired" || f.workFlowStatus == "correctionRequired") {
+            if (
+              (s.id == 7 && currentStatus.status == "correctionRequired") ||
+              f.workFlowStatus == "correctionRequired"
+            ) {
               if (filteredFiles.find((ff) => ff._id == f._id) == undefined) {
                 filteredFiles.push(f);
               }
@@ -967,36 +1011,35 @@ export default function FilesList(props) {
       );
     }
 
-  
-		if (data.values.invoiceType == 1) {
-			files = files.filter(f => f.isPrePayment != false);
-		}
-		if (data.values.invoiceType == 2) {
-			files = files.filter(f => f.isReceipt != false);
-			console.log(files);
-		}
-		if (data.values.invoiceType == 3) {
-			files = files.filter(f => f.isPettyCash != false);
-		}
-    
-		//Invoice Type
+    if (data.values.invoiceType == 1) {
+      files = files.filter((f) => f.isPrePayment != false);
+    }
+    if (data.values.invoiceType == 2) {
+      files = files.filter((f) => f.isReceipt != false);
+      console.log(files);
+    }
+    if (data.values.invoiceType == 3) {
+      files = files.filter((f) => f.isPettyCash != false);
+    }
+
+    //Invoice Type
     // if (data.filters.invoiceType) {
-		// 	console.log(data.values.invoiceType);
+    // 	console.log(data.values.invoiceType);
     //   switch (data.values.invoiceType) {
     //     case 1:
-		// 			files = files.filter(f => f.isPo == true);
+    // 			files = files.filter(f => f.isPo == true);
     //       break;
     //     case 2:
-		// 			files = files.filter(f => f.isExpense == true);
+    // 			files = files.filter(f => f.isExpense == true);
     //       break;
     //     case 3:
-		// 			files = files.filter(f => f.isPettyCash == true);
+    // 			files = files.filter(f => f.isPettyCash == true);
     //       break;
     //     default:
-		// 			files = files;
+    // 			files = files;
     //       break;
     //   }
-  	//  }
+    //  }
     setTableData(files.reverse());
     setShowFiltersModel(false);
   };
@@ -1519,7 +1562,7 @@ export default function FilesList(props) {
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
-                    onClick={exportToCSV}
+                    onClick={() => exportToCSV()}
                   >
                     Export
                   </Button>

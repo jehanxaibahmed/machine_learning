@@ -138,7 +138,6 @@ export default function CreateInvoice(props) {
   duedate = duedate.setDate(today.getDate() + 15);
   const userDetails = jwt.decode(Token);
   const isVendor = userDetails.isVendor;
-  const baseCurrency = !isVendor ? userDetails.currency.Currency_Base : "";
   const [formState, setFormState] = useState({
     vendors: [],
     organizations: [],
@@ -208,6 +207,8 @@ export default function CreateInvoice(props) {
       organizationId: "",
     },
   });
+  const [baseCurrency, setBaseCurrency] = useState(!isVendor ? userDetails.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '');
+
   const getLookUp = () => {
     const organizationId = !isVendor
       ? userDetails.orgDetail.organizationId
@@ -262,7 +263,7 @@ export default function CreateInvoice(props) {
       data: {
         organizationId: isVendor
           ? formState.selectedOrg
-            ? formState.selectedOrg._id
+            ? formState.selectedOrg.organizationId
             : orgId
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
@@ -327,7 +328,7 @@ export default function CreateInvoice(props) {
       data: {
         poNumber: p,
         organizationId: isVendor
-          ? formState.selectedOrg._id || null
+          ? formState.selectedOrg.organizationId || null
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
       },
@@ -691,7 +692,7 @@ export default function CreateInvoice(props) {
                   baseCurrency,
                   currencyLookups,
                   item[2].values[0].value
-                  ? parseFloat(item[2].values[0].value)
+                  ? item[2].values[0].value
                   : 0,
                   true
                 ),
@@ -703,7 +704,7 @@ export default function CreateInvoice(props) {
                   baseCurrency,
                   currencyLookups,
                   item[3].values[0].value
-                  ? parseFloat(item[3].values[0].value)
+                  ? item[3].values[0].value
                   : 0,
                   true
                 ),
@@ -846,8 +847,10 @@ export default function CreateInvoice(props) {
     } else {
       getLookUp();
       getPos();
+      setBaseCurrency(!isVendor ? userDetails.currency.Currency_Base : formState.selectedOrg.currency);
       setVendorModal(false);
       console.log(formState.selectedOrg);
+      if(isVendor){
       setFormState((formState) => ({
         ...formState,
         values: {
@@ -855,6 +858,7 @@ export default function CreateInvoice(props) {
           currency: formState.selectedOrg.currency,
         },
       }));
+    }
     }
   };
 
@@ -1081,6 +1085,7 @@ export default function CreateInvoice(props) {
         ...formState,
         attachments: invoice_attachments,
       }));
+      setBaseCurrency(!isVendor ? userDetails.currency.Currency_Base : org.currency);
       getPos(fileData.organizationId);
       if (!isVendor) {
         getReceipts(fileData.po);
@@ -1100,7 +1105,7 @@ export default function CreateInvoice(props) {
         { name: "Date of Expiry", value: formatDateTime(po.dateOfExpiry) },
         {
           name: "PO Amount:",
-          value: `${currency.Symbol + addZeroes(po.poAmount)}`,
+          value: `${"SAR" + addZeroes(po.poAmount)}`,
         },
         { name: "Partial Delivery:", value: po.partialDelivery ? "YES" : "NO" },
       ]);
@@ -2723,7 +2728,7 @@ export default function CreateInvoice(props) {
                                 ? "Valid Invoice Currency is required"
                                 : null
                             }
-                            disabled={edit}
+                            disabled={edit || items.length > 0}
                             label="Currency"
                             id="currency"
                             name="currency"
