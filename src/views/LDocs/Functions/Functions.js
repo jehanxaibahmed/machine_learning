@@ -80,8 +80,8 @@ export const currentTracking = (trackingStatus) => {
       currentStatus = trackingStatus.received.status;
       activeStep = { val: 0, status: currentStatus };
       break;
-      case "initialReview":
-        currentStatus = trackingStatus.initialReview.status;
+    case "initialReview":
+      currentStatus = trackingStatus.initialReview.status;
       if (currentStatus) {
         activeStep = { val: 1, status: currentStatus };
       } else {
@@ -126,14 +126,14 @@ export const currentTracking = (trackingStatus) => {
 
 export const validateInvoice = async (row, Token) => {
   return new Promise((res, rej) => {
-      axios({
-        method: "post", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
-        data: { 
-          invoiceId:row.invoiceId,
-          version:row.version,
-          vendorId:row.vendorId
-         },
+    axios({
+      method: "post", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      data: {
+        invoiceId: row.invoiceId,
+        version: row.version,
+        vendorId: row.vendorId,
+      },
       headers: {
         cooljwt: Token,
       },
@@ -243,39 +243,45 @@ export const validateInvoice = async (row, Token) => {
               await axios({
                 method: "post", //you can set what request you want to be
                 url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getNameById`,
-                data: { 
-                  organizationId:invoice.organizationId,
-                  tenantId:invoice.tenantId,
-                  vendorId:invoice.vendorId,
-                  userId:invoice.createdBy,
-                  isVendor:invoice.createdByVendor
-                 },
-              headers: {
-                cooljwt: Token,
-              }}).then((res)=>{
-                 InvoiceNames =  res.data;
-              }).catch((err)=>{
-                console.log(err);
-              });
-               //Gettting Names BlockChain
+                data: {
+                  organizationId: invoice.organizationId,
+                  tenantId: invoice.tenantId,
+                  vendorId: invoice.vendorId,
+                  userId: invoice.createdBy,
+                  isVendor: invoice.createdByVendor,
+                },
+                headers: {
+                  cooljwt: Token,
+                },
+              })
+                .then((res) => {
+                  InvoiceNames = res.data;
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+              //Gettting Names BlockChain
               await axios({
                 method: "post", //you can set what request you want to be
                 url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getNameById`,
-                data: { 
-                  organizationId:blockchain.OrganizationID,
-                  tenantId:blockchain.TenantID,
-                  vendorId:blockchain.VendorID,
-                  userId:blockchain.CreatedBy,
-                  isVendor:invoice.createdByVendor
-                 },
-              headers: {
-                cooljwt: Token,
-              }}).then((res)=>{
-                console.log(res);
-                BlockchainNames = res.data;
-              }).catch((err)=>{
-                console.log(err);
+                data: {
+                  organizationId: blockchain.OrganizationID,
+                  tenantId: blockchain.TenantID,
+                  vendorId: blockchain.VendorID,
+                  userId: blockchain.CreatedBy,
+                  isVendor: invoice.createdByVendor,
+                },
+                headers: {
+                  cooljwt: Token,
+                },
               })
+                .then((res) => {
+                  console.log(res);
+                  BlockchainNames = res.data;
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
               const ValidationData = {
                 "Submit Date": {
                   onChain: formatDateTime(blockchain.InvoiceDate),
@@ -286,8 +292,8 @@ export const validateInvoice = async (row, Token) => {
                   onChain: blockchain.VendorID,
                   offChain: invoice.vendorId,
                   isSame: isVendorIDSame,
-                  onChainName:BlockchainNames.vendorName || null,
-                  offChainName:InvoiceNames.vendorName || null,
+                  onChainName: BlockchainNames.vendorName || null,
+                  offChainName: InvoiceNames.vendorName || null,
                 },
                 "Item Count": {
                   onChain: blockchain.ItemCount,
@@ -305,8 +311,8 @@ export const validateInvoice = async (row, Token) => {
                   onChain: blockchain.OrganizationID,
                   offChain: invoice.organizationId,
                   isSame: isOrganizationIDSame,
-                  onChainName:BlockchainNames.organizationName || null,
-                  offChainName:InvoiceNames.organizationName || null,
+                  onChainName: BlockchainNames.organizationName || null,
+                  offChainName: InvoiceNames.organizationName || null,
                 },
                 "Discount Percentage": {
                   onChain: `${blockchain.DiscountPercentage}%`,
@@ -331,8 +337,8 @@ export const validateInvoice = async (row, Token) => {
                   onChain: blockchain.TenantID,
                   offChain: invoice.tenantId,
                   isSame: isTenantIDSame,
-                  onChainName:BlockchainNames.tenantName || null,
-                  offChainName:InvoiceNames.tenantName || null,
+                  onChainName: BlockchainNames.tenantName || null,
+                  offChainName: InvoiceNames.tenantName || null,
                 },
                 "Created Date": {
                   onChain: formatDateTime(blockchain.CreatedDate),
@@ -343,8 +349,8 @@ export const validateInvoice = async (row, Token) => {
                   onChain: blockchain.CreatedBy,
                   offChain: invoice.createdBy,
                   isSame: isCreatedBySame,
-                  onChainName:BlockchainNames.userName || null,
-                  offChainName:InvoiceNames.userName || null,
+                  onChainName: BlockchainNames.userName || null,
+                  offChainName: InvoiceNames.userName || null,
                 },
                 Validate: {
                   isSame: isValidate,
@@ -363,13 +369,19 @@ export const validateInvoice = async (row, Token) => {
   });
 };
 
-export const conversionRate = (fc, bc, currencies, amount) => {
-  const bC = currencies.find(c=>c._id == bc);
-  const fC = currencies.find(c=>c._id == fc);
+export const conversionRate = (fc, bc, currencies, amount, isNotSymbol) => {
+  const bC = currencies.find((c) => c._id == bc);
+  const fC = currencies.find((c) => c._id == fc);
   const bcSymbol = bC ? bC.Symbol : "";
   const fcRate = fC ? fC.conversionRate : "";
-  return fc !== bc ? ` (${bcSymbol} ${parseFloat(fcRate*amount).toFixed(2)})` : "";
-}
+  if (isNotSymbol) {
+    return parseFloat(fcRate * amount).toFixed(2);
+  } else {
+    return fc !== bc
+      ? `(${bcSymbol} ${parseFloat(fcRate * amount).toFixed(2)})`
+      : "";
+  }
+};
 
 export const appendScript = (scriptToAppend) => {
   const script = document.createElement("script");

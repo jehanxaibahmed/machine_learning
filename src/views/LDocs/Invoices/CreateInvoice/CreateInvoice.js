@@ -686,9 +686,27 @@ export default function CreateInvoice(props) {
                 unitCost: item[2].values[0].value
                   ? addZeroes(item[2].values[0].value)
                   : "",
+                unitCost_bc:conversionRate(
+                  formState.values.currency,
+                  baseCurrency,
+                  currencyLookups,
+                  item[2].values[0].value
+                  ? parseFloat(item[2].values[0].value)
+                  : 0,
+                  true
+                ),
                 amount: item[3].values[0].value
                   ? addZeroes(item[3].values[0].value)
                   : "",
+                amount_bc:conversionRate(
+                  formState.values.currency,
+                  baseCurrency,
+                  currencyLookups,
+                  item[3].values[0].value
+                  ? parseFloat(item[3].values[0].value)
+                  : 0,
+                  true
+                ),
                 originalamount: item[3].values[0].value
                   ? item[3].values[0].value
                   : "",
@@ -1267,6 +1285,12 @@ export default function CreateInvoice(props) {
     if (error) {
       return false;
     } else {
+      const amount = parseFloat(formState.values.unitCost) *
+      parseFloat(formState.values.quantity) -
+    parseFloat(
+      (formState.values.unitCost * formState.values.discount) / 100
+    ) *
+      formState.values.quantity;
       const item = {
         itemName: formState.values.itemName,
         unitCost: formState.values.unitCost,
@@ -1276,14 +1300,22 @@ export default function CreateInvoice(props) {
         expenseType: formState.values.inlineExpenseType,
         category: category,
         receiptNumber: formState.values.receiptNumber,
-        amount:
-          parseFloat(formState.values.unitCost) *
-            parseFloat(formState.values.quantity) -
-          parseFloat(
-            (formState.values.unitCost * formState.values.discount) / 100
-          ) *
-            formState.values.quantity,
-        additionalDetails: formState.values.additionalDetails,
+        unitCost_bc:conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          formState.values.unitCost,
+          true
+        ),
+        amount_bc:conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          amount,
+          true
+        ),
+        amount:amount,
+        additionalDetails: formState.values.additionalDetails
       };
       //Editing
       if (editIndex !== null) {
@@ -1489,6 +1521,34 @@ export default function CreateInvoice(props) {
       isPettyCash: formState.isPeetyCash,
       isPrePayment: formState.isPrePayment,
       isExpense: formState.isExpense,
+      grossAmt_bc:conversionRate(
+        formState.values.currency,
+        baseCurrency,
+        currencyLookups,
+        formState.values.subtotal,
+        true
+      ),
+      discountAmt_bc:conversionRate(
+        formState.values.currency,
+        baseCurrency,
+        currencyLookups,
+        discountAmt,
+        true
+      ),
+      taxAmt_bc:conversionRate(
+        formState.values.currency,
+        baseCurrency,
+        currencyLookups,
+        taxAmt,
+        true
+      ),
+      netAmt_bc:conversionRate(
+        formState.values.currency,
+        baseCurrency,
+        currencyLookups,
+        formState.values.total,
+        true
+      )
     };
     //Axios Call
     axios({
