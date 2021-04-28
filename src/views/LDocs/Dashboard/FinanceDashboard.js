@@ -82,15 +82,14 @@ export default function FinanceDashboard() {
   React.useEffect(() => {
     //Purchase Series
     if(graphData.topFiveVendor){
-      console.log(graphData.topFiveVendor[0].totalAmount);
     const purchaseSeries = [
       {
         data: [
-          graphData.topFiveVendor[0] ? parseFloat(graphData.topFiveVendor[0].totalAmount).toFixed(2) : 0, 
-          graphData.topFiveVendor[1] ? parseFloat(graphData.topFiveVendor[1].totalAmount).toFixed(2) : 0,
-          graphData.topFiveVendor[2] ? parseFloat(graphData.topFiveVendor[2].totalAmount).toFixed(2) : 0,
-          graphData.topFiveVendor[3] ? parseFloat(graphData.topFiveVendor[3].totalAmount).toFixed(2) : 0,
-          graphData.topFiveVendor[4] ? parseFloat(graphData.topFiveVendor[4].totalAmount).toFixed(2) : 0,
+          graphData.topFiveVendor[0] ? parseFloat(graphData.topFiveVendor[0] ? graphData.topFiveVendor[0].totalAmount:0).toFixed(2) : 0, 
+          graphData.topFiveVendor[1] ? parseFloat(graphData.topFiveVendor[1] ? graphData.topFiveVendor[1].totalAmount:0).toFixed(2) : 0,
+          graphData.topFiveVendor[2] ? parseFloat(graphData.topFiveVendor[2] ? graphData.topFiveVendor[2].totalAmount:0).toFixed(2) : 0,
+          graphData.topFiveVendor[3] ? parseFloat(graphData.topFiveVendor[3] ? graphData.topFiveVendor[3].totalAmount:0).toFixed(2) : 0,
+          graphData.topFiveVendor[4] ? parseFloat(graphData.topFiveVendor[4] ? graphData.topFiveVendor[4].totalAmount:0).toFixed(2) : 0,
         ],
       },
     ];
