@@ -224,7 +224,7 @@ export default function CreateInvoice(props) {
       })
         .then((res) => {
           if (typeof res.data == "object") {
-            setCurrencyLookups(res.data);
+            setCurrencyLookups(res.data.filter(c=>c.isEnabled == true));
           }
         })
         .catch((error) => {
