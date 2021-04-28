@@ -376,10 +376,10 @@ export const conversionRate = (fc, bc, currencies, amount, isNotSymbol) => {
   const fcRate = fC ? fC.conversionRate : "";
   if (isNotSymbol) {
     console.log(fcRate);
-    return parseFloat(fcRate * amount).toFixed(2);
+    return parseFloat(fcRate * amount).toFixed(4);
   } else {
     return fc !== bc
-      ? `(${bcSymbol} ${parseFloat(fcRate * amount).toFixed(2)})`
+      ? `(${bcSymbol} ${parseFloat(fcRate * amount).toFixed(4)})`
       : "";
   }
 };
