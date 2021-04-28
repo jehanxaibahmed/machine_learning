@@ -103,7 +103,7 @@ export default function InvoiceDetail() {
         console.log(invoice);
       })
       .catch((error) => {
-        error.response.status == 401 && errorAlert('TOKEN HAS BEEN EXPIRED!');
+        error.response && error.response.status == 401 && errorAlert('TOKEN HAS BEEN EXPIRED!');
         setInvoice(null);
         errorAlert('UNABLE TO FIND INVOICE IN SYSTEM');
         console.log(error);

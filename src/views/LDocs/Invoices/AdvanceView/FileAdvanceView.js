@@ -552,7 +552,7 @@ export default function FileAdvanceView(props) {
                   />
                   <ListItemText
                     primary="Currency"
-                    secondary={fileData.FC_currency.Code.toUpperCase()}
+                    secondary={fileData.FC_currency.Code ? fileData.FC_currency.Code.toUpperCase():""}
                   />
                   <ListItemText
                     primary={`Created By`}
