@@ -1055,10 +1055,13 @@ export default function CreateInvoice(props) {
         const i = {
           additionalDetails: item.additionalDetails,
           amount: item.amount,
+          amount_bc: item.amount_bc,
           discount: item.discount,
+          discount_bc: item.discount_bc,
           itemName: item.itemName,
           quantity: item.quantity,
           unitCost: item.unitCost,
+          unitCost_bc: item.unitCost_bc,
           receiptNumber: item.receiptNumber,
           category: parseInt(item.category),
           poInline: item.poInline,
