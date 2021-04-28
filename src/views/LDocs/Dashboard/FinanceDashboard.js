@@ -346,7 +346,7 @@ export default function FinanceDashboard() {
                 }}
               >
                 
-                {`${graphData ? graphData.currencyInfo.Symbol:""} ${graphData.totalDueInvoices && graphData.totalDueInvoices[0]
+                {`${graphData.currencyInfo ? graphData.currencyInfo.Symbol:""} ${graphData.totalDueInvoices && graphData.totalDueInvoices[0]
                   ? formatCash(
                       graphData.totalDueInvoices[0].totalAmount
                     )
@@ -367,7 +367,7 @@ export default function FinanceDashboard() {
                   marginTop: "10px",
                 }}
               >
-                {`SAR ${graphData.totalInvoiceAmount && graphData.totalInvoiceAmount[0]
+                {`${graphData.currencyInfo ? graphData.currencyInfo.Symbol:""} ${graphData.totalInvoiceAmount && graphData.totalInvoiceAmount[0]
                   ? formatCash(
                       graphData.totalInvoiceAmount[0].totalAmount
                     )
