@@ -361,7 +361,7 @@ export default function Currency() {
                                 onChange={handleChange}
                                 name="rate"
                                 type="number"
-                                value={state.editIndex == index ? parseFloat(prop.conversionRate) : parseFloat(prop.conversionRate).toFixed(2)}
+                                value={state.editIndex == index ? parseFloat(prop.conversionRate) : parseFloat(prop.conversionRate).toFixed(4)}
                               />
                             </div>
                           ),
