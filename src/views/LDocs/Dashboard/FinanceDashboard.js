@@ -346,7 +346,7 @@ export default function FinanceDashboard() {
                 }}
               >
                 
-                {`SAR ${graphData.totalDueInvoices && graphData.totalDueInvoices[0]
+                {`${graphData ? graphData.currencyInfo.Symbol:""} ${graphData.totalDueInvoices && graphData.totalDueInvoices[0]
                   ? formatCash(
                       graphData.totalDueInvoices[0].totalAmount
                     )
