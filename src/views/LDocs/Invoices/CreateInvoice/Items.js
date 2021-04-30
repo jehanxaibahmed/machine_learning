@@ -103,6 +103,7 @@ export default function Items(props) {
     receipts,
     currencyLookups,
     userData,
+    edit
   } = props;
   const classes = useStyles();
   const baseCurrency = !isVendor ? userData.currency.Currency_Base : "";
@@ -149,12 +150,12 @@ export default function Items(props) {
               <StyledTableCell>#</StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell align="right">
-                Unit Cost ({currency.Symbol || "$"})
+                Unit Cost ({currency.Code || "$"})
               </StyledTableCell>
               <StyledTableCell align="right">Quantity</StyledTableCell>
               <StyledTableCell align="right">Discount (%)</StyledTableCell>
               <StyledTableCell align="right">
-                Amount ({currency.Symbol || "$"})
+                Amount ({currency.Code || "$"})
               </StyledTableCell>
               <StyledTableCell> </StyledTableCell>
             </TableRow>
@@ -559,17 +560,18 @@ export default function Items(props) {
                       {row.itemName}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {`${currency.Symbol} `} 
+                      {`${currency.Code} `} 
                       {addZeroes(row.unitCost)}
-                      <sub>
+                      <br />
                       {conversionRate(
                         currency._id,
                         !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '',
                         currencyLookups,
                         row.unitCost,
-                        false
+                        false,
+                        edit,
+                        formState.conversionRate ? formState.conversionRate : 0 
                       )}
-                      </sub>
                     </StyledTableCell>
                     <StyledTableCell align="right">
                       {addZeroes(row.quantity)}
@@ -578,17 +580,18 @@ export default function Items(props) {
                       {addZeroes(row.discount)}%
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {`${currency.Symbol} `} 
+                      {`${currency.Code} `} 
                       {addZeroes(row.amount)}
-                      <sub>
+                      <br />
                       {conversionRate(
                         currency._id,
                         !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '',
                         currencyLookups,
                         row.amount,
-                        false
+                        false,
+                        edit,
+                        formState.conversionRate ? formState.conversionRate : 0 
                       )}
-                      </sub>
                     </StyledTableCell>
                     <StyledTableCell style={{ width: 100 }} align="right">
                       <Tooltip title="Edit Item" aria-label="edit">

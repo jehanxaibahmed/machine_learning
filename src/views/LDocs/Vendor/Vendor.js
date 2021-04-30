@@ -239,7 +239,7 @@ export default function Vendor() {
               id:  `V-00${index+1}`,
               vendorName: prop.level1.vendorName,
               //organizationName: prop.organizationName,
-              currency: currency ? `${currency.Currency.toUpperCase()} ${currency.Symbol}` : prop.Currency_Base,
+              currency: currency ? `${currency.Currency.toUpperCase()} ${currency.Code}` : prop.Currency_Base,
               licenseNumber: prop.level1.licenseNumber,
               email: prop.level1.email,
               referenceTicket: prop.level1.referenceTicket,

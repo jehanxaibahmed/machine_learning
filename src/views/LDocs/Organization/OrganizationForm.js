@@ -105,7 +105,7 @@ export default function Organization() {
              tradeLicenseNumber: prop.tradeLicenseNumber,
              primaryBusinessRepresentative: prop.primaryBusinessRepresentative,
              referenceTicket: prop.referenceTicket,
-             currency_Base: currency ? `${currency.Currency.toUpperCase()} ${currency.Symbol}` : prop.Currency_Base ,
+             currency_Base: currency ? `${currency.Currency.toUpperCase()} ${currency.Code}` : prop.Currency_Base ,
              actions: (
                <div className="actions-right">
                  <Tooltip title="Update Level 1" aria-label="updateOrganization">

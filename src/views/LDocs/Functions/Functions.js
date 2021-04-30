@@ -302,9 +302,9 @@ export const validateInvoice = async (row, Token) => {
                 },
                 "Gross Amount": {
                   onChain:
-                    invoice.FC_currency.Symbol + addZeroes(blockchain.GrossAmt),
+                    invoice.FC_currency.Code + addZeroes(blockchain.GrossAmt),
                   offChain:
-                    invoice.FC_currency.Symbol + addZeroes(invoice.grossAmt),
+                    invoice.FC_currency.Code + addZeroes(invoice.grossAmt),
                   isSame: isGrossAmtSame,
                 },
                 "Organization ID": {
@@ -321,16 +321,16 @@ export const validateInvoice = async (row, Token) => {
                 },
                 "Tax Amount": {
                   onChain:
-                    invoice.FC_currency.Symbol + addZeroes(blockchain.TaxAmt),
+                    invoice.FC_currency.Code + addZeroes(blockchain.TaxAmt),
                   offChain:
-                    invoice.FC_currency.Symbol + addZeroes(invoice.taxAmt),
+                    invoice.FC_currency.Code + addZeroes(invoice.taxAmt),
                   isSame: isTaxAmtSame,
                 },
                 "Net Amount": {
                   onChain:
-                    invoice.FC_currency.Symbol + addZeroes(blockchain.NetAmt),
+                    invoice.FC_currency.Code + addZeroes(blockchain.NetAmt),
                   offChain:
-                    invoice.FC_currency.Symbol + addZeroes(invoice.netAmt),
+                    invoice.FC_currency.Code + addZeroes(invoice.netAmt),
                   isSame: isNetAmtSame,
                 },
                 "Tenant ID": {
@@ -369,11 +369,13 @@ export const validateInvoice = async (row, Token) => {
   });
 };
 
-export const conversionRate = (fc, bc, currencies, amount, isNotSymbol) => {
+export const conversionRate = (fc, bc, currencies, amount, isNotSymbol,isEdit, rate) => {
   const bC = currencies.find((c) => c._id == bc);
   const fC = currencies.find((c) => c._id == fc);
-  const bcSymbol = bC ? bC.Symbol : "";
-  const fcRate = fC ? fC.conversionRate : "";
+  console.log(bC);
+  console.log(fC);
+  const bcSymbol = bC ? bC.Code : "";
+  const fcRate = isEdit ? rate : fC ? fC.conversionRate : "";
   if (isNotSymbol) {
     console.log(fcRate);
     return parseFloat(fcRate * amount).toFixed(4);

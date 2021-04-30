@@ -74,11 +74,15 @@ export default function VendorDashboard() {
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
   let decoded = jwt.decode(Token);
+  const year =  new Date().getFullYear();
   const classes = useStyles();
   const backdropCss = useStyleBackDrop();
   const pendingApprovalIcon = require("assets/img/pendingApproval.png");
   const [chartdata, setChartData] = React.useState(data);
+  const [quarterChartOptions, setQuarterChartOptions] = React.useState(data.quarterOptions);
+  const [byAmountChartOptions, setByAmountChartOptions] = React.useState(data.byAmountOptions);
   const [graphData, setGraphData] = React.useState({});
+  const [apiData, setApiData] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const dispatch = useDispatch();
 
@@ -110,6 +114,7 @@ export default function VendorDashboard() {
       headers: { cooljwt: Token },
     })
       .then((response) => {
+        setApiData(response.data);
         //Handling
         response.data.forEach((item, index) => {
           invByCount_totalOverdue += item.overDueCount;
@@ -213,7 +218,7 @@ export default function VendorDashboard() {
         let q1_table = {
           key: "0",
           title: "Q1",
-          period: "Jan-Mar",
+          period: `Jan-Mar ${year}`,
           totalOverdue: q1_totalOverdue,
           totalUnpaid: q1_totalUnpaid,
           totalReadyForPay: q1_totalReadyForPay,
@@ -221,7 +226,7 @@ export default function VendorDashboard() {
         let q2_table = {
           key: "1",
           title: "Q2",
-          period: "Apr-Jun",
+          period: `Apr-Jun ${year}`,
           totalOverdue: q2_totalOverdue,
           totalUnpaid: q2_totalUnpaid,
           totalReadyForPay: q2_totalReadyForPay,
@@ -229,7 +234,7 @@ export default function VendorDashboard() {
         let q3_table = {
           key: "2",
           title: "Q3",
-          period: "Jul-Sep",
+          period: `Jul-Sep ${year}`,
           totalOverdue: q3_totalOverdue,
           totalUnpaid: q3_totalUnpaid,
           totalReadyForPay: q3_totalReadyForPay,
@@ -237,7 +242,7 @@ export default function VendorDashboard() {
         let q4_table = {
           key: "3",
           title: "Q4",
-          period: "Oct-Dec",
+          period: `Oct-Dec ${year}`,
           totalOverdue: q4_totalOverdue,
           totalUnpaid: q4_totalUnpaid,
           totalReadyForPay: q4_totalReadyForPay,
@@ -261,6 +266,113 @@ export default function VendorDashboard() {
   React.useEffect(() => {
     getChartData();
   }, []);
+
+  React.useEffect(()=>{
+    if(graphData){
+    const quarterOptions =  {
+      fill: {
+          colors: ["#007f5e"],
+      },
+    chart: {
+      toolbar: {
+        show: false,
+      },
+      type: "bar",
+      
+    },
+    plotOptions: {
+      bar: {
+        columnWidth: "80%",
+        dataLabels: {
+          position: "top", // top, center, bottom
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        offsetY: -20,
+        formatter: function (val, opts) {
+          return `${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
+      }
+    }
+    },
+    dataLabels: {
+      offsetY: -20,
+      enabled: true,
+      formatter: function (val, opts) {
+        return `${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
+    },
+      style: {
+        fontSize: "12px",
+        colors: ["black"],
+      },
+    },
+    legend: {
+      show: false,
+    },
+    xaxis: {
+      categories: [
+        ["Over Due"],
+        ["Un Paid"],
+        ["Ready To Pay"]
+      ],
+      labels: {
+        style: {
+          fontSize: "12px",
+        },
+      },
+    },
+  };
+  const byAmountOptions = {
+    fill: {
+        colors: ["#095392"],
+    },
+  chart: {
+    toolbar: {
+      show: false,
+    },
+    type: "bar",
+  },
+  plotOptions: {
+    bar: {
+      columnWidth: "80%",
+      dataLabels: {
+        position: "top", // top, center, bottom
+      },
+    },
+  },
+  dataLabels: {
+    offsetY: -20,
+    enabled: true,
+    formatter: function (val, opts) {
+      return `${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
+  },
+    style: {
+      fontSize: "12px",
+      colors: ["black"],
+    },
+  },
+  legend: {
+    show: false,
+  },
+  xaxis: {
+    categories: [
+      ["Over Due"],
+      ["Un Paid"],
+      ["Ready To Pay"]
+    ],
+    labels: {
+      style: {
+        fontSize: "12px",
+      },
+    },
+  },
+};
+
+    setQuarterChartOptions(quarterOptions);
+    setByAmountChartOptions(byAmountOptions);
+}
+  },[graphData])
+
 
   return (
     <React.Fragment>
@@ -382,7 +494,7 @@ export default function VendorDashboard() {
               <GridContainer justify="space-between">
                 <GridItem xs={12} sm={12} md={12}>
                   <ReactApexChart
-                    options={chartdata.byAmountOptions}
+                    options={byAmountChartOptions}
                     series={
                       [
                         {
@@ -418,12 +530,12 @@ export default function VendorDashboard() {
                       varient="body2"
                       style={{ float: "right", color: "grey" }}
                     >
-                      Jan-Mar
+                      Jan-Mar {year}
                     </Typography>
                   </CardHeader>
                   <CardBody>
                     <ReactApexChart
-                      options={chartdata.quarterOptions}
+                      options={quarterChartOptions}
                       series={[
                         {
                           data:
@@ -452,12 +564,12 @@ export default function VendorDashboard() {
                       varient="body2"
                       style={{ float: "right", color: "grey" }}
                     >
-                      Apr-Jun
+                      Apr-Jun {year}
                     </Typography>
                   </CardHeader>
                   <CardBody>
                     <ReactApexChart
-                      options={chartdata.quarterOptions}
+                      options={quarterChartOptions}
                       series={[
                         {
                           data: 
@@ -488,12 +600,12 @@ export default function VendorDashboard() {
                       varient="body2"
                       style={{ float: "right", color: "grey" }}
                     >
-                      Jul-Sep
+                      Jul-Sep {year}
                     </Typography>
                   </CardHeader>
                   <CardBody>
                     <ReactApexChart
-                      options={chartdata.quarterOptions}
+                      options={quarterChartOptions}
                       series={[
                         {
                           data: 
@@ -522,12 +634,12 @@ export default function VendorDashboard() {
                       varient="body2"
                       style={{ float: "right", color: "grey" }}
                     >
-                      Oct-Dec
+                      Oct-Dec {year}
                     </Typography>
                   </CardHeader>
                   <CardBody>
                     <ReactApexChart
-                      options={chartdata.quarterOptions}
+                      options={quarterChartOptions}
                       series={[
                         {
                           data: 

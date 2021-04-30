@@ -476,13 +476,13 @@ export default function FileAdvanceView(props) {
                   /> */}
                   <ListItemText
                     primary="Gross Amount"
-                    secondary={`${fileData.FC_currency.Symbol} ${addZeroes(
+                    secondary={`${fileData.FC_currency.Code} ${addZeroes(
                       fileData.grossAmt
                     )}
                     ${
                       fileData.FC_currency && fileData.LC_currency
                         ? fileData.FC_currency._id !== fileData.LC_currency._id
-                          ? ` / ${fileData.LC_currency.Symbol ||
+                          ? ` / ${fileData.LC_currency.Code ||
                               ""} ${addZeroes(fileData.grossAmt_bc) || "0.00"}`
                           : ""
                         : ""
@@ -490,44 +490,44 @@ export default function FileAdvanceView(props) {
                     `}
                   />
                   <ListItemText
-                    primary="Discount"
-                    secondary={`${fileData.FC_currency.Symbol} ${addZeroes(
+                    primary={`Discount (${fileData.discountPercent}%)`}
+                    secondary={`${fileData.FC_currency.Code} ${addZeroes(
                       (fileData.discountPercent * fileData.grossAmt) / 100
                     )}
                     ${
                       fileData.FC_currency && fileData.LC_currency
                         ? fileData.FC_currency._id !== fileData.LC_currency._id
-                          ? ` / ${fileData.LC_currency.Symbol ||
+                          ? ` / ${fileData.LC_currency.Code ||
                               ""} ${addZeroes(fileData.discountAmt_bc) || "0.00"}`
                           : ""
                         : ""
                     }
-                    (${fileData.discountPercent}%)`}
+                    `}
                   />
                   <ListItemText
-                    primary="Tax"
-                    secondary={`${fileData.FC_currency.Symbol} ${addZeroes(
+                    primary={`Tax (${(fileData.taxAmt * 100) / fileData.grossAmt}%)`}
+                    secondary={`${fileData.FC_currency.Code} ${addZeroes(
                       fileData.taxAmt
                     )}
                     ${
                       fileData.FC_currency && fileData.LC_currency
                         ? fileData.FC_currency._id !== fileData.LC_currency._id
-                          ? ` / ${fileData.LC_currency.Symbol ||
+                          ? ` / ${fileData.LC_currency.Code ||
                               ""} ${addZeroes(fileData.taxAmt_bc) || "0.00"}`
                           : ""
                         : ""
                     }
-                    (${(fileData.taxAmt * 100) / fileData.grossAmt}%)`}
+                    `}
                   />
                   <ListItemText
                     primary="Net Amount"
-                    secondary={`${fileData.FC_currency.Symbol} ${addZeroes(
+                    secondary={`${fileData.FC_currency.Code} ${addZeroes(
                       fileData.netAmt
                     )}
                     ${
                       fileData.FC_currency && fileData.LC_currency
                         ? fileData.FC_currency._id !== fileData.LC_currency._id
-                          ? ` / ${fileData.LC_currency.Symbol ||
+                          ? ` / ${fileData.LC_currency.Code ||
                               ""} ${fileData.netAmt_bc || "0.00"}`
                           : ""
                         : ""
@@ -556,8 +556,8 @@ export default function FileAdvanceView(props) {
                   />
                   <ListItemText
                     primary={`Created By`}
-                    secondary={`${fileData.createdBy} ${
-                      fileData.createdByVendor ? "(Supplier)" : "(Requester)"
+                    secondary={`${fileData.createdBy.split("@")[0].toUpperCase()} ${
+                      fileData.createdByVendor ? "(SUPPLIER)" : "(REQUESTER)"
                     }`}
                   />
                 </List>

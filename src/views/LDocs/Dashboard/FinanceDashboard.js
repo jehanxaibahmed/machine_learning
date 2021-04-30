@@ -45,6 +45,7 @@ export default function FinanceDashboard() {
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
   const [graphData, setGraphData] = React.useState([]);
+  const [summaryOptions, setSummaryOptions] = React.useState({summaryOptions :data.summaryOptions, summarySeries:data.summarySeries});
   const [purchaseOptions, setPurchaseOptions] = React.useState({purchaseOptions :data.purchaseOptions, purchaseSeries:data.purchaseSeries});
   const [amountOptions, setAmountOptions] = React.useState({amountOptions :data.amountOptions, amountSeries:data.amountSeries});
   const [tvpOptions, setTvpOptions] = React.useState({TvPoptions :data.TvPoptions, TvPseries:data.TvPseries});
@@ -80,6 +81,69 @@ export default function FinanceDashboard() {
     getChartData();
   }, []);
   React.useEffect(() => {
+    //Summary Options 
+    if(graphData.AgeSummery){
+      const summaryOptions =  {
+        fill: {
+          colors: ["#095392"],
+        },
+    
+        chart: {
+          toolbar: {
+            show: false,
+          },
+    
+          type: "bar",
+          events: {
+            click: function (chart, w, e) {
+              // console.log(chart, w, e)
+            },
+          },
+        },
+        plotOptions: {
+          bar: {
+            columnWidth: "80%",
+            // style: {
+            //   backgroundColor: ["green"],
+            // },
+            // distributed: true,
+            dataLabels: {
+              position: "top", // top, center, bottom
+            },
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          offsetY: -20,
+          formatter: function (val, opts) {
+            return `${graphData.currencyInfo.Code} ${val}`
+        },
+          style: {
+            fontSize: "12px",
+            colors: ["black"],
+          },
+        },
+        legend: {
+          show: false,
+        },
+        xaxis: {
+          categories: [
+            ["<30 Days"],
+            ["<60 Days"],
+            ["<90 Days"],
+            ["<120 Days"],
+            ["Other"],
+          ],
+          labels: {
+            style: {
+              fontSize: "12px",
+            },
+          },
+        },
+      };
+
+    setSummaryOptions({summaryOptions:summaryOptions,summarySeries:graphData.AgeSummery})
+    }
     //Purchase Series
     if(graphData.topFiveVendor){
     const purchaseSeries = [
@@ -112,8 +176,12 @@ export default function FinanceDashboard() {
         },
       },
       dataLabels: {
+        formatter: function (val, opts) {
+          return `${graphData.currencyInfo.Code} ${val}`
+      },
         offsetY: -20,
         enabled: true,
+      
         style: {
           fontSize: "12px",
           colors: ["black"],
@@ -170,6 +238,9 @@ export default function FinanceDashboard() {
         },
       },
       dataLabels: {
+        formatter: function (val, opts) {
+          return `${graphData.currencyInfo.Code} ${val}`
+      },
         offsetY: -20,
         enabled: true,
         style: {
@@ -273,7 +344,13 @@ export default function FinanceDashboard() {
             },
           },
           dataLabels: {
-            enabled: false,
+            background: {
+              enabled: false},
+            formatter: function (val, opts) {
+              return `${graphData.currencyInfo.Code} ${val}`
+          },
+          offsetY: -20,
+            enabled: true,
           },
           legend: {
             position: "top",
@@ -346,7 +423,7 @@ export default function FinanceDashboard() {
                 }}
               >
                 
-                {`${graphData.currencyInfo ? graphData.currencyInfo.Symbol:""} ${graphData.totalDueInvoices && graphData.totalDueInvoices[0]
+                {`${graphData.currencyInfo ? graphData.currencyInfo.Code:""} ${graphData.totalDueInvoices && graphData.totalDueInvoices[0]
                   ? formatCash(
                       graphData.totalDueInvoices[0].totalAmount
                     )
@@ -367,7 +444,7 @@ export default function FinanceDashboard() {
                   marginTop: "10px",
                 }}
               >
-                {`${graphData.currencyInfo ? graphData.currencyInfo.Symbol:""} ${graphData.totalInvoiceAmount && graphData.totalInvoiceAmount[0]
+                {`${graphData.currencyInfo ? graphData.currencyInfo.Code:""} ${graphData.totalInvoiceAmount && graphData.totalInvoiceAmount[0]
                   ? formatCash(
                       graphData.totalInvoiceAmount[0].totalAmount
                     )
@@ -385,7 +462,7 @@ export default function FinanceDashboard() {
             </CardHeader>
             <CardContent>
               <ReactApexChart
-                options={chartdata.summaryOptions}
+                options={summaryOptions.summaryOptions}
                 series={
                   graphData.AgeSummery
                     ? [

@@ -139,6 +139,7 @@ export default function CreateInvoice(props) {
   const userDetails = jwt.decode(Token);
   const isVendor = userDetails.isVendor;
   const [formState, setFormState] = useState({
+    conversionRate:0,
     vendors: [],
     organizations: [],
     attachments: [],
@@ -207,7 +208,13 @@ export default function CreateInvoice(props) {
       organizationId: "",
     },
   });
-  const [baseCurrency, setBaseCurrency] = useState(!isVendor ? userDetails.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '');
+  const [baseCurrency, setBaseCurrency] = useState(
+    !isVendor
+      ? userDetails.currency.Currency_Base
+      : formState.selectedOrg
+      ? formState.selectedOrg.currency
+      : ""
+  );
 
   const getLookUp = () => {
     const organizationId = !isVendor
@@ -224,7 +231,7 @@ export default function CreateInvoice(props) {
       })
         .then((res) => {
           if (typeof res.data == "object") {
-            setCurrencyLookups(res.data.filter(c=>c.isEnabled == true));
+            setCurrencyLookups(res.data.filter((c) => c.isEnabled == true));
           }
         })
         .catch((error) => {
@@ -687,25 +694,21 @@ export default function CreateInvoice(props) {
                 unitCost: item[2].values[0].value
                   ? addZeroes(item[2].values[0].value)
                   : "",
-                unitCost_bc:conversionRate(
+                unitCost_bc: conversionRate(
                   formState.values.currency,
                   baseCurrency,
                   currencyLookups,
-                  item[2].values[0].value
-                  ? item[2].values[0].value
-                  : 0,
+                  item[2].values[0].value ? item[2].values[0].value : 0,
                   true
                 ),
                 amount: item[3].values[0].value
                   ? addZeroes(item[3].values[0].value)
                   : "",
-                amount_bc:conversionRate(
+                amount_bc: conversionRate(
                   formState.values.currency,
                   baseCurrency,
                   currencyLookups,
-                  item[3].values[0].value
-                  ? item[3].values[0].value
-                  : 0,
+                  item[3].values[0].value ? item[3].values[0].value : 0,
                   true
                 ),
                 originalamount: item[3].values[0].value
@@ -847,18 +850,22 @@ export default function CreateInvoice(props) {
     } else {
       getLookUp();
       getPos();
-      setBaseCurrency(!isVendor ? userDetails.currency.Currency_Base : formState.selectedOrg.currency);
+      setBaseCurrency(
+        !isVendor
+          ? userDetails.currency.Currency_Base
+          : formState.selectedOrg.currency
+      );
       setVendorModal(false);
       console.log(formState.selectedOrg);
-      if(isVendor){
-      setFormState((formState) => ({
-        ...formState,
-        values: {
-          ...formState.values,
-          currency: formState.selectedOrg.currency,
-        },
-      }));
-    }
+      if (isVendor) {
+        setFormState((formState) => ({
+          ...formState,
+          values: {
+            ...formState.values,
+            currency: formState.selectedOrg.currency,
+          },
+        }));
+      }
     }
   };
 
@@ -893,10 +900,41 @@ export default function CreateInvoice(props) {
   };
   //On Currency Currency
   React.useEffect(() => {
-    setCurrency(
+    const choosedCurrency =
       currencyLookups.find((l) => l._id == formState.values.currency) ||
-        defaultCurrency
-    );
+      defaultCurrency;
+    setCurrency(choosedCurrency);
+    if(!edit){
+    const UItems = items.map((i) => {
+      let j = {
+        ...i,
+        amount_bc: conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          parseFloat(i.amount),
+          false
+        ),
+        unitCost_bc: conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          parseFloat(i.unitCost),
+          false
+        ),
+        discountAmt_bc: conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          parseFloat(i.discount),
+          false
+        ),
+      };
+      return j;
+    });
+    console.log(UItems);
+    setItems(UItems);
+  }
   }, [formState.values.currency, currencyLookups]);
   //Update Total
   React.useEffect(() => {
@@ -1020,7 +1058,7 @@ export default function CreateInvoice(props) {
       orgs = orgs || formState.organizations;
       let org = orgs.find((o) => o.organizationId == fileData.organizationId);
       let vendor = formState.vendors.find((v) => v._id == fileData.vendorId);
-      console.log(vendor);
+      console.log(fileData.conversionRate);
       setFormState((formState) => ({
         ...formState,
         selectedVendor: fileData.vendorId,
@@ -1050,6 +1088,7 @@ export default function CreateInvoice(props) {
           expenseType: fileData.expenseType,
         },
         selectedOrg: isVendor ? org || null : null,
+        conversionRate:fileData.conversionRate || 0,
       }));
       var invoice_items = fileData.items.map((item) => {
         const i = {
@@ -1088,7 +1127,9 @@ export default function CreateInvoice(props) {
         ...formState,
         attachments: invoice_attachments,
       }));
-      setBaseCurrency(!isVendor ? userDetails.currency.Currency_Base : org.currency);
+      setBaseCurrency(
+        !isVendor ? userDetails.currency.Currency_Base : org.currency
+      );
       getPos(fileData.organizationId);
       if (!isVendor) {
         getReceipts(fileData.po);
@@ -1293,12 +1334,13 @@ export default function CreateInvoice(props) {
     if (error) {
       return false;
     } else {
-      const amount = parseFloat(formState.values.unitCost) *
-      parseFloat(formState.values.quantity) -
-    parseFloat(
-      (formState.values.unitCost * formState.values.discount) / 100
-    ) *
-      formState.values.quantity;
+      const amount =
+        parseFloat(formState.values.unitCost) *
+          parseFloat(formState.values.quantity) -
+        parseFloat(
+          (formState.values.unitCost * formState.values.discount) / 100
+        ) *
+          formState.values.quantity;
       const item = {
         itemName: formState.values.itemName,
         unitCost: formState.values.unitCost,
@@ -1308,22 +1350,26 @@ export default function CreateInvoice(props) {
         expenseType: formState.values.inlineExpenseType,
         category: category,
         receiptNumber: formState.values.receiptNumber,
-        unitCost_bc:conversionRate(
+        unitCost_bc: conversionRate(
           formState.values.currency,
           baseCurrency,
           currencyLookups,
           parseFloat(formState.values.unitCost),
-          true
+          true,
+          edit,
+          formState.conversionRate
         ),
-        amount_bc:conversionRate(
+        amount_bc: conversionRate(
           formState.values.currency,
           baseCurrency,
           currencyLookups,
           parseFloat(amount),
-          true
+          true,
+          edit,
+          formState.conversionRate
         ),
-        amount:amount,
-        additionalDetails: formState.values.additionalDetails
+        amount: amount,
+        additionalDetails: formState.values.additionalDetails,
       };
       //Editing
       if (editIndex !== null) {
@@ -1517,6 +1563,9 @@ export default function CreateInvoice(props) {
         (l) => l._id == formState.values.currency
       ),
       LC_currency: userCurrency,
+      conversionRate:currencyLookups.find(
+        (l) => l._id == formState.values.currency
+      ).conversionRate,
       description: formState.values.notes,
       createdByVendor: isVendor ? true : false,
       po: formState.values.poNumber,
@@ -1529,34 +1578,42 @@ export default function CreateInvoice(props) {
       isPettyCash: formState.isPeetyCash,
       isPrePayment: formState.isPrePayment,
       isExpense: formState.isExpense,
-      grossAmt_bc:conversionRate(
+      grossAmt_bc: conversionRate(
         formState.values.currency,
         baseCurrency,
         currencyLookups,
         parseFloat(formState.values.subtotal),
-        true
+        true,
+        edit,
+        formState.conversionRate
       ),
-      discountAmt_bc:conversionRate(
+      discountAmt_bc: conversionRate(
         formState.values.currency,
         baseCurrency,
         currencyLookups,
         parseFloat(discountAmt),
-        true
+        true,
+        edit,
+        formState.conversionRate
       ),
-      taxAmt_bc:conversionRate(
+      taxAmt_bc: conversionRate(
         formState.values.currency,
         baseCurrency,
         currencyLookups,
         parseFloat(taxAmt),
-        true
+        true,
+        edit,
+        formState.conversionRate
       ),
-      netAmt_bc:conversionRate(
+      netAmt_bc: conversionRate(
         formState.values.currency,
         baseCurrency,
         currencyLookups,
         parseFloat(formState.values.total),
-        true
-      )
+        true,
+        edit,
+        formState.conversionRate
+      ),
     };
     //Axios Call
     axios({
@@ -1860,7 +1917,7 @@ export default function CreateInvoice(props) {
                             select
                           >
                             <MenuItem value={1}>
-                              Amount ({currency.Symbol || "$"})
+                              Amount ({currency.Code || "$"})
                             </MenuItem>
                             <MenuItem value={2}>Percentage (%)</MenuItem>
                           </TextField>
@@ -1953,7 +2010,7 @@ export default function CreateInvoice(props) {
                             select
                           >
                             <MenuItem value={1}>
-                              Amount ({currency.Symbol || "$"})
+                              Amount ({currency.Code || "$"})
                             </MenuItem>
                             <MenuItem value={2}>Percentage (%)</MenuItem>
                           </TextField>
@@ -2731,7 +2788,7 @@ export default function CreateInvoice(props) {
                                 ? "Valid Invoice Currency is required"
                                 : null
                             }
-                            disabled={edit || items.length > 0}
+                            disabled={edit}
                             label="Currency"
                             id="currency"
                             name="currency"
@@ -2753,16 +2810,16 @@ export default function CreateInvoice(props) {
                             </MenuItem>
                             {currencyLookups.map((cu) => (
                               <MenuItem key={cu._id} value={cu._id}>
-                                {`${cu.Currency.toUpperCase()} (${cu.Symbol})`}
+                                {`${cu.Currency.toUpperCase()} (${cu.Code})`}
                               </MenuItem>
                             ))}
                           </TextField>
                         </GridItem>
                         <GridItem
                           xs={12}
-                          sm={13}
-                          md={12}
-                          lg={12}
+                          sm={12}
+                          md={6}
+                          lg={6}
                           style={{ marginTop: "10px", marginBottom: "10px" }}
                         >
                           <FormGroup row>
@@ -2811,6 +2868,27 @@ export default function CreateInvoice(props) {
                               ""
                             )}
                           </FormGroup>
+                        </GridItem>
+                        <GridItem
+                          xs={12}
+                          sm={12}
+                          md={6}
+                          lg={6}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        >
+                          <TextField
+                            fullWidth={true}
+                            label="Conversion Rate"
+                            id="conversionRate"
+                            name="conversionrate"
+                            disabled={true}
+                            
+                            type="text"
+                            // variant="outlined"
+                            value={formState.values.currency ? `1 ${currency.Code ? currency.Code: ""} = ${currencyLookups.find(c=>c._id == baseCurrency) ? currencyLookups.find(c=>c._id == baseCurrency).Code:""} ${currency.conversionRate ? parseFloat(!edit ? currency.conversionRate : formState.conversionRate).toFixed(4):"?"}`: 
+                            "" || ""}
+                            className={classes.textField}
+                          />
                         </GridItem>
                         {!formState.isPeetyCash &&
                         !formState.isExpense &&
@@ -3092,6 +3170,7 @@ export default function CreateInvoice(props) {
                       createReceipts={createReceipts}
                       currencyLookups={currencyLookups}
                       userData={userDetails}
+                      edit={edit}
                     />
 
                     <GridItem
@@ -3162,12 +3241,15 @@ export default function CreateInvoice(props) {
                                   formState.values.currency,
                                   baseCurrency,
                                   currencyLookups,
-                                  parseFloat(formState.values.subtotal)
+                                  parseFloat(formState.values.subtotal),
+                                  false,
+                                  edit,
+                                  formState.conversionRate
                                 )}
                               </TableCell>
                               <TableCell>
                                 <TextField
-                                  label={`Sub Total(${currency.Symbol || "$"})`}
+                                  label={`Sub Total(${currency.Code || "$"})`}
                                   id="subtotal"
                                   name="subtotal"
                                   disabled={true}
@@ -3197,12 +3279,15 @@ export default function CreateInvoice(props) {
                                       : (formState.values.subtotal *
                                           formState.values.overallDiscount) /
                                           100
-                                  )
+                                  ),
+                                  false,
+                                  edit,
+                                  formState.conversionRate
                                 )}
                               </TableCell>
                               <TableCell>
                                 <TextField
-                                  label={`Discount(${currency.Symbol || "$"})`}
+                                  label={`Discount(${currency.Code || "$"})`}
                                   id="discount"
                                   name="overallDiscount"
                                   onChange={(event) => {
@@ -3241,12 +3326,15 @@ export default function CreateInvoice(props) {
                                       : (formState.values.subtotal *
                                           formState.values.overallTax) /
                                           100
-                                  )
+                                  ),
+                                  false,
+                                  edit,
+                                  formState.conversionRate
                                 )}
                               </TableCell>
                               <TableCell>
                                 <TextField
-                                  label={`Tax(${currency.Symbol || "$"})`}
+                                  label={`Tax(${currency.Code || "$"})`}
                                   id="tax"
                                   name="overallTax"
                                   onChange={(event) => {
@@ -3271,17 +3359,20 @@ export default function CreateInvoice(props) {
                             <TableRow>
                               <TableCell component="th" scope="row">
                                 Total
-                                  <br />
+                                <br />
                                 {conversionRate(
                                   formState.values.currency,
                                   baseCurrency,
                                   currencyLookups,
-                                  parseFloat(formState.values.total)
+                                  parseFloat(formState.values.total),
+                                  false,
+                                  edit,
+                                  formState.conversionRate
                                 )}
                               </TableCell>
                               <TableCell component="th" scope="row">
                                 <TextField
-                                  label={`Total(${currency.Symbol || "$"})`}
+                                  label={`Total(${currency.Code || "$"})`}
                                   id="total"
                                   name="total"
                                   disabled={true}
