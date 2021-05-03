@@ -217,7 +217,7 @@ export default function CreateInvoice(props) {
   );
 
   const getLookUp = () => {
-    const organizationId = !isVendor
+    const organizationId = edit ? fileData.organizationId : !isVendor
       ? userDetails.orgDetail.organizationId
       : formState.values.organizationId;
     //Get Currencies
@@ -1059,6 +1059,7 @@ export default function CreateInvoice(props) {
       let org = orgs.find((o) => o.organizationId == fileData.organizationId);
       let vendor = formState.vendors.find((v) => v._id == fileData.vendorId);
       console.log(fileData.conversionRate);
+      getLookUp();
       setFormState((formState) => ({
         ...formState,
         selectedVendor: fileData.vendorId,
@@ -1079,13 +1080,13 @@ export default function CreateInvoice(props) {
           discountType: 1,
           overallDiscount: fileData.discountAmt,
           organizationId: fileData.organizationId,
-          currency: fileData.FC_currency._id || currency,
           paymentTerms: `NET-${fileData.paymentTerms}`,
           poNumber: fileData.po,
           selectedVendor: !isVendor
             ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
             : null,
           expenseType: fileData.expenseType,
+          currency: fileData.FC_currency._id || "",
         },
         selectedOrg: isVendor ? org || null : null,
         conversionRate:fileData.conversionRate || 0,
@@ -1128,8 +1129,9 @@ export default function CreateInvoice(props) {
         attachments: invoice_attachments,
       }));
       setBaseCurrency(
-        !isVendor ? userDetails.currency.Currency_Base : org.currency
+        fileData.LC_currency._id
       );
+      // setCurrency(currencyLookups.find(c=>c._id == fileData.FC_currency._id ));
       getPos(fileData.organizationId);
       if (!isVendor) {
         getReceipts(fileData.po);
@@ -3149,6 +3151,7 @@ export default function CreateInvoice(props) {
                     <Items
                       formState={formState}
                       items={items}
+                      baseCurrency={fileData ? fileData.LC_currency._id: null}
                       handleChange={handleChange}
                       addZeroes={addZeroes}
                       handleEditItem={handleEditItem}

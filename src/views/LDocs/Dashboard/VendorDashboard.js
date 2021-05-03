@@ -268,7 +268,7 @@ export default function VendorDashboard() {
   }, []);
 
   React.useEffect(()=>{
-    if(graphData){
+    if(graphData && apiData){
     const quarterOptions =  {
       fill: {
           colors: ["#007f5e"],
@@ -290,17 +290,17 @@ export default function VendorDashboard() {
       dataLabels: {
         enabled: true,
         offsetY: -20,
-        formatter: function (val, opts) {
-          return `${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
-      }
+      //   formatter: function (val, opts) {
+      //     return `${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
+      // }
     }
     },
     dataLabels: {
       offsetY: -20,
       enabled: true,
-      formatter: function (val, opts) {
-        return `${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
-    },
+    //   formatter: function (val, opts) {
+    //     return `${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
+    // },
       style: {
         fontSize: "12px",
         colors: ["black"],
@@ -308,6 +308,11 @@ export default function VendorDashboard() {
     },
     legend: {
       show: false,
+    },
+    yaxis: {
+      title: {
+        text: `${apiData[0] ? apiData[0].currencyCode : ''}`
+      }
     },
     xaxis: {
       categories: [
@@ -343,9 +348,9 @@ export default function VendorDashboard() {
   dataLabels: {
     offsetY: -20,
     enabled: true,
-    formatter: function (val, opts) {
-      return `${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
-  },
+  //   formatter: function (val, opts) {
+  //     return `${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
+  // },
     style: {
       fontSize: "12px",
       colors: ["black"],
@@ -353,6 +358,11 @@ export default function VendorDashboard() {
   },
   legend: {
     show: false,
+  },
+  yaxis: {
+    title: {
+      text: `${apiData[0] ? apiData[0].currencyCode : ''}`
+    }
   },
   xaxis: {
     categories: [

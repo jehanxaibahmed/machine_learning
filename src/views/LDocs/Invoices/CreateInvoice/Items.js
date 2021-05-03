@@ -102,12 +102,14 @@ export default function Items(props) {
     createReceipts,
     receipts,
     currencyLookups,
+    baseCurrency,
     userData,
     edit
   } = props;
   const classes = useStyles();
-  const baseCurrency = !isVendor ? userData.currency.Currency_Base : "";
   const [lookups, setLookups] = useState([]);
+  const [baseCurr, setBaseCurr] = useState();
+  
   //getLookups
   const getLookUp = async () => {
     return new Promise((res, rej) => {
@@ -134,6 +136,10 @@ export default function Items(props) {
   React.useEffect(() => {
     getLookUp();
   }, []);
+
+  React.useEffect(()=>{
+    setBaseCurr(baseCurrency ? baseCurrency : !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '');
+  },[formState])
 
   return (
     <GridItem xs={12} sm={12} md={12} lg={12}>
@@ -563,9 +569,9 @@ export default function Items(props) {
                       {`${currency.Code} `} 
                       {addZeroes(row.unitCost)}
                       <br />
-                      {conversionRate(
+                      {currency._id != baseCurr &&  conversionRate(
                         currency._id,
-                        !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '',
+                        baseCurr,
                         currencyLookups,
                         row.unitCost,
                         false,
@@ -583,9 +589,9 @@ export default function Items(props) {
                       {`${currency.Code} `} 
                       {addZeroes(row.amount)}
                       <br />
-                      {conversionRate(
+                      {currency._id != baseCurr && conversionRate(
                         currency._id,
-                        !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '',
+                        baseCurrency ? baseCurrency : !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '',
                         currencyLookups,
                         row.amount,
                         false,

@@ -447,15 +447,26 @@ export default function FilesList(props) {
           ),
           netAmt: (
             <MenuProvider data={prop} id="menu_id">
-              {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
-              <br />
+            <Tooltip 
+             title={
+                  `1 ${prop.LC_currency.Code} ≈ ${prop.FC_currency.Code} ${prop.conversionRate
+                    ? prop.conversionRate
+                    : ""}`
+                }
+                aria-label="conversionRate"
+              > 
+              <div>
+                {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
+                <br />
                 {prop.FC_currency && prop.LC_currency
                   ? prop.FC_currency._id !== prop.LC_currency._id
                     ? `(${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
                         "0.00"})`
                     : ""
                   : ""}
-            </MenuProvider>
+                  </div>
+              </Tooltip>
+              </MenuProvider>
           ),
           version: (
             <MenuProvider data={prop} id="menu_id">

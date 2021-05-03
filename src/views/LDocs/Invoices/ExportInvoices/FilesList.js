@@ -118,7 +118,7 @@ export default function ExportList(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
   const classes = useStyles();
@@ -203,7 +203,9 @@ export default function ExportList(props) {
         }));
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         setFormState((formState) => ({
           ...formState,
           pos: [],
@@ -225,7 +227,9 @@ export default function ExportList(props) {
         }));
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(error);
       });
   };
@@ -446,15 +450,26 @@ export default function ExportList(props) {
           ),
           netAmt: (
             <MenuProvider data={prop} id="menu_id">
-              {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
-              <br />
+            <Tooltip 
+             title={
+                  `1 ${prop.LC_currency.Code} &#8776; &#x2248; &thickapprox; ${prop.FC_currency.Code} ${prop.conversionRate
+                    ? prop.conversionRate
+                    : ""}`
+                }
+                aria-label="conversionRate"
+              > 
+              <div>
+                {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
+                <br />
                 {prop.FC_currency && prop.LC_currency
                   ? prop.FC_currency._id !== prop.LC_currency._id
                     ? `(${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
                         "0.00"})`
                     : ""
                   : ""}
-            </MenuProvider>
+                  </div>
+              </Tooltip>
+              </MenuProvider>
           ),
           version: (
             <MenuProvider data={prop} id="menu_id">
@@ -632,7 +647,9 @@ export default function ExportList(props) {
         setIsLoading(false);
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -753,7 +770,9 @@ export default function ExportList(props) {
         setExportToFusionModel(false);
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(error);
       });
   };

@@ -372,8 +372,7 @@ export const validateInvoice = async (row, Token) => {
 export const conversionRate = (fc, bc, currencies, amount, isNotSymbol,isEdit, rate) => {
   const bC = currencies.find((c) => c._id == bc);
   const fC = currencies.find((c) => c._id == fc);
-  console.log(bC);
-  console.log(fC);
+  console.log(currencies);
   const bcSymbol = bC ? bC.Code : "";
   const fcRate = isEdit ? rate : fC ? fC.conversionRate : "";
   if (isNotSymbol) {
