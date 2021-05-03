@@ -452,12 +452,12 @@ export default function ExportList(props) {
             <MenuProvider data={prop} id="menu_id">
             <Tooltip 
              title={
-                  `1 ${prop.LC_currency.Code} &#8776; &#x2248; &thickapprox; ${prop.FC_currency.Code} ${prop.conversionRate
-                    ? prop.conversionRate
-                    : ""}`
-                }
-                aria-label="conversionRate"
-              > 
+              `1 ${prop.LC_currency.Code} ≈ ${prop.FC_currency.Code} ${prop.conversionRate
+                ? prop.conversionRate
+                : ""}`
+            }
+            aria-label="conversionRate"
+          > 
               <div>
                 {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
                 <br />
