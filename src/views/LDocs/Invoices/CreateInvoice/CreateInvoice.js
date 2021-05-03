@@ -2887,7 +2887,7 @@ export default function CreateInvoice(props) {
                             
                             type="text"
                             // variant="outlined"
-                            value={formState.values.currency ? `${currency.Code ? currency.Code: ""} 1 = ${currencyLookups.find(c=>c._id == baseCurrency) ? currencyLookups.find(c=>c._id == baseCurrency).Code:""} ${currency.conversionRate ? parseFloat(!edit ? currency.conversionRate : formState.conversionRate).toFixed(4):"?"}`: 
+                            value={formState.values.currency ? `${currency.Code ? currency.Code: ""} 1 ≈ ${currencyLookups.find(c=>c._id == baseCurrency) ? currencyLookups.find(c=>c._id == baseCurrency).Code:""} ${currency.conversionRate ? parseFloat(!edit ? currency.conversionRate : formState.conversionRate).toFixed(4):"?"}`: 
                             "" || ""}
                             className={classes.textField}
                           />

@@ -140,7 +140,7 @@ export default function FinanceDashboard() {
         },
         yaxis: {
           title: {
-            text: `Amount (${graphData.currencyInfo.Code})`,
+            text: `Amount ( ${graphData.currencyInfo.Code} )`,
           },
         },
         xaxis: {
@@ -242,8 +242,13 @@ export default function FinanceDashboard() {
         },
         yaxis: {
           title: {
-            text: `Amount (${graphData.currencyInfo.Code})`,
-          }
+            text: `Amount ( ${graphData.currencyInfo.Code} )`,
+          },
+          // labels: {
+          //   formatter: function (val, opts) {
+          //     return `${graphData.currencyInfo.Code} ${val}`
+          //   }
+          // },
         },
         xaxis: {
           categories: [
@@ -338,7 +343,7 @@ export default function FinanceDashboard() {
         },
         yaxis: {
           title: {
-            text: `Amount (${graphData.currencyInfo.Code})`,
+            text: `Amount ( ${graphData.currencyInfo.Code} )`,
           },
         },
         xaxis: {
@@ -478,7 +483,7 @@ export default function FinanceDashboard() {
         },
         yaxis: {
           title: {
-            text: `Amount (${graphData.currencyInfo.Code})`,
+            text: `Amount ( ${graphData.currencyInfo.Code} )`,
           },
         },
         xaxis: {
