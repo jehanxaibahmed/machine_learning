@@ -452,8 +452,8 @@ export default function ExportList(props) {
             <MenuProvider data={prop} id="menu_id">
             <Tooltip 
              title={
-              `1 ${prop.LC_currency.Code} ≈ ${prop.FC_currency.Code} ${prop.conversionRate
-                ? prop.conversionRate
+              `${prop.LC_currency.Code} 1 ≈ ${prop.FC_currency.Code} ${prop.conversionRate
+                ? parseFloat(prop.conversionRate).toFixed(4)
                 : ""}`
             }
             aria-label="conversionRate"
