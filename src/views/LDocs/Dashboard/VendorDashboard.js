@@ -311,7 +311,7 @@ export default function VendorDashboard() {
     },
     yaxis: {
       title: {
-        text: `${apiData[0] ? apiData[0].currencyCode : ''}`
+        text: `Amount (${apiData[0] ? apiData[0].currencyCode : ''})`
       }
     },
     xaxis: {
@@ -361,7 +361,7 @@ export default function VendorDashboard() {
   },
   yaxis: {
     title: {
-      text: `${apiData[0] ? apiData[0].currencyCode : ''}`
+      text: `Amount (${apiData[0] ? apiData[0].currencyCode : ''})`
     }
   },
   xaxis: {
