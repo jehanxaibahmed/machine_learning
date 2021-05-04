@@ -4,6 +4,7 @@ import axios from "axios";
 import dateFormat from "dateformat";
 import { firebaseConfig } from "../../../config/Firebase";
 import { setIsTokenExpired } from "actions";
+import moment from "moment";
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -69,7 +70,10 @@ export function addZeroes(num) {
 }
 
 export const formatDateTime = (date) => {
-  return dateFormat(date, "dd/mm/yyyy hh:mm:ss TT");
+  var offset = moment().utcOffset();
+  var now = new Date(date);
+  const someday  = moment(now).utcOffset(offset).format('DD-MM-YYYY HH:mm');
+  return someday;
 };
 
 export const currentTracking = (trackingStatus) => {
