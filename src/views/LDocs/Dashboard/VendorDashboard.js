@@ -310,9 +310,14 @@ export default function VendorDashboard() {
       show: false,
     },
     yaxis: {
-      title: {
-        text: `Amount ( ${apiData[0] ? apiData[0].currencyCode : ''} )`
-      }
+      // title: {
+      //   text: `Amount ( ${apiData[0] ? apiData[0].currencyCode : ''} )`
+      // }
+      labels: {
+        formatter: function (val, opts) {
+          return ` ${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
+        }
+      },
     },
     xaxis: {
       categories: [
@@ -360,12 +365,13 @@ export default function VendorDashboard() {
     show: false,
   },
   yaxis: {
-    title: {
-      text: `Amount ( ${apiData[0] ? apiData[0].currencyCode : ''} )`
-    },
-    style: {
-      fontSize: "12px",
-      colors: ["black"],
+    // title: {
+    //   text: `Amount ( ${apiData[0] ? apiData[0].currencyCode : ''} )`
+    // },
+    labels: {
+      formatter: function (val, opts) {
+        return ` ${apiData[0] ? apiData[0].currencyCode : ''} ${val}`
+      }
     },
   },
   xaxis: {

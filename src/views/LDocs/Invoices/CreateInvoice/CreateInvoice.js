@@ -1580,6 +1580,7 @@ export default function CreateInvoice(props) {
       isPettyCash: formState.isPeetyCash,
       isPrePayment: formState.isPrePayment,
       isExpense: formState.isExpense,
+      createdDate: new Date().toLocaleString().replace(/t/, " ").replace(/\..+/, ""),
       grossAmt_bc: conversionRate(
         formState.values.currency,
         baseCurrency,

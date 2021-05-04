@@ -139,8 +139,13 @@ export default function FinanceDashboard() {
           show: false,
         },
         yaxis: {
-          title: {
-            text: `Amount ( ${graphData.currencyInfo.Code} )`,
+          // title: {
+          //   text: `Amount ( ${graphData.currencyInfo.Code} )`,
+          // },
+          labels: {
+            formatter: function (val, opts) {
+              return `${graphData.currencyInfo.Code} ${val}`
+            }
           },
         },
         xaxis: {
@@ -241,14 +246,14 @@ export default function FinanceDashboard() {
           show: false,
         },
         yaxis: {
-          title: {
-            text: `Amount ( ${graphData.currencyInfo.Code} )`,
-          },
-          // labels: {
-          //   formatter: function (val, opts) {
-          //     return `${graphData.currencyInfo.Code} ${val}`
-          //   }
+          // title: {
+          //   text: `Amount ( ${graphData.currencyInfo.Code} )`,
           // },
+          labels: {
+            formatter: function (val, opts) {
+              return `${graphData.currencyInfo.Code} ${val}`
+            }
+          },
         },
         xaxis: {
           categories: [
@@ -342,8 +347,13 @@ export default function FinanceDashboard() {
           show: false,
         },
         yaxis: {
-          title: {
-            text: `Amount ( ${graphData.currencyInfo.Code} )`,
+          // title: {
+          //   text: `Amount ( ${graphData.currencyInfo.Code} )`,
+          // },
+          labels: {
+            formatter: function (val, opts) {
+              return `${graphData.currencyInfo.Code} ${val}`
+            }
           },
         },
         xaxis: {
@@ -482,8 +492,13 @@ export default function FinanceDashboard() {
           offsetX: 40,
         },
         yaxis: {
-          title: {
-            text: `Amount ( ${graphData.currencyInfo.Code} )`,
+          // title: {
+          //   text: `Amount ( ${graphData.currencyInfo.Code} )`,
+          // },
+          labels: {
+            formatter: function (val, opts) {
+              return `${graphData.currencyInfo.Code} ${val}`
+            }
           },
         },
         xaxis: {
