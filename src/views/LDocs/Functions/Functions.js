@@ -72,7 +72,7 @@ export function addZeroes(num) {
 export const formatDateTime = (date) => {
   var offset = moment().utcOffset();
   var now = new Date(date);
-  const someday  = moment(now).utcOffset(offset).format('DD-MM-YYYY HH:mm');
+  const someday  = moment(now).utcOffset(offset).format('DD-MM-YYYY hh:mm A');
   return someday;
 };
 
