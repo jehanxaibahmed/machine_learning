@@ -362,6 +362,7 @@ export default function ApprovalRequested() {
         ...FileData,
         approveComments: formState.values.approveComments,
         status: formState.values.status,
+        updateTime: new Date().toLocaleString().replace(/t/, " ").replace(/\..+/, ""),
       };
       axios({
         method: "post",

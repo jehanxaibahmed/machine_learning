@@ -355,6 +355,7 @@ const goBack = () => {
               ...InvoiceData,
               reviewComments: formState.values.reviewComments,
               status: formState.values.status,
+              updateTime: new Date().toLocaleString().replace(/t/, " ").replace(/\..+/, ""),
             };
             axios({
                 method: "post",

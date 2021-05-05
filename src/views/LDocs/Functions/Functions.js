@@ -288,8 +288,8 @@ export const validateInvoice = async (row, Token) => {
                 });
               const ValidationData = {
                 "Submit Date": {
-                  onChain: formatDateTime(blockchain.InvoiceDate),
-                  offChain: formatDateTime(invoice.invoiceDate),
+                  onChain: dateFormat(blockchain.InvoiceDate, "dd-mm-yyyy"),
+                  offChain: dateFormat(invoice.invoiceDate, "dd-mm-yyyy"),
                   isSame: isInvoiceDateSame,
                 },
                 "Vendor ID": {
