@@ -1,13 +1,18 @@
 /*eslint-disable*/
 import React, { useState, useEffect } from "react";
 // @material-ui/core components
-import { makeStyles, MenuItem, TextField,CircularProgress,
-    Slide,
-    Dialog,
-    LinearProgress,
-    DialogContent,
-    IconButton,
-    Tooltip } from "@material-ui/core";
+import {
+  makeStyles,
+  MenuItem,
+  TextField,
+  CircularProgress,
+  Slide,
+  Dialog,
+  LinearProgress,
+  DialogContent,
+  IconButton,
+  Tooltip,
+} from "@material-ui/core";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -23,8 +28,8 @@ import ChipInput from "material-ui-chip-input";
 import Pending from "assets/img/statuses/Pending.png";
 import Success from "assets/img/statuses/Success.png";
 import Rejected from "assets/img/statuses/Rejected.png";
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
@@ -41,7 +46,9 @@ const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
 
 export default function InitiatePayment(props) {
-  const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const Token =
+    useSelector((state) => state.userReducer.Token) ||
+    localStorage.getItem("cooljwt");
   const decoded = jwt.decode(Token);
   const [vendorData, setVendorData] = React.useState();
   const classes = useStyles();
@@ -52,36 +59,36 @@ export default function InitiatePayment(props) {
   const [PaymentGateways, setPaymentGateways] = React.useState([]);
   const paymentMethods = [
     {
-        title:"PayPal",
-        id:1,
-        logo:Paypal
+      title: "PayPal",
+      id: 1,
+      logo: Paypal,
     },
     {
-      title:"Master Card",
-      id:2,
-      logo:Mastercard
-  },
-  {
-      title:"Money Button",
-      id:3,
-      logo:MoneyButton
-  },
-  {
-      title:"Coin Gate",
-      id:4,
-      logo:CoinGate
-  }
-]
+      title: "Master Card",
+      id: 2,
+      logo: Mastercard,
+    },
+    {
+      title: "Money Button",
+      id: 3,
+      logo: MoneyButton,
+    },
+    {
+      title: "Coin Gate",
+      id: 4,
+      logo: CoinGate,
+    },
+  ];
   const [formState, setFormState] = React.useState({
     values: {
-        paidAmount:"",
-        paymentBy:"",
-        paymentType:""
+      paidAmount: "",
+      paymentBy: "",
+      paymentType: "",
     },
     errors: {
-        paidAmount:"",
-        paymentBy:"",
-        paymentType:""
+      paidAmount: "",
+      paymentBy: "",
+      paymentType: "",
     },
   });
   const successAlert = (msg) => {
@@ -104,7 +111,9 @@ export default function InitiatePayment(props) {
         error
         style={{ display: "block", marginTop: "-100px" }}
         title="Error!"
-        onConfirm={() => {hideAlert() }}
+        onConfirm={() => {
+          hideAlert();
+        }}
         onCancel={() => hideAlert()}
         confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
       >
@@ -120,34 +129,39 @@ export default function InitiatePayment(props) {
   };
 
   React.useEffect(() => {
-      getPaymentMethods();
+    getPaymentMethods();
     getVendorData();
   }, []);
 
+  React.useEffect(() => {
+    paymentButton();
+  }, [formState.values.paymentBy]);
+
   const handleChange = (event) => {
     event.persist();
-      setFormState((formState) => ({
-        ...formState,
-        values: {
-          ...formState.values,
-          [event.target.name]: event.target.value,
-        },
-      }));
+    setFormState((formState) => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        [event.target.name]: event.target.value,
+      },
+    }));
   };
 
   const getPaymentMethods = () => {
     axios({
-        method: "get",
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/getGateway/${props.fileData.tenantId}`,
-        headers: { cooljwt: Token },
+      method: "get",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/getGateway/${props.fileData.tenantId}`,
+      headers: { cooljwt: Token },
+    })
+      .then((response) => {
+        console.log(response.data);
+        setPaymentGateways(response.data);
       })
-        .then((response) => {
-          console.log(response.data);
-          setPaymentGateways(response.data);
-        }).catch((err)=>{
-          console.log(err);
-        })
-  }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const getVendorData = () => {
     axios({
       method: "get",
@@ -155,16 +169,19 @@ export default function InitiatePayment(props) {
       headers: { cooljwt: Token },
     })
       .then((response) => {
-        const vendor = response.data.find(v=> v._id == props.fileData.vendorId);
-        if(vendor){
-          setVendorData(vendor)
-        }else{
+        const vendor = response.data.find(
+          (v) => v._id == props.fileData.vendorId
+        );
+        if (vendor) {
+          setVendorData(vendor);
+        } else {
           setVendorData({});
         }
-      }).catch((err)=>{
-        console.log(err);
       })
-  }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const initPayment = () => {
     setIsLoading(true);
     let paidAmount;
@@ -172,74 +189,121 @@ export default function InitiatePayment(props) {
     let paymentType;
     const Check = require("is-null-empty-or-undefined").Check;
     var error = false;
-    if (!Check(formState.values.paidAmount) && formState.values.paidAmount <= props.fileData.balanceDue ) {
-        paidAmount = "success";
+    if (
+      !Check(formState.values.paidAmount) &&
+      formState.values.paidAmount <= props.fileData.balanceDue
+    ) {
+      paidAmount = "success";
     } else {
-        paidAmount = "error";
-        error = true;
+      paidAmount = "error";
+      error = true;
     }
     if (!Check(formState.values.paymentBy)) {
-        paymentBy = "success";
+      paymentBy = "success";
     } else {
-        paymentBy = "error";
-        error = true;
+      paymentBy = "error";
+      error = true;
     }
     if (!Check(formState.values.paymentType)) {
-        paymentType = "success";
+      paymentType = "success";
     } else {
-        paymentType = "error";
-        error = true;
+      paymentType = "error";
+      error = true;
     }
     setFormState((formState) => ({
-        ...formState,
-        errors: {
-            ...formState.errors,
-            paidAmount: paidAmount,
-            paymentBy: paymentBy,
-            paymentType: paymentType
-        }
+      ...formState,
+      errors: {
+        ...formState.errors,
+        paidAmount: paidAmount,
+        paymentBy: paymentBy,
+        paymentType: paymentType,
+      },
     }));
     if (error) {
-        setIsLoading(false);
-        return false;
+      setIsLoading(false);
+      return false;
     } else {
-        let data = {
-            tenantId:props.fileData.tenantId,
-            organizationId:props.fileData.organizationId,
-            invoiceId:props.fileData.invoiceId,
-            version:props.fileData.version,
-            paidAmount:formState.values.paidAmount,
-            updatedBy:decoded.email,
-            paymentType:formState.values.paymentType,
-            paymentBy:formState.values.paymentBy,
-            balanceDue:props.fileData.balanceDue - formState.values.paidAmount
-        };
-        axios({
-            method: "post",
-            url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
-            data: data,
-            headers: {
-                cooljwt: Token,
-            },
-        }).then(async (response) => {
-                await props.loadFiles(decoded, false);
-                setIsLoading(false);
-                //props.closeModal();
-                successAlert("Payment Initiated Successfully!");
-            })
-            .catch((error) => {
-              if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
-                console.log(
-                    typeof error.response != "undefined"
-                           ? error.response.data
-                            : error.message
-                )
-                errorAlert(
-                    "There is Some Issue .."
-                );
-            });
+      let data = {
+        tenantId: props.fileData.tenantId,
+        organizationId: props.fileData.organizationId,
+        invoiceId: props.fileData.invoiceId,
+        version: props.fileData.version,
+        paidAmount: formState.values.paidAmount,
+        updatedBy: decoded.email,
+        paymentType: formState.values.paymentType,
+        paymentBy: formState.values.paymentBy,
+        balanceDue: props.fileData.balanceDue - formState.values.paidAmount,
+      };
+      axios({
+        method: "post",
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
+        data: data,
+        headers: {
+          cooljwt: Token,
+        },
+      })
+        .then(async (response) => {
+          await props.loadFiles(decoded, false);
+          setIsLoading(false);
+          //props.closeModal();
+          successAlert("Payment Initiated Successfully!");
+        })
+        .catch((error) => {
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
+          console.log(
+            typeof error.response != "undefined"
+              ? error.response.data
+              : error.message
+          );
+          errorAlert("There is Some Issue ..");
+        });
     }
-} 
+  };
+
+  const paymentButton = () => {
+    if(formState.values.paymentBy == "PayPal"){
+    paypal.Button.render(
+      {
+        env: "sandbox", // Or 'production'
+        // Set up the payment:
+        // 1. Add a payment callback
+        payment: function(data, actions) {
+          // 2. Make a request to your server
+          return actions.request
+            .post(`${process.env.REACT_APP_LDOCS_API_URL}/payment/createPayment`,{
+                invoiceId: props.fileData.invoiceId,
+                organizationId:props.fileData.organizationId,
+                description:`Payment for Invoice ${props.fileData.invoiceId}`,
+                amount:formState.values.paymentType == "full" ?  parseFloat(props.fileData.netAmt_bc) : parseFloat(formState.values.paidAmount),
+               currency:props.fileData.LC_currency.Code
+            })
+            .then(function(res) {
+              // 3. Return res.id from the response
+              return res.id;
+            });
+        },
+        // Execute the payment:
+        // 1. Add an onAuthorize callback
+        onAuthorize: function(data, actions) {
+          // 2. Make a request to your server
+          return actions.request
+            .post(`${process.env.REACT_APP_LDOCS_API_URL}/payment/executePayment`, {
+              paymentID: data.paymentID,
+              payerID: data.payerID,
+              amount:formState.values.paymentType == "full" ? parseFloat(props.fileData.netAmt_bc) : parseFloat(formState.values.paidAmount),
+              currency:props.fileData.LC_currency.Code
+            })
+            .then(function(res) {
+              // 3. Show the buyer a confirmation message.
+            });
+        },
+      },
+      "#paypal-button"
+    );
+    }
+  };
 
   function closeModal() {
     props.closeModal();
@@ -248,234 +312,258 @@ export default function InitiatePayment(props) {
     <GridContainer>
       {alert}
       <GridItem xs={12} sm={12} md={12}>
-                    <Card>
-                      <CardHeader color="info" icon>
-                        <CardIcon color="info">
-                          <h4 className={classes.cardTitle}>
-                            Initiate Payment Invoice:&nbsp;
-                            {props.fileData.invoiceId}
-                          </h4>
-                        </CardIcon>
-                      </CardHeader>
-                      <CardBody>
-                        <GridContainer>
-                      <GridItem
-                          xs={10}
-                          sm={10}
-                          md={11}
-                          lg={11}
-                          style={{
-                            marginTop: "10px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          <TextField
-                            className={classes.textField}
-                            type="text"
-                            fullWidth={true}
-                            label="Supplier Name"
-                            disabled={true}
-                            value={props.fileData.vendorName || ""}
-                          ></TextField>
-                        </GridItem>
-                        <GridItem
-                          xs={2}
-                          sm={2}
-                          md={1}
-                          lg={1}
-                          style={{
-                            marginTop: "10px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                           <Tooltip title="Show Bank Details" ><IconButton onClick={()=>setShowVendorDetails(!showVendorDetails)} >{showVendorDetails ?<VisibilityIcon fontSize="small"/>:<VisibilityOffIcon fontSize="small"/>}</IconButton></Tooltip>                       
-                        </GridItem>
-                        {showVendorDetails ?
-                        <GridItem
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                        style={{
-                          marginTop: "10px",
-                          marginBottom: "10px",
+        <Card>
+          <CardHeader color="info" icon>
+            <CardIcon color="info">
+              <h4 className={classes.cardTitle}>
+                Initiate Payment Invoice:&nbsp;
+                {props.fileData.invoiceId}
+              </h4>
+            </CardIcon>
+          </CardHeader>
+          <CardBody>
+            <GridContainer>
+              <GridItem
+                xs={10}
+                sm={10}
+                md={11}
+                lg={11}
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                }}
+              >
+                <TextField
+                  className={classes.textField}
+                  type="text"
+                  fullWidth={true}
+                  label="Supplier Name"
+                  disabled={true}
+                  value={props.fileData.vendorName || ""}
+                ></TextField>
+              </GridItem>
+              <GridItem
+                xs={2}
+                sm={2}
+                md={1}
+                lg={1}
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Tooltip title="Show Bank Details">
+                  <IconButton
+                    onClick={() => setShowVendorDetails(!showVendorDetails)}
+                  >
+                    {showVendorDetails ? (
+                      <VisibilityIcon fontSize="small" />
+                    ) : (
+                      <VisibilityOffIcon fontSize="small" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+              </GridItem>
+              {showVendorDetails ? (
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={12}
+                  lg={12}
+                  style={{
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <Step3
+                    goBack={() => setShowVendorDetails(!showVendorDetails)}
+                    vendorData={vendorData}
+                  />
+                </GridItem>
+              ) : (
+                <React.Fragment>
+                  <GridItem
+                    xs={12}
+                    sm={12}
+                    md={12}
+                    lg={12}
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <TextField
+                      className={classes.textField}
+                      error={formState.errors.paymentType === "error"}
+                      fullWidth={true}
+                      helperText={
+                        formState.errors.paymentType === "error"
+                          ? "Payment Type is required"
+                          : null
+                      }
+                      label="Payment Type"
+                      name="paymentType"
+                      onChange={(event) => {
+                        handleChange(event);
+                      }}
+                      select
+                      value={formState.values.paymentType || ""}
+                    >
+                      <MenuItem
+                        disabled
+                        classes={{
+                          root: classes.selectMenuItem,
                         }}
-                      > 
-                        <Step3 
-                          goBack={()=>setShowVendorDetails(!showVendorDetails)}
-                          vendorData={vendorData}
-                        />
-                        </GridItem>
-                        : 
-                        <React.Fragment>
-                        <GridItem
-                          xs={12}
-                          sm={12}
-                          md={12}
-                          lg={12}
-                          style={{
-                            marginTop: "10px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          <TextField
-                            className={classes.textField}
-                            error={formState.errors.paymentType === "error"}
-                            fullWidth={true}
-                            helperText={
-                              formState.errors.paymentType === "error"
-                                ? "Payment Type is required"
-                                : null
-                            }
-                            label="Payment Type"
-                            name="paymentType"
-                            onChange={(event) => {
-                              handleChange(event);
-                            }}
-                            select
-                            value={formState.values.paymentType || ""}
-                          >
-                            <MenuItem
-                              disabled
-                              classes={{
-                                root: classes.selectMenuItem,
-                              }}
-                            >
-                              Choose Payment Type
-                            </MenuItem>
-                            <MenuItem value="full">
-                              Full
-                            </MenuItem>
-                            <MenuItem value="partial">
-                              Partial
-                            </MenuItem>
-                          </TextField>
-                        </GridItem>
-                        <GridItem
-                          xs={12}
-                          sm={12}
-                          md={12}
-                          lg={12}
-                          style={{
-                            marginTop: "10px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          <TextField
-                            className={classes.textField}
-                            error={formState.errors.paymentBy === "error"}
-                            fullWidth={true}
-                            helperText={
-                              formState.errors.paymentBy === "error"
-                                ? "Payment Option is required"
-                                : null
-                            }
-                            label="Payment Options"
-                            name="paymentBy"
-                            select
-                            onChange={(event) => {
-                              handleChange(event);
-                            }}
-                            value={formState.values.paymentBy || ""}
-                          >
-                             <MenuItem
-                              disabled
-                              classes={{
-                                root: classes.selectMenuItem,
-                              }}
-                            >
-                              Choose Payment Option
-                            </MenuItem>
-                            {PaymentGateways.map(p=>(
-                                <MenuItem value={p._id}>
-                              {/* {p.title}&nbsp;&nbsp; */}
-                              <div  className="fileinput text-right">
-                                <div className="">
-                                  <img  height="100px" src={`${process.env.REACT_APP_LDOCS_API_URL}/${p.imgUrl}`} alt={p.serviceName
-} />
-                                </div>
-                              </div>
-                            </MenuItem>
-                            ))}
-                          </TextField>
-                        </GridItem>
-                        <GridItem
-                          xs={12}
-                          sm={12}
-                          md={12}
-                          lg={12}
-                          style={{
-                            marginTop: "10px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          <TextField
-                            className={classes.textField}
-                            type="text"
-                            fullWidth={true}
-                            label="Amount Due"
-                            disabled={true}
-                            value={`${props.fileData.LC_currency.Code}  ${props.fileData.netAmt_bc}` || ""}
-                          ></TextField>
-                        </GridItem>
-                        {formState.values.paymentType != "full" ? 
-                        <GridItem
-                          xs={12}
-                          sm={12}
-                          md={12}
-                          lg={12}
-                          style={{
-                            marginTop: "10px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          <TextField
-                            className={classes.textField}
-                            type="text"
-                            error={formState.errors.paidAmount === "error"}
-                            fullWidth={true}
-                            helperText={
-                              formState.errors.paidAmount === "error"
-                                ? "Amount must be less then balance due"
-                                : null
-                            }
-                            label="Amount To Pay"
-                            name="paidAmount"
-                            onChange={(event) => {
-                              handleChange(event);
-                            }}
-                            value={formState.values.paidAmount || ""}
-                          ></TextField>
-                        </GridItem>:
+                      >
+                        Choose Payment Type
+                      </MenuItem>
+                      <MenuItem value="full">Full</MenuItem>
+                      <MenuItem value="partial">Partial</MenuItem>
+                    </TextField>
+                  </GridItem>
+               
+                  <GridItem
+                    xs={12}
+                    sm={12}
+                    md={12}
+                    lg={12}
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <TextField
+                      className={classes.textField}
+                      type="text"
+                      fullWidth={true}
+                      label="Amount Due"
+                      disabled={true}
+                      value={
+                        `${props.fileData.LC_currency.Code}  ${props.fileData.netAmt_bc}` ||
                         ""
+                      }
+                    ></TextField>
+                  </GridItem>
+                  {formState.values.paymentType != "full" ? (
+                    <GridItem
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      style={{
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <TextField
+                        className={classes.textField}
+                        type="text"
+                        error={formState.errors.paidAmount === "error"}
+                        fullWidth={true}
+                        helperText={
+                          formState.errors.paidAmount === "error"
+                            ? "Amount must be less then balance due"
+                            : null
                         }
-                        </React.Fragment>
-                        }
-                        </GridContainer>
-                        
-                        {!showVendorDetails ?
-                        <span style={{ float: "right" }}>
-                            <Button
-                                color="info"
-                                className={classes.registerButton}
-                                round
-                                type="button"
-                                onClick={initPayment}
-                            >
-                               {isLoading ? <CircularProgress disableShrink />:'Proceed To Pay'} 
-                            </Button>
-                            <Button
-                                color="danger"
-                                className={classes.registerButton}
-                                onClick={closeModal}
-                                round
-                            >
-                                Close
-                            </Button>
-                            </span>:""}
-                        </CardBody>
-                        </Card>
+                        label="Amount To Pay"
+                        name="paidAmount"
+                        onChange={(event) => {
+                          handleChange(event);
+                        }}
+                        value={formState.values.paidAmount || ""}
+                      ></TextField>
                     </GridItem>
-                    </GridContainer>
+                  ) : (
+                    ""
+                  )}
+                     <GridItem
+                    xs={12}
+                    sm={12}
+                    md={12}
+                    lg={12}
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <TextField
+                      className={classes.textField}
+                      error={formState.errors.paymentBy === "error"}
+                      fullWidth={true}
+                      helperText={
+                        formState.errors.paymentBy === "error"
+                          ? "Payment Option is required"
+                          : null
+                      }
+                      label="Payment Options"
+                      name="paymentBy"
+                      select
+                      onChange={(event) => {
+                        handleChange(event);
+                      }}
+                      value={formState.values.paymentBy || ""}
+                    >
+                      <MenuItem
+                        disabled
+                        classes={{
+                          root: classes.selectMenuItem,
+                        }}
+                      >
+                        Choose Payment Option
+                      </MenuItem>
+                      {PaymentGateways.map((p) => (
+                        <MenuItem value={p.serviceName}>
+                          {/* {p.title}&nbsp;&nbsp; */}
+                          <div className="fileinput text-right">
+                            <div className="">
+                              <img
+                                height="100px"
+                                src={`${process.env.REACT_APP_LDOCS_API_URL}/${p.imgUrl}`}
+                                alt={p.serviceName}
+                              />
+                            </div>
+                          </div>
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </GridItem>
+                </React.Fragment>
+              )}
+            </GridContainer>
+
+            {!showVendorDetails ? (
+              <span style={{ float: "right",marginTop:'20px' }}>
+                {formState.values.paymentBy == "PayPal" ? 
+                <span style={{marginTop:'20px'}} id="paypal-button"></span>:
+                <Button
+                  color="info"
+                  className={classes.registerButton}
+                  round
+                  disabled={true}
+                  type="button"
+                  onClick={initPayment}
+                >
+                  {isLoading ? (
+                    <CircularProgress disableShrink />
+                  ) : (
+                    "Proceed To Pay"
+                  )}
+                </Button>}
+                {/* <Button
+                  color="danger"
+                  className={classes.registerButton}
+                  onClick={closeModal}
+                  round
+                >
+                  Close
+                </Button> */}
+              </span>
+            ) : (
+              ""
+            )}
+          </CardBody>
+        </Card>
+      </GridItem>
+    </GridContainer>
   );
 }
