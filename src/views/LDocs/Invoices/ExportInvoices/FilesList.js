@@ -784,6 +784,7 @@ export default function ExportList(props) {
           filter: null,
         }));
         setSelected([]);
+        let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
         getMyFiles(userDetail, false);
         setExportToFusionModel(false);
         notify(n == 1 ? "Exported Successfully": "Sent For Payment");

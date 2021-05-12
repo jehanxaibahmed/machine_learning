@@ -156,6 +156,7 @@ export default function PaymentList(props) {
   const [formState, setFormState] = React.useState({
     files: [],
     totalInvoices: 0,
+    PaidInvoices:0,
     paymentDue: 0,
     overDue: 0,
     paymentInProcess: 0,
@@ -310,7 +311,7 @@ export default function PaymentList(props) {
     if (from == 1) {
       let filter = "totalInvCount";
       if (data.id == 0) {
-        filter = "totalInvCount";
+        filter = "PaidInvoices";
       }
       if (data.id == 1) {
         if (data.val == 0) {
@@ -628,7 +629,7 @@ export default function PaymentList(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/InvoiceDetailF/${user.orgDetail.organizationId}/${formState.filter}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/InvoiceDetailFinance/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
@@ -641,6 +642,9 @@ export default function PaymentList(props) {
             formState.filter == null
               ? response.data.invoicesApproved
               : response.data,
+          PaidInvoices: formState.filter == null
+          ? response.data.PaidInvoices
+          : formState.PaidInvoices,
           totalInvoices:
             formState.filter == null
               ? response.data.totalInvCount
@@ -1050,18 +1054,18 @@ export default function PaymentList(props) {
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Total Invoices</p>
+                  <p className={classes.cardCategory}>Paid Invoices</p>
                   <h3 className={classes.cardTitle}>
-                    {formState.totalInvoices}
+                    {formState.PaidInvoices}
                   </h3>
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title="All Invoices">
+                    <Tooltip title="Paid Invoices">
                       <Typography varient="body2" component="h2">
                         <Avatar
                           style={
-                            formState.filter == "totalInvCount"
+                            formState.filter == "PaidInvoices"
                               ? {
                                   background: "#007f5e",
                                   color: "white",
@@ -1072,7 +1076,7 @@ export default function PaymentList(props) {
                                 }
                           }
                           onClick={() =>
-                            setFilter(1, { id: 0, val: "totalInvCount" })
+                            setFilter(1, { id: 0, val: "PaidInvoices" })
                           }
                         >
                           <Done fontSize="large" />

@@ -49,6 +49,7 @@ export default function InitiatePayment(props) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [alert, setAlert] = React.useState(null);
   const [showVendorDetails, setShowVendorDetails] = React.useState(false);
+  const [PaymentGateways, setPaymentGateways] = React.useState([]);
   const paymentMethods = [
     {
         title:"PayPal",
@@ -119,6 +120,7 @@ export default function InitiatePayment(props) {
   };
 
   React.useEffect(() => {
+      getPaymentMethods();
     getVendorData();
   }, []);
 
@@ -133,6 +135,19 @@ export default function InitiatePayment(props) {
       }));
   };
 
+  const getPaymentMethods = () => {
+    axios({
+        method: "get",
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/getGateway/${props.fileData.tenantId}`,
+        headers: { cooljwt: Token },
+      })
+        .then((response) => {
+          console.log(response.data);
+          setPaymentGateways(response.data);
+        }).catch((err)=>{
+          console.log(err);
+        })
+  }
   const getVendorData = () => {
     axios({
       method: "get",
@@ -371,12 +386,13 @@ export default function InitiatePayment(props) {
                             >
                               Choose Payment Option
                             </MenuItem>
-                            {paymentMethods.map(p=>(
-                                <MenuItem value={p.id}>
+                            {PaymentGateways.map(p=>(
+                                <MenuItem value={p._id}>
                               {/* {p.title}&nbsp;&nbsp; */}
                               <div  className="fileinput text-right">
                                 <div className="">
-                                  <img  height="100px" src={p.logo} alt={p.title} />
+                                  <img  height="100px" src={`${process.env.REACT_APP_LDOCS_API_URL}/${p.imgUrl}`} alt={p.serviceName
+} />
                                 </div>
                               </div>
                             </MenuItem>
