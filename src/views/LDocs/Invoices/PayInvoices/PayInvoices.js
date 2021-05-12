@@ -1,18 +1,13 @@
 /*eslint-disable*/
 import React, { useState, useEffect } from "react";
 // @material-ui/core components
-import {
-  makeStyles,
-  MenuItem,
-  TextField,
-  CircularProgress,
-  Slide,
-  Dialog,
-  LinearProgress,
-  DialogContent,
-  IconButton,
-  Tooltip,
-} from "@material-ui/core";
+import { makeStyles, MenuItem, TextField,CircularProgress,
+    Slide,
+    Dialog,
+    LinearProgress,
+    DialogContent,
+    IconButton,
+    Tooltip } from "@material-ui/core";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -28,8 +23,9 @@ import ChipInput from "material-ui-chip-input";
 import Pending from "assets/img/statuses/Pending.png";
 import Success from "assets/img/statuses/Success.png";
 import Rejected from "assets/img/statuses/Rejected.png";
-import VisibilityIcon from "@material-ui/icons/Visibility";
-import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+
 
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
@@ -43,16 +39,14 @@ import ExportingInvoiceAnimation from "components/ExportingInvoiceAnimation/Expo
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
 
-export default function ExportToFusion(props) {
-  const Token =
-    useSelector((state) => state.userReducer.Token) ||
-    localStorage.getItem("cooljwt");
+export default function PayInvoices(props) {
+  const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
   const decoded = jwt.decode(Token);
   const classes = useStyles();
   const sweetClass = sweetAlertStyle();
   const [alert, setAlert] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
-
+  
   const successAlert = (msg) => {
     setAlert(
       <SweetAlert
@@ -73,9 +67,7 @@ export default function ExportToFusion(props) {
         error
         style={{ display: "block", marginTop: "-100px" }}
         title="Error!"
-        onConfirm={() => {
-          hideAlert();
-        }}
+        onConfirm={() => {hideAlert() }}
         onCancel={() => hideAlert()}
         confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
       >
@@ -91,31 +83,28 @@ export default function ExportToFusion(props) {
   };
 
   React.useEffect(() => {
-    // setTimeout(() => {
-    //   successAlert('Exported SuccessFully');
-    // }, 3000);
+      // setTimeout(() => {
+      //   successAlert('Exported SuccessFully');
+      // }, 3000);
   }, []);
 
   return (
     <GridContainer>
       {alert}
       <GridItem xs={12} sm={12} md={12}>
-        <Card>
-          <CardHeader color="info" icon>
-            <CardIcon color="info">
-              <h4 className={classes.cardTitle}>
-                {props.export == 1
-                  ? "Exporting To Oracle Fusion"
-                  : "SENT FOR PAYMENT"}
-              </h4>
-            </CardIcon>
-          </CardHeader>
-          <CardBody style={{textAlign:'center', marginTop:100, marginBottom:100}}>
-            <CircularProgress style={{width:200,height:200}} />
-            {/* <ExportingInvoiceAnimation /> */}
-          </CardBody>
-        </Card>
-      </GridItem>
-    </GridContainer>
+                    <Card>
+                      <CardHeader color="info" icon>
+                        <CardIcon color="info">
+                          <h4 className={classes.cardTitle}>
+                            Exporting To Oracle Fusion
+                          </h4>
+                        </CardIcon>
+                      </CardHeader>
+                      <CardBody>
+                       <ExportingInvoiceAnimation />
+                        </CardBody>
+                        </Card>
+                    </GridItem>
+                    </GridContainer>
   );
 }

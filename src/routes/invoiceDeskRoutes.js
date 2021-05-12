@@ -13,6 +13,7 @@ import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
+import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 
 //Components
 
@@ -26,6 +27,7 @@ import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import CreateInvoice from "views/LDocs/Invoices/CreateInvoice/CreateInvoice";
 import InvoiceTracking from "views/LDocs/Invoices/InvoiceTracking/InvoiceTracking";
 import ExportList from "views/LDocs/Invoices/ExportInvoices/FilesList";
+import PaymentList from "views/LDocs/Invoices/PayInvoices/FilesList";
 import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
 import Requested from "views/LDocs/Reviews/Requested";
 import jwt from "jsonwebtoken";
@@ -111,7 +113,7 @@ var invoiceRoutes = [
     collapse: true,
     name: "Finance Desk",
     rtlName: "المكونات",
-    icon: LocalAtmIcon,
+    icon: AccountBalanceIcon,
     state: "FinanceDeskCollapse",
     views: [
       {
@@ -130,6 +132,15 @@ var invoiceRoutes = [
         rtlMini: "ر",
         icon: SystemUpdateIcon,
         component: ExportList,
+        layout: "/invoice",
+      },
+      {
+        path: "/payment",
+        name: "Pay Invoices",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: LocalAtmIcon,
+        component: PaymentList,
         layout: "/invoice",
       }
     ]}

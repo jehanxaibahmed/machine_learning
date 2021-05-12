@@ -1551,7 +1551,15 @@ export default function CreateInvoice(props) {
         ? null
         : formState.values.selectedVendor.level1.contactPerson,
       createdBy: userData.email,
-      balanceDue: formState.values.total,
+      balanceDue: conversionRate(
+        formState.values.currency,
+        baseCurrency,
+        currencyLookups,
+        parseFloat(formState.values.total),
+        true,
+        edit,
+        formState.conversionRate
+      ),
       items: items,
       attachments: formState.attachments,
       vendorName: isVendor

@@ -35,6 +35,8 @@ import {
   EditOutlined,
   Done,
 } from "@material-ui/icons";
+import ProccedToPayment from "./ProccedToPayment";
+
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -87,12 +89,10 @@ import NoStatus from "assets/img/statuses/NoStatus.png";
 import VerticalLinearStepper from "../../../Components/VerticalStepper";
 import ViewModuleIcon from "@material-ui/icons/ViewModule";
 import { useDispatch, useSelector } from "react-redux";
-import ExportToFusion from "./ExportToFusion";
+import PayInvoices from "./PayInvoices";
+import InitiatePayment  from "./PaymentModal";
 import Filters from "./Filters";
-import { over } from "lodash";
 import { setIsTokenExpired } from "actions";
-import { ToastContainer, toast } from 'react-toastify';
-
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -105,16 +105,6 @@ const StyledBadge = withStyles((theme) => ({
     background: "#007f5e",
   },
 }))(Badge);
-const notify = (msg) => 
-toast(msg, {
-  position: "top-right",
-  autoClose: 2000,
-  hideProgressBar: true,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: false,
-  progress: undefined,
-  });
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
@@ -125,7 +115,7 @@ const TransitionLeft = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-export default function ExportList(props) {
+export default function PaymentList(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
@@ -133,12 +123,11 @@ export default function ExportList(props) {
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
   const classes = useStyles();
-  const [componentName, setComponentName] = React.useState("Export To Fusion");
+  const [componentName, setComponentName] = React.useState("Invoices For Payment");
   const [classicModal, setClassicModal] = React.useState(false);
   const [tagModal, setTagModal] = React.useState(false);
   const [qrModal, setQrModal] = React.useState(false);
-  const [taskModal, setTaskModal] = React.useState(false);
-  const [reviewerModal, setReviewerModal] = React.useState(false);
+  const [paymentPopup, setPaymentPopup] = React.useState(false);
   const [initWorkFlowModal, setInitWorkFlowModal] = React.useState(false);
   const [animateTable, setAnimateTable] = React.useState(true);
   const [animatePdf, setAnimatePdf] = React.useState(false);
@@ -158,6 +147,7 @@ export default function ExportList(props) {
   const [markAsReceivedModel, setMarkAsReceivedModel] = React.useState(false);
   const [initPaymentModel, setinitPaymentModel] = React.useState(false);
   const [exportToFusionModel, setExportToFusionModel] = React.useState(false);
+  const [paymentModal, setPaymentModal] = React.useState(false);
   const [editInvoice, setEditInvoiceModel] = React.useState(false);
   const [decoded, setDecoded] = React.useState(null);
   const [view, setView] = React.useState("read");
@@ -170,7 +160,6 @@ export default function ExportList(props) {
     overDue: 0,
     paymentInProcess: 0,
     vendors: [],
-    export:null,
     pos: [],
     filter: null,
     filters: {
@@ -194,7 +183,10 @@ export default function ExportList(props) {
       notPaid: false,
     },
   });
-
+  const showPaymentPopup = () => {
+    setAnimateTable(false);
+    setPaymentPopup(true);
+  };
   const getPos = () => {
     let userDetails = jwt.decode(Token);
     axios({
@@ -373,10 +365,15 @@ export default function ExportList(props) {
     setAnimateTable(false);
     setAnimateQr(true);
   };
-  //Close Views
+  const viewPaymentView = (row) =>{
+    setRow(row);
+    setPaymentModal(true);
+  } 
+   //Close Views
   const goBack = () => {
     setPdfUrl();
     setQrModal(false);
+    setPaymentPopup(false);
     setIsViewing(false);
     setIsViewingBlockChainView(false);
     setAnimateTable(true);
@@ -462,26 +459,26 @@ export default function ExportList(props) {
           ),
           netAmt: (
             <MenuProvider data={prop} id="menu_id">
-            <Tooltip 
-             title={
-              `${prop.LC_currency.Code} 1 ≈ ${prop.FC_currency.Code} ${prop.conversionRate
-                ? parseFloat(prop.conversionRate).toFixed(4)
-                : ""}`
-            }
-            aria-label="conversionRate"
-          > 
-              <div>
-                {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
-                <br />
-                {prop.FC_currency && prop.LC_currency
-                  ? prop.FC_currency._id !== prop.LC_currency._id
-                    ? `(${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
-                        "0.00"})`
+              <Tooltip
+                title={`${prop.LC_currency.Code} 1 ≈ ${prop.FC_currency.Code} ${
+                  prop.conversionRate
+                    ? parseFloat(prop.conversionRate).toFixed(4)
                     : ""
-                  : ""}
-                  </div>
+                }`}
+                aria-label="conversionRate"
+              >
+                <div>
+                  {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
+                  <br />
+                  {prop.FC_currency && prop.LC_currency
+                    ? prop.FC_currency._id !== prop.LC_currency._id
+                      ? `(${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
+                          "0.00"})`
+                      : ""
+                    : ""}
+                </div>
               </Tooltip>
-              </MenuProvider>
+            </MenuProvider>
           ),
           version: (
             <MenuProvider data={prop} id="menu_id">
@@ -605,6 +602,21 @@ export default function ExportList(props) {
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
+              <Tooltip title="Pay Invoice" aria-label="payInvoice">
+                <Button
+                  justIcon
+                  round
+                  simple
+                  icon={MonetizationOnIcon}
+                  onClick={() => {
+                    viewPaymentView(prop);
+                  }}
+                  color="info"
+                  className="Edit"
+                >
+                  <MonetizationOnIcon />
+                </Button>
+              </Tooltip>
             </div>
           ),
         };
@@ -616,7 +628,7 @@ export default function ExportList(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceCfoDetails/${user.orgDetail.organizationId}/${formState.filter}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/InvoiceDetailF/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
@@ -709,6 +721,8 @@ export default function ExportList(props) {
               id: file.invoiceId,
               version: file.version,
               vendorId: file.vendorId,
+              netAmt_bc: file.netAmt_bc,
+              LC_currency: file.LC_currency,
             });
           }
         });
@@ -726,6 +740,8 @@ export default function ExportList(props) {
           id: invoice.invoiceId,
           version: invoice.version,
           vendorId: invoice.vendorId,
+          netAmt_bc: invoice.netAmt_bc,
+          LC_currency: invoice.LC_currency,
         });
       } else {
         const index = selected.findIndex(
@@ -761,18 +777,12 @@ export default function ExportList(props) {
   const viewBlockChainViewFromAwesomeMenu = ({ event, props }) => {
     viewBlockChainView(props);
   };
-  const exportInvoices = (n) => {
-    // n = 1 && export Invoices 
-    // n = 2 && Payment Invoices 
-    setFormState((formState) => ({
-      ...formState,
-      export: n,
-    }));
+  const exportInvoices = () => {
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     setExportToFusionModel(true);
     axios({
       method: "post",
-      url: n == 1 ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/exportInvoices`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/moveToFinance` ,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/exportInvoices`,
       data: selected,
       headers: {
         cooljwt: Token,
@@ -786,10 +796,8 @@ export default function ExportList(props) {
         setSelected([]);
         getMyFiles(userDetail, false);
         setExportToFusionModel(false);
-        notify(n == 1 ? "Exported Successfully": "Sent For Payment");
       })
       .catch((error) => {
-        setSelected([]);
         if (error.response) {
           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
@@ -901,7 +909,44 @@ export default function ExportList(props) {
       ) : (
         ""
       )}
-
+      {/* Payment Modal */}
+      {paymentModal ? 
+       <GridContainer justify="center">
+       <GridItem xs={12} sm={12} md={12} className={classes.center}>
+         <Dialog
+           classes={{
+             root: classes.center + " " + classes.modalRoot,
+             paper: classes.modal,
+           }}
+           fullWidth={true}
+           maxWidth={"md"}
+           scroll="body"
+           open={paymentModal}
+           TransitionComponent={Transition}
+           keepMounted
+           onClose={() => setPaymentModal(false)}
+           aria-labelledby="tag-modal-slide-title"
+           aria-describedby="tag-modal-slide-description"
+         >
+           <DialogContent
+             id="tag-modal-slide-description"
+             className={classes.modalBody}
+           >
+             <InitiatePayment
+                closeModal={() => setPaymentModal(false)}
+                fileData={row}
+               loadFiles={getMyFiles}
+             />
+             {/* <PayInvoices
+               closeModal={() => setPaymentModal(false)}
+               fileData={row}
+               loadFiles={getMyFiles}
+             /> */}
+           </DialogContent>
+         </Dialog>
+       </GridItem>
+     </GridContainer>
+      :""}
       {/* Mark As Payment Model */}
       {exportToFusionModel ? (
         <GridContainer justify="center">
@@ -925,10 +970,9 @@ export default function ExportList(props) {
                 id="tag-modal-slide-description"
                 className={classes.modalBody}
               >
-                <ExportToFusion
+                <PayInvoices
                   closeModal={() => setExportToFusionModel(false)}
                   fileData={row}
-                  export={formState.export || 1}
                   loadFiles={getMyFiles}
                 />
               </DialogContent>
@@ -969,6 +1013,20 @@ export default function ExportList(props) {
               </Card>
             </GridItem>
           </GridContainer>
+        </Animated>
+      ) : (
+        ""
+      )}
+
+      {paymentPopup ? (
+        <Animated
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
+          animationInDuration={1000}
+          animationOutDuration={1000}
+          isVisible={paymentPopup}
+        >
+          <ProccedToPayment goBack={goBack} selectedInvoices={selected} />
         </Animated>
       ) : (
         ""
@@ -1226,7 +1284,9 @@ export default function ExportList(props) {
               <Card>
                 <CardHeader color="danger" icon>
                   <CardIcon color="danger">
-                    <h4 className={classes.cardTitleText}>{componentName}</h4>
+                    <h4 className={classes.cardTitleText}>
+                      {componentName} 
+                    </h4>
                   </CardIcon>
                   <p style={{ color: "gray" }}>
                     Note: Right click on any file to see multiple options
@@ -1234,38 +1294,25 @@ export default function ExportList(props) {
                   <Button
                     color="info"
                     round
-                    style={{ float: "right" }}
+                    style={{ float: "right", padding: "10x 0px" }}
                     className={classes.marginRight}
                     onClick={() => setShowFiltersModel(true)}
                   >
                     Filters
                   </Button>
-                  <Button
-                    color="info"
-                    round
-                    style={{ float: "right" }}
-                    className={classes.marginRight}
-                    onClick={() =>
-                      selected.length > 0
-                        ? exportInvoices(1)
-                        : msgAlert("Please Select a Invoice.")
-                    }
-                  >
-                    Export to Fusion ({selected.length})
-                  </Button>
-                  <Button
+                  {/* <Button
                     color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
-                    onClick={() =>
+                    onClick={() => {
                       selected.length > 0
-                        ? exportInvoices(2)
-                        : msgAlert("Please Select a Invoice.")
-                    }
+                        ? showPaymentPopup()
+                        : msgAlert("Please Select a Invoice.");
+                    }}
                   >
-                    Ready To Pay ({selected.length})
-                  </Button>
+                    Proceed to Payment
+                  </Button> */}
                 </CardHeader>
                 <CardBody>
                   {isLoading ? (
