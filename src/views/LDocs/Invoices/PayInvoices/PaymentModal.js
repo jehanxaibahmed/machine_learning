@@ -57,28 +57,6 @@ export default function InitiatePayment(props) {
   const [alert, setAlert] = React.useState(null);
   const [showVendorDetails, setShowVendorDetails] = React.useState(false);
   const [PaymentGateways, setPaymentGateways] = React.useState([]);
-  const paymentMethods = [
-    {
-      title: "PayPal",
-      id: 1,
-      logo: Paypal,
-    },
-    {
-      title: "Master Card",
-      id: 2,
-      logo: Mastercard,
-    },
-    {
-      title: "Money Button",
-      id: 3,
-      logo: MoneyButton,
-    },
-    {
-      title: "Coin Gate",
-      id: 4,
-      logo: CoinGate,
-    },
-  ];
   const [formState, setFormState] = React.useState({
     values: {
       paidAmount: "",
