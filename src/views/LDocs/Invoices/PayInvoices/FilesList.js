@@ -589,10 +589,9 @@ export default function PaymentList(props) {
           select: (
             <div className="actions">
               <Checkbox
-                // disabled={
-                //   formState.filter == "totalInvCount" ||
-                //   formState.filter == "paymentInProcessCount"
-                // }
+                disabled={
+                  formState.filter == "PaidInvoices"
+                }
                 checked={isSelected}
                 onChange={() => select(prop)}
               />
@@ -600,6 +599,7 @@ export default function PaymentList(props) {
           ),
           actions: (
             <div className="actions-right">
+              {formState.filter != "PaidInvoices" ? 
                <Tooltip title="Pay Invoice" aria-label="payInvoice">
                 <Button
                   justIcon
@@ -614,7 +614,7 @@ export default function PaymentList(props) {
                 >
                   <MonetizationOnIcon />
                 </Button>
-              </Tooltip>
+              </Tooltip>:""}
               <Tooltip title="View File" aria-label="viewfile">
                 <Button
                   justIcon
@@ -1421,10 +1421,9 @@ export default function PaymentList(props) {
                               }
                               onChange={() => select()}
                              
-                              // disabled={
-                              //   formState.filter == "totalInvCount" ||
-                              //   formState.filter == "paymentInProcessCount"
-                              // }
+                              disabled={
+                                formState.filter == "PaidInvoices"
+                              }
                             />
                           ),
                           
