@@ -61,12 +61,14 @@ export default function InitiatePayment(props) {
     values: {
       paidAmount: "",
       paymentBy: "",
-      paymentType: "",
+      paymentType: "full",
+      currencyType:1,
     },
     errors: {
       paidAmount: "",
       paymentBy: "",
       paymentType: "",
+      currencyType:""
     },
   });
   const successAlert = (msg) => {
@@ -241,45 +243,83 @@ export default function InitiatePayment(props) {
   };
 
   const paymentButton = () => {
-    if(formState.values.paymentBy == "PayPal"){
-    paypal.Button.render(
-      {
-        env: "sandbox", // Or 'production'
-        // Set up the payment:
-        // 1. Add a payment callback
-        payment: function(data, actions) {
-          // 2. Make a request to your server
-          return actions.request
-            .post(`${process.env.REACT_APP_LDOCS_API_URL}/payment/createPayment`,{
-                invoiceId: props.fileData.invoiceId,
-                organizationId:props.fileData.organizationId,
-                description:`Payment for Invoice ${props.fileData.invoiceId}`,
-                amount:formState.values.paymentType == "full" ?  parseFloat(props.fileData.netAmt_bc) : parseFloat(formState.values.paidAmount),
-               currency:props.fileData.LC_currency.Code
-            })
-            .then(function(res) {
-              // 3. Return res.id from the response
-              return res.id;
-            });
+    if (formState.values.paymentBy == "PayPal") {
+      paypal.Button.render(
+        {
+          env: "sandbox", // Or 'production'
+          // Set up the payment:
+          // 1. Add a payment callback
+          payment: function(data, actions) {
+            // 2. Make a request to your server
+            return actions.request
+              .post(
+                `${process.env.REACT_APP_LDOCS_API_URL}/payment/createPayment`,
+                {
+                  invoiceId: props.fileData.invoiceId,
+                  organizationId: props.fileData.organizationId,
+                  description: `Payment for Invoice ${props.fileData.invoiceId}`,
+                  amount:
+                    formState.values.paymentType == "full"
+                      ? parseFloat(props.fileData.netAmt_bc)
+                      : parseFloat(formState.values.paidAmount),
+                  currency: props.fileData.LC_currency.Code,
+                }
+              )
+              .then(function(res) {
+                // 3. Return res.id from the response
+                return res.id;
+              });
+          },
+          // Execute the payment:
+          // 1. Add an onAuthorize callback
+          onAuthorize: function(data, actions) {
+            // 2. Make a request to your server
+            return actions.request
+              .post(
+                `${process.env.REACT_APP_LDOCS_API_URL}/payment/executePayment`,
+                {
+                  paymentID: data.paymentID,
+                  payerID: data.payerID,
+                  amount:
+                    formState.values.paymentType == "full"
+                      ? parseFloat(props.fileData.netAmt_bc)
+                      : parseFloat(formState.values.paidAmount),
+                  currency: props.fileData.LC_currency.Code,
+                }
+              )
+              .then(function(res) {
+                let data = {
+                  tenantId:props.fileData.tenantId,
+                  organizationId:props.fileData.organizationId,
+                  invoiceId:props.fileData.invoiceId,
+                  version:props.fileData.version,
+                  paidAmount:formState.values.paymentType == "full" ? parseFloat(props.fileData.netAmt_bc)  :parseFloat(formState.values.paidAmount),
+                  updatedBy:decoded.email,
+                  paymentID:res.id,
+                  payerID:res.payer.payer_info.payer_id,
+                  paymentType:formState.values.paymentType,
+                  paymentBy:formState.values.paymentBy.currencyType,
+                  balanceDue: formState.values.paymentType == "full"
+                  ? 0
+                  : parseFloat(props.fileData.balanceDue) - parseFloat(formState.values.paidAmount),
+                  paymentMethod: formState.values.paymentBy
+              };
+              axios({
+                  method: "post",
+                  url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
+                  data: data,
+                  headers: {
+                      cooljwt: Token,
+                  },
+              }).then(async (response) => {
+                console.log(res);
+                successAlert("Payment Successful...");
+              })
+              });
+          },
         },
-        // Execute the payment:
-        // 1. Add an onAuthorize callback
-        onAuthorize: function(data, actions) {
-          // 2. Make a request to your server
-          return actions.request
-            .post(`${process.env.REACT_APP_LDOCS_API_URL}/payment/executePayment`, {
-              paymentID: data.paymentID,
-              payerID: data.payerID,
-              amount:formState.values.paymentType == "full" ? parseFloat(props.fileData.netAmt_bc) : parseFloat(formState.values.paidAmount),
-              currency:props.fileData.LC_currency.Code
-            })
-            .then(function(res) {
-              // 3. Show the buyer a confirmation message.
-            });
-        },
-      },
-      "#paypal-button"
-    );
+        "#paypal-button"
+      );
     }
   };
 
@@ -399,7 +439,7 @@ export default function InitiatePayment(props) {
                       <MenuItem value="partial">Partial</MenuItem>
                     </TextField>
                   </GridItem>
-               
+
                   <GridItem
                     xs={12}
                     sm={12}
@@ -454,7 +494,49 @@ export default function InitiatePayment(props) {
                   ) : (
                     ""
                   )}
-                     <GridItem
+                  <GridItem
+                    xs={12}
+                    sm={12}
+                    md={12}
+                    lg={12}
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <TextField
+                      className={classes.textField}
+                      fullWidth={true}
+                      
+                      label="Currency Type"
+                      name="currencyType"
+                      select
+                      onChange={(event) => {
+                        handleChange(event);
+                      }}
+                      value={formState.values.currencyType || ""}
+                    >
+                      <MenuItem
+                        disabled
+                        classes={{
+                          root: classes.selectMenuItem,
+                        }}
+                      >
+                        Choose Currency Type
+                      </MenuItem>
+                        <MenuItem value={1}>
+                          Fiat Payment
+                        </MenuItem>
+                        <MenuItem value={2}>
+                          Crypto Payment
+                        </MenuItem>
+                        <MenuItem value={3}>
+                          Both
+                        </MenuItem>
+                    </TextField>
+                  </GridItem>
+
+                  <GridItem
                     xs={12}
                     sm={12}
                     md={12}
@@ -489,7 +571,7 @@ export default function InitiatePayment(props) {
                       >
                         Choose Payment Option
                       </MenuItem>
-                      {PaymentGateways.map((p) => (
+                      {PaymentGateways.filter(pg=>pg.currencyType == parseInt(formState.values.currencyType)).map((p) => (
                         <MenuItem value={p.serviceName}>
                           {/* {p.title}&nbsp;&nbsp; */}
                           <div className="fileinput text-right">
@@ -510,23 +592,25 @@ export default function InitiatePayment(props) {
             </GridContainer>
 
             {!showVendorDetails ? (
-              <span style={{ float: "right",marginTop:'20px' }}>
-                {formState.values.paymentBy == "PayPal" ? 
-                <span style={{marginTop:'20px'}} id="paypal-button"></span>:
-                <Button
-                  color="info"
-                  className={classes.registerButton}
-                  round
-                  disabled={true}
-                  type="button"
-                  onClick={initPayment}
-                >
-                  {isLoading ? (
-                    <CircularProgress disableShrink />
-                  ) : (
-                    "Proceed To Pay"
-                  )}
-                </Button>}
+              <span style={{ float: "right", marginTop: "20px" }}>
+                {formState.values.paymentBy == "PayPal" ? (
+                  <span style={{ marginTop: "20px" }} id="paypal-button"></span>
+                ) : (
+                  <Button
+                    color="info"
+                    className={classes.registerButton}
+                    round
+                    disabled={true}
+                    type="button"
+                    onClick={initPayment}
+                  >
+                    {isLoading ? (
+                      <CircularProgress disableShrink />
+                    ) : (
+                      "Proceed To Pay"
+                    )}
+                  </Button>
+                )}
                 {/* <Button
                   color="danger"
                   className={classes.registerButton}

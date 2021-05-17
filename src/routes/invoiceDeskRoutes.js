@@ -136,7 +136,7 @@ var invoiceRoutes = [
       },
       {
         path: "/payment",
-        name: "Pay Invoices",
+        name: "Invoice Payments",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         icon: LocalAtmIcon,

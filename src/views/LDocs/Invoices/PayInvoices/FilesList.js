@@ -8,6 +8,10 @@ import CenterFocusWeakIcon from "@material-ui/icons/CenterFocusWeak";
 import CenterFocusStrongIcon from "@material-ui/icons/CenterFocusStrong";
 import DateRangeIcon from "@material-ui/icons/DateRange";
 import styles from "assets/jss/material-dashboard-pro-react/views/dashboardStyle.js";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@material-ui/core/TableRow";
 // @material-ui/core components
 import {
   makeStyles,
@@ -122,8 +126,11 @@ export default function PaymentList(props) {
   const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
+  const [poModal, setPoModal] = React.useState(false);
+  const [po, setPO] = React.useState(null);
+  const [pos, setPos] = React.useState([]);
   const classes = useStyles();
-  const [componentName, setComponentName] = React.useState("Invoices For Payment");
+  const [componentName, setComponentName] = React.useState("Invoice Payments");
   const [classicModal, setClassicModal] = React.useState(false);
   const [tagModal, setTagModal] = React.useState(false);
   const [qrModal, setQrModal] = React.useState(false);
@@ -188,34 +195,61 @@ export default function PaymentList(props) {
     setAnimateTable(false);
     setPaymentPopup(true);
   };
+  
+  const viewPO = (p) => {
+    getPos().then(poss=>{
+      let po = poss.find(
+        (po) =>
+          po.poNumber == p
+      );
+      if (po) {
+        setPO([
+          { name: "Date of Issue", value: formatDateTime(po.dateOfIssue) },
+          { name: "Payment Terms", value: po.paymentTerm },
+          { name: "Date of Expiry", value: formatDateTime(po.dateOfExpiry) },
+          {
+            name: "PO Amount:",
+            value: `${"SAR" + addZeroes(po.poAmount)}`,
+          },
+          { name: "Partial Delivery:", value: po.partialDelivery ? "YES" : "NO" },
+        ]);
+        setPoModal(true);
+      }
+    });
+  };
+
   const getPos = () => {
-    let userDetails = jwt.decode(Token);
-    axios({
-      method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
-      data: {
-        organizationId: userDetails.orgDetail.organizationId,
-      },
-      headers: {
-        cooljwt: Token,
-      },
-    })
-      .then((res) => {
-        console.log(res.data);
-        setFormState((formState) => ({
-          ...formState,
-          pos: res.data,
-        }));
+    return new Promise((resolve, rej)=>{
+      let userDetails = jwt.decode(Token);
+      axios({
+        method: "post", //you can set what request you want to be
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+        data: {
+          organizationId: userDetails.orgDetail.organizationId,
+        },
+        headers: {
+          cooljwt: Token,
+        },
       })
-      .catch((error) => {
-        if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
-        }
-        setFormState((formState) => ({
-          ...formState,
-          pos: [],
-        }));
-      });
+        .then((res) => {
+          resolve(res.data);
+          setPos(res.data);
+          setFormState((formState) => ({
+            ...formState,
+            pos: res.data,
+          }));  
+          })
+        .catch((error) => {
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
+          setPos([]);
+          setFormState((formState) => ({
+            ...formState,
+            pos: [],
+          }));
+        });
+    })
   };
 
   const getVendors = () => {
@@ -315,13 +349,13 @@ export default function PaymentList(props) {
       }
       if (data.id == 1) {
         if (data.val == 0) {
-          filter = "paymentDueWeek";
+          filter = "partialPayWeek";
         }
         if (data.val == 1) {
-          filter = "paymentDueMonth";
+          filter = "partialPayMonth";
         }
         if (data.val == 2) {
-          filter = "paymentDueMonthAfter";
+          filter = "partialPayMonthAfter";
         }
       }
       if (data.id == 2) {
@@ -431,6 +465,13 @@ export default function PaymentList(props) {
           dueDate: (
             <MenuProvider data={prop} id="menu_id">
               {dateFormat(prop.dueDate, "dd-mm-yyyy")}
+              <br />
+              (Net-{prop.paymentTerms})
+            </MenuProvider>
+          ),
+          balanceDue:(
+            <MenuProvider data={prop} id="menu_id">
+              {`${prop.FC_currency.Code} ${addZeroes(prop.balanceDue)}`}
             </MenuProvider>
           ),
           vendorName: (
@@ -449,9 +490,9 @@ export default function PaymentList(props) {
             </MenuProvider>
           ),
           poNumber: (
-            <MenuProvider data={prop} id="menu_id">
-              {prop.po}
-            </MenuProvider>
+            // <MenuProvider  data={prop} id="menu_id">
+              <div style={{color:'blue',cursor:'pointer'}} onClick={()=>viewPO(prop.po)}>{prop.po}</div>
+            // </MenuProvider>
           ),
           customerName: (
             <MenuProvider data={prop} id="menu_id">
@@ -469,14 +510,15 @@ export default function PaymentList(props) {
                 aria-label="conversionRate"
               >
                 <div>
-                  {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
-                  <br />
+                 
                   {prop.FC_currency && prop.LC_currency
                     ? prop.FC_currency._id !== prop.LC_currency._id
-                      ? `(${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
-                          "0.00"})`
+                      ? `${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
+                          "0.00"}`
                       : ""
                     : ""}
+                      <br />
+                     {`(${prop.FC_currency.Code} ${addZeroes(prop.netAmt)})`}
                 </div>
               </Tooltip>
             </MenuProvider>
@@ -558,6 +600,21 @@ export default function PaymentList(props) {
           ),
           actions: (
             <div className="actions-right">
+               <Tooltip title="Pay Invoice" aria-label="payInvoice">
+                <Button
+                  justIcon
+                  round
+                  simple
+                  icon={MonetizationOnIcon}
+                  onClick={() => {
+                    viewPaymentView(prop);
+                  }}
+                  color="info"
+                  className="Edit"
+                >
+                  <MonetizationOnIcon />
+                </Button>
+              </Tooltip>
               <Tooltip title="View File" aria-label="viewfile">
                 <Button
                   justIcon
@@ -603,21 +660,7 @@ export default function PaymentList(props) {
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
-              <Tooltip title="Pay Invoice" aria-label="payInvoice">
-                <Button
-                  justIcon
-                  round
-                  simple
-                  icon={MonetizationOnIcon}
-                  onClick={() => {
-                    viewPaymentView(prop);
-                  }}
-                  color="info"
-                  className="Edit"
-                >
-                  <MonetizationOnIcon />
-                </Button>
-              </Tooltip>
+             
             </div>
           ),
         };
@@ -651,7 +694,7 @@ export default function PaymentList(props) {
               : formState.totalInvoices,
           paymentDue:
             formState.filter == null
-              ? response.data.paymentDueCount
+              ? response.data.partiallyPay
               : formState.paymentDue,
           overDue:
             formState.filter == null
@@ -877,6 +920,48 @@ export default function PaymentList(props) {
       ) : (
         ""
       )}
+      {poModal ? (
+              <Dialog
+                classes={{
+                  root: classes.center + " " + classes.modalRoot,
+                  paper: classes.modal,
+                }}
+                fullWidth={true}
+                maxWidth={"sm"}
+                open={poModal}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={() => setPoModal(false)}
+                aria-labelledby="vendor-modal-slide-title"
+                aria-describedby="vendor-modal-slide-description"
+              >
+                <DialogContent id="vendorSelect" className={classes.modalBody}>
+                  <Card>
+                    <CardHeader color="info" icon>
+                      <CardIcon color="info">
+                        <h4 className={classes.cardTitleText}>
+                          Purchase Order
+                        </h4>
+                      </CardIcon>
+                    </CardHeader>
+                    <CardBody>
+                      <Table>
+                        <TableBody>
+                          {po.map((val, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{val.name}</TableCell>
+                              <TableCell>{val.value}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardBody>
+                  </Card>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              ""
+            )}
       {/* Open BlockChain View */}
       {isViewingBlockChainView ? (
         <Animated
@@ -1047,6 +1132,43 @@ export default function PaymentList(props) {
           {/* Awesome Menu */}
           <MyAwesomeMenu />
           <GridContainer>
+          <GridItem xs={12} sm={6} md={6} lg={3}>
+              <Card>
+                <CardHeader color="danger" stats icon>
+                  <CardIcon color="danger">
+                    {/* <Store /> */}
+                    <InsertDriveFileIcon />
+                  </CardIcon>
+                  <p className={classes.cardCategory}>To be Paid</p>
+                  <h3 className={classes.cardTitle}>
+                    {formState.paymentInProcess}
+                  </h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div className={classes.stats}>
+                    <Tooltip title="To be Paid">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "paymentInProcessCount"
+                              ? { background: "#095392", color: "white" }
+                              : { cursor: "pointer" }
+                          }
+                          onClick={() =>
+                            setFilter(1, {
+                              id: 3,
+                              val: "paymentInProcessCount",
+                            })
+                          }
+                        >
+                          <Done fontSize="large" />
+                        </Avatar>
+                      </Typography>
+                    </Tooltip>
+                  </div>
+                </CardFooter>
+              </Card>
+            </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
                 <CardHeader color="info" stats icon>
@@ -1054,7 +1176,7 @@ export default function PaymentList(props) {
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Paid Invoices</p>
+                  <p className={classes.cardCategory}>Fully Paid</p>
                   <h3 className={classes.cardTitle}>
                     {formState.PaidInvoices}
                   </h3>
@@ -1093,7 +1215,7 @@ export default function PaymentList(props) {
                   <CardIcon color="danger">
                     <CenterFocusWeakIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Payment Due</p>
+                  <p className={classes.cardCategory}>Partially Paid</p>
                   <h3 className={classes.cardTitle}>{formState.paymentDue}</h3>
                 </CardHeader>
                 <CardFooter stats>
@@ -1102,7 +1224,7 @@ export default function PaymentList(props) {
                       <Typography varient="body2" component="h2">
                         <Avatar
                           style={
-                            formState.filter == "paymentDueWeek"
+                            formState.filter == "partialPayWeek"
                               ? {
                                   background: "#095392",
                                   color: "white",
@@ -1123,7 +1245,7 @@ export default function PaymentList(props) {
                       <Typography varient="body2" component="h2">
                         <Avatar
                           style={
-                            formState.filter == "paymentDueMonth"
+                            formState.filter == "partialPayMonth"
                               ? {
                                   background: "#095392",
                                   color: "white",
@@ -1145,7 +1267,7 @@ export default function PaymentList(props) {
                       <Typography varient="body2" component="h2">
                         <Avatar
                           style={
-                            formState.filter == "paymentDueMonthAfter"
+                            formState.filter == "partialPayMonthAfter"
                               ? {
                                   background: "#095392",
                                   color: "white",
@@ -1247,43 +1369,7 @@ export default function PaymentList(props) {
                 </CardFooter>
               </Card>
             </GridItem>
-            <GridItem xs={12} sm={6} md={6} lg={3}>
-              <Card>
-                <CardHeader color="danger" stats icon>
-                  <CardIcon color="danger">
-                    {/* <Store /> */}
-                    <InsertDriveFileIcon />
-                  </CardIcon>
-                  <p className={classes.cardCategory}>Payment in Process</p>
-                  <h3 className={classes.cardTitle}>
-                    {formState.paymentInProcess}
-                  </h3>
-                </CardHeader>
-                <CardFooter stats>
-                  <div className={classes.stats}>
-                    <Tooltip title="Payment in Process">
-                      <Typography varient="body2" component="h2">
-                        <Avatar
-                          style={
-                            formState.filter == "paymentInProcessCount"
-                              ? { background: "#095392", color: "white" }
-                              : { cursor: "pointer" }
-                          }
-                          onClick={() =>
-                            setFilter(1, {
-                              id: 3,
-                              val: "paymentInProcessCount",
-                            })
-                          }
-                        >
-                          <Done fontSize="large" />
-                        </Avatar>
-                      </Typography>
-                    </Tooltip>
-                  </div>
-                </CardFooter>
-              </Card>
-            </GridItem>
+            
             <GridItem xs={12}>
               <Card>
                 <CardHeader color="danger" icon>
@@ -1334,12 +1420,15 @@ export default function PaymentList(props) {
                                 selected.length >= 0
                               }
                               onChange={() => select()}
+                             
                               // disabled={
                               //   formState.filter == "totalInvCount" ||
                               //   formState.filter == "paymentInProcessCount"
                               // }
                             />
                           ),
+                          
+                          width: 50,
                           accessor: "select",
                           disableSortBy: false,
                         },
@@ -1354,7 +1443,7 @@ export default function PaymentList(props) {
                           accessor: "createdDate",
                         },
                         {
-                          Header: "Due Date",
+                          Header: "Due Date / (PT)",
                           accessor: "dueDate",
                         },
                         {
@@ -1364,6 +1453,10 @@ export default function PaymentList(props) {
                         {
                           Header: "Po Number",
                           accessor: "poNumber",
+                        },
+                        {
+                          Header: "Balance Due",
+                          accessor: "balanceDue",
                         },
                         {
                           Header: "Amount",
@@ -1414,7 +1507,7 @@ export default function PaymentList(props) {
             filters={formState.filters}
             values={formState.values}
             vendors={formState.vendors}
-            pos={formState.pos}
+            pos={pos}
             closeModal={() => setShowFiltersModel(false)}
             setFilters={setFilter}
             isVendor={isVendor}
