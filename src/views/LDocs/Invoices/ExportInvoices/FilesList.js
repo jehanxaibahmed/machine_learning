@@ -216,7 +216,7 @@ export default function ExportList(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         setFormState((formState) => ({
           ...formState,
@@ -240,7 +240,7 @@ export default function ExportList(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });
@@ -660,7 +660,7 @@ export default function ExportList(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(
           typeof error.response != "undefined"
@@ -792,7 +792,7 @@ export default function ExportList(props) {
       .catch((error) => {
         setSelected([]);
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });

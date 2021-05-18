@@ -290,6 +290,7 @@ export default function FilesList(props) {
     setData(
       response.reverse().map((prop, key) => {
         var currentStatus = currentTracking(prop.trackingStatus);
+        console.log(currentStatus);
         let isSubmitedByVendor =
           !prop.initWorkFLow && !isVendor && prop.markedAs == "unread";
         let isCorrectionRequiredInWorkflow =
@@ -335,7 +336,20 @@ export default function FilesList(props) {
                     color="secondary"
                   />
                 </Tooltip>
-              ) : currentStatus.val == 0 ? (
+              )
+              : currentStatus.status == "readyToPay" ? (
+                <Tooltip title="REJECTED">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="REJECTED"
+                    clickable
+                    color="secondary"
+                  />
+                </Tooltip>
+              )
+              : currentStatus.val == 0 ? (
                 <Tooltip title="PENDING">
                   <Chip
                     variant="outlined"
@@ -826,8 +840,9 @@ export default function FilesList(props) {
         setIsLoading(false);
       })
       .catch((error) => {
+        console.log(error);
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(
           typeof error.response != "undefined"

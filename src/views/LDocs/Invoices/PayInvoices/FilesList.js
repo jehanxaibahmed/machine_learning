@@ -241,7 +241,7 @@ export default function PaymentList(props) {
           })
         .catch((error) => {
           if (error.response) {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+             error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           setPos([]);
           setFormState((formState) => ({
@@ -267,7 +267,7 @@ export default function PaymentList(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });
@@ -471,7 +471,7 @@ export default function PaymentList(props) {
           ),
           balanceDue:(
             <MenuProvider data={prop} id="menu_id">
-              {`${prop.FC_currency.Code} ${addZeroes(prop.balanceDue)}`}
+              {`${prop.LC_currency.Code} ${addZeroes(prop.balanceDue)}`}
             </MenuProvider>
           ),
           vendorName: (
@@ -719,7 +719,7 @@ export default function PaymentList(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(
           typeof error.response != "undefined"
@@ -846,7 +846,7 @@ export default function PaymentList(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });

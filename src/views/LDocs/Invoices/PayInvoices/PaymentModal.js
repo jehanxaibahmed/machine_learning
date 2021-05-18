@@ -37,10 +37,7 @@ import { useDispatch, useSelector } from "react-redux";
 import BuildNetwork from "views/LDocs/Vendor/BuildNetwork";
 import Step3 from "views/LDocs/Vendor/steps/level3";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
-import Paypal from "assets/img/paypal.png";
-import Mastercard from "assets/img/mastercard.png";
-import MoneyButton from "assets/img/moneyButton.png";
-import CoinGate from "assets/img/coingate.png";
+
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -119,6 +116,30 @@ export default function InitiatePayment(props) {
 
   const handleChange = (event) => {
     event.persist();
+    let paidAmount;
+    var error = false;
+    if (event.target.name == "paidAmount") {
+    if (
+      event.target.value <= props.fileData.balanceDue
+    ) {
+      paidAmount = "success";
+    } else {
+      paidAmount = "error";
+      error = true;
+    }
+    setFormState((formState) => ({
+      ...formState,
+      values:{
+        paymentType:'partial',
+        paymentBy:'',
+        currencyType:1
+      },
+      errors: {
+        ...formState.errors,
+        paidAmount: paidAmount,
+      },
+    }));
+    }
     setFormState((formState) => ({
       ...formState,
       values: {
@@ -230,7 +251,7 @@ export default function InitiatePayment(props) {
         })
         .catch((error) => {
           if (error.response) {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+             error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(
             typeof error.response != "undefined"
@@ -243,6 +264,10 @@ export default function InitiatePayment(props) {
   };
 
   const paymentButton = () => {
+    if (formState.values.paymentType != "full" && formState.values.paidAmount >= props.fileData.balanceDue) {
+      console.log('Error Amount');
+    }else{
+      
     if (formState.values.paymentBy == "PayPal") {
       paypal.Button.render(
         {
@@ -321,6 +346,22 @@ export default function InitiatePayment(props) {
         "#paypal-button"
       );
     }
+    if (formState.values.paymentBy == "moneybutton") {
+      const div = document.getElementById('my-money-button')
+      moneyButton.render(div, {
+        to: "ryan@moneybutton.com",
+        amount: formState.values.paymentType == "full" ? parseFloat(props.fileData.netAmt_bc)  :parseFloat(formState.values.paidAmount),
+        currency: props.fileData.LC_currency.Code,
+        label: "Pay Through Money Button",
+        clientIdentifier: "some public client identifier",
+        buttonId: "234325",
+        buttonData: "{}",
+        type: "tip",
+        onPayment: function (arg) { console.log('onPayment', arg) },
+        onError: function (arg) { console.log('onError', arg) }
+      })
+    }
+  }
   };
 
   function closeModal() {
@@ -592,33 +633,15 @@ export default function InitiatePayment(props) {
             </GridContainer>
 
             {!showVendorDetails ? (
-              <span style={{ float: "right", marginTop: "20px" }}>
+              <span  id="paymentWrapper" style={{ float: "right", marginTop: "20px" }}>
                 {formState.values.paymentBy == "PayPal" ? (
                   <span style={{ marginTop: "20px" }} id="paypal-button"></span>
-                ) : (
-                  <Button
-                    color="info"
-                    className={classes.registerButton}
-                    round
-                    disabled={true}
-                    type="button"
-                    onClick={initPayment}
-                  >
-                    {isLoading ? (
-                      <CircularProgress disableShrink />
-                    ) : (
-                      "Proceed To Pay"
-                    )}
-                  </Button>
-                )}
-                {/* <Button
-                  color="danger"
-                  className={classes.registerButton}
-                  onClick={closeModal}
-                  round
-                >
-                  Close
-                </Button> */}
+                ) : ""}
+                 {formState.values.paymentBy == "moneybutton" ? (
+                   <div style={{maxWidth:237}}  >
+                     <span id='my-money-button'></span>
+                   </div>
+                ) : ""}
               </span>
             ) : (
               ""

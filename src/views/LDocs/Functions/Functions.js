@@ -79,6 +79,7 @@ export const formatDateTime = (date) => {
 export const currentTracking = (trackingStatus) => {
   let currentStatus;
   let activeStep;
+  console.log(trackingStatus.current_status);
   switch (trackingStatus.current_status) {
     case "received":
       currentStatus = trackingStatus.received.status;
@@ -116,14 +117,14 @@ export const currentTracking = (trackingStatus) => {
         activeStep = { val: 3, status: currentStatus };
       }
       break;
-    // case "paid":
-    //   currentStatus = trackingStatus.paid.status;
-    //   if (currentStatus) {
-    //     activeStep = { val: 4, status: currentStatus };
-    //   } else {
-    //     activeStep = { val: 3, status: currentStatus };
-    //   }
-    //   break;
+    case "paid":
+      currentStatus = trackingStatus.paid.status;
+      if (currentStatus) {
+        activeStep = { val: 4, status: currentStatus };
+      } else {
+        activeStep = { val: 3, status: currentStatus };
+      }
+      break;
   }
   return activeStep;
 };

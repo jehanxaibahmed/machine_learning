@@ -125,7 +125,7 @@ export default function Items(props) {
         })
         .catch((error) => {
           if (error.response) {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+             error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
           rej([]);

@@ -100,7 +100,7 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setBlockChainData([]);
@@ -122,7 +122,7 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setPaymentData([]);
@@ -139,7 +139,7 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.error(error);
       });
@@ -161,7 +161,7 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setWorkflow([]);
@@ -229,7 +229,7 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });

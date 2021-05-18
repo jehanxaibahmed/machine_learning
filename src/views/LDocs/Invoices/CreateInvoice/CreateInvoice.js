@@ -236,7 +236,7 @@ export default function CreateInvoice(props) {
         })
         .catch((error) => {
           if (error.response) {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+             error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
         });
@@ -257,7 +257,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });
@@ -284,7 +284,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setPos([]);
@@ -348,7 +348,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setReceipts([]);
@@ -443,7 +443,7 @@ export default function CreateInvoice(props) {
         })
         .catch((error) => {
           if (error.response) {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+             error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
           errorAlert("Unable To Generate RECEIPT.");
@@ -995,7 +995,7 @@ export default function CreateInvoice(props) {
         })
         .catch((error) => {
           if (error.response) {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+             error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
         });
@@ -1019,7 +1019,7 @@ export default function CreateInvoice(props) {
           })
           .catch((error) => {
             if (error.response) {
-              error.response.status == 401 && dispatch(setIsTokenExpired(true));
+               error.response.status == 401 && dispatch(setIsTokenExpired(true));
             }
             console.log(error);
           });
@@ -1041,7 +1041,7 @@ export default function CreateInvoice(props) {
         })
         .catch((error) => {
           if (error.response) {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+             error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
         });
@@ -1709,7 +1709,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         setIsSavingInvoice(false);
         errorAlert(
