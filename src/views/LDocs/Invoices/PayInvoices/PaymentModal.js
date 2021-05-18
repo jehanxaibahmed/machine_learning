@@ -120,7 +120,7 @@ export default function InitiatePayment(props) {
     var error = false;
     if (event.target.name == "paidAmount") {
     if (
-      event.target.value <= props.fileData.balanceDue
+      event.target.value <= props.fileData.balanceDue && event.target.value > 0
     ) {
       paidAmount = "success";
     } else {
@@ -264,7 +264,7 @@ export default function InitiatePayment(props) {
   };
 
   const paymentButton = () => {
-    if (formState.values.paymentType != "full" && formState.values.paidAmount >= props.fileData.balanceDue) {
+    if (formState.values.paymentType != "full" && formState.errors.paidAmount == "error") {
       console.log('Error Amount');
     }else{
       
