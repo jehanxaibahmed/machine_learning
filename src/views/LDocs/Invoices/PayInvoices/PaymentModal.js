@@ -338,7 +338,7 @@ export default function InitiatePayment(props) {
             }
           }).render('#paypal-button');
   
-        }, 5000);
+        }, 1000);
         
 
 
