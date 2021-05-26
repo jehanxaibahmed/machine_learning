@@ -21,6 +21,7 @@ import Level1Profile from "./Level1Profile.js";
 import PasswordChange from "./PasswordChange";
 import jwt from "jsonwebtoken";
 import SignatureStamp from "../SignatureStamp/SignatureStamp";
+import PaymentGateways  from "./PaymentGateways";
 
 const sweetAlertStyle = makeStyles(styles2);
 
@@ -179,6 +180,14 @@ export default function UserProfile() {
           {!jwt.decode(Token).isVendor ?
           <GridItem  xs={12} sm={12} md={12} lg={12} >
             <SignatureStamp />
+          </GridItem>
+          :""}
+
+
+
+          {jwt.decode(Token).isVendor ?
+          <GridItem  xs={12} sm={12} md={12} lg={12} >
+            <PaymentGateways />
           </GridItem>
           :""}
         </GridContainer>
