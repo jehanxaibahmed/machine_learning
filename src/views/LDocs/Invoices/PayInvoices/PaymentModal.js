@@ -291,7 +291,7 @@ export default function InitiatePayment(props) {
         script.async = true;    
         script.src = src;  
         
-        document.getElementById('div').appendChild(script);
+        document.getElementById('body').prepend(script);
 
         // div.current.appendChild(script);
     }
@@ -467,7 +467,7 @@ export default function InitiatePayment(props) {
     props.closeModal();
   }
   return (
-    <GridContainer id="div" ref={div}>
+    <GridContainer  ref={div}>
       {alert}
       <GridItem xs={12} sm={12} md={12}>
         <Card>

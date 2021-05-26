@@ -49,6 +49,7 @@
     "react-keyed-file-browser": "^1.9.0",
     "react-list-drag-and-drop": "^0.9.2",
     "react-list-select": "^0.4.1",
+    "react-load-script": "0.0.6",
     "react-lottie-player": "^1.1.0",
     "react-material-ui-carousel": "^2.2.2",
     "react-perfect-scrollbar": "^1.5.8",
