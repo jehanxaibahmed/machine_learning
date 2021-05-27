@@ -39,7 +39,6 @@ import Step3 from "views/LDocs/Vendor/steps/level3";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
 import { PayPalButton } from "react-paypal-button-v2";
 
-
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
 
@@ -287,7 +286,7 @@ export default function InitiatePayment(props) {
       let ClientID = clientID;
       let vendorMerchantID =
         vendorData.level3.payPalAcc_details.merchantIdInPayPal;
-       let src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}`;
+      let src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}`;
       // let src =
       //   "https://www.paypal.com/sdk/js?&client-id=AVuqQ1kwJEdy8IxI9SDI-IT-cdQNW0Ruh9H44S6uPKst-lwEC-el8bB8ErDAxxX2ZhhuSejbqYIlfAAM&merchant-id=HRUTW4GF7EM7N";
       const script = document.createElement("script");
@@ -319,30 +318,32 @@ export default function InitiatePayment(props) {
     } else {
       if (formState.values.paymentBy == "PayPal") {
         let orderID;
-          axios({
-            method: "get",
-            url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/requestAccessTokenPaypal`,
-          }).then((response) => {
-            let accessToken = response.data.access_token;
+        axios({
+          method: "get",
+          url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/requestAccessTokenPaypal`,
+        }).then((response) => {
+          let accessToken = response.data.access_token;
           paypal
             .Buttons({
-              createOrder: function(data, actions) {                
+              createOrder: function(data, actions) {
                 return axios({
                   method: "post",
                   url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/my-server/create-order`,
                   data: {
-                    access_token:accessToken,
+                    access_token: accessToken,
                     purchase_units: [
                       {
                         amount: {
                           currency_code: props.fileData.LC_currency.Code,
-                          value:  formState.values.paymentType == "full"
-                          ? parseFloat(props.fileData.netAmt_bc)
-                          : parseFloat(formState.values.paidAmount),
+                          value:
+                            formState.values.paymentType == "full"
+                              ? parseFloat(props.fileData.netAmt_bc)
+                              : parseFloat(formState.values.paidAmount),
                         },
                         payee: {
-                          email_address:vendorData.level3.payPalAcc_details.payPal_email,
-                          // email_address:'jehanxaibahmed@gmail.com', 
+                          email_address:
+                            vendorData.level3.payPalAcc_details.payPal_email,
+                          // email_address:'jehanxaibahmed@gmail.com',
                         },
                         payment_instruction: {
                           disbursement_mode: "INSTANT",
@@ -350,9 +351,7 @@ export default function InitiatePayment(props) {
                             {
                               amount: {
                                 currency_code: props.fileData.LC_currency.Code,
-                                value:  formState.values.paymentType == "full"
-                                ? parseFloat(props.fileData.netAmt_bc)
-                                : parseFloat(formState.values.paidAmount),
+                                value: 1.0,
                               },
                             },
                           ],
@@ -361,39 +360,91 @@ export default function InitiatePayment(props) {
                     ],
                   },
                   headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                     cooljwt: Token,
                   },
                 })
                   .then(function(res) {
-                    console.log('ResU', res);
+                    console.log("ResU", res);
                     return res;
-                  }).then(function(data) {
-                    console.log('Res', data);
+                  })
+                  .then(function(data) {
+                    console.log("Res", data);
                     return data.data.id.id;
                   });
               },
               onApprove: function(data, actions) {
-                console.log('orderData', data);
+                console.log("orderData", data);
                 return axios({
                   method: "post",
                   url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/my-server/handle-approve/${data.orderID}`,
                   data: {
-                    access_token:accessToken
+                    access_token: accessToken,
                   },
                   headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                     cooljwt: Token,
                   },
                 }).then(function(res) {
                   if (!res.ok) {
                     console.log(res);
+                    let response = res.data.result;
+                    let payer = response.payer;
+                    let purchase_units = response.purchase_units;
+                    let status = response.status;
+                    let transaction = purchase_units[0].payments.captures[0];
+                    let orderId = response.id;
+                    let payerEmail = payer.email_address;
+                    let payerId = payer.payer_id;
+                    console.log("Order ID", orderId);
+                    console.log("Transaction ID", transaction.id);
+
+                    let data = {
+                      tenantId: props.fileData.tenantId,
+                      organizationId: props.fileData.organizationId,
+                      invoiceId: props.fileData.invoiceId,
+                      version: props.fileData.version,
+                      paidAmount:
+                        formState.values.paymentType == "full"
+                          ? parseFloat(props.fileData.netAmt_bc)
+                          : parseFloat(formState.values.paidAmount),
+                      updatedBy: decoded.email,
+                      paymentID: transaction.id,
+                      payerID: payerId,
+                      paymentType: formState.values.paymentType,
+                      currencyType: formState.values.currencyType,
+                      orderId: orderId,
+                      paymentGateway:formState.values.paymentBy,
+                      balanceDue:
+                        formState.values.paymentType == "full"
+                          ? 0
+                          : parseFloat(props.fileData.balanceDue) -
+                            parseFloat(formState.values.paidAmount),
+                      paymentMethod: formState.values.paymentBy,
+                      transactionFee:"1",
+                    };
+                    axios({
+                      method: "post",
+                      url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
+                      data: data,
+                      headers: {
+                        cooljwt: Token,
+                      },
+                    }).then(async (response) => {
+                      console.log(response);
+                      props
+                      await props.loadFiles(decoded, false);
+                      successAlert("Payment Successful...");
+                      
+                    }).catch((err)=>{
+                      errorAlert('Payment Already Done');
+                    });
                   }
                 });
               },
             })
             .render("#paypal-button");
-          })
+        });
 
         // paypal.Button.render(
         //   {
@@ -704,7 +755,6 @@ export default function InitiatePayment(props) {
                       </MenuItem>
                       <MenuItem value={1}>Fiat Payment</MenuItem>
                       <MenuItem value={2}>Crypto Payment</MenuItem>
-                      <MenuItem value={3}>Both</MenuItem>
                     </TextField>
                   </GridItem>
 
@@ -774,25 +824,25 @@ export default function InitiatePayment(props) {
                 style={{ float: "right", marginTop: "20px" }}
               >
                 {formState.values.paymentBy == "PayPal" ? (
-                //    <PayPalButton
-                //    amount="0.01"
-                //    // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
-                //    onSuccess={(details, data) => {
-                //      alert("Transaction completed by " + details.payer.name.given_name);
-           
-                //      // OPTIONAL: Call your server to save the transaction
-                //      return fetch("/paypal-transaction-complete", {
-                //        method: "post",
-                //        body: JSON.stringify({
-                //          orderId: data.orderID
-                //        })
-                //      });
-                //    }}
-                //    options={{
-                //      clientId: clientID,
-                //      merchantId:  vendorData.level3.payPalAcc_details.merchantIdInPayPal
-                //    }}
-                //  />
+                  //    <PayPalButton
+                  //    amount="0.01"
+                  //    // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+                  //    onSuccess={(details, data) => {
+                  //      alert("Transaction completed by " + details.payer.name.given_name);
+
+                  //      // OPTIONAL: Call your server to save the transaction
+                  //      return fetch("/paypal-transaction-complete", {
+                  //        method: "post",
+                  //        body: JSON.stringify({
+                  //          orderId: data.orderID
+                  //        })
+                  //      });
+                  //    }}
+                  //    options={{
+                  //      clientId: clientID,
+                  //      merchantId:  vendorData.level3.payPalAcc_details.merchantIdInPayPal
+                  //    }}
+                  //  />
                   <span style={{ marginTop: "20px" }} id="paypal-button"></span>
                 ) : (
                   ""

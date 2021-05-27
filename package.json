@@ -105,7 +105,8 @@
     "node-sass": "^4.14.1",
     "prettier": "1.18.2",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "terser-brunch": "^4.0.0"
   },
   "browserslist": {
     "production": [

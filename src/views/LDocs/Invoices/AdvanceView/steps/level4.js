@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import GridItem from "components/Grid/GridItem.js";
 import { formatDateTime, addZeroes } from "../../../Functions/Functions";
-
+import GetAppIcon from '@material-ui/icons/GetApp';
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
@@ -54,6 +54,7 @@ export default function Step4(props) {
   const classes = useStyles();
   const classesList = useStyle();
   const [animateStep, setAnimateStep] = useState(true);
+  const [payments, setPayments] = useState(props.payments);
   const isExported = props.isExported.status
     ? props.isExported.status == "completed"
       ? true
@@ -69,46 +70,43 @@ export default function Step4(props) {
       isVisible={animateStep}
     >
       <GridContainer>
-        {isExported ? (
           <Table className={classesList.table} aria-label="simple table">
             <TableHead>
               <TableRow className={classesList.TableRow}>
-                <TableCell className={classesList.TableCell}>#</TableCell>
-                <TableCell className={classesList.TableCell}>Status</TableCell>
-                <TableCell className={classesList.TableCell}>
-                  Transaction By
-                </TableCell>
-                <TableCell className={classesList.TableCell}>
-                  Transaction Date
-                </TableCell>
+                <TableCell className={classesList.TableCell}>Payment ID</TableCell>
+                <TableCell className={classesList.TableCell}>Payment Gateway</TableCell>
+                {/* <TableCell className={classesList.TableCell}>Payer ID</TableCell> */}
+                <TableCell className={classesList.TableCell}>Balance Due</TableCell>
+                {/* <TableCell className={classesList.TableCell}>Order ID</TableCell> */}
+                <TableCell className={classesList.TableCell}>Partial / Fully</TableCell>
+                <TableCell className={classesList.TableCell}>Paid Amount</TableCell>
+                <TableCell className={classesList.TableCell}>Transaction Fee</TableCell>
+                <TableCell className={classesList.TableCell}>Transaction Date</TableCell>
+                <TableCell className={classesList.TableCell}>Receipt</TableCell>
               </TableRow>
             </TableHead>
             <TableBody style={{ paddingBottom: 5 }}>
-              {/* {props.payments ? props.payments.map((item, index)=>{
-                    let Payment = JSON.parse(item.Record);
-                    return ( */}
+              {payments ? payments.map((item, index)=>{
+                    return (
               <TableRow>
-                <TableCell className={classesList.TableCell}>{`P-1`}</TableCell>
+                <TableCell className={classesList.TableCell}>{item.paymentID}</TableCell>
+                <TableCell className={classesList.TableCell}>{item.paymentGateway}</TableCell>
+                <TableCell className={classesList.TableCell}>{item.balanceDue}</TableCell>
+                {/* <TableCell className={classesList.TableCell}>{item.payerID}</TableCell> */}
+                {/* <TableCell className={classesList.TableCell}>{item.orderId}</TableCell> */}
+                <TableCell className={classesList.TableCell}>{item.finalPayment ? "Fully":"Partial"}</TableCell>
+                <TableCell className={classesList.TableCell}>{item.paidAmount}</TableCell>
+                <TableCell className={classesList.TableCell}>{item.transactionFee}</TableCell>
                 <TableCell className={classesList.TableCell}>
-                  Exported
+                  {formatDateTime(item.date)}
                 </TableCell>
-                <TableCell className={classesList.TableCell}>
-                  {props.isExported.updatedBy
-                    ? props.isExported.updatedBy.toUpperCase()
-                    : ""}
-                </TableCell>
-                <TableCell className={classesList.TableCell}>
-                  {formatDateTime(props.isExported.date)}
-                </TableCell>
+                <TableCell className={classesList.TableCell}><a href={`${process.env.REACT_APP_LDOCS_API_URL}/${item.receiptUrl}`} download target="_blank" ><GetAppIcon /></a></TableCell>
               </TableRow>
-              {/* )
+              )
               }
-                ):''} */}
+                ):''} 
             </TableBody>
           </Table>
-        ) : (
-          ""
-        )}
       </GridContainer>
     </Animated>
   );

@@ -111,7 +111,7 @@ export default function FileAdvanceView(props) {
   const getPaymentData = async () => {
     await axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/payment-history/${fileData.invoiceId}-${fileData.version}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/getPaymentsByInvoice/${fileData.organizationId}/${fileData.invoiceId}`,
     })
       .then((response) => {
         if (response.data.length !== 0) {
