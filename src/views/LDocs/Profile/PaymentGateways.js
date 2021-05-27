@@ -358,8 +358,20 @@ export default function PaymentGateways(props) {
           },
           operations: [
             {
-              operation: "BANK_ADDITION",
-            },
+              operation: "API_INTEGRATION",
+              api_integration_preference: {
+                rest_api_integration: {
+                  integration_method: "PAYPAL",
+                  integration_type: "THIRD_PARTY",
+                  third_party_details: {
+                    features: [
+                      "PAYMENT",
+                      "REFUND"
+                   ]
+                  }
+                }
+              }
+            }
           ],
           legal_consents: [
             {

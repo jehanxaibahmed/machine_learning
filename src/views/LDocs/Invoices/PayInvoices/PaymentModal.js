@@ -37,6 +37,8 @@ import { useDispatch, useSelector } from "react-redux";
 import BuildNetwork from "views/LDocs/Vendor/BuildNetwork";
 import Step3 from "views/LDocs/Vendor/steps/level3";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
+import { PayPalButton } from "react-paypal-button-v2";
+
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -285,27 +287,27 @@ export default function InitiatePayment(props) {
       let ClientID = clientID;
       let vendorMerchantID =
         vendorData.level3.payPalAcc_details.merchantIdInPayPal;
-        // let src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}`;
-        let src="https://www.paypal.com/sdk/js?&client-id=AVuqQ1kwJEdy8IxI9SDI-IT-cdQNW0Ruh9H44S6uPKst-lwEC-el8bB8ErDAxxX2ZhhuSejbqYIlfAAM&merchant-id=HRUTW4GF7EM7N"
-        const script = document.createElement("script");    
-        script.async = true;    
-        script.src = src;  
-        
-        document.getElementById('body').prepend(script);
+      // let src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}`;
+      let src =
+        "https://www.paypal.com/sdk/js?&client-id=AVuqQ1kwJEdy8IxI9SDI-IT-cdQNW0Ruh9H44S6uPKst-lwEC-el8bB8ErDAxxX2ZhhuSejbqYIlfAAM&merchant-id=HRUTW4GF7EM7N";
+      const script = document.createElement("script");
+      script.async = true;
+      script.src = src;
 
-        // div.current.appendChild(script);
+      document.getElementById("body").prepend(script);
+
+      // div.current.appendChild(script);
     }
-      // const script = document.createElement("script");
+    // const script = document.createElement("script");
 
-      // script.src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}"`;
-      // script.async = true;
+    // script.src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}"`;
+    // script.async = true;
 
-      // document.head.appendChild(script);
+    // document.head.appendChild(script);
 
-      // return () => {
-      //   document.head.removeChild(script);
-      // };
-    
+    // return () => {
+    //   document.head.removeChild(script);
+    // };
   }, [vendorData, clientID]);
 
   const paymentButton = () => {
@@ -316,42 +318,81 @@ export default function InitiatePayment(props) {
       console.log("Error Amount");
     } else {
       if (formState.values.paymentBy == "PayPal") {
-        setTimeout(() => {
-          paypal.Buttons({
-            createOrder: function (data, actions) {
-              return fetch('/my-server/create-order', {
-                method: 'POST'
-              }).then(function(res) {
-                return res.json();
-              }).then(function(data) {
-                return data.id;
-              });
-            },
-            onApprove: function (data, actions) {
-              return fetch('/my-server/capture-order/' + data.orderID, {
-                method: 'POST'
-              }).then(function(res) {
-                if (!res.ok) {
-                  alert('Something went wrong');
-                }
-              });
-            }
-          }).render('#paypal-button');
-  
-        }, 1000);
-        
+        let orderID;
+          axios({
+            method: "get",
+            url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/requestAccessTokenPaypal`,
+          }).then((response) => {
+            let accessToken = response.data.access_token;
+          paypal
+            .Buttons({
+              createOrder: function(data, actions) {                
+                let obj = {
+                  access_token:accessToken,
+                  purchase_units: [
+                    {
+                      amount: {
+                        currency_code: props.fileData.LC_currency.Code,
+                        value:  formState.values.paymentType == "full"
+                        ? parseFloat(props.fileData.netAmt_bc)
+                        : parseFloat(formState.values.paidAmount),
+                      },
+                      payee: {
+                        email_address:vendorData.level3.payPalAcc_details.payPal_email,
+                        // email_address:'jehanxaibahmed@gmail.com', 
+                      },
+                      payment_instruction: {
+                        disbursement_mode: "INSTANT",
+                        platform_fees: [
+                          {
+                            amount: {
+                              currency_code: props.fileData.LC_currency.Code,
+                              value:  formState.values.paymentType == "full"
+                              ? parseFloat(props.fileData.netAmt_bc)
+                              : parseFloat(formState.values.paidAmount),
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                };
 
 
-
-
-
-
-
-
-
-
-
-
+                return axios({
+                  method: "post",
+                  url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/my-server/create-order`,
+                  data: obj,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    cooljwt: Token,
+                  },
+                })
+                  .then(function(res) {
+                    return res;
+                  }).then(function(data) {
+                    return data.id;
+                  });
+              },
+              onApprove: function(data, actions) {
+                console.log('orderData', data);
+                return axios({
+                  method: "post",
+                  url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/my-server/handle-approve/${data.orderID}`,
+                  data: obj,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    cooljwt: Token,
+                  },
+                }).then(function(res) {
+                  if (!res.ok) {
+                    alert("Something went wrong");
+                  }
+                });
+              },
+            })
+            .render("#paypal-button");
+          })
 
         // paypal.Button.render(
         //   {
@@ -434,9 +475,6 @@ export default function InitiatePayment(props) {
         //   },
         //   "#paypal-button"
         // );
-
-
-
       }
       if (formState.values.paymentBy == "moneybutton") {
         const div = document.getElementById("my-money-button");
@@ -467,7 +505,7 @@ export default function InitiatePayment(props) {
     props.closeModal();
   }
   return (
-    <GridContainer  ref={div}>
+    <GridContainer ref={div}>
       {alert}
       <GridItem xs={12} sm={12} md={12}>
         <Card>
@@ -735,6 +773,25 @@ export default function InitiatePayment(props) {
                 style={{ float: "right", marginTop: "20px" }}
               >
                 {formState.values.paymentBy == "PayPal" ? (
+                //    <PayPalButton
+                //    amount="0.01"
+                //    // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+                //    onSuccess={(details, data) => {
+                //      alert("Transaction completed by " + details.payer.name.given_name);
+           
+                //      // OPTIONAL: Call your server to save the transaction
+                //      return fetch("/paypal-transaction-complete", {
+                //        method: "post",
+                //        body: JSON.stringify({
+                //          orderId: data.orderID
+                //        })
+                //      });
+                //    }}
+                //    options={{
+                //      clientId: clientID,
+                //      merchantId:  vendorData.level3.payPalAcc_details.merchantIdInPayPal
+                //    }}
+                //  />
                   <span style={{ marginTop: "20px" }} id="paypal-button"></span>
                 ) : (
                   ""
