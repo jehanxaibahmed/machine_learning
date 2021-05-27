@@ -287,9 +287,9 @@ export default function InitiatePayment(props) {
       let ClientID = clientID;
       let vendorMerchantID =
         vendorData.level3.payPalAcc_details.merchantIdInPayPal;
-      // let src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}`;
-      let src =
-        "https://www.paypal.com/sdk/js?&client-id=AVuqQ1kwJEdy8IxI9SDI-IT-cdQNW0Ruh9H44S6uPKst-lwEC-el8bB8ErDAxxX2ZhhuSejbqYIlfAAM&merchant-id=HRUTW4GF7EM7N";
+       let src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}`;
+      // let src =
+      //   "https://www.paypal.com/sdk/js?&client-id=AVuqQ1kwJEdy8IxI9SDI-IT-cdQNW0Ruh9H44S6uPKst-lwEC-el8bB8ErDAxxX2ZhhuSejbqYIlfAAM&merchant-id=HRUTW4GF7EM7N";
       const script = document.createElement("script");
       script.async = true;
       script.src = src;
@@ -327,51 +327,50 @@ export default function InitiatePayment(props) {
           paypal
             .Buttons({
               createOrder: function(data, actions) {                
-                let obj = {
-                  access_token:accessToken,
-                  purchase_units: [
-                    {
-                      amount: {
-                        currency_code: props.fileData.LC_currency.Code,
-                        value:  formState.values.paymentType == "full"
-                        ? parseFloat(props.fileData.netAmt_bc)
-                        : parseFloat(formState.values.paidAmount),
-                      },
-                      payee: {
-                        email_address:vendorData.level3.payPalAcc_details.payPal_email,
-                        // email_address:'jehanxaibahmed@gmail.com', 
-                      },
-                      payment_instruction: {
-                        disbursement_mode: "INSTANT",
-                        platform_fees: [
-                          {
-                            amount: {
-                              currency_code: props.fileData.LC_currency.Code,
-                              value:  formState.values.paymentType == "full"
-                              ? parseFloat(props.fileData.netAmt_bc)
-                              : parseFloat(formState.values.paidAmount),
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  ],
-                };
-
-
                 return axios({
                   method: "post",
                   url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/my-server/create-order`,
-                  data: obj,
+                  data: {
+                    access_token:accessToken,
+                    purchase_units: [
+                      {
+                        amount: {
+                          currency_code: props.fileData.LC_currency.Code,
+                          value:  formState.values.paymentType == "full"
+                          ? parseFloat(props.fileData.netAmt_bc)
+                          : parseFloat(formState.values.paidAmount),
+                        },
+                        payee: {
+                          email_address:vendorData.level3.payPalAcc_details.payPal_email,
+                          // email_address:'jehanxaibahmed@gmail.com', 
+                        },
+                        payment_instruction: {
+                          disbursement_mode: "INSTANT",
+                          platform_fees: [
+                            {
+                              amount: {
+                                currency_code: props.fileData.LC_currency.Code,
+                                value:  formState.values.paymentType == "full"
+                                ? parseFloat(props.fileData.netAmt_bc)
+                                : parseFloat(formState.values.paidAmount),
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
                   headers: {
                     'Content-Type': 'application/json',
                     cooljwt: Token,
                   },
                 })
                   .then(function(res) {
+                    console.log('ResU', res);
                     return res;
                   }).then(function(data) {
-                    return data.id;
+                    console.log('Res', data);
+                    return data.data.id.id;
                   });
               },
               onApprove: function(data, actions) {
@@ -379,7 +378,6 @@ export default function InitiatePayment(props) {
                 return axios({
                   method: "post",
                   url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/my-server/handle-approve/${data.orderID}`,
-                  data: obj,
                   headers: {
                     'Content-Type': 'application/json',
                     cooljwt: Token,
