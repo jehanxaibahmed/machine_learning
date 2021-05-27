@@ -378,6 +378,9 @@ export default function InitiatePayment(props) {
                 return axios({
                   method: "post",
                   url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/my-server/handle-approve/${data.orderID}`,
+                  data: {
+                    access_token:accessToken
+                  },
                   headers: {
                     'Content-Type': 'application/json',
                     cooljwt: Token,
