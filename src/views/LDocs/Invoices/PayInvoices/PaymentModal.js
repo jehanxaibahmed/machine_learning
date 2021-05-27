@@ -384,7 +384,7 @@ export default function InitiatePayment(props) {
                   },
                 }).then(function(res) {
                   if (!res.ok) {
-                    alert("Something went wrong");
+                    console.log(res);
                   }
                 });
               },
