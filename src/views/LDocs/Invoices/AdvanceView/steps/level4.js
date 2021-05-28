@@ -91,12 +91,12 @@ export default function Step4(props) {
               <TableRow>
                 <TableCell className={classesList.TableCell}>{item.paymentID}</TableCell>
                 <TableCell className={classesList.TableCell}>{item.paymentGateway}</TableCell>
-                <TableCell className={classesList.TableCell}>{item.balanceDue}</TableCell>
+                <TableCell className={classesList.TableCell}>{addZeroes(item.balanceDue)}</TableCell>
                 {/* <TableCell className={classesList.TableCell}>{item.payerID}</TableCell> */}
                 {/* <TableCell className={classesList.TableCell}>{item.orderId}</TableCell> */}
                 <TableCell className={classesList.TableCell}>{item.finalPayment ? "Fully":"Partial"}</TableCell>
-                <TableCell className={classesList.TableCell}>{item.paidAmount}</TableCell>
-                <TableCell className={classesList.TableCell}>{item.transactionFee}</TableCell>
+                <TableCell className={classesList.TableCell}> {item.currencyCode ? item.currencyCode : "" } {addZeroes(item.paidAmount)}</TableCell>
+                <TableCell className={classesList.TableCell}>{item.currencyCode ? item.currencyCode : "" } {addZeroes(item.transactionFee)}</TableCell>
                 <TableCell className={classesList.TableCell}>
                   {formatDateTime(item.date)}
                 </TableCell>

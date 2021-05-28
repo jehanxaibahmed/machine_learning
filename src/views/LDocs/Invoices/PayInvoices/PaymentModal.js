@@ -38,6 +38,7 @@ import BuildNetwork from "views/LDocs/Vendor/BuildNetwork";
 import Step3 from "views/LDocs/Vendor/steps/level3";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
 import { PayPalButton } from "react-paypal-button-v2";
+import { addZeroes } from "views/LDocs/Functions/Functions";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -337,8 +338,8 @@ export default function InitiatePayment(props) {
                           currency_code: props.fileData.LC_currency.Code,
                           value:
                             formState.values.paymentType == "full"
-                              ? parseFloat(props.fileData.netAmt_bc)
-                              : parseFloat(formState.values.paidAmount),
+                              ? parseFloat(props.fileData.balanceDue).toFixed(2)
+                              : parseFloat(formState.values.paidAmount).toFixed(2),
                         },
                         payee: {
                           email_address:
@@ -406,8 +407,8 @@ export default function InitiatePayment(props) {
                       version: props.fileData.version,
                       paidAmount:
                         formState.values.paymentType == "full"
-                          ? parseFloat(props.fileData.netAmt_bc)
-                          : parseFloat(formState.values.paidAmount),
+                          ? parseFloat(props.fileData.balanceDue).toFixed(2)
+                          : parseFloat(formState.values.paidAmount).toFixed(2),
                       updatedBy: decoded.email,
                       paymentID: transaction.id,
                       payerID: payerId,
@@ -415,6 +416,7 @@ export default function InitiatePayment(props) {
                       currencyType: formState.values.currencyType,
                       orderId: orderId,
                       paymentGateway:formState.values.paymentBy,
+                      currencyCode:props.fileData.LC_currency.Code,
                       balanceDue:
                         formState.values.paymentType == "full"
                           ? 0
@@ -432,7 +434,6 @@ export default function InitiatePayment(props) {
                       },
                     }).then(async (response) => {
                       console.log(response);
-                      props
                       await props.loadFiles(decoded, false);
                       successAlert("Payment Successful...");
                       
@@ -534,7 +535,7 @@ export default function InitiatePayment(props) {
           to: "ryan@moneybutton.com",
           amount:
             formState.values.paymentType == "full"
-              ? parseFloat(props.fileData.netAmt_bc)
+              ? parseFloat(props.fileData.balanceDue)
               : parseFloat(formState.values.paidAmount),
           currency: props.fileData.LC_currency.Code,
           label: "Pay Through Money Button",
@@ -687,7 +688,7 @@ export default function InitiatePayment(props) {
                       label="Amount Due"
                       disabled={true}
                       value={
-                        `${props.fileData.LC_currency.Code}  ${props.fileData.netAmt_bc}` ||
+                        `${props.fileData.LC_currency.Code}  ${addZeroes(props.fileData.balanceDue)}` ||
                         ""
                       }
                     ></TextField>
@@ -737,7 +738,7 @@ export default function InitiatePayment(props) {
                     <TextField
                       className={classes.textField}
                       fullWidth={true}
-                      label="Currency Type"
+                      label="Payment In"
                       name="currencyType"
                       select
                       onChange={(event) => {

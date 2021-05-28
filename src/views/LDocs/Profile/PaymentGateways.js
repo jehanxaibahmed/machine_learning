@@ -549,7 +549,7 @@ export default function PaymentGateways(props) {
                 onClick={referalLink}
                 style={{ float: "right" }}
               >
-                On Boarding
+                Connect
               </Button>
               </CardBody>
             </Card>

@@ -259,7 +259,7 @@ export default function Horizentalteppers(props) {
             "inProgress"
           ? "In Process"
           : ""
-        : "",
+        : "Hello",
       status: props.fileData.trackingStatus.paymentInProcess.status || null,
       comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
     },
@@ -309,14 +309,14 @@ export default function Horizentalteppers(props) {
           setActiveStep(3);
         }
         break;
-      // case "paid":
-      //   currentStatus = props.fileData.trackingStatus.paid.status;
-      //   if (currentStatus) {
-      //     setActiveStep(4);
-      //   } else {
-      //     setActiveStep(3);
-      //   }
-      //   break;
+      case "paid":
+        currentStatus = props.fileData.trackingStatus.paid.status;
+        if (currentStatus) {
+          setActiveStep(4);
+        } else {
+          setActiveStep(3);
+        }
+        break;
     }
   }, []);
 

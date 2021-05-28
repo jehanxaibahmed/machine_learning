@@ -338,14 +338,14 @@ export default function FilesList(props) {
                 </Tooltip>
               )
               : currentStatus.status == "readyToPay" ? (
-                <Tooltip title="REJECTED">
+                <Tooltip title="Ready To Pay">
                   <Chip
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label="REJECTED"
+                    label="Ready To Pay"
                     clickable
-                    color="secondary"
+                    style={{ border: "orange 1px solid", color: "orange" }}
                   />
                 </Tooltip>
               )
