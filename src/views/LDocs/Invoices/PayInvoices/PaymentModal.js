@@ -54,6 +54,8 @@ export default function InitiatePayment(props) {
   const classes = useStyles();
   const sweetClass = sweetAlertStyle();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [paymentInProcess, setPaymentInProcess] = React.useState(false);
+  const [buttonLoaded, setButtonLoaded] = React.useState(null);
   const [alert, setAlert] = React.useState(null);
   const [showVendorDetails, setShowVendorDetails] = React.useState(false);
   const [PaymentGateways, setPaymentGateways] = React.useState([]);
@@ -158,7 +160,7 @@ export default function InitiatePayment(props) {
   const getPaymentMethods = () => {
     axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/getGateway/${props.fileData.tenantId}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/getGateway/${props.fileData.vendorId}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -202,85 +204,6 @@ export default function InitiatePayment(props) {
         console.log(err);
       });
   };
-  const initPayment = () => {
-    setIsLoading(true);
-    let paidAmount;
-    let paymentBy;
-    let paymentType;
-    const Check = require("is-null-empty-or-undefined").Check;
-    var error = false;
-    if (
-      !Check(formState.values.paidAmount) &&
-      formState.values.paidAmount <= props.fileData.balanceDue
-    ) {
-      paidAmount = "success";
-    } else {
-      paidAmount = "error";
-      error = true;
-    }
-    if (!Check(formState.values.paymentBy)) {
-      paymentBy = "success";
-    } else {
-      paymentBy = "error";
-      error = true;
-    }
-    if (!Check(formState.values.paymentType)) {
-      paymentType = "success";
-    } else {
-      paymentType = "error";
-      error = true;
-    }
-    setFormState((formState) => ({
-      ...formState,
-      errors: {
-        ...formState.errors,
-        paidAmount: paidAmount,
-        paymentBy: paymentBy,
-        paymentType: paymentType,
-      },
-    }));
-    if (error) {
-      setIsLoading(false);
-      return false;
-    } else {
-      let data = {
-        tenantId: props.fileData.tenantId,
-        organizationId: props.fileData.organizationId,
-        invoiceId: props.fileData.invoiceId,
-        version: props.fileData.version,
-        paidAmount: formState.values.paidAmount,
-        updatedBy: decoded.email,
-        paymentType: formState.values.paymentType,
-        paymentBy: formState.values.paymentBy,
-        balanceDue: props.fileData.balanceDue - formState.values.paidAmount,
-      };
-      axios({
-        method: "post",
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
-        data: data,
-        headers: {
-          cooljwt: Token,
-        },
-      })
-        .then(async (response) => {
-          await props.loadFiles(decoded, false);
-          setIsLoading(false);
-          //props.closeModal();
-          successAlert("Payment Initiated Successfully!");
-        })
-        .catch((error) => {
-          if (error.response) {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
-          }
-          console.log(
-            typeof error.response != "undefined"
-              ? error.response.data
-              : error.message
-          );
-          errorAlert("There is Some Issue ..");
-        });
-    }
-  };
 
   useEffect(() => {
     if (vendorData && clientID) {
@@ -288,26 +211,12 @@ export default function InitiatePayment(props) {
       let vendorMerchantID =
         vendorData.level3.payPalAcc_details.merchantIdInPayPal;
       let src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}`;
-      // let src =
-      //   "https://www.paypal.com/sdk/js?&client-id=AVuqQ1kwJEdy8IxI9SDI-IT-cdQNW0Ruh9H44S6uPKst-lwEC-el8bB8ErDAxxX2ZhhuSejbqYIlfAAM&merchant-id=HRUTW4GF7EM7N";
       const script = document.createElement("script");
       script.async = true;
       script.src = src;
 
       document.getElementById("body").prepend(script);
-
-      // div.current.appendChild(script);
     }
-    // const script = document.createElement("script");
-
-    // script.src = `https://www.paypal.com/sdk/js?&client-id=${ClientID}&merchant-id=${vendorMerchantID}"`;
-    // script.async = true;
-
-    // document.head.appendChild(script);
-
-    // return () => {
-    //   document.head.removeChild(script);
-    // };
   }, [vendorData, clientID]);
 
   const paymentButton = () => {
@@ -318,7 +227,7 @@ export default function InitiatePayment(props) {
       console.log("Error Amount");
     } else {
       if (formState.values.paymentBy == "PayPal") {
-        let orderID;
+        setButtonLoaded(false);
         axios({
           method: "get",
           url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/requestAccessTokenPaypal`,
@@ -339,7 +248,9 @@ export default function InitiatePayment(props) {
                           value:
                             formState.values.paymentType == "full"
                               ? parseFloat(props.fileData.balanceDue).toFixed(2)
-                              : parseFloat(formState.values.paidAmount).toFixed(2),
+                              : parseFloat(formState.values.paidAmount).toFixed(
+                                  2
+                                ),
                         },
                         payee: {
                           email_address:
@@ -366,16 +277,15 @@ export default function InitiatePayment(props) {
                   },
                 })
                   .then(function(res) {
-                    console.log("ResU", res);
                     return res;
                   })
                   .then(function(data) {
-                    console.log("Res", data);
                     return data.data.id.id;
                   });
               },
               onApprove: function(data, actions) {
-                console.log("orderData", data);
+                setButtonLoaded(false);
+                setPaymentInProcess(true);
                 return axios({
                   method: "post",
                   url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/my-server/handle-approve/${data.orderID}`,
@@ -415,15 +325,15 @@ export default function InitiatePayment(props) {
                       paymentType: formState.values.paymentType,
                       currencyType: formState.values.currencyType,
                       orderId: orderId,
-                      paymentGateway:formState.values.paymentBy,
-                      currencyCode:props.fileData.LC_currency.Code,
+                      paymentGateway: formState.values.paymentBy,
+                      currencyCode: props.fileData.LC_currency.Code,
                       balanceDue:
                         formState.values.paymentType == "full"
                           ? 0
                           : parseFloat(props.fileData.balanceDue) -
                             parseFloat(formState.values.paidAmount),
                       paymentMethod: formState.values.paymentBy,
-                      transactionFee:"1",
+                      transactionFee: "1",
                     };
                     axios({
                       method: "post",
@@ -432,102 +342,26 @@ export default function InitiatePayment(props) {
                       headers: {
                         cooljwt: Token,
                       },
-                    }).then(async (response) => {
-                      console.log(response);
-                      await props.loadFiles(decoded, false);
-                      successAlert("Payment Successful...");
-                      
-                    }).catch((err)=>{
-                      errorAlert('Payment Already Done');
-                    });
+                    })
+                      .then(async (response) => {
+                        console.log(response);
+                        await props.loadFiles(decoded, false);
+                        setPaymentInProcess(false);
+                        // setButtonLoaded(true);
+                        successAlert("Payment Successful...");
+                      })
+                      .catch((err) => {
+                        errorAlert("Payment Already Done");
+                      });
                   }
                 });
               },
             })
             .render("#paypal-button");
+          setTimeout(() => {
+            setButtonLoaded(true);
+          }, 3000);
         });
-
-        // paypal.Button.render(
-        //   {
-        //     env: "sandbox", // Or 'production'
-        //     // Set up the payment:
-        //     // 1. Add a payment callback
-        //     payment: function(data, actions) {
-        //       // 2. Make a request to your server
-        //       return actions.request
-        //         .post(
-        //           `${process.env.REACT_APP_LDOCS_API_URL}/payment/createPayment`,
-        //           {
-        //             invoiceId: props.fileData.invoiceId,
-        //             organizationId: props.fileData.organizationId,
-        //             description: `Payment for Invoice ${props.fileData.invoiceId}`,
-        //             amount:
-        //               formState.values.paymentType == "full"
-        //                 ? parseFloat(props.fileData.netAmt_bc)
-        //                 : parseFloat(formState.values.paidAmount),
-        //             currency: props.fileData.LC_currency.Code,
-        //           }
-        //         )
-        //         .then(function(res) {
-        //           // 3. Return res.id from the response
-        //           return res.id;
-        //         });
-        //     },
-        //     // Execute the payment:
-        //     // 1. Add an onAuthorize callback
-        //     onAuthorize: function(data, actions) {
-        //       // 2. Make a request to your server
-        //       return actions.request
-        //         .post(
-        //           `${process.env.REACT_APP_LDOCS_API_URL}/payment/executePayment`,
-        //           {
-        //             paymentID: data.paymentID,
-        //             payerID: data.payerID,
-        //             amount:
-        //               formState.values.paymentType == "full"
-        //                 ? parseFloat(props.fileData.netAmt_bc)
-        //                 : parseFloat(formState.values.paidAmount),
-        //             currency: props.fileData.LC_currency.Code,
-        //           }
-        //         )
-        //         .then(function(res) {
-        //           let data = {
-        //             tenantId: props.fileData.tenantId,
-        //             organizationId: props.fileData.organizationId,
-        //             invoiceId: props.fileData.invoiceId,
-        //             version: props.fileData.version,
-        //             paidAmount:
-        //               formState.values.paymentType == "full"
-        //                 ? parseFloat(props.fileData.netAmt_bc)
-        //                 : parseFloat(formState.values.paidAmount),
-        //             updatedBy: decoded.email,
-        //             paymentID: res.id,
-        //             payerID: res.payer.payer_info.payer_id,
-        //             paymentType: formState.values.paymentType,
-        //             paymentBy: formState.values.paymentBy.currencyType,
-        //             balanceDue:
-        //               formState.values.paymentType == "full"
-        //                 ? 0
-        //                 : parseFloat(props.fileData.balanceDue) -
-        //                   parseFloat(formState.values.paidAmount),
-        //             paymentMethod: formState.values.paymentBy,
-        //           };
-        //           axios({
-        //             method: "post",
-        //             url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
-        //             data: data,
-        //             headers: {
-        //               cooljwt: Token,
-        //             },
-        //           }).then(async (response) => {
-        //             console.log(res);
-        //             successAlert("Payment Successful...");
-        //           });
-        //         });
-        //     },
-        //   },
-        //   "#paypal-button"
-        // );
       }
       if (formState.values.paymentBy == "moneybutton") {
         const div = document.getElementById("my-money-button");
@@ -688,8 +522,9 @@ export default function InitiatePayment(props) {
                       label="Amount Due"
                       disabled={true}
                       value={
-                        `${props.fileData.LC_currency.Code}  ${addZeroes(props.fileData.balanceDue)}` ||
-                        ""
+                        `${props.fileData.LC_currency.Code}  ${addZeroes(
+                          props.fileData.balanceDue
+                        )}` || ""
                       }
                     ></TextField>
                   </GridItem>
@@ -760,10 +595,10 @@ export default function InitiatePayment(props) {
                   </GridItem>
 
                   <GridItem
-                    xs={12}
-                    sm={12}
-                    md={12}
-                    lg={12}
+                    xs={9}
+                    sm={9}
+                    md={9}
+                    lg={9}
                     style={{
                       marginTop: "10px",
                       marginBottom: "10px",
@@ -796,24 +631,60 @@ export default function InitiatePayment(props) {
                       </MenuItem>
                       {PaymentGateways.filter(
                         (pg) =>
-                          pg.currencyType ==
-                          parseInt(formState.values.currencyType)
+                          pg.currencyType.includes(
+                          parseInt(formState.values.currencyType))
                       ).map((p) => (
                         <MenuItem value={p.serviceName}>
-                          {/* {p.title}&nbsp;&nbsp; */}
                           <div className="fileinput text-right">
+                            <div className="" style={{ marginTop: 20 }}>
+                              {p.serviceName.toUpperCase()}
+                            </div>
+                          </div>
+                          {/* <div className="fileinput text-right">
                             <div className="" style={{ marginTop: 20 }}>
                               <img
                                 height="26px"
                                 width="120px"
-                                src={`${process.env.REACT_APP_LDOCS_API_URL}/${p.imgUrl}`}
+                                src=
+                                {`${process.env.REACT_APP_LDOCS_API_URL}/${p.serviceName.toUpperCase()}`}
                                 alt={p.serviceName}
                               />
                             </div>
-                          </div>
+                          </div> */}
                         </MenuItem>
                       ))}
                     </TextField>
+                  </GridItem>
+                  <GridItem
+                    xs={3}
+                    sm={3}
+                    md={3}
+                    lg={3}
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <div className="fileinput text-right">
+                      <div className="" style={{ marginTop: 20 }}>
+                        {PaymentGateways.find(
+                          (pg) => pg.serviceName == formState.values.paymentBy
+                        ) ? (
+                          <img
+                            height="60px"
+                            width="100%"
+                            src={`${process.env.REACT_APP_LDOCS_API_URL}/${
+                              PaymentGateways.find(
+                                (pg) =>
+                                  pg.serviceName == formState.values.paymentBy
+                              ).imgUrl
+                            }`}
+                          />
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </div>
                   </GridItem>
                 </React.Fragment>
               )}
@@ -825,29 +696,17 @@ export default function InitiatePayment(props) {
                 style={{ float: "right", marginTop: "20px" }}
               >
                 {formState.values.paymentBy == "PayPal" ? (
-                  //    <PayPalButton
-                  //    amount="0.01"
-                  //    // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
-                  //    onSuccess={(details, data) => {
-                  //      alert("Transaction completed by " + details.payer.name.given_name);
-
-                  //      // OPTIONAL: Call your server to save the transaction
-                  //      return fetch("/paypal-transaction-complete", {
-                  //        method: "post",
-                  //        body: JSON.stringify({
-                  //          orderId: data.orderID
-                  //        })
-                  //      });
-                  //    }}
-                  //    options={{
-                  //      clientId: clientID,
-                  //      merchantId:  vendorData.level3.payPalAcc_details.merchantIdInPayPal
-                  //    }}
-                  //  />
-                  <span style={{ marginTop: "20px" }} id="paypal-button"></span>
+                  <span
+                    style={{
+                      marginTop: "20px",
+                      display: buttonLoaded ? "block" : "none",
+                    }}
+                    id="paypal-button"
+                  ></span>
                 ) : (
                   ""
                 )}
+                {buttonLoaded == false ? <CircularProgress /> : ""}
                 {formState.values.paymentBy == "moneybutton" ? (
                   <div style={{ maxWidth: 237 }}>
                     <span id="my-money-button"></span>
@@ -859,6 +718,9 @@ export default function InitiatePayment(props) {
             ) : (
               ""
             )}
+            {/* {paymentInProcess? 
+            <CircularProgress />:""  
+            } */}
           </CardBody>
         </Card>
       </GridItem>

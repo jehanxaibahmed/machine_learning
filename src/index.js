@@ -22,6 +22,12 @@ import { registerServiceWorker } from "./register-sw";
 navigator.serviceWorker.addEventListener("notificationclick", (message) => {
   console.log(message);
 });
+const loader = document.querySelector('.loader');
+
+// if you want to show the loader when React loads data again
+const showLoader = () => loader.classList.remove('loader--hide');
+
+const hideLoader = () => loader.classList.add('loader--hide');
 navigator.serviceWorker.addEventListener("message", (message) => {
   var payload = message.data['firebase-messaging-msg-data'];
   addNotification(
@@ -39,6 +45,7 @@ navigator.serviceWorker.addEventListener("message", (message) => {
 
 const hist = createBrowserHistory();
 registerServiceWorker();
+hideLoader();
     ReactDOM.render(
       <Provider store={store}>
         <Router history={hist}>

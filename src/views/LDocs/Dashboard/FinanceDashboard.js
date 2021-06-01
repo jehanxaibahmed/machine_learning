@@ -569,7 +569,7 @@ export default function FinanceDashboard() {
                     } ${
                       graphData.totalDueInvoices &&
                       graphData.totalDueInvoices[0]
-                        ? formatCash(graphData.totalDueInvoices[0].totalAmount)
+                        ? formatCash(graphData.totalDueInvoices[0].totalAmount.toFixed(2))
                         : 0
                     }`}
                   </Typography>
@@ -594,7 +594,7 @@ export default function FinanceDashboard() {
                       graphData.totalInvoiceAmount &&
                       graphData.totalInvoiceAmount[0]
                         ? formatCash(
-                            graphData.totalInvoiceAmount[0].totalAmount
+                            graphData.totalInvoiceAmount[0].totalAmount.toFixed(2)
                           )
                         : 0
                     }`}
