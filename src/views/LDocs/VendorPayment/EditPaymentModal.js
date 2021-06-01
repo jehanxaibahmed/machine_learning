@@ -108,7 +108,7 @@ export default function EditPaymentGateway({item, closeModal,getPaymentgateways}
                 // successAlert('Edit Successfully..');
             }).catch((err)=>{
               getPaymentgateways();
-                errorAlert('There is an issue..');
+              errorAlert('There is an issue..');
             })
 
   }
