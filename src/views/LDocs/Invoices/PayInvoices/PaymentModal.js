@@ -363,28 +363,28 @@ export default function InitiatePayment(props) {
           }, 3000);
         });
       }
-      if (formState.values.paymentBy == "moneybutton") {
-        const div = document.getElementById("my-money-button");
-        moneyButton.render(div, {
-          to: "ryan@moneybutton.com",
-          amount:
-            formState.values.paymentType == "full"
-              ? parseFloat(props.fileData.balanceDue)
-              : parseFloat(formState.values.paidAmount),
-          currency: props.fileData.LC_currency.Code,
-          label: "Pay Through Money Button",
-          clientIdentifier: "some public client identifier",
-          buttonId: "234325",
-          buttonData: "{}",
-          type: "tip",
-          onPayment: function(arg) {
-            console.log("onPayment", arg);
-          },
-          onError: function(arg) {
-            console.log("onError", arg);
-          },
-        });
-      }
+      // if (formState.values.paymentBy == "moneybutton") {
+      //   const div = document.getElementById("my-money-button");
+      //   moneyButton.render(div, {
+      //     to: "ryan@moneybutton.com",
+      //     amount:
+      //       formState.values.paymentType == "full"
+      //         ? parseFloat(props.fileData.balanceDue)
+      //         : parseFloat(formState.values.paidAmount),
+      //     currency: props.fileData.LC_currency.Code,
+      //     label: "Pay Through Money Button",
+      //     clientIdentifier: "some public client identifier",
+      //     buttonId: "234325",
+      //     buttonData: "{}",
+      //     type: "tip",
+      //     onPayment: function(arg) {
+      //       console.log("onPayment", arg);
+      //     },
+      //     onError: function(arg) {
+      //       console.log("onError", arg);
+      //     },
+      //   });
+      // }
     }
   };
 
@@ -707,13 +707,13 @@ export default function InitiatePayment(props) {
                   ""
                 )}
                 {buttonLoaded == false ? <CircularProgress /> : ""}
-                {formState.values.paymentBy == "moneybutton" ? (
+                {/* {formState.values.paymentBy == "moneybutton" ? (
                   <div style={{ maxWidth: 237 }}>
                     <span id="my-money-button"></span>
                   </div>
                 ) : (
                   ""
-                )}
+                )} */}
               </span>
             ) : (
               ""

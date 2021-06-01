@@ -19,6 +19,7 @@ import jwt from "jsonwebtoken";
 import axios from "axios";
 import AddPaymentModal from "./AddPaymentModal";
 import EditPaymentModal from "./EditPaymentModal";
+import Paypal from "./Paypal/Paypal";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -45,6 +46,12 @@ export default function VendorPayment() {
   const [editPaymentGatewayModal, setEditPaymentGatewayModal] = React.useState(
     false
   );
+  const [detailPaymentGatewayModal, setDetailPaymentGatewayModal] = React.useState(
+    false
+  );
+  const [gridView, setGridView] = React.useState(
+    true
+  );
   const [item, setItem] = React.useState(null);
   const [type, setType] = React.useState(1);
   const [value, setValue] = React.useState('0');
@@ -65,6 +72,17 @@ const editGateway = (i) => {
     setItem(i);
     setEditPaymentGatewayModal(true);
 
+}
+
+const editDetails = (i) => {
+    setItem(i);
+    setGridView(false);
+    setDetailPaymentGatewayModal(true);
+}
+
+const goBack = () => {
+    setDetailPaymentGatewayModal(false);
+    setGridView(true);
 }
 
 const handleRadioChange = (event) => {
@@ -93,12 +111,13 @@ const handleRadioChange = (event) => {
 
   return (
     <div>
+      {gridView ?
       <Animated
         animationIn="bounceInRight"
         animationOut="bounceOutLeft"
         animationInDuration={1000}
         animationOutDuration={1000}
-        isVisible={true}
+        isVisible={gridView}
       >
        
         <GridContainer>
@@ -193,6 +212,7 @@ const handleRadioChange = (event) => {
                   addPayment={addPayment}
                   setType={setType}
                   editGateway={editGateway}
+                  showDetails={editDetails}
                   paymentGateways={PaymentGateways}
                   
                   /> :
@@ -200,6 +220,7 @@ const handleRadioChange = (event) => {
                   addPayment={addPayment}
                   setType={setType}
                   editGateway={editGateway}
+                  showDetails={editDetails}
                   paymentGateways={PaymentGateways}
                   
                   />}
@@ -227,7 +248,44 @@ const handleRadioChange = (event) => {
           </GridItem>
           
         </GridContainer>
-      </Animated>
+      </Animated>:""}
+      {detailPaymentGatewayModal ?
+      <Animated
+        animationIn="bounceInRight"
+        animationOut="bounceOutLeft"
+        animationInDuration={1000}
+        animationOutDuration={1000}
+        isVisible={detailPaymentGatewayModal}
+      >
+       
+        <GridContainer>
+          <GridItem xs={12} sm={12} md={12}>
+            <Card profile>
+              <CardHeader color="info" icon>
+                <CardIcon color="info">
+                  <h4 className={classes.cardTitle}>Payment Details ({item ? item.serviceName.toUpperCase():""})</h4>
+                </CardIcon>
+                <Button
+                    color="danger"
+                    round
+                    style={{ float: "right" }}
+                    className={classes.marginRight}
+                    onClick={() => goBack()}
+                  >
+                    Go Back
+                  </Button>
+              </CardHeader>
+              <CardBody profile>
+                  {item.serviceName == 'PayPal'? 
+                 <Paypal />
+                 :""}
+              </CardBody>
+            </Card>
+          </GridItem>
+          
+        </GridContainer>
+      </Animated>:""}
     </div>
+
   );
 }

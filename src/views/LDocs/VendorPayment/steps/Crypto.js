@@ -13,6 +13,8 @@ import { Animated } from "react-animated-css";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import DetailsIcon from '@material-ui/icons/Details';
+
 
 import {
   Table,
@@ -70,7 +72,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export default function Crypto({ addPayment, setType, paymentGateways, editGateway }) {
+export default function Crypto({ addPayment, setType, paymentGateways, editGateway, showDetails }) {
   const useStyles = makeStyles(styles);
   const classes = useStyles();
   const classesList = useStyle();
@@ -102,7 +104,7 @@ export default function Crypto({ addPayment, setType, paymentGateways, editGatew
           </TableHead>
           <TableBody style={{ paddingBottom: 5 }}>
             {paymentGateways
-              .filter((p) => p.currencyType == 2)
+              .filter((p) => p.currencyType.includes(2))
               .map((pay) => (
                 <TableRow>
                  
@@ -134,6 +136,18 @@ export default function Crypto({ addPayment, setType, paymentGateways, editGatew
                         color="info"
                       >
                         <EditOutlined />
+                      </Button>
+                    </Tooltip>
+                    <Tooltip title={"Details"} aria-label="details">
+                      <Button
+                        justIcon
+                        round
+                        simple
+                        icon={DetailsIcon}
+                        onClick={()=>showDetails(pay)}
+                        color="info"
+                      >
+                        <DetailsIcon />
                       </Button>
                     </Tooltip>
                   </TableCell>

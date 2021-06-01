@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { makeStyles, Tooltip } from "@material-ui/core";
 // @material-ui/core components
 import { EditOutlined } from "@material-ui/icons";
+import DetailsIcon from '@material-ui/icons/Details';
 // core components
 import { Animated } from "react-animated-css";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -56,7 +57,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export default function Fiat({ addPayment, setType, paymentGateways, editGateway }) {
+export default function Fiat({ addPayment, setType, paymentGateways, editGateway, showDetails }) {
   const classes = useStyles();
   const classesList = useStyle();
   const [animateStep, setAnimateStep] = useState(true);
@@ -86,7 +87,7 @@ export default function Fiat({ addPayment, setType, paymentGateways, editGateway
           </TableHead>
           <TableBody style={{ paddingBottom: 5 }}>
             {paymentGateways
-              .filter((p) => p.currencyType == 1)
+              .filter((p) => p.currencyType.includes(1))
               .map((pay) => (
                 <TableRow>
                   <TableCell className={classesList.TableCell}>
@@ -117,6 +118,18 @@ export default function Fiat({ addPayment, setType, paymentGateways, editGateway
                         color="info"
                       >
                         <EditOutlined />
+                      </Button>
+                    </Tooltip>
+                    <Tooltip title={"Details"} aria-label="details">
+                      <Button
+                        justIcon
+                        round
+                        simple
+                        icon={DetailsIcon}
+                        onClick={()=>showDetails(pay)}
+                        color="info"
+                      >
+                        <DetailsIcon />
                       </Button>
                     </Tooltip>
                   </TableCell>
