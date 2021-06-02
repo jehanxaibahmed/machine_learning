@@ -255,11 +255,13 @@ export default function Horizentalteppers(props) {
           ? "Correction Required"
           : props.fileData.trackingStatus.paymentInProcess.status == "completed"
           ? "Ready to Pay"
+          : props.fileData.trackingStatus.paid.status == "completed"
+          ? "Paid"
           : props.fileData.trackingStatus.paymentInProcess.status ==
-            "inProgress"
+            "inProgress" || "readyToPay"
           ? "In Process"
           : ""
-        : "Hello",
+        : "",
       status: props.fileData.trackingStatus.paymentInProcess.status || null,
       comments: props.fileData.trackingStatus.paymentInProcess.comment || null,
     },
@@ -344,12 +346,10 @@ export default function Horizentalteppers(props) {
                           ? "orange"
                           : step.remarks == "Rejected"
                           ? "red"
-                          : step.remarks == "Done"
-                          ? "green"
-                          : step.remarks == "Ready to Pay"
-                          ? "green"
                           : step.remarks == "In Process"
                           ? "blue"
+                          : step.remarks == "Done" || "Paid" || "Ready to Pay"
+                          ? "green"
                           : "inherted",
                     }}
                   >
