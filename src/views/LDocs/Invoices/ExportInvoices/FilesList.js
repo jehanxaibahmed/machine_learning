@@ -1241,6 +1241,8 @@ export default function ExportList(props) {
                   >
                     Filters
                   </Button>
+                  {formState.filter != "paymentInProcessCount" && formState.filter != "totalInvCount" ? 
+                  <React.Fragment>
                   <Button
                     color="info"
                     round
@@ -1267,6 +1269,8 @@ export default function ExportList(props) {
                   >
                     Ready To Pay ({selected.length})
                   </Button>
+                  </React.Fragment>
+                  :""}
                 </CardHeader>
                 <CardBody>
                   {isLoading ? (

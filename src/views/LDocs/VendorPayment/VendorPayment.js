@@ -20,6 +20,7 @@ import axios from "axios";
 import AddPaymentModal from "./AddPaymentModal";
 import EditPaymentModal from "./EditPaymentModal";
 import Paypal from "./Paypal/Paypal";
+import MoneyButton from "./MoneyButton/MoneyButton.js";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -278,6 +279,9 @@ const handleRadioChange = (event) => {
               <CardBody profile>
                   {item.serviceName == 'PayPal'? 
                  <Paypal />
+                 :""}
+                  {item.serviceName == 'moneybutton'? 
+                 <MoneyButton />
                  :""}
               </CardBody>
             </Card>

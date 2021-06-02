@@ -322,7 +322,7 @@ export default function VendorDashboard() {
     xaxis: {
       categories: [
         ["Over Due"],
-        ["Un Paid"],
+        ["Paid"],
         ["Ready To Pay"]
       ],
       labels: {
@@ -377,7 +377,7 @@ export default function VendorDashboard() {
   xaxis: {
     categories: [
       ["Over Due"],
-      ["Un Paid"],
+      ["Paid"],
       ["Ready To Pay"]
     ],
     labels: {
@@ -416,10 +416,10 @@ export default function VendorDashboard() {
               </h3>
             </CardHeader>
             <CardFooter stats>
-              <div className={classes.stats}>
+              {/* <div className={classes.stats}>
                 <InsertDriveFileIcon />
                 <Link to="/admin/invoices">Show Invoices</Link>
-              </div>
+              </div> */}
             </CardFooter>
           </Card>
         </GridItem>
@@ -437,10 +437,10 @@ export default function VendorDashboard() {
               </h3>
             </CardHeader>
             <CardFooter stats>
-              <div className={classes.stats}>
+              {/* <div className={classes.stats}>
                 <CenterFocusWeakIcon />
                 <Link to="#">Show Open Invoices</Link>
-              </div>
+              </div> */}
             </CardFooter>
           </Card>
         </GridItem>
@@ -450,17 +450,17 @@ export default function VendorDashboard() {
               <CardIcon color="info">
                 <CenterFocusStrongIcon />
               </CardIcon>
-              <p className={classes.cardCategory}>Un Paid Invoices</p>
+              <p className={classes.cardCategory}>Paid Invoices</p>
               <h3 className={classes.cardTitle}>{graphData.dashboard_tables
                   ? parseFloat(graphData.dashboard_tables[0].totalUnpaid)
                   : 0}
                   </h3>
             </CardHeader>
             <CardFooter stats>
-              <div className={classes.stats}>
+              {/* <div className={classes.stats}>
                 <CenterFocusStrongIcon />
                 <Link to="#">Show Closed Invoices</Link>
-              </div>
+              </div> */}
             </CardFooter>
           </Card>
         </GridItem>
@@ -489,14 +489,14 @@ export default function VendorDashboard() {
               </h3>
             </CardHeader>
             <CardFooter stats>
-              <div className={classes.stats}>
+              {/* <div className={classes.stats}>
                 <Danger>
                   <WatchLaterIcon />
                 </Danger>
                 <a href="#space" onClick={(e) => e.preventDefault()}>
                   Action pending
                 </a>
-              </div>
+              </div> */}
             </CardFooter>
           </Card>
         </GridItem>

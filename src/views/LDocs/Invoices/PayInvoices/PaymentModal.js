@@ -39,6 +39,7 @@ import Step3 from "views/LDocs/Vendor/steps/level3";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
 import { PayPalButton } from "react-paypal-button-v2";
 import { addZeroes } from "views/LDocs/Functions/Functions";
+let MoneyButton = require("@moneybutton/react-money-button").default;
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -363,6 +364,12 @@ export default function InitiatePayment(props) {
           }, 3000);
         });
       }
+    if (formState.values.paymentBy == "moneybutton") {
+      setButtonLoaded(false);
+      setTimeout(() => {
+        setButtonLoaded(true);
+      }, 3000);
+    }
       // if (formState.values.paymentBy == "moneybutton") {
       //   const div = document.getElementById("my-money-button");
       //   moneyButton.render(div, {
@@ -629,10 +636,10 @@ export default function InitiatePayment(props) {
                       >
                         Choose Payment Option
                       </MenuItem>
-                      {PaymentGateways.filter(
-                        (pg) =>
-                          pg.currencyType.includes(
-                          parseInt(formState.values.currencyType))
+                      {PaymentGateways.filter((pg) =>
+                        pg.currencyType.includes(
+                          parseInt(formState.values.currencyType)
+                        )
                       ).map((p) => (
                         <MenuItem value={p.serviceName}>
                           <div className="fileinput text-right">
@@ -706,6 +713,24 @@ export default function InitiatePayment(props) {
                 ) : (
                   ""
                 )}
+                 {formState.values.paymentBy == "moneybutton" ? 
+                 (
+                   <MoneyButton
+                   style={{
+                    marginTop: "20px",
+                    display: buttonLoaded ? "block" : "none",
+                  }}
+                   to={vendorData.level3.moneyButton_details.email}
+                   amount={formState.values.paymentType == "full"
+                   ? parseFloat(props.fileData.balanceDue).toFixed(2)
+                   : parseFloat(formState.values.paidAmount).toFixed(
+                       2
+                     )}
+                   currency={props.fileData.LC_currency.Code}
+                 />
+                ) : (
+                  ""
+                )}
                 {buttonLoaded == false ? <CircularProgress /> : ""}
                 {/* {formState.values.paymentBy == "moneybutton" ? (
                   <div style={{ maxWidth: 237 }}>
@@ -714,6 +739,8 @@ export default function InitiatePayment(props) {
                 ) : (
                   ""
                 )} */}
+
+              
               </span>
             ) : (
               ""
