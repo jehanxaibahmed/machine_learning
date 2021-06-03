@@ -88,6 +88,58 @@ export default function InitiatePayment(props) {
       </SweetAlert>
     );
   };
+
+  const onLoad =  (load) => {
+   console.log('Load', load);
+}
+
+function onMoneyButtonPayment (payment) {
+  let data = {
+    tenantId: props.fileData.tenantId,
+    organizationId: props.fileData.organizationId,
+    invoiceId: props.fileData.invoiceId,
+    version: props.fileData.version,
+    paidAmount:
+      formState.values.paymentType == "full"
+        ? parseFloat(props.fileData.balanceDue).toFixed(2)
+        : parseFloat(formState.values.paidAmount).toFixed(2),
+    updatedBy: decoded.email,
+    paymentID: "",
+    payerID: "",
+    paymentType: formState.values.paymentType,
+    currencyType: formState.values.currencyType,
+    orderId: orderId,
+    paymentGateway: formState.values.paymentBy,
+    currencyCode: props.fileData.LC_currency.Code,
+    balanceDue:
+      formState.values.paymentType == "full"
+        ? 0
+        : parseFloat(props.fileData.balanceDue) -
+          parseFloat(formState.values.paidAmount),
+    paymentMethod: formState.values.paymentBy,
+    transactionFee: "1",
+  };
+  axios({
+    method: "post",
+    url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
+    data: data,
+    headers: {
+      cooljwt: Token,
+    },
+  })
+    .then(async (response) => {
+      console.log(response);
+      await props.loadFiles(decoded, false);
+      setPaymentInProcess(false);
+      // setButtonLoaded(true);
+      successAlert("Payment Successful...");
+    })
+    .catch((err) => {
+      errorAlert("Payment Already Done");
+    });}
+
+ 
+
   const errorAlert = (msg) => {
     setAlert(
       <SweetAlert
@@ -117,6 +169,27 @@ export default function InitiatePayment(props) {
     getVendorData();
     getClientId();
   }, []);
+
+
+
+  React.useEffect(()=>{
+         
+    var css = 'div[style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; z-index: 1001;"] {z-index: 99999999999999 !important; }div[style="position: relative; display: inline-block; width: 280px; height: 50px;"]{width:195px !important}iframe[style="border: none; width: 280px; height: 50px;"]{width:195px !important}',
+    head = document.head || document.getElementsByTagName('head')[0],
+    style = document.createElement('style');
+
+    head.appendChild(style);
+
+    style.type = 'text/css';
+    if (style.styleSheet){
+      // This is required for IE8 and below.
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+      },[])
+
+
 
   React.useEffect(() => {
     paymentButton();
@@ -726,6 +799,12 @@ export default function InitiatePayment(props) {
                    : parseFloat(formState.values.paidAmount).toFixed(
                        2
                      )}
+                  label="Pay Now"
+                  onError={()=>{ props.closeModal(); }}
+                  onLoad={(payload)=>console.log("Loaded")}
+                  onPayment={onMoneyButtonPayment}
+                  successMessage="Payment SuccessFully Transfered"
+                  devMode={false}
                    currency={props.fileData.LC_currency.Code}
                  />
                 ) : (
