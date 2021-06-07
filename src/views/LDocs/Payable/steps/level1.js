@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Tooltip, Chip } from "@material-ui/core";
 // @material-ui/core components
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
@@ -14,6 +14,7 @@ import defaultAvatar from "assets/img/placeholder.jpg";
 import AttachmentIcon from "@material-ui/icons/Attachment";
 import ReactTable from "react-table";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
+import { GetApp } from "@material-ui/icons";
 const sweetAlertStyle = makeStyles(styles2);
 let Token = localStorage.getItem("cooljwt");
 const styles = {
@@ -42,12 +43,33 @@ export default function Step1({transactions}) {
       transactions.map((prop, key) => {
         return {
           paymentID:prop.paymentID,
-          transactionAmount:prop.paidAmount,
+          transactionAmount: `${prop.currencyCode}  ${parseFloat(prop.paidAmount).toFixed(2)}`,
           invoiceID:prop.invoiceId,
           payerID:prop.payerID,
           paymentChannel:prop.paymentGateway,
           transactionDate: formatDateTime(prop.date),
-          payment:prop.finalPayment ? "Full" : "Partial"
+          payment:prop.finalPayment ?  <Tooltip title="Full Payment">
+          <Chip
+            variant="outlined"
+            size="small"
+            // avatar={<Avatar>M</Avatar>}
+            label="Full"
+            clickable
+            style={{ border: "green 1px solid", color: "green" }}
+            />
+        </Tooltip> : 
+         <Tooltip title="Partial Payment">
+         <Chip
+           variant="outlined"
+           size="small"
+           // avatar={<Avatar>M</Avatar>}
+           label="Partial"
+           clickable
+           style={{ border: "blue 1px solid", color: "blue" }}
+           />
+       </Tooltip>,
+       isFait:prop.currencyType == 1 || '1' ? "Fiat" : "Crypto" ,
+       actions:<div><a href={`${process.env.REACT_APP_LDOCS_API_URL}/${prop.receiptUrl}`} download target="_blank" ><GetApp /></a></div>
         }
   }));
 },[transactions]);
@@ -92,6 +114,10 @@ export default function Step1({transactions}) {
                                 accessor: "paymentChannel",
                               },
                               {
+                                Header: "Fait / Crypto",
+                                accessor: "isFait",
+                              },
+                              {
                                 Header: "Transaction Date",
                                 accessor: "transactionDate",
                               },
@@ -100,6 +126,12 @@ export default function Step1({transactions}) {
                                 accessor: "payment",
                                 filterable: false,
                               },
+                              {
+                                Header: "Actions",
+                                accessor: "actions",
+                                filterable: false,
+                              },
+                              
                             ]
                       }
                       defaultPageSize={10}

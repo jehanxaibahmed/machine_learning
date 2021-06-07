@@ -4,7 +4,18 @@ import ReactTable from "react-table";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import { MenuItem, TextField, Switch, Checkbox , FormControlLabel } from "@material-ui/core";
+import {
+  MenuItem,
+  TextField,
+  Switch,
+  Checkbox,
+  FormControlLabel,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  Divider,
+} from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
@@ -137,17 +148,62 @@ export default function GeneralConfigrations() {
                   </CardIcon>
                 </CardHeader>
                 <CardBody>
-                  {isLoading ? <CircularProgress disableShrink /> : ""}
+                  {/* "autoInitWorkFlow":true,
+        "enableEmailNotify":false,
+        "enablePayments":true, */}
+                  <List>
+                    {/* Auto Init Workflow */}
+                    <ListItem>
+                      <ListItemText
+                        style={{ color: "black" }}
+                        primary="Auto Init Workflow"
+                        secondary={
+                          "System will auto initialize workflow on invoices"
+                        }
+                      />
+                      <ListItemSecondaryAction>
+                        <Checkbox color="primary" />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <Divider />
+                    {/* Enable Email Notifications */}
+                    <ListItem>
+                      <ListItemText
+                        style={{ color: "black" }}
+                        primary="Email Notifications"
+                        secondary={
+                          "System will sent Email Notification on Every Event"
+                        }
+                      />
+                      <ListItemSecondaryAction>
+                        <Checkbox color="primary" />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <Divider />
+                    {/* Enables Payments */}
+                    <ListItem>
+                      <ListItemText
+                        style={{ color: "black" }}
+                        primary="Enable Payments"
+                        secondary={
+                          "System will allow you to pay Invoices through diffrent payment Gateways"
+                        }
+                      />
+                      <ListItemSecondaryAction>
+                        <Checkbox color="primary" />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  </List>
                 </CardBody>
               </Card>
             </GridItem>
 
             <GridItem xs={12}>
               <Card>
-                <CardHeader color="info" icon>
-                  <CardIcon color="info">
+                <CardHeader color="danger" icon>
+                  <CardIcon color="danger">
                     <h4 className={classes.cardTitleText}>
-                      Email Configrations
+                      SMTP Configrations
                     </h4>
                   </CardIcon>
                 </CardHeader>
@@ -156,8 +212,8 @@ export default function GeneralConfigrations() {
                     <GridItem
                       xs={12}
                       sm={12}
-                      md={4}
-                      lg={4}
+                      md={3}
+                      lg={3}
                       style={{ marginTop: "10px", marginBottom: "10px" }}
                     >
                       <TextField
@@ -175,8 +231,8 @@ export default function GeneralConfigrations() {
                     <GridItem
                       xs={12}
                       sm={12}
-                      md={4}
-                      lg={4}
+                      md={3}
+                      lg={3}
                       style={{ marginTop: "10px", marginBottom: "10px" }}
                     >
                       <TextField
@@ -194,8 +250,8 @@ export default function GeneralConfigrations() {
                     <GridItem
                       xs={12}
                       sm={12}
-                      md={4}
-                      lg={4}
+                      md={3}
+                      lg={3}
                       style={{ marginTop: "10px", marginBottom: "10px" }}
                     >
                       <TextField
@@ -213,8 +269,8 @@ export default function GeneralConfigrations() {
                     <GridItem
                       xs={12}
                       sm={12}
-                      md={4}
-                      lg={4}
+                      md={3}
+                      lg={3}
                       style={{ marginTop: "10px", marginBottom: "10px" }}
                     >
                       <TextField
@@ -232,16 +288,26 @@ export default function GeneralConfigrations() {
                     <GridItem
                       xs={12}
                       sm={12}
-                      md={4}
-                      lg={4}
+                      md={12}
+                      lg={12}
                       style={{ marginTop: "20px" }}
                     >
-                      <FormControlLabel
-                            value="secure"
-                            control={<Checkbox color="primary" />}
-                            label="Secure"
-                            labelPlacement="start"
-                        />
+                      <List>
+                        {/* Auto Init Workflow */}
+                        <ListItem>
+                          <ListItemText
+                            style={{ color: "black" }}
+                            primary="Secure"
+                            secondary={
+                              "Connection Security   (SSL ENABLED)"
+                            }
+                          />
+                          <ListItemSecondaryAction>
+                            <Checkbox color="primary" />
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      </List>
+                      <Divider />
                     </GridItem>
                   </GridContainer>
                 </CardBody>

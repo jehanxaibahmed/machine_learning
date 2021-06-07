@@ -113,6 +113,12 @@ export default function Payable(props) {
           animationOutDuration={1000}
           isVisible={gridView}
         >
+            {loading ?
+            <div style={{textAlign:'center', marginTop:100, marginBottom:100}}>
+            <CircularProgress style={{width:200,height:200}} />
+          </div>
+          :
+          <div>
           <GridContainer>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card
@@ -130,45 +136,7 @@ export default function Payable(props) {
               >
                 <h4 className={classes.cardCategory}>PAID</h4>
                     <Divider style={{background:'white'}} />
-                <h5 className={classes.cardTitle}>{componentState.currencyCode}  {componentState.fullPaid}</h5>
-              </Card>
-            </GridItem>
-            <GridItem xs={12} sm={6} md={6} lg={3}>
-              <Card
-                style={{
-                  backgroundColor: "#ffb75e",
-                  background:
-                    "-webkit-linear-gradient(to right, #ffb75e, #ed8f03)",
-                  background: "linear-gradient(to right, #ffb75e, #ed8f03)",
-                  paddingLeft:20,
-                  paddingTop:10,
-                  paddingBottom:10,
-                  paddingRight:20,
-                  color:'white'
-                }}
-              >
-                <h4 className={classes.cardCategory}>PENDING</h4>
-                    <Divider style={{background:'white'}} />
-                <h5 className={classes.cardTitle}>{componentState.currencyCode} {componentState.toBePaid}</h5>
-              </Card>
-            </GridItem>
-            <GridItem xs={12} sm={6} md={6} lg={3}>
-              <Card
-                style={{
-                  backgroundColor: "#f85032",
-                  background:
-                    "-webkit-linear-gradient(to right, #f85032, #e73827)",
-                  background: "linear-gradient(to right, #f85032, #e73827)",
-                  paddingLeft:20,
-                  paddingTop:10,
-                  paddingBottom:10,
-                  paddingRight:20,
-                  color:'white'
-                }}
-              >
-                <h4 className={classes.cardCategory}>OVERDUE</h4>
-                    <Divider style={{background:'white'}} />
-                <h5 className={classes.cardTitle}>{componentState.currencyCode} {componentState.overDueInvoices}</h5>
+                <h5 className={classes.cardTitle}>{componentState.currencyCode}  {componentState.fullPaid.toFixed(2)}</h5>
               </Card>
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
@@ -187,7 +155,45 @@ export default function Payable(props) {
               >
                 <h4 className={classes.cardCategory}>PARTIAL PAID</h4>
                     <Divider style={{background:'white'}} />
-                <h5 className={classes.cardTitle}>{componentState.currencyCode} {componentState.partiallyPay}</h5>
+                <h5 className={classes.cardTitle}>{componentState.currencyCode} {componentState.partiallyPay.toFixed(2)}</h5>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={6} lg={3}>
+              <Card
+                style={{
+                  backgroundColor: "#ffb75e",
+                  background:
+                    "-webkit-linear-gradient(to right, #ffb75e, #ed8f03)",
+                  background: "linear-gradient(to right, #ffb75e, #ed8f03)",
+                  paddingLeft:20,
+                  paddingTop:10,
+                  paddingBottom:10,
+                  paddingRight:20,
+                  color:'white'
+                }}
+              >
+                <h4 className={classes.cardCategory}>PENDING</h4>
+                    <Divider style={{background:'white'}} />
+                <h5 className={classes.cardTitle}>{componentState.currencyCode} {componentState.toBePaid.toFixed(2)}</h5>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={6} lg={3}>
+              <Card
+                style={{
+                  backgroundColor: "#f85032",
+                  background:
+                    "-webkit-linear-gradient(to right, #f85032, #e73827)",
+                  background: "linear-gradient(to right, #f85032, #e73827)",
+                  paddingLeft:20,
+                  paddingTop:10,
+                  paddingBottom:10,
+                  paddingRight:20,
+                  color:'white'
+                }}
+              >
+                <h4 className={classes.cardCategory}>OVERDUE</h4>
+                    <Divider style={{background:'white'}} />
+                <h5 className={classes.cardTitle}>{componentState.currencyCode} {componentState.overDueInvoices.toFixed(2)}</h5>
               </Card>
             </GridItem>
           </GridContainer>
@@ -216,6 +222,8 @@ export default function Payable(props) {
               </Card>
             </GridItem>
           </GridContainer>
+          </div>
+          }
         </Animated>
       ) : (
         ""
