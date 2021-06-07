@@ -1,0 +1,216 @@
+import React, { useState, useEffect } from "react";
+import { makeStyles, Tooltip, Chip } from "@material-ui/core";
+// @material-ui/core components
+import CardIcon from "components/Card/CardIcon.js";
+import CardHeader from "components/Card/CardHeader.js";
+import GridContainer from "components/Grid/GridContainer.js";
+import GridItem from "components/Grid/GridItem.js";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
+import { Animated } from "react-animated-css";
+import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
+import defaultAvatar from "assets/img/placeholder.jpg";
+import AttachmentIcon from "@material-ui/icons/Attachment";
+import ReactTable from "react-table";
+import { formatDateTime } from "views/LDocs/Functions/Functions";
+import { currentTracking } from "views/LDocs/Functions/Functions";
+const sweetAlertStyle = makeStyles(styles2);
+let Token = localStorage.getItem("cooljwt");
+const styles = {
+  cardIconTitle: {
+    ...cardTitle,
+    marginTop: "15px",
+    marginBottom: "0px",
+  },
+  cardTitleText: {
+    color: "white",
+  },
+  buttonRight: {},
+};
+
+export default function Step2({invoices}) {
+  const useStyles = makeStyles(styles);
+  const classes = useStyles();
+  const [animateStep, setAnimateStep] = useState(true);
+  const [data, setData] = useState([]);
+  console.log(invoices);
+
+
+  useEffect(()=>{
+    setData(
+      invoices.map((prop, key) => {
+        var currentStatus = currentTracking(prop.trackingStatus);
+        let isCorrectionRequiredInWorkflow = prop.workFlowStatus == "correctionRequired";
+        return {
+          invoiceId:prop.invoiceId,
+          amount: `${prop.LC_currency.Code}   ${prop.netAmt_bc}`,
+          dueDate:prop.dueDate,
+          invoiceDate: formatDateTime(prop.createdDate),
+          status: currentStatus.status == "rejected" ? (
+                <Tooltip title="REJECTED">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="REJECTED"
+                    clickable
+                    color="secondary"
+                  />
+                </Tooltip>
+              ) : (currentStatus.status == "correctionRequired" &&
+                  currentStatus.val == 1) ||
+                isCorrectionRequiredInWorkflow ? (
+                <Tooltip title="SENT FOR CORRECTION">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="SENT FOR CORRECTION"
+                    clickable
+                    style={{ border: "orange 1px solid", color: "orange" }}
+                  />
+                </Tooltip>
+              ) : currentStatus.status == "rejected" ? (
+                <Tooltip title="REJECTED">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="REJECTED"
+                    clickable
+                    color="secondary"
+                  />
+                </Tooltip>
+              )
+              : currentStatus.status == "readyToPay" ? (
+                <Tooltip title="Ready To Pay">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="Ready To Pay"
+                    clickable
+                    style={{ border: "orange 1px solid", color: "orange" }}
+                  />
+                </Tooltip>
+              )
+              : currentStatus.val == 0 ? (
+                <Tooltip title="PENDING">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="PENDING"
+                    clickable
+                    style={{ border: "orange 1px solid", color: "orange" }}
+                  />
+                </Tooltip>
+              ) : currentStatus.val == 1 ? (
+                <Tooltip title="UNDER INITIAL REVIEW">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="INITIAL REVIEW"
+                    clickable
+                    color="primary"
+                  />
+                </Tooltip>
+              ) : currentStatus.val == 2 ? (
+                <Tooltip title="UNDER REVIEW">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="UNDER REVIEW"
+                    clickable
+                    color="primary"
+                  />
+                </Tooltip>
+              ) : currentStatus.val == 3 ? (
+                <Tooltip title="UNDER APPROVAL">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="UNDER APPROVAL"
+                    clickable
+                    color="primary"
+                  />
+                </Tooltip>
+              ) : currentStatus.val == 4 ? (
+                <Tooltip title="DONE">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="APPROVAL DONE"
+                    clickable
+                    style={{ border: "green 1px solid", color: "green" }}
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip title="NO STATUS">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="NO STATUS"
+                    clickable
+                    color="primary"
+                  />
+                </Tooltip>
+          ),
+        }
+  }));
+},[invoices]);
+
+
+  return (
+    <Animated
+      animationIn="bounceInRight"
+      animationOut="bounceOutLeft"
+      animationInDuration={1000}
+      animationOutDuration={1000}
+      isVisible={animateStep}
+    >
+      <GridContainer>
+      <GridItem xs={12}>
+      <ReactTable
+                      data={data}
+                      sortable={false}
+                      style={{alignContent:'left'}}
+                      columns={
+                       [
+                              {
+                                Header: "InvoiceID",
+                                accessor: "invoiceId",
+                              },
+                              {
+                                Header: "Status",
+                                accessor: "status",
+                              },
+                              {
+                                Header: "Amount",
+                                accessor: "amount",
+                              },
+                              {
+                                Header: "Invoice Date",
+                                accessor: "invoiceDate",
+                              },
+                              {
+                                Header: "Due Date",
+                                accessor: "dueDate",
+                              }
+                              
+                            ]
+                      }
+                      defaultPageSize={10}
+                      className="-striped -highlight"
+                    />
+                    </GridItem>
+      </GridContainer>
+    </Animated>
+  );
+}

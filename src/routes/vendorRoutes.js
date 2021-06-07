@@ -7,8 +7,8 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import CreateInvoice from "views/LDocs/Invoices/CreateInvoice/CreateInvoice";
 import VendorPayment from "views/LDocs/VendorPayment/VendorPayment";
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
-
-
+import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
+import Customers from "views/LDocs/Customers/Customers";
 
 var vendorRoutes = [
   {
@@ -34,6 +34,14 @@ var vendorRoutes = [
     rtlName: "لوحة القيادة",
     icon: InsertDriveFileIcon,
     component: FilesList,
+    layout: "/vendor",
+  },
+  {
+    path: "/customers",
+    name: "Customers",
+    rtlName: "لوحة القيادة",
+    icon: PeopleOutlineIcon,
+    component: Customers,
     layout: "/vendor",
   },
   {

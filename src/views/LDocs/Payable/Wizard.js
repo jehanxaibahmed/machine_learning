@@ -6,7 +6,6 @@ import PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
 // core components
 import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card.js";
 
 import wizardStyle from "assets/jss/material-dashboard-pro-react/components/wizardStyle.js";
 
@@ -170,7 +169,7 @@ class Wizard extends React.Component {
     this.setState({ movingTabStyle: movingTabStyle });
   }
   render() {
-    const { classes, title, subtitle, color, steps } = this.props;
+    const { classes, color, steps } = this.props;
     return (
       <div className={classes.wizardContainer} ref={this.wizard}>
         {/* <Card className={classes.card}> */}
@@ -219,14 +218,14 @@ class Wizard extends React.Component {
                   <prop.stepComponent
                     innerRef={(node) => (this[prop.stepId] = node)}
                     allStates={this.state.allStates}
-                    
-                    
+                    invoices={this.props.invoices}
+                    transactions={this.props.transactions}
                   />
                 </div>
               );
             })}
           </div>
-          {/* <div className={classes.footer}>
+          <div className={classes.footer}>
             <div className={classes.left}>
               {this.state.previousButton ? (
                 <Button
@@ -236,17 +235,17 @@ class Wizard extends React.Component {
                   {this.props.previousButtonText}
                 </Button>
               ) : null}
-              <Button
+              {/* <Button
                 className={this.props.previousButtonClasses}
                 onClick={this.props.goBack}
               >
                 Back
-              </Button>
+              </Button> */}
             </div>
             <div className={classes.right}>
               {this.state.nextButton ? (
                 <Button
-                  color="info"
+                  color="danger"
                   className={this.props.nextButtonClasses}
                   onClick={() => this.nextButtonClick()}
                 >
@@ -255,7 +254,7 @@ class Wizard extends React.Component {
               ) : null}
             </div>
             <div className={classes.clearfix} />
-          </div> */}
+          </div>
         {/* </Card> */}
       </div>
     );
@@ -263,7 +262,7 @@ class Wizard extends React.Component {
 }
 
 Wizard.defaultProps = {
-  color: "info",
+  color: "danger",
   title: "Here should go your title",
   subtitle: "And this would be your subtitle",
   previousButtonText: "Previous",

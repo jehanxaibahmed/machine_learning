@@ -388,6 +388,7 @@ function onMoneyButtonPayment (payment) {
                       tenantId: props.fileData.tenantId,
                       organizationId: props.fileData.organizationId,
                       invoiceId: props.fileData.invoiceId,
+                      vendorId:props.fileData.vendorId,
                       version: props.fileData.version,
                       paidAmount:
                         formState.values.paymentType == "full"
@@ -804,7 +805,7 @@ function onMoneyButtonPayment (payment) {
                   onLoad={(payload)=>console.log("Loaded")}
                   onPayment={onMoneyButtonPayment}
                   successMessage="Payment SuccessFully Transfered"
-                  devMode={false}
+                  devMode={true}
                    currency={props.fileData.LC_currency.Code}
                  />
                 ) : (

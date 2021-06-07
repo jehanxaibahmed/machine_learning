@@ -28,9 +28,11 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { Animated } from "react-animated-css";
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import jwt from "jsonwebtoken";
 import BuildNetwork from "./BuildNetwork.js";
 import { setIsTokenExpired } from "actions";
+import Payable from "../Payable/Payable";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -71,6 +73,8 @@ export default function Vendor() {
   const [viewComponentView, setViewComponentView] = React.useState(false);
   const [animateTableView, setAnimateTableView] = React.useState(true);
   const [viewComponent, setViewComponent] = React.useState(false);
+  const [viewAnalyticsComponent, setViewAnalyticsComponent] = React.useState(false);
+  const [analyticsComponent, setAnalyticsComponent] = React.useState(false);
   const [animateTable, setAnimateTable] = React.useState(true);
   const [vendorData, setVendorData] = React.useState();
 
@@ -150,6 +154,16 @@ export default function Vendor() {
 
   }
 
+  const viewAnalytics = (row) => {
+    setAnimateTable(false);
+    setVendorData(row);
+    setTimeout(function() {
+      setAnimateTableView(false);
+      setViewAnalyticsComponent(true);
+      setAnalyticsComponent(true);
+    }, 500);
+  }
+
   const viewVendor = (row) => {
      setAnimateTable(false);
      setVendorData(row);
@@ -173,8 +187,10 @@ export default function Vendor() {
    };
 
   const goBack = () => {
+    setAnalyticsComponent(false);
     setViewComponent(false);
   setTimeout(function () {
+    setViewAnalyticsComponent(false);
     setViewComponentView(false);
      setAnimateTableView(true);
     setAnimateTable(true);
@@ -259,19 +275,19 @@ export default function Vendor() {
               ),
               actions: (
                 <div className="actions-right">
-                  {/* <Tooltip title="Update Vendor" aria-label="updateVendor">
+                  <Tooltip title="Analytics" aria-label="analytics">
                    <Button
                      justIcon
                      round
                      simple
-                     icon={EditIcon}
-                     onClick={() => updateComp(prop)}
+                     icon={AssessmentIcon}
+                     onClick={() => viewAnalytics(prop)}
                      color="info"
                      className="View"
                    >
-                     <EditIcon />
+                     <AssessmentIcon />
                    </Button>
-                 </Tooltip> */}
+                 </Tooltip>
                   <Tooltip
                     title="View Supplier"
                     aria-label="viewvendor"
@@ -311,56 +327,6 @@ export default function Vendor() {
     <div>
       {alert}
       <GridContainer justify="center">
-      <GridItem xs={12} sm={12} md={12} lg={12}>
-          <Card>
-            <CardHeader color="info" icon>
-              <CardIcon color="info">
-                <h4 className={classes.cardTitleText}>Filter</h4>
-              </CardIcon>
-            </CardHeader>
-            <CardBody>
-              <GridItem
-                xs={12}
-                sm={12}
-                md={12}
-                lg={12}
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              >
-                <TextField
-                  className={classes.textField}
-                  fullWidth={true}
-                  label="Select Organization To See Companies"
-                  name="organizationFilter"
-                  onChange={(event) => {
-                    handleOrgFilter(event);
-                  }}
-                  select
-                  value={organizationFilter.organizationName || ""}
-                >
-                  <MenuItem
-                    disabled
-                    classes={{
-                      root: classes.selectMenuItem,
-                    }}
-                  >
-                    Choose Organization
-                      </MenuItem>
-                  {/* {userDetails.isTenant ? (
-                    <MenuItem value={'SHOW ALL'}>
-                      SHOW ALL
-                    </MenuItem>) : ''} */}
-                  {organizations.map((org, index) => {
-                    return (
-                      <MenuItem key={index} value={org.organizationName}>
-                        {org.organizationName}
-                      </MenuItem>
-                    );
-                  })}
-                </TextField>
-              </GridItem>
-            </CardBody>
-          </Card>
-        </GridItem>
         <GridItem xs={12} sm={12} md={12} className={classes.center}>
           <Dialog
             classes={{
@@ -428,6 +394,56 @@ export default function Vendor() {
         isVisible={animateTable}
       >
         <GridContainer>
+        <GridItem xs={12} sm={12} md={12} lg={12}>
+          <Card>
+            <CardHeader color="info" icon>
+              <CardIcon color="info">
+                <h4 className={classes.cardTitleText}>Filter</h4>
+              </CardIcon>
+            </CardHeader>
+            <CardBody>
+              <GridItem
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              >
+                <TextField
+                  className={classes.textField}
+                  fullWidth={true}
+                  label="Select Organization To See Companies"
+                  name="organizationFilter"
+                  onChange={(event) => {
+                    handleOrgFilter(event);
+                  }}
+                  select
+                  value={organizationFilter.organizationName || ""}
+                >
+                  <MenuItem
+                    disabled
+                    classes={{
+                      root: classes.selectMenuItem,
+                    }}
+                  >
+                    Choose Organization
+                      </MenuItem>
+                  {/* {userDetails.isTenant ? (
+                    <MenuItem value={'SHOW ALL'}>
+                      SHOW ALL
+                    </MenuItem>) : ''} */}
+                  {organizations.map((org, index) => {
+                    return (
+                      <MenuItem key={index} value={org.organizationName}>
+                        {org.organizationName}
+                      </MenuItem>
+                    );
+                  })}
+                </TextField>
+              </GridItem>
+            </CardBody>
+          </Card>
+        </GridItem>
           <GridItem xs={12}>
             <Card>
               <CardHeader color="info" icon>
@@ -510,6 +526,26 @@ export default function Vendor() {
           <BuildNetwork
             goBack={goBack}
             vendorData={vendorData}
+          />
+        </Animated>
+      ) : (
+        ""
+      )}
+
+
+
+{analyticsComponent ? (
+        <Animated
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
+          animationInDuration={1000}
+          animationOutDuration={1000}
+          isVisible={viewAnalyticsComponent}
+        >
+          <Payable
+            goBack={goBack}
+            vendor={vendorData._id}
+            org={organizationFilter._id}
           />
         </Animated>
       ) : (

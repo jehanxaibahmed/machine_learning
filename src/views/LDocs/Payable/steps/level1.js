@@ -1,0 +1,112 @@
+import React, { useState, useEffect } from "react";
+import { makeStyles } from "@material-ui/core";
+// @material-ui/core components
+import CardIcon from "components/Card/CardIcon.js";
+import CardHeader from "components/Card/CardHeader.js";
+import GridContainer from "components/Grid/GridContainer.js";
+import GridItem from "components/Grid/GridItem.js";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
+import { Animated } from "react-animated-css";
+import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
+import defaultAvatar from "assets/img/placeholder.jpg";
+import AttachmentIcon from "@material-ui/icons/Attachment";
+import ReactTable from "react-table";
+import { formatDateTime } from "views/LDocs/Functions/Functions";
+const sweetAlertStyle = makeStyles(styles2);
+let Token = localStorage.getItem("cooljwt");
+const styles = {
+  cardIconTitle: {
+    ...cardTitle,
+    marginTop: "15px",
+    marginBottom: "0px",
+  },
+  cardTitleText: {
+    color: "white",
+  },
+  buttonRight: {},
+};
+
+export default function Step1({transactions}) {
+  const useStyles = makeStyles(styles);
+  const classes = useStyles();
+  const [animateStep, setAnimateStep] = useState(true);
+  const [data, setData] = useState([]);
+  
+  console.log(transactions);
+
+
+  useEffect(()=>{
+    setData(
+      transactions.map((prop, key) => {
+        return {
+          paymentID:prop.paymentID,
+          transactionAmount:prop.paidAmount,
+          invoiceID:prop.invoiceId,
+          payerID:prop.payerID,
+          paymentChannel:prop.paymentGateway,
+          transactionDate: formatDateTime(prop.date),
+          payment:prop.finalPayment ? "Full" : "Partial"
+        }
+  }));
+},[transactions]);
+
+
+  return (
+    <Animated
+      animationIn="bounceInRight"
+      animationOut="bounceOutLeft"
+      animationInDuration={1000}
+      animationOutDuration={1000}
+      isVisible={animateStep}
+    >
+      <GridContainer>
+      <GridItem xs={12}>
+      <ReactTable
+                      data={data}
+                      sortable={false}
+                      columns={
+                       [
+                              {
+                                Header: "Payment ID",
+                                accessor: "paymentID",
+                                filterable: true,
+                                filter: "fuzzyText",
+                                sortType: "basic",
+                              },
+                              {
+                                Header: "Transaction Amount",
+                                accessor: "transactionAmount",
+                              },
+                              {
+                                Header: "Invoice ID",
+                                accessor: "invoiceID",
+                              },
+                              {
+                                Header: "Payer ID",
+                                accessor: "payerID",
+                              },
+                              {
+                                Header: "Payment Channel",
+                                accessor: "paymentChannel",
+                              },
+                              {
+                                Header: "Transaction Date",
+                                accessor: "transactionDate",
+                              },
+                              {
+                                Header: "Payment (Full/Partial)",
+                                accessor: "payment",
+                                filterable: false,
+                              },
+                            ]
+                      }
+                      defaultPageSize={10}
+                      className="-striped -highlight"
+                    />
+                    </GridItem>
+      </GridContainer>
+    </Animated>
+  );
+}

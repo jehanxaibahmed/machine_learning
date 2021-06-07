@@ -11,7 +11,8 @@ import PeopleIcon from '@material-ui/icons/People';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-
+import SettingsIcon from '@material-ui/icons/Settings';
+import PhonelinkSetupSharpIcon from '@material-ui/icons/PhonelinkSetupSharp';
 //Components
 import UsersList from "views/LDocs/Users/UsersList";
 import BuildNetwork from "views/LDocs/BuidNetwork/BuildNetwork";
@@ -24,6 +25,7 @@ import  Warnings from "views/LDocs/Warnings/Warnings";
 import  Vendor from "views/LDocs/Vendor/Vendor";
 import Verify from "views/LDocs/Verify/Verify";
 import Currency from "views/LDocs/Currency/Currency";
+import GeneralConfigrations from "views/LDocs/Configrations/GeneralConfigrations";
 
 
 
@@ -71,13 +73,6 @@ var adminRoutes = [
         component: UsersList,
         layout: "/admin",
       },
-      {
-        path: "/currency",
-        name: "Currency",
-        icon: MonetizationOnIcon,
-        component: Currency,
-        layout: "/admin",
-      },
       // {
       //   path: "/warnings",
       //   name: "Warnings",
@@ -103,6 +98,29 @@ var adminRoutes = [
     icon: NotificationsActiveIcon,
     component: Notifications,
     layout: "/admin",
+  },
+  {
+    collapse: true,
+    name: "Configration",
+    rtlName: "صفحات",
+    icon: SettingsIcon,
+    state: "configCollapse",
+    views: [
+      {
+        path: "/generalconfigration",
+        name: "General Configrations",
+        icon: PhonelinkSetupSharpIcon,
+        component: GeneralConfigrations,
+        layout: "/admin",
+      },
+      {
+        path: "/currency",
+        name: "Currency",
+        icon: MonetizationOnIcon,
+        component: Currency,
+        layout: "/admin",
+      }
+    ]
   }
 ];
 export default adminRoutes;
