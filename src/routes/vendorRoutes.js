@@ -54,8 +54,8 @@ var vendorRoutes = [
     layout: "/vendor",
   },
   {
-    path: "/Payment",
-    name: "Payments",
+    path: "/PaymentChannels ",
+    name: "Payment Channels",
     rtlName: "لوحة القيادة",
     icon: LocalAtmIcon,
     component: VendorPayment,

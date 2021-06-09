@@ -282,7 +282,7 @@ export default function InitiatePayment(props) {
                           <TextField
                             className={classes.textField}
                             type="text"
-                            label="Balance Due"
+                            label="Balance"
                             disabled={true}
                             fullWidth={true}
                             value={props.fileData.balanceDue.toFixed(2) || ""}
@@ -391,7 +391,7 @@ export default function InitiatePayment(props) {
                             fullWidth={true}
                             helperText={
                               formState.errors.paidAmount === "error"
-                                ? "Amount must be less then balance due"
+                                ? "Amount must be less then balance"
                                 : null
                             }
                             label="Paid Amount"

@@ -531,7 +531,7 @@ export default function Paypal(props) {
                       }
                       className={classes.textField}
                       fullWidth={true}
-                      label="Paypal Email"
+                      label="Paypal ID"
                       name="paypalEmail"
                       type="text"
                       id="paypal-email"

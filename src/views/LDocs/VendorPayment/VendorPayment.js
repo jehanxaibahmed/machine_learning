@@ -190,7 +190,7 @@ const handleRadioChange = (event) => {
             <Card profile>
               <CardHeader color="info" icon>
                 <CardIcon color="info">
-                  <h4 className={classes.cardTitle}>Payments Accept Methods </h4>
+                  <h4 className={classes.cardTitle}>Payments Channels </h4>
                 </CardIcon>
                 <RadioGroup value={value} onChange={handleRadioChange} style={{float:'right'}} row aria-label="position" name="position" defaultValue="bottom">
         <FormControlLabel
@@ -264,7 +264,7 @@ const handleRadioChange = (event) => {
             <Card profile>
               <CardHeader color="info" icon>
                 <CardIcon color="info">
-                  <h4 className={classes.cardTitle}>Payment Details ({item ? item.serviceName.toUpperCase():""})</h4>
+                  <h4 className={classes.cardTitle}>Channel Details ({item ? item.serviceName.toUpperCase():""})</h4>
                 </CardIcon>
                 <Button
                     color="danger"

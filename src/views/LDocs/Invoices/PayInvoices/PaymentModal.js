@@ -627,7 +627,7 @@ function onMoneyButtonPayment (payment) {
                         fullWidth={true}
                         helperText={
                           formState.errors.paidAmount === "error"
-                            ? "Amount must be less then balance due"
+                            ? "Amount must be less then balance"
                             : null
                         }
                         label="Amount To Pay"
@@ -718,7 +718,7 @@ function onMoneyButtonPayment (payment) {
                         <MenuItem value={p.serviceName}>
                           <div className="fileinput text-right">
                             <div className="" style={{ marginTop: 20 }}>
-                              {p.serviceName.toUpperCase()}
+                              {`${p.serviceName.toUpperCase()} ${p.default ? "(Preferred)":""}`}
                             </div>
                           </div>
                           {/* <div className="fileinput text-right">

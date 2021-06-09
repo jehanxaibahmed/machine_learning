@@ -145,6 +145,7 @@ export default function Payable(props) {
   };
 
   const getData = () => {
+    setIsLoading(true);
     let vendorID = props.vendor
       ? props.vendor
       : isVendor
@@ -340,6 +341,17 @@ export default function Payable(props) {
                       />
                     </ListItem>
                     <Divider />
+                    <ListItem style={{margin:0,padding:0}}>
+                      <ListItemText
+                        style={{ color: "black" }}
+                        primary="License Number"
+                        secondary={
+                          componentState.selectedVendor ?
+                          componentState.selectedVendor.level1.licenseNumber:"..." 
+                        }
+                      />
+                    </ListItem>
+                    <Divider />
                     </List>
                       </CardBody>:
                       <CardBody>
@@ -508,6 +520,7 @@ export default function Payable(props) {
                             invoices={componentState.invoices}
                             transactions={componentState.payments}
                             loading={loading}
+                            isVendor={isVendor}
                           />
                         </CardBody>
                       </Card>

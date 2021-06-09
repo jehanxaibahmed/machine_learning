@@ -94,11 +94,11 @@ export default function Crypto({ addPayment, setType, paymentGateways, editGatew
           <TableHead>
             <TableRow className={classesList.TableRow}>
               <TableCell className={classesList.TableCell}>
-                Service Name
+                Channel
               </TableCell>
               <TableCell className={classesList.TableCell}> </TableCell>
               <TableCell className={classesList.TableCell}>Enable</TableCell>
-              <TableCell className={classesList.TableCell}>Prefered</TableCell>
+              <TableCell className={classesList.TableCell}>Preferred</TableCell>
               <TableCell className={classesList.TableCell}>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -162,7 +162,7 @@ export default function Crypto({ addPayment, setType, paymentGateways, editGatew
           className={classes.marginRight}
           onClick={() => addPayment(2)}
         >
-          Add Payment Method
+          Add Payment Channel
         </Button>
       </GridContainer>
     </Animated>

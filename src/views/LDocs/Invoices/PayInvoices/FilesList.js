@@ -1472,7 +1472,7 @@ export default function PaymentList(props) {
                           accessor: "poNumber",
                         },
                         {
-                          Header: "Balance Due",
+                          Header: "Balance",
                           accessor: "balanceDue",
                         },
                         {

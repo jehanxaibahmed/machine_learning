@@ -14,7 +14,7 @@ import defaultAvatar from "assets/img/placeholder.jpg";
 import AttachmentIcon from "@material-ui/icons/Attachment";
 import ReactTable from "react-table";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
-import { GetApp } from "@material-ui/icons";
+import { GetApp, PinDropSharp } from "@material-ui/icons";
 const sweetAlertStyle = makeStyles(styles2);
 let Token = localStorage.getItem("cooljwt");
 const styles = {
@@ -29,7 +29,7 @@ const styles = {
   buttonRight: {},
 };
 
-export default function Step1({transactions, loading}) {
+export default function Step1({transactions, loading, isVendor}) {
   const useStyles = makeStyles(styles);
   const classes = useStyles();
   const [animateStep, setAnimateStep] = useState(true);
@@ -44,7 +44,7 @@ export default function Step1({transactions, loading}) {
           paymentID:prop.paymentID,
           transactionAmount: `${prop.currencyCode}  ${parseFloat(prop.paidAmount).toFixed(2)}`,
           invoiceID:prop.invoiceId,
-          payerID:prop.payerID,
+          payerID:isVendor ? `${prop.currencyCode}  ${parseFloat(prop.transactionFee).toFixed(2)}` : prop.payerID,
           paymentChannel:prop.paymentGateway,
           transactionDate: formatDateTime(prop.date),
           payment:prop.finalPayment ?  <Tooltip title="Full Payment">
@@ -104,7 +104,7 @@ export default function Step1({transactions, loading}) {
                                 sortType: "basic",
                               },
                               {
-                                Header: "Transaction Amount",
+                                Header: "Txn Amount",
                                 accessor: "transactionAmount",
                               },
                               {
@@ -112,11 +112,11 @@ export default function Step1({transactions, loading}) {
                                 accessor: "invoiceID",
                               },
                               {
-                                Header: "Payer ID",
+                                Header: isVendor ? "Txn Fee" : "Payer ID" ,
                                 accessor: "payerID",
                               },
                               {
-                                Header: "Payment Channel",
+                                Header: "Channel",
                                 accessor: "paymentChannel",
                               },
                               {
@@ -124,11 +124,11 @@ export default function Step1({transactions, loading}) {
                                 accessor: "isFait",
                               },
                               {
-                                Header: "Transaction Date",
+                                Header: "Txn Date",
                                 accessor: "transactionDate",
                               },
                               {
-                                Header: "Payment (Full/Partial)",
+                                Header: "Payment",
                                 accessor: "payment",
                                 filterable: false,
                               },

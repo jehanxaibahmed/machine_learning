@@ -82,18 +82,6 @@ export default function Step2({invoices, loading}) {
                   />
                 </Tooltip>
               )
-              : currentStatus.status == "readyToPay" ? (
-                <Tooltip title="Ready To Pay">
-                  <Chip
-                    variant="outlined"
-                    size="small"
-                    // avatar={<Avatar>M</Avatar>}
-                    label="Ready To Pay"
-                    clickable
-                    style={{ border: "orange 1px solid", color: "orange" }}
-                  />
-                </Tooltip>
-              )
               : prop.trackingStatus.paid.status == "completed" ? (
                 <Tooltip title="Paid">
                   <Chip
@@ -103,6 +91,19 @@ export default function Step2({invoices, loading}) {
                     label="Paid"
                     clickable
                     style={{ border: "green 1px solid", color: "green" }}
+                  />
+                </Tooltip>
+              )
+              
+              : currentStatus.status == "readyToPay" ? (
+                <Tooltip title="Ready To Pay">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="Ready To Pay"
+                    clickable
+                    style={{ border: "orange 1px solid", color: "orange" }}
                   />
                 </Tooltip>
               )

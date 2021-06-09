@@ -55,6 +55,7 @@ export default function Step4(props) {
   const classesList = useStyle();
   const [animateStep, setAnimateStep] = useState(true);
   const [payments, setPayments] = useState(props.payments);
+  const isVendor = props.isVendor;
   const isExported = props.isExported.status
     ? props.isExported.status == "completed"
       ? true
@@ -74,13 +75,14 @@ export default function Step4(props) {
             <TableHead>
               <TableRow className={classesList.TableRow}>
                 <TableCell className={classesList.TableCell}>Payment ID</TableCell>
-                <TableCell className={classesList.TableCell}>Payment Gateway</TableCell>
+                <TableCell className={classesList.TableCell}>Payment Channel</TableCell>
+                <TableCell className={classesList.TableCell}>Paid Amount</TableCell>
                 {/* <TableCell className={classesList.TableCell}>Payer ID</TableCell> */}
-                <TableCell className={classesList.TableCell}>Balance Due</TableCell>
+                <TableCell className={classesList.TableCell}>Balance</TableCell>
                 {/* <TableCell className={classesList.TableCell}>Order ID</TableCell> */}
                 <TableCell className={classesList.TableCell}>Partial / Fully</TableCell>
-                <TableCell className={classesList.TableCell}>Paid Amount</TableCell>
-                {/* <TableCell className={classesList.TableCell}>Transaction Fee</TableCell> */}
+                {isVendor?
+                <TableCell className={classesList.TableCell}>Transaction Fee</TableCell>:""}
                 <TableCell className={classesList.TableCell}>Transaction Date</TableCell>
                 <TableCell className={classesList.TableCell}>Receipt</TableCell>
               </TableRow>
@@ -91,12 +93,13 @@ export default function Step4(props) {
               <TableRow>
                 <TableCell className={classesList.TableCell}>{item.paymentID}</TableCell>
                 <TableCell className={classesList.TableCell}>{item.paymentGateway}</TableCell>
+                <TableCell className={classesList.TableCell}> {item.currencyCode ? item.currencyCode : "" } {addZeroes(item.paidAmount)}</TableCell>
                 <TableCell className={classesList.TableCell}>{item.currencyCode ? item.currencyCode : "" } {addZeroes(item.balanceDue)}</TableCell>
                 {/* <TableCell className={classesList.TableCell}>{item.payerID}</TableCell> */}
                 {/* <TableCell className={classesList.TableCell}>{item.orderId}</TableCell> */}
                 <TableCell className={classesList.TableCell}>{item.finalPayment ? "Fully":"Partial"}</TableCell>
-                <TableCell className={classesList.TableCell}> {item.currencyCode ? item.currencyCode : "" } {addZeroes(item.paidAmount)}</TableCell>
-                {/* <TableCell className={classesList.TableCell}>{item.currencyCode ? item.currencyCode : "" } {addZeroes(item.transactionFee)}</TableCell> */}
+                {isVendor ?
+                <TableCell className={classesList.TableCell}>{item.currencyCode ? item.currencyCode : "" } {addZeroes(item.transactionFee)}</TableCell>:""}
                 <TableCell className={classesList.TableCell}>
                   {formatDateTime(item.date)}
                 </TableCell>
