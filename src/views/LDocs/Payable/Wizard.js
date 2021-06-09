@@ -220,6 +220,7 @@ class Wizard extends React.Component {
                     allStates={this.state.allStates}
                     invoices={this.props.invoices}
                     transactions={this.props.transactions}
+                    loading={this.props.loading}     
                   />
                 </div>
               );

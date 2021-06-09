@@ -9,6 +9,7 @@ import VendorPayment from "views/LDocs/VendorPayment/VendorPayment";
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
 import Customers from "views/LDocs/Customers/Customers";
+import Payable from "views/LDocs/Payable/Payable";
 
 var vendorRoutes = [
   {
@@ -42,6 +43,14 @@ var vendorRoutes = [
     rtlName: "لوحة القيادة",
     icon: PeopleOutlineIcon,
     component: Customers,
+    layout: "/vendor",
+  },
+  {
+    path: "/Receivables",
+    name: "Receivables",
+    rtlName: "لوحة القيادة",
+    icon: LocalAtmIcon,
+    component: Payable,
     layout: "/vendor",
   },
   {

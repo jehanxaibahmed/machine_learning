@@ -71,6 +71,7 @@ export function addZeroes(num) {
 
 export const formatDateTime = (date) => {
   var offset = moment().utcOffset();
+  console.log(offset);
   var now = new Date(date);
   const someday  = moment(now).utcOffset(offset).format('DD-MM-YYYY hh:mm A');
   return someday;
@@ -79,7 +80,6 @@ export const formatDateTime = (date) => {
 export const currentTracking = (trackingStatus) => {
   let currentStatus;
   let activeStep;
-  console.log(trackingStatus.current_status);
   switch (trackingStatus.current_status) {
     case "received":
       currentStatus = trackingStatus.received.status;
@@ -281,7 +281,6 @@ export const validateInvoice = async (row, Token) => {
                 },
               })
                 .then((res) => {
-                  console.log(res);
                   BlockchainNames = res.data;
                 })
                 .catch((err) => {
@@ -377,11 +376,9 @@ export const validateInvoice = async (row, Token) => {
 export const conversionRate = (fc, bc, currencies, amount, isNotSymbol,isEdit, rate) => {
   const bC = currencies.find((c) => c._id == bc);
   const fC = currencies.find((c) => c._id == fc);
-  console.log(currencies);
   const bcSymbol = bC ? bC.Code : "";
   const fcRate = isEdit ? rate : fC ? fC.conversionRate : "";
   if (isNotSymbol) {
-    console.log(fcRate);
     return parseFloat(fcRate * amount).toFixed(4);
   } else {
     return fc !== bc

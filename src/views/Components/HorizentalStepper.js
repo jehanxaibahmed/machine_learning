@@ -258,7 +258,7 @@ export default function Horizentalteppers(props) {
           : props.fileData.trackingStatus.paid.status == "completed"
           ? "Paid"
           : props.fileData.trackingStatus.paymentInProcess.status ==
-            "inProgress" || "readyToPay"
+            "inProgress" || props.fileData.trackingStatus.paymentInProcess.status == "readyToPay"
           ? "In Process"
           : ""
         : "",

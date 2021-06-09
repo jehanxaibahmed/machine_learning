@@ -337,6 +337,18 @@ export default function FilesList(props) {
                   />
                 </Tooltip>
               )
+              : prop.trackingStatus.paid.status == "completed" ? (
+                <Tooltip title="Paid">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="Paid"
+                    clickable
+                    style={{ border: "green 1px solid", color: "green" }}
+                  />
+                </Tooltip>
+              )
               : currentStatus.status == "readyToPay" ? (
                 <Tooltip title="Ready To Pay">
                   <Chip

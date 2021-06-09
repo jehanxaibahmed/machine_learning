@@ -77,14 +77,77 @@ export default function GeneralConfigrations() {
   const [animateTableView, setAnimateTableView] = React.useState(true);
   const [animateTable, setAnimateTable] = React.useState(true);
   const [state, setState] = React.useState({
-    currencies: [],
-    editIndex: null,
-    baseCurrency: null,
+    initWorkflow: false,
+    emailNotification: false,
+    payments: false,
+    secure: false,
+    values: {
+      smtp: "",
+      user: "",
+      pass: "",
+      port: "",
+    },
   });
 
   React.useEffect(() => {
     let userDetail = jwt.decode(Token);
+    axios({
+      method: "get",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/tenant/getTenantConfig`,
+      headers: { cooljwt: Token },
+    })
+      .then((response) => {
+        let tenantConfig = response.data.tenantConfig;
+        setState((state) => ({
+          ...state,
+          initWorkflow:tenantConfig.autoInitWorkFlow,
+          payments:tenantConfig.enablePayments,
+          emailNotification:tenantConfig.enableEmailNotify,
+          secure:tenantConfig.emailConfig.secure,
+          values: {
+            ...state.values,
+            smtp: tenantConfig.emailConfig.SMTPHost,
+            pass:tenantConfig.emailConfig.authPassword,
+            user:tenantConfig.emailConfig.authUser,
+            port:tenantConfig.emailConfig.port
+          },
+        }));
+        console.log(tenantConfig);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
+
+  const saveConfigration = () => {
+    let body = {
+      tenantConfig: {
+        autoInitWorkFlow: state.initWorkflow,
+        enableEmailNotify: state.emailNotification,
+        enablePayments: state.payments,
+        emailConfig: {
+          SMTPHost: state.values.smtp,
+          authUser: state.values.user,
+          authPassword: state.values.pass,
+          port: state.values.port,
+          secure: state.secure,
+        },
+      },
+    };
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/tenant/saveTenantGeneralConfig`,
+      data: body,
+      headers: { cooljwt: Token },
+    })
+      .then((response) => {
+        successAlert('Configration Updated');
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const sweetClass = sweetAlertStyle();
   const [alert, setAlert] = React.useState(null);
@@ -126,6 +189,40 @@ export default function GeneralConfigrations() {
     setAlert(null);
   };
 
+  const onChange = (event) => {
+    event.persist();
+    let name = event.target.name;
+    let checked;
+    if (name == "initWorkflow") {
+      checked = state.initWorkflow;
+    }
+    if (name == "payments") {
+      checked = state.payments;
+    }
+    if (name == "emailNotification") {
+      checked = state.emailNotification;
+    }
+    if (name == "secure") {
+      checked = state.secure;
+    }
+
+    setState((state) => ({
+      ...state,
+      [event.target.name]: !checked,
+    }));
+  };
+
+  const handleChange = (event) => {
+    event.persist();
+    setState((state) => ({
+      ...state,
+      values: {
+        ...state.values,
+        [event.target.name]: event.target.value,
+      },
+    }));
+  };
+
   return (
     <div>
       {alert}
@@ -162,7 +259,13 @@ export default function GeneralConfigrations() {
                         }
                       />
                       <ListItemSecondaryAction>
-                        <Checkbox color="primary" />
+                        <Checkbox
+                          color="primary"
+                          value={state.initWorkflow}
+                          checked={state.initWorkflow}
+                          name="initWorkflow"
+                          onChange={onChange}
+                        />
                       </ListItemSecondaryAction>
                     </ListItem>
                     <Divider />
@@ -176,7 +279,13 @@ export default function GeneralConfigrations() {
                         }
                       />
                       <ListItemSecondaryAction>
-                        <Checkbox color="primary" />
+                        <Checkbox
+                          color="primary"
+                          value={state.emailNotification}
+                          checked={state.emailNotification}
+                          name="emailNotification"
+                          onChange={onChange}
+                        />
                       </ListItemSecondaryAction>
                     </ListItem>
                     <Divider />
@@ -190,7 +299,13 @@ export default function GeneralConfigrations() {
                         }
                       />
                       <ListItemSecondaryAction>
-                        <Checkbox color="primary" />
+                        <Checkbox
+                          color="primary"
+                          checked={state.payments}
+                          value={state.payments}
+                          name="payments"
+                          onChange={onChange}
+                        />
                       </ListItemSecondaryAction>
                     </ListItem>
                   </List>
@@ -220,12 +335,10 @@ export default function GeneralConfigrations() {
                         className={classes.textField}
                         fullWidth={true}
                         label="SMTP Host"
-                        name=""
-                        //   onChange={(event) => {
-                        //     handleOrgFilter(event);
-                        //   }}
+                        name="smtp"
+                        onChange={handleChange}
                         type="text"
-                        value={"" || ""}
+                        value={state.values.smtp || ""}
                       />
                     </GridItem>
                     <GridItem
@@ -239,12 +352,10 @@ export default function GeneralConfigrations() {
                         className={classes.textField}
                         fullWidth={true}
                         label="Auth User"
-                        name=""
-                        //   onChange={(event) => {
-                        //     handleOrgFilter(event);
-                        //   }}
+                        name="user"
+                        onChange={handleChange}
                         type="text"
-                        value={"" || ""}
+                        value={state.values.user || ""}
                       />
                     </GridItem>
                     <GridItem
@@ -258,12 +369,10 @@ export default function GeneralConfigrations() {
                         className={classes.textField}
                         fullWidth={true}
                         label="Auth Pass"
-                        name=""
-                        //   onChange={(event) => {
-                        //     handleOrgFilter(event);
-                        //   }}
-                        type="text"
-                        value={"" || ""}
+                        name="pass"
+                        onChange={handleChange}
+                        type="password"
+                        value={state.values.pass || ""}
                       />
                     </GridItem>
                     <GridItem
@@ -277,12 +386,10 @@ export default function GeneralConfigrations() {
                         className={classes.textField}
                         fullWidth={true}
                         label="Port"
-                        name=""
-                        //   onChange={(event) => {
-                        //     handleOrgFilter(event);
-                        //   }}
+                        name="port"
+                        onChange={handleChange}
                         type="text"
-                        value={"" || ""}
+                        value={state.values.port || ""}
                       />
                     </GridItem>
                     <GridItem
@@ -298,18 +405,32 @@ export default function GeneralConfigrations() {
                           <ListItemText
                             style={{ color: "black" }}
                             primary="Secure"
-                            secondary={
-                              "Connection Security   (SSL ENABLED)"
-                            }
+                            secondary={"Connection Security   (SSL ENABLED)"}
                           />
                           <ListItemSecondaryAction>
-                            <Checkbox color="primary" />
+                            <Checkbox
+                              color="primary"
+                              value={state.secure}
+                              checked={state.secure}
+                              name="secure"
+                              onChange={onChange}
+                            />
                           </ListItemSecondaryAction>
                         </ListItem>
                       </List>
                       <Divider />
                     </GridItem>
                   </GridContainer>
+                  <Button
+                    color="info"
+                    className={classes.registerButton}
+                    style={{ float: "right", marginTop: 20 }}
+                    round
+                    type="button"
+                    onClick={saveConfigration}
+                  >
+                    Save Configration
+                  </Button>
                 </CardBody>
               </Card>
             </GridItem>

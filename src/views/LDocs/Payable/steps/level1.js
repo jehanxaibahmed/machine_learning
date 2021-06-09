@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles, Tooltip, Chip } from "@material-ui/core";
+import { makeStyles, Tooltip, Chip, CircularProgress } from "@material-ui/core";
 // @material-ui/core components
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
@@ -29,13 +29,12 @@ const styles = {
   buttonRight: {},
 };
 
-export default function Step1({transactions}) {
+export default function Step1({transactions, loading}) {
   const useStyles = makeStyles(styles);
   const classes = useStyles();
   const [animateStep, setAnimateStep] = useState(true);
   const [data, setData] = useState([]);
   
-  console.log(transactions);
 
 
   useEffect(()=>{
@@ -85,6 +84,13 @@ export default function Step1({transactions}) {
     >
       <GridContainer>
       <GridItem xs={12}>
+      {loading ? (
+            <div
+              style={{ textAlign: "center", marginTop: 100, marginBottom: 100 }}
+            >
+              <CircularProgress style={{ width: 200, height: 200 }} />
+            </div>
+          ) : (
       <ReactTable
                       data={data}
                       sortable={false}
@@ -136,7 +142,7 @@ export default function Step1({transactions}) {
                       }
                       defaultPageSize={10}
                       className="-striped -highlight"
-                    />
+                    />)}
                     </GridItem>
       </GridContainer>
     </Animated>

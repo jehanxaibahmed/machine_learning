@@ -80,7 +80,7 @@ export default function Step4(props) {
                 {/* <TableCell className={classesList.TableCell}>Order ID</TableCell> */}
                 <TableCell className={classesList.TableCell}>Partial / Fully</TableCell>
                 <TableCell className={classesList.TableCell}>Paid Amount</TableCell>
-                <TableCell className={classesList.TableCell}>Transaction Fee</TableCell>
+                {/* <TableCell className={classesList.TableCell}>Transaction Fee</TableCell> */}
                 <TableCell className={classesList.TableCell}>Transaction Date</TableCell>
                 <TableCell className={classesList.TableCell}>Receipt</TableCell>
               </TableRow>
@@ -96,7 +96,7 @@ export default function Step4(props) {
                 {/* <TableCell className={classesList.TableCell}>{item.orderId}</TableCell> */}
                 <TableCell className={classesList.TableCell}>{item.finalPayment ? "Fully":"Partial"}</TableCell>
                 <TableCell className={classesList.TableCell}> {item.currencyCode ? item.currencyCode : "" } {addZeroes(item.paidAmount)}</TableCell>
-                <TableCell className={classesList.TableCell}>{item.currencyCode ? item.currencyCode : "" } {addZeroes(item.transactionFee)}</TableCell>
+                {/* <TableCell className={classesList.TableCell}>{item.currencyCode ? item.currencyCode : "" } {addZeroes(item.transactionFee)}</TableCell> */}
                 <TableCell className={classesList.TableCell}>
                   {formatDateTime(item.date)}
                 </TableCell>

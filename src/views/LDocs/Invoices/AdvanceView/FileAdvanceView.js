@@ -288,13 +288,13 @@ export default function FileAdvanceView(props) {
     setIsLoading(true);
     await getQrCode();
     await getFileVersions();
+    await getPaymentData();
     if (!isVendor) {
       await getValidator();
     }
     if (fileData.initWorkFlow && !isVendor) {
       await getBlockChainData();
       await getWorkflowSteps();
-      await getPaymentData();
       setIsLoading(false);
     }
     setIsLoading(false);

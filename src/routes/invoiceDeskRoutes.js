@@ -31,6 +31,7 @@ import PaymentList from "views/LDocs/Invoices/PayInvoices/FilesList";
 import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
 import Requested from "views/LDocs/Reviews/Requested";
 import jwt from "jsonwebtoken";
+import Payable from "views/LDocs/Payable/Payable";
 const Token = localStorage.getItem('cooljwt');
 let decoded = jwt.decode(Token);
 console.log(decoded);
@@ -142,7 +143,15 @@ var invoiceRoutes = [
         icon: LocalAtmIcon,
         component: PaymentList,
         layout: "/invoice",
-      }
+      },
+      {
+        path: "/Payables",
+        name: "Payables",
+        rtlName: "لوحة القيادة",
+        icon: LocalAtmIcon,
+        component: Payable,
+        layout: "/invoice",
+      },
     ]}
   ,{
     path: "/verifier",
