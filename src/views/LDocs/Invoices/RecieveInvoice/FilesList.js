@@ -337,13 +337,25 @@ export default function FilesList(props) {
                   />
                 </Tooltip>
               )
-              : prop.trackingStatus.paid.status == "completed" ? (
-                <Tooltip title="Paid">
+              : prop.trackingStatus.paid.status == "partial" ? (
+                <Tooltip title="Partially Paid">
                   <Chip
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label="Paid"
+                    label="Partially Paid"
+                    clickable
+                    style={{ border: "lightgreen 1px solid", color: "lightgreen" }}
+                  />
+                </Tooltip>
+              )
+              : prop.trackingStatus.paid.status == "completed" ? (
+                <Tooltip title="Fully Paid">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="Fully Paid"
                     clickable
                     style={{ border: "green 1px solid", color: "green" }}
                   />

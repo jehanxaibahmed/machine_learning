@@ -255,8 +255,10 @@ export default function Horizentalteppers(props) {
           ? "Correction Required"
           : props.fileData.trackingStatus.paymentInProcess.status == "completed"
           ? "Ready to Pay"
+          : props.fileData.trackingStatus.paid.status == "partial"
+          ? "Partially Paid"
           : props.fileData.trackingStatus.paid.status == "completed"
-          ? "Paid"
+          ? "Fully Paid"
           : props.fileData.trackingStatus.paymentInProcess.status ==
             "inProgress" || props.fileData.trackingStatus.paymentInProcess.status == "readyToPay"
           ? "In Process"
