@@ -290,7 +290,7 @@ export default function Payable(props) {
                             : componentState.vendors.map((ven, index) => {
                                 return (
                                   <MenuItem key={index} value={ven._id}>
-                                    {ven.level1.displayName}
+                                    {ven.level1.vendorName}
                                   </MenuItem>
                                 );
                               })}
