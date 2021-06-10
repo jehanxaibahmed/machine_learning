@@ -55,7 +55,7 @@ export default function WizardView(props) {
       stepId: "address",
     },
     {
-      stepName: "Payments / Exports",
+      stepName: "Payments",
       stepComponent: Step4,
       stepId: "payments",
     },

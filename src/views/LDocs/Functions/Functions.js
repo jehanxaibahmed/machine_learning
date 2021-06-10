@@ -3,7 +3,7 @@ import "firebase/messaging";
 import axios from "axios";
 import dateFormat from "dateformat";
 import { firebaseConfig } from "../../../config/Firebase";
-import { setIsTokenExpired } from "actions";
+import jwt from "jsonwebtoken";
 import moment from "moment";
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
@@ -70,7 +70,16 @@ export function addZeroes(num) {
 }
 
 export const formatDateTime = (date) => {
-  var offset = moment().utcOffset();
+  let Token = localStorage.getItem('cooljwt');
+  let user = jwt.decode(Token);
+  var offset;
+  if(user.tenantConfigs){
+    let tenantConfig = user.tenantConfigs;
+    let timeStamp = tenantConfig.timeZone;
+    offset = timeStamp.offset;
+  }else{
+    offset = moment().utcOffset();
+  }
   console.log(offset);
   var now = new Date(date);
   const someday  = moment(now).utcOffset(offset).format('DD-MM-YYYY hh:mm A');

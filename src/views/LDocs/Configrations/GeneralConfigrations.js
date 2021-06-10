@@ -39,6 +39,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import { setIsTokenExpired } from "actions";
+import TimezoneSelect from "react-timezone-select";
 
 const styles = {
   cardIconTitle: {
@@ -76,6 +77,7 @@ export default function GeneralConfigrations() {
   const [data, setData] = React.useState();
   const [animateTableView, setAnimateTableView] = React.useState(true);
   const [animateTable, setAnimateTable] = React.useState(true);
+  const [selectedTimezone, setSelectedTimezone] = React.useState("");
   const [state, setState] = React.useState({
     initWorkflow: false,
     emailNotification: false,
@@ -100,18 +102,19 @@ export default function GeneralConfigrations() {
         let tenantConfig = response.data.tenantConfig;
         setState((state) => ({
           ...state,
-          initWorkflow:tenantConfig.autoInitWorkFlow,
-          payments:tenantConfig.enablePayments,
-          emailNotification:tenantConfig.enableEmailNotify,
-          secure:tenantConfig.emailConfig.secure,
+          initWorkflow: tenantConfig.autoInitWorkFlow,
+          payments: tenantConfig.enablePayments,
+          emailNotification: tenantConfig.enableEmailNotify,
+          secure: tenantConfig.emailConfig.secure,
           values: {
             ...state.values,
             smtp: tenantConfig.emailConfig.SMTPHost,
-            pass:tenantConfig.emailConfig.authPassword,
-            user:tenantConfig.emailConfig.authUser,
-            port:tenantConfig.emailConfig.port
+            pass: tenantConfig.emailConfig.authPassword,
+            user: tenantConfig.emailConfig.authUser,
+            port: tenantConfig.emailConfig.port,
           },
         }));
+        setSelectedTimezone(tenantConfig.timeZone);
         console.log(tenantConfig);
       })
       .catch((err) => {
@@ -132,6 +135,7 @@ export default function GeneralConfigrations() {
           port: state.values.port,
           secure: state.secure,
         },
+        timeZone:selectedTimezone
       },
     };
     axios({
@@ -141,7 +145,7 @@ export default function GeneralConfigrations() {
       headers: { cooljwt: Token },
     })
       .then((response) => {
-        successAlert('Configration Updated');
+        successAlert("Configration Updated");
         console.log(response);
       })
       .catch((err) => {
@@ -421,7 +425,41 @@ export default function GeneralConfigrations() {
                       <Divider />
                     </GridItem>
                   </GridContainer>
-                  <Button
+                 
+                </CardBody>
+              </Card>
+            </GridItem>
+            <GridItem xs={12}>
+              <Card>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
+                    <h4 className={classes.cardTitleText}>
+                      Timezone Configration
+                    </h4>
+                  </CardIcon>
+                </CardHeader>
+                <CardBody>
+                  <GridContainer>
+                    <GridItem
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      style={{ marginTop: "10px", marginBottom: "10px" }}
+                    >
+                      <TimezoneSelect
+                        value={selectedTimezone}
+                        onChange={setSelectedTimezone}
+                      />
+                    </GridItem>
+                    {/* {JSON.stringify(selectedTimezone, null, 2)} */}
+
+                  </GridContainer>
+                </CardBody>
+              </Card>
+            </GridItem>
+          </GridContainer>
+          <Button
                     color="info"
                     className={classes.registerButton}
                     style={{ float: "right", marginTop: 20 }}
@@ -431,10 +469,6 @@ export default function GeneralConfigrations() {
                   >
                     Save Configration
                   </Button>
-                </CardBody>
-              </Card>
-            </GridItem>
-          </GridContainer>
         </Animated>
       ) : (
         ""

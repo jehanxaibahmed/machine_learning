@@ -100,6 +100,7 @@ export default function Payable(props) {
   };
 
   const getCustomers = () => {
+    setIsLoading(true);
     axios({
       method: "get", //you can set what request you want to be
       url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/organizationByVender`,
@@ -109,11 +110,11 @@ export default function Payable(props) {
     })
       .then((response) => {
         let orgs = response.data.organizations;
-        setSelected(orgs[0].organizationId);
+        // setSelected(orgs[0].organizationId);
         setComponentState((componentState) => ({
           ...componentState,
           orgs: orgs,
-          selectedCustomer: orgs.find(o=>o.organizationId == orgs[0].organizationId)
+          // selectedCustomer: orgs.find(o=>o.organizationId == orgs[0].organizationId)
         }));
       })
       .catch((err) => {
@@ -122,6 +123,7 @@ export default function Payable(props) {
   };
 
   const getVendors = () => {
+    setIsLoading(true);
     decoded.orgDetail &&
       axios({
         method: "get", //you can set what request you want to be
@@ -132,11 +134,11 @@ export default function Payable(props) {
       })
         .then((response) => {
           let vendors = response.data;
-          setSelected(vendors[0]._id);
+          // setSelected(vendors[0]._id);
           setComponentState((componentState) => ({
             ...componentState,
             vendors: vendors,
-            selectedVendor:vendors.find(v=>v._id == vendors[0]._id)
+            // selectedVendor:vendors.find(v=>v._id == vendors[0]._id)
           }));
         })
         .catch((err) => {
@@ -198,7 +200,6 @@ export default function Payable(props) {
   };
 
   React.useEffect(() => {
-    setIsLoading(true);
     let vendorID = props.vendor;
     let orgID = props.org;
     vendorID && orgID ? getData() : isVendor ? getCustomers() : getVendors();
