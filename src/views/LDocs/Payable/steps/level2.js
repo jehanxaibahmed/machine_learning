@@ -200,7 +200,7 @@ export default function Step2({invoices, loading}) {
       <ReactTable
                       data={data}
                       sortable={false}
-                      style={{alignContent:'left'}}
+                      style={{textAlign: "initial"}}
                       columns={
                        [
                               {
