@@ -74,6 +74,10 @@ export default function FileTags(props) {
     let file = props.fileData;
     let data = {
       invoiceId: file.invoiceId,
+      tenantId:file.tenantId,
+      organizationId:file.organizationId,
+      vendorId:file.vendorId,
+      version:file.version,
       invoiceTag: {
         email: decoded.email,
         tag: myChips

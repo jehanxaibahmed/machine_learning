@@ -72,14 +72,7 @@ var adminRoutes = [
         icon: SupervisedUserCircleIcon,
         component: UsersList,
         layout: "/admin",
-      },
-      // {
-      //   path: "/warnings",
-      //   name: "Warnings",
-      //   icon: ErrorIcon,
-      //   component: Warnings,
-      //   layout: "/admin",
-      // }
+      }
     ],
   },
     {
@@ -97,6 +90,13 @@ var adminRoutes = [
     rtlName: "لوحة القيادة",
     icon: NotificationsActiveIcon,
     component: Notifications,
+    layout: "/admin",
+  },
+  {
+    path: "/logs",
+    name: "logs",
+    icon: ErrorIcon,
+    component: Warnings,
     layout: "/admin",
   },
   {

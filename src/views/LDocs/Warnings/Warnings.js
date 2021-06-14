@@ -54,13 +54,13 @@ export default function Warnings() {
       >
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
-            <Card profile>
+            {/* <Card profile>
               <CardHeader color="info" icon>
                 <CardIcon color="info">
                   <h4 className={classes.cardTitle}>Events</h4>
                 </CardIcon>
               </CardHeader>
-              <CardBody profile>
+              <CardBody profile> */}
                 <MaterialTable
                   detailPanel={(rowData) => {
                     return (
@@ -70,7 +70,7 @@ export default function Warnings() {
                       </div>
                     );
                   }}
-                  title="EVENT LOGS"
+                  title="ACTIVITY LOGS"
                   columns={[
                     {
                       title: "Event By",
@@ -94,8 +94,8 @@ export default function Warnings() {
                     filtering: true,
                   }}
                 />
-              </CardBody>
-            </Card>
+              {/* </CardBody>
+            </Card> */}
           </GridItem>
         </GridContainer>
       </Animated>
