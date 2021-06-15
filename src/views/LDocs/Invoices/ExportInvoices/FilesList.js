@@ -91,8 +91,7 @@ import ExportToFusion from "./ExportToFusion";
 import Filters from "./Filters";
 import { over } from "lodash";
 import { setIsTokenExpired } from "actions";
-import { ToastContainer, toast } from 'react-toastify';
-
+import { ToastContainer, toast } from "react-toastify";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -105,24 +104,24 @@ const StyledBadge = withStyles((theme) => ({
     background: "#9E2654",
   },
 }))(Badge);
-const notify = (msg) => 
-toast(msg, {
-  position: "top-right",
-  autoClose: 2000,
-  hideProgressBar: true,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: false,
-  progress: undefined,
+const notify = (msg) =>
+  toast(msg, {
+    position: "top-right",
+    autoClose: 2000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: false,
+    progress: undefined,
   });
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="down" ref={ref} {...props} />;
+  return <Slide direction='down' ref={ref} {...props} />;
 });
 const TransitionRight = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="right" ref={ref} {...props} />;
+  return <Slide direction='right' ref={ref} {...props} />;
 });
 const TransitionLeft = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="left" ref={ref} {...props} />;
+  return <Slide direction='left' ref={ref} {...props} />;
 });
 
 export default function ExportList(props) {
@@ -170,7 +169,7 @@ export default function ExportList(props) {
     overDue: 0,
     paymentInProcess: 0,
     vendors: [],
-    export:null,
+    export: null,
     pos: [],
     filter: null,
     filters: {
@@ -216,7 +215,7 @@ export default function ExportList(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         setFormState((formState) => ({
           ...formState,
@@ -240,7 +239,7 @@ export default function ExportList(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });
@@ -356,10 +355,10 @@ export default function ExportList(props) {
     setIsViewingBlockChainView(false);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice-workflow-history/${row.vendorId}-${row.invoiceId}-${row.version}`,
+      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${row.vendorId}-${row.invoiceId}-${row.version}`,
     }).then((response) => {
-      if (response.data.length !== 0) {
-        setBlockChainData(response.data);
+      if (response.data.InvoiceWorkflowHistory.length !== 0) {
+        setBlockChainData(response.data.InvoiceWorkflowHistory);
         setIsViewingBlockChainView(true);
         setAnimateTable(false);
         setAnimateBlockChain(true);
@@ -410,107 +409,107 @@ export default function ExportList(props) {
           id: prop._id,
           invoiceId: prop.invoiceId,
           status: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {prop.markedAs == "unread" ? (
                 <Chip
                   style={{ background: "#deb725", color: "#fff" }}
-                  label="Pending"
+                  label='Pending'
                 />
               ) : prop.markedAs == "read" ? (
-                <Chip label="Received" color="primary" />
+                <Chip label='Received' color='primary' />
               ) : prop.markedAs == "rejected" ? (
-                <Chip color="secondary" label="Rejected" />
+                <Chip color='secondary' label='Rejected' />
               ) : (
                 ""
               )}
             </MenuProvider>
           ),
           createdDate: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {formatDateTime(prop.createdDate)}
             </MenuProvider>
           ),
           dueDate: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {dateFormat(prop.dueDate, "dd-mm-yyyy")}
             </MenuProvider>
           ),
           vendorName: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {prop.vendorName}
             </MenuProvider>
           ),
           approvedDate: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {formatDateTime(prop.approved)}
             </MenuProvider>
           ),
           requester: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {prop.createdByVendor ? "Supplier" : prop.createdBy.split("@")[0]}
             </MenuProvider>
           ),
           poNumber: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {prop.po}
             </MenuProvider>
           ),
           customerName: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {prop.organizationName}
             </MenuProvider>
           ),
           netAmt: (
-            <MenuProvider data={prop} id="menu_id">
-            <Tooltip 
-             title={
-              `${prop.LC_currency.Code} 1 ≈ ${prop.FC_currency.Code} ${prop.conversionRate
-                ? parseFloat(prop.conversionRate).toFixed(4)
-                : ""}`
-            }
-            aria-label="conversionRate"
-          > 
-              <div>
-                {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
-                <br />
-                {prop.FC_currency && prop.LC_currency
-                  ? prop.FC_currency._id !== prop.LC_currency._id
-                    ? `(${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
-                        "0.00"})`
+            <MenuProvider data={prop} id='menu_id'>
+              <Tooltip
+                title={`${prop.LC_currency.Code} 1 ≈ ${prop.FC_currency.Code} ${
+                  prop.conversionRate
+                    ? parseFloat(prop.conversionRate).toFixed(4)
                     : ""
-                  : ""}
-                  </div>
+                }`}
+                aria-label='conversionRate'
+              >
+                <div>
+                  {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
+                  <br />
+                  {prop.FC_currency && prop.LC_currency
+                    ? prop.FC_currency._id !== prop.LC_currency._id
+                      ? `(${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
+                          "0.00"})`
+                      : ""
+                    : ""}
+                </div>
               </Tooltip>
-              </MenuProvider>
+            </MenuProvider>
           ),
           version: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {prop.version}
             </MenuProvider>
           ),
           reviewed: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {prop.reviewStatus == "pending" ? (
-                <div className="fileinput text-center">
-                  <div className="thumbnail img-circle2">
+                <div className='fileinput text-center'>
+                  <div className='thumbnail img-circle2'>
                     <img src={Pending} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : prop.reviewStatus == "reviewed" ? (
-                <div className="fileinput text-center">
-                  <div className="thumbnail img-circle2">
+                <div className='fileinput text-center'>
+                  <div className='thumbnail img-circle2'>
                     <img src={Success} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : prop.reviewStatus == "rejected" ? (
-                <div className="fileinput text-center">
-                  <div className="thumbnail img-circle2">
+                <div className='fileinput text-center'>
+                  <div className='thumbnail img-circle2'>
                     <img src={Rejected} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : (
-                <div className="fileinput text-center">
-                  <div className="thumbnail img-circle2">
+                <div className='fileinput text-center'>
+                  <div className='thumbnail img-circle2'>
                     <img src={NoStatus} alt={prop.reviewedStatus} />
                   </div>
                 </div>
@@ -518,28 +517,28 @@ export default function ExportList(props) {
             </MenuProvider>
           ),
           approved: (
-            <MenuProvider data={prop} id="menu_id">
+            <MenuProvider data={prop} id='menu_id'>
               {prop.approveStatus == "pending" ? (
-                <div className="fileinput text-center">
-                  <div className="thumbnail img-circle2">
+                <div className='fileinput text-center'>
+                  <div className='thumbnail img-circle2'>
                     <img src={Pending} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : prop.approveStatus == "approved" ? (
-                <div className="fileinput text-center">
-                  <div className="thumbnail img-circle2">
+                <div className='fileinput text-center'>
+                  <div className='thumbnail img-circle2'>
                     <img src={Success} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : prop.approveStatus == "rejected" ? (
-                <div className="fileinput text-center">
-                  <div className="thumbnail img-circle2">
+                <div className='fileinput text-center'>
+                  <div className='thumbnail img-circle2'>
                     <img src={Rejected} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : (
-                <div className="fileinput text-center">
-                  <div className="thumbnail img-circle2">
+                <div className='fileinput text-center'>
+                  <div className='thumbnail img-circle2'>
                     <img src={NoStatus} alt={prop.approvedstatus} />
                   </div>
                 </div>
@@ -547,7 +546,7 @@ export default function ExportList(props) {
             </MenuProvider>
           ),
           select: (
-            <div className="actions">
+            <div className='actions'>
               <Checkbox
                 // disabled={
                 //   formState.filter == "totalInvCount" ||
@@ -559,8 +558,8 @@ export default function ExportList(props) {
             </div>
           ),
           actions: (
-            <div className="actions-right">
-              <Tooltip title="View File" aria-label="viewfile">
+            <div className='actions-right'>
+              <Tooltip title='View File' aria-label='viewfile'>
                 <Button
                   justIcon
                   round
@@ -569,13 +568,13 @@ export default function ExportList(props) {
                   onClick={() => {
                     viewFile(prop);
                   }}
-                  color="danger"
-                  className="Edit"
+                  color='danger'
+                  className='Edit'
                 >
                   <Visibility />
                 </Button>
               </Tooltip>
-              <Tooltip title="BlockChain View" aria-label="blockChainView">
+              <Tooltip title='BlockChain View' aria-label='blockChainView'>
                 <Button
                   justIcon
                   round
@@ -584,13 +583,13 @@ export default function ExportList(props) {
                   onClick={() => {
                     viewBlockChainView(prop);
                   }}
-                  color="info"
-                  className="Edit"
+                  color='info'
+                  className='Edit'
                 >
                   <ClearAllIcon />
                 </Button>
               </Tooltip>
-              <Tooltip title="360&#176; View" aria-label="advanceDocumentView">
+              <Tooltip title='360&#176; View' aria-label='advanceDocumentView'>
                 <Button
                   justIcon
                   round
@@ -599,8 +598,8 @@ export default function ExportList(props) {
                   onClick={() => {
                     viewQrView(prop);
                   }}
-                  color="info"
-                  className="Edit"
+                  color='info'
+                  className='Edit'
                 >
                   <ViewModuleIcon />
                 </Button>
@@ -660,7 +659,7 @@ export default function ExportList(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(
           typeof error.response != "undefined"
@@ -678,7 +677,7 @@ export default function ExportList(props) {
       <SweetAlert
         alert
         style={{ display: "block", marginTop: "-100px" }}
-        title="Info!"
+        title='Info!'
         onConfirm={() => hideErrorAlert()}
         onCancel={() => hideErrorAlert()}
         confirmBtnCssClass={sweetClass.button + " " + sweetClass.info}
@@ -762,8 +761,8 @@ export default function ExportList(props) {
     viewBlockChainView(props);
   };
   const exportInvoices = (n) => {
-    // n = 1 && export Invoices 
-    // n = 2 && Payment Invoices 
+    // n = 1 && export Invoices
+    // n = 2 && Payment Invoices
     setFormState((formState) => ({
       ...formState,
       export: n,
@@ -772,7 +771,10 @@ export default function ExportList(props) {
     setExportToFusionModel(true);
     axios({
       method: "post",
-      url: n == 1 ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/exportInvoices`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/moveToFinance` ,
+      url:
+        n == 1
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/exportInvoices`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/moveToFinance`,
       data: selected,
       headers: {
         cooljwt: Token,
@@ -787,19 +789,19 @@ export default function ExportList(props) {
         let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
         getMyFiles(userDetail, false);
         setExportToFusionModel(false);
-        notify(n == 1 ? "Exported Successfully": "Sent For Payment");
+        notify(n == 1 ? "Exported Successfully" : "Sent For Payment");
       })
       .catch((error) => {
         setSelected([]);
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });
   };
   //Right Click Menu
   const MyAwesomeMenu = () => (
-    <Menu id="menu_id" theme={theme.dark} animation={animation.zoom}>
+    <Menu id='menu_id' theme={theme.dark} animation={animation.zoom}>
       {!isVendor ? (
         <Item onClick={viewBlockChainViewFromAwesomeMenu}>
           <ClearAllIcon />
@@ -821,17 +823,17 @@ export default function ExportList(props) {
       {/* View File */}
       {isViewing ? (
         <Animated
-          animationIn="bounceInRight"
-          animationOut="bounceOutLeft"
+          animationIn='bounceInRight'
+          animationOut='bounceOutLeft'
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animatePdf}
         >
-          <GridContainer justify="center">
+          <GridContainer justify='center'>
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color="info" icon>
-                  <CardIcon color="info">
+                <CardHeader color='info' icon>
+                  <CardIcon color='info'>
                     <h4 className={classes.cardTitleText}>
                       Invoice:
                       {pdfModalData.invoiceId +
@@ -840,7 +842,7 @@ export default function ExportList(props) {
                     </h4>
                   </CardIcon>
                   <Button
-                    color="danger"
+                    color='danger'
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -852,10 +854,10 @@ export default function ExportList(props) {
                 <CardBody>
                   <Iframe
                     url={pdfUrl}
-                    width="100%"
-                    id="myId"
+                    width='100%'
+                    id='myId'
                     allow="print 'none'; download 'none'"
-                    className="myClassname"
+                    className='myClassname'
                     height={window.screen.height}
                   />
                 </CardBody>
@@ -869,21 +871,21 @@ export default function ExportList(props) {
       {/* Open BlockChain View */}
       {isViewingBlockChainView ? (
         <Animated
-          animationIn="bounceInRight"
-          animationOut="bounceOutLeft"
+          animationIn='bounceInRight'
+          animationOut='bounceOutLeft'
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateBlockChain}
         >
-          <GridContainer justify="center">
+          <GridContainer justify='center'>
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color="info" icon>
-                  <CardIcon color="info">
+                <CardHeader color='info' icon>
+                  <CardIcon color='info'>
                     <h4 className={classes.cardTitleText}>Blockchain View</h4>
                   </CardIcon>
                   <Button
-                    color="danger"
+                    color='danger'
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -905,7 +907,7 @@ export default function ExportList(props) {
 
       {/* Mark As Payment Model */}
       {exportToFusionModel ? (
-        <GridContainer justify="center">
+        <GridContainer justify='center'>
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -914,16 +916,16 @@ export default function ExportList(props) {
               }}
               fullWidth={true}
               maxWidth={"sm"}
-              scroll="body"
+              scroll='body'
               open={exportToFusionModel}
               TransitionComponent={Transition}
               keepMounted
               onClose={() => setExportToFusionModel(false)}
-              aria-labelledby="tag-modal-slide-title"
-              aria-describedby="tag-modal-slide-description"
+              aria-labelledby='tag-modal-slide-title'
+              aria-describedby='tag-modal-slide-description'
             >
               <DialogContent
-                id="tag-modal-slide-description"
+                id='tag-modal-slide-description'
                 className={classes.modalBody}
               >
                 <ExportToFusion
@@ -941,21 +943,21 @@ export default function ExportList(props) {
       )}
       {qrModal ? (
         <Animated
-          animationIn="bounceInRight"
-          animationOut="bounceOutLeft"
+          animationIn='bounceInRight'
+          animationOut='bounceOutLeft'
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateQr}
         >
-          <GridContainer justify="center">
+          <GridContainer justify='center'>
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color="info" icon>
-                  <CardIcon color="info">
+                <CardHeader color='info' icon>
+                  <CardIcon color='info'>
                     <h4 className={classes.cardTitleText}>360&#176; View</h4>
                   </CardIcon>
                   <Button
-                    color="danger"
+                    color='danger'
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -977,8 +979,8 @@ export default function ExportList(props) {
 
       {animateTable ? (
         <Animated
-          animationIn="bounceInRight"
-          animationOut="bounceOutLeft"
+          animationIn='bounceInRight'
+          animationOut='bounceOutLeft'
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateTable}
@@ -988,8 +990,8 @@ export default function ExportList(props) {
           <GridContainer>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color="info" stats icon>
-                  <CardIcon color="info">
+                <CardHeader color='info' stats icon>
+                  <CardIcon color='info'>
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
@@ -1000,8 +1002,8 @@ export default function ExportList(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title="All Invoices">
-                      <Typography varient="body2" component="h2">
+                    <Tooltip title='All Invoices'>
+                      <Typography varient='body2' component='h2'>
                         <Avatar
                           style={
                             formState.filter == "totalInvCount"
@@ -1018,7 +1020,7 @@ export default function ExportList(props) {
                             setFilter(1, { id: 0, val: "totalInvCount" })
                           }
                         >
-                          <Done fontSize="large" />
+                          <Done fontSize='large' />
                         </Avatar>
                       </Typography>
                     </Tooltip>
@@ -1028,8 +1030,8 @@ export default function ExportList(props) {
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color="danger" stats icon>
-                  <CardIcon color="danger">
+                <CardHeader color='danger' stats icon>
+                  <CardIcon color='danger'>
                     <CenterFocusWeakIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Payment Due</p>
@@ -1037,8 +1039,8 @@ export default function ExportList(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title="Weekly">
-                      <Typography varient="body2" component="h2">
+                    <Tooltip title='Weekly'>
+                      <Typography varient='body2' component='h2'>
                         <Avatar
                           style={
                             formState.filter == "paymentDueWeek"
@@ -1058,8 +1060,8 @@ export default function ExportList(props) {
                         </Avatar>
                       </Typography>
                     </Tooltip>
-                    <Tooltip title="Monthly">
-                      <Typography varient="body2" component="h2">
+                    <Tooltip title='Monthly'>
+                      <Typography varient='body2' component='h2'>
                         <Avatar
                           style={
                             formState.filter == "paymentDueMonth"
@@ -1080,8 +1082,8 @@ export default function ExportList(props) {
                         </Avatar>
                       </Typography>
                     </Tooltip>
-                    <Tooltip title="Above Month">
-                      <Typography varient="body2" component="h2">
+                    <Tooltip title='Above Month'>
+                      <Typography varient='body2' component='h2'>
                         <Avatar
                           style={
                             formState.filter == "paymentDueMonthAfter"
@@ -1109,8 +1111,8 @@ export default function ExportList(props) {
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color="info" stats icon>
-                  <CardIcon color="info">
+                <CardHeader color='info' stats icon>
+                  <CardIcon color='info'>
                     <CenterFocusStrongIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Over Due</p>
@@ -1118,8 +1120,8 @@ export default function ExportList(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title="Weekly">
-                      <Typography varient="body2" component="h2">
+                    <Tooltip title='Weekly'>
+                      <Typography varient='body2' component='h2'>
                         <Avatar
                           style={
                             formState.filter == "paymentOverDueWeek"
@@ -1140,8 +1142,8 @@ export default function ExportList(props) {
                         </Avatar>
                       </Typography>
                     </Tooltip>
-                    <Tooltip title="Monthly">
-                      <Typography varient="body2" component="h2">
+                    <Tooltip title='Monthly'>
+                      <Typography varient='body2' component='h2'>
                         <Avatar
                           style={
                             formState.filter == "paymentOverDueMonth"
@@ -1161,8 +1163,8 @@ export default function ExportList(props) {
                         </Avatar>
                       </Typography>
                     </Tooltip>
-                    <Tooltip title="Above Month">
-                      <Typography varient="body2" component="h2">
+                    <Tooltip title='Above Month'>
+                      <Typography varient='body2' component='h2'>
                         <Avatar
                           style={
                             formState.filter == "paymentOverDueMonthAfter"
@@ -1188,8 +1190,8 @@ export default function ExportList(props) {
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color="danger" stats icon>
-                  <CardIcon color="danger">
+                <CardHeader color='danger' stats icon>
+                  <CardIcon color='danger'>
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
@@ -1200,8 +1202,8 @@ export default function ExportList(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title="Payment in Process">
-                      <Typography varient="body2" component="h2">
+                    <Tooltip title='Payment in Process'>
+                      <Typography varient='body2' component='h2'>
                         <Avatar
                           style={
                             formState.filter == "paymentInProcessCount"
@@ -1215,7 +1217,7 @@ export default function ExportList(props) {
                             })
                           }
                         >
-                          <Done fontSize="large" />
+                          <Done fontSize='large' />
                         </Avatar>
                       </Typography>
                     </Tooltip>
@@ -1225,15 +1227,15 @@ export default function ExportList(props) {
             </GridItem>
             <GridItem xs={12}>
               <Card>
-                <CardHeader color="danger" icon>
-                  <CardIcon color="danger">
+                <CardHeader color='danger' icon>
+                  <CardIcon color='danger'>
                     <h4 className={classes.cardTitleText}>{componentName}</h4>
                   </CardIcon>
                   <p style={{ color: "gray" }}>
                     Note: Right click on any file to see multiple options
                   </p>
                   <Button
-                    color="info"
+                    color='info'
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -1241,36 +1243,39 @@ export default function ExportList(props) {
                   >
                     Filters
                   </Button>
-                  {formState.filter != "paymentInProcessCount" && formState.filter != "totalInvCount" ? 
-                  <React.Fragment>
-                  <Button
-                    color="info"
-                    round
-                    style={{ float: "right" }}
-                    className={classes.marginRight}
-                    onClick={() =>
-                      selected.length > 0
-                        ? exportInvoices(1)
-                        : msgAlert("Please Select a Invoice.")
-                    }
-                  >
-                    Export to Fusion ({selected.length})
-                  </Button>
-                  <Button
-                    color="danger"
-                    round
-                    style={{ float: "right" }}
-                    className={classes.marginRight}
-                    onClick={() =>
-                      selected.length > 0
-                        ? exportInvoices(2)
-                        : msgAlert("Please Select a Invoice.")
-                    }
-                  >
-                    Ready To Pay ({selected.length})
-                  </Button>
-                  </React.Fragment>
-                  :""}
+                  {formState.filter != "paymentInProcessCount" &&
+                  formState.filter != "totalInvCount" ? (
+                    <React.Fragment>
+                      <Button
+                        color='info'
+                        round
+                        style={{ float: "right" }}
+                        className={classes.marginRight}
+                        onClick={() =>
+                          selected.length > 0
+                            ? exportInvoices(1)
+                            : msgAlert("Please Select a Invoice.")
+                        }
+                      >
+                        Export to Fusion ({selected.length})
+                      </Button>
+                      <Button
+                        color='danger'
+                        round
+                        style={{ float: "right" }}
+                        className={classes.marginRight}
+                        onClick={() =>
+                          selected.length > 0
+                            ? exportInvoices(2)
+                            : msgAlert("Please Select a Invoice.")
+                        }
+                      >
+                        Ready To Pay ({selected.length})
+                      </Button>
+                    </React.Fragment>
+                  ) : (
+                    ""
+                  )}
                 </CardHeader>
                 <CardBody>
                   {isLoading ? (
@@ -1340,7 +1345,7 @@ export default function ExportList(props) {
                       defaultPageSize={10}
                       showPaginationTop
                       showPaginationBottom={true}
-                      className="-striped -highlight"
+                      className='-striped -highlight'
                     />
                   )}
                 </CardBody>
@@ -1358,8 +1363,8 @@ export default function ExportList(props) {
         // onOpen={}
       >
         <Animated
-          animationIn="bounceInRight"
-          animationOut="bounceOutLeft"
+          animationIn='bounceInRight'
+          animationOut='bounceOutLeft'
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={showFiltersModel}
