@@ -242,10 +242,11 @@ export default function FilesList(props) {
     setIsViewingBlockChainView(false);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice-workflow-history/${row.vendorId}-${row.invoiceId}-${row.version}`,
+      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${row.vendorId}-${row.invoiceId}-${row.version}`,
     }).then((response) => {
-      if (response.data.length !== 0) {
-        setBlockChainData(response.data);
+      if (response.data.InvoiceWorkflowHistory.length !== 0) {
+        let blockChainData = response.data.InvoiceWorkflowHistory;
+        setBlockChainData(blockChainData);
         setIsViewingBlockChainView(true);
         setAnimateTable(false);
         setAnimateBlockChain(true);

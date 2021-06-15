@@ -149,11 +149,11 @@ export default function Workflow() {
         axios({
           method: "get", //you can set what request you want to be
           //url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/historyworkflow/${row._id}`
-          url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/workflow/get-workflow/${row._id}`
+          url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/workflow/get-workflow-history/${row._id}`
         })
           .then((response) => {
-            if(response.data.length !== 0){
-            setBlockChainData(response.data);
+            if(response.data.WorkflowHistory.length !== 0){
+            setBlockChainData(response.data.WorkflowHistory);
             setIsViewingBlockChainView(true);
             setAnimateTable(false);
             setAnimateBlockChain(true);

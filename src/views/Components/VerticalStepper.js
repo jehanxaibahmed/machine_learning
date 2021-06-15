@@ -65,6 +65,7 @@ function generate(element) {
   }
 
 useEffect(()=>{
+  console.log(props.data);
     setSteps(props.data.reverse());
 },[])
 
@@ -75,7 +76,7 @@ function Row(props) {
   
     return (
       <React.Fragment>
-        {row.InvoiceID ? 
+        {row.invoiceID ? 
         //File
         <TableRow className={classes.root}>
           <TableCell>
@@ -84,7 +85,7 @@ function Row(props) {
             </IconButton>
           </TableCell>
           <TableCell component="th" scope="row">
-            {row.InvoiceID}
+            {row.invoiceID}
           </TableCell>
           {/* <TableCell style={{color:'#3f51b5'}} align="left"> {row.InvoiceHash}</TableCell> */}
           <TableCell align="left">{row.WorkflowID}</TableCell>
@@ -118,7 +119,7 @@ function Row(props) {
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box margin={1}>
                     <Typography variant="body2" gutterBottom component="div">
-                    {row.InvoiceID ? row.EventComments:row.ReferenceTicket}
+                    {row.invoiceID ? row.EventComments:row.ReferenceTicket}
                     </Typography>
               </Box>
             </Collapse>
@@ -129,11 +130,12 @@ function Row(props) {
   }
 
 function getStepContentTable(step, ind) {
+  console.log(step);
     return (
     <Box boxShadow={3} style={{padding:5,marginLeft:30*ind, background:'rgb(238 238 238)'}}>
         <Table aria-label="collapsible table">
             <TableHead>
-            {step.InvoiceID ? 
+            {step.invoiceID ? 
             <TableRow>
                 <TableCell />
                 <TableCell>Invoice ID</TableCell>
@@ -170,12 +172,11 @@ return (
 <div className={classes.root}>
     <Stepper  orientation="vertical" connector={<QontoConnector />}>
     {steps.map((data, index) => {
-      console.log(JSON.parse(data.Record));
         return <Step active={true}  key={index} >
-            <StepLabel >#{JSON.parse(data.Record).InvoiceHash || JSON.parse(data.Record).WorkflowHash}</StepLabel>
-            {JSON.parse(data.Record).event ? <StepLabel >{JSON.parse(data.Record).event ? `${JSON.parse(data.Record).event.toUpperCase()} STEP`:''}</StepLabel>:''}
+            {/* <StepLabel >#{data.InvoiceHash ||data.WorkflowHash}</StepLabel> */}
+            {data.Event ? <StepLabel >{data.Event ? `${data.Event.toUpperCase()} STEP`:''}</StepLabel>:''}
             <StepContent>                
-                <div>{getStepContentTable(JSON.parse(data.Record), index)}</div>
+                <div>{getStepContentTable(data, index)}</div>
             </StepContent>
         </Step>
       })}
