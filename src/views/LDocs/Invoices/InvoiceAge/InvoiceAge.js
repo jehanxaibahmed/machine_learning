@@ -118,7 +118,7 @@ export default function InvoiceAge(props) {
       backgroundColor:  theme.palette.grey[400],
     },
     bar: {
-      backgroundColor:  '#095392',
+      backgroundColor:  '#5A2C66',
     }
   
   }))(LinearProgress);

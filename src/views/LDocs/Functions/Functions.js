@@ -156,10 +156,12 @@ export const validateInvoice = async (row, Token) => {
         const invoice = invoiceRes.data;
         axios({
           method: "get",
-          url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
+          url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
         })
           .then(async (blockchainRes) => {
-            const blockchain = JSON.parse(blockchainRes.data.Record);
+            const blockchain = blockchainRes.data.InvoiceData;
+            console.log('BlockChain',blockchain);
+            console.log('Invoice',invoice);
             if (invoice !== null || undefined) {
               let isInvoiceDateSame;
               let isVendorIDSame;
@@ -177,61 +179,61 @@ export const validateInvoice = async (row, Token) => {
               let InvoiceNames;
               if (
                 new Date(invoice.invoiceDate).getTime() ==
-                new Date(blockchain.InvoiceDate).getTime()
+                new Date(blockchain.invoiceDate).getTime()
               ) {
                 isInvoiceDateSame = true;
               } else {
                 isInvoiceDateSame = false;
               }
-              if (invoice.vendorId == blockchain.VendorID) {
+              if (invoice.vendorId == blockchain.vendorID) {
                 isVendorIDSame = true;
               } else {
                 isVendorIDSame = false;
               }
-              if (invoice.items.length == blockchain.ItemCount) {
+              if (invoice.items.length == blockchain.itemCount) {
                 isItemCountSame = true;
               } else {
                 isItemCountSame = false;
               }
-              if (invoice.grossAmt == blockchain.GrossAmt) {
+              if (invoice.grossAmt == blockchain.grossAmt) {
                 isGrossAmtSame = true;
               } else {
                 isGrossAmtSame = false;
               }
-              if (invoice.organizationId == blockchain.OrganizationID) {
+              if (invoice.organizationId == blockchain.organizationID) {
                 isOrganizationIDSame = true;
               } else {
                 isOrganizationIDSame = false;
               }
-              if (invoice.taxAmt == blockchain.TaxAmt) {
+              if (invoice.taxAmt == blockchain.taxAmt) {
                 isTaxAmtSame = true;
               } else {
                 isTaxAmtSame = false;
               }
-              if (invoice.discountPercent == blockchain.DiscountPercentage) {
+              if (invoice.discountPercent == blockchain.discountPercent) {
                 isDiscountPercentageSame = true;
               } else {
                 isDiscountPercentageSame = false;
               }
-              if (invoice.netAmt == blockchain.NetAmt) {
+              if (invoice.netAmt == blockchain.netAmt) {
                 isNetAmtSame = true;
               } else {
                 isNetAmtSame = false;
               }
-              if (invoice.tenantId == blockchain.TenantID) {
+              if (invoice.tenantId == blockchain.tenantID) {
                 isTenantIDSame = true;
               } else {
                 isTenantIDSame = false;
               }
               if (
                 new Date(invoice.createdDate).getTime() ==
-                new Date(blockchain.CreatedDate).getTime()
+                new Date(blockchain.createdDate).getTime()
               ) {
                 isCreatedDateSame = true;
               } else {
                 isCreatedDateSame = false;
               }
-              if (invoice.createdBy == blockchain.CreatedBy) {
+              if (invoice.createdBy == blockchain.createdBy) {
                 isCreatedBySame = true;
               } else {
                 isCreatedBySame = false;
@@ -279,10 +281,10 @@ export const validateInvoice = async (row, Token) => {
                 method: "post", //you can set what request you want to be
                 url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getNameById`,
                 data: {
-                  organizationId: blockchain.OrganizationID,
-                  tenantId: blockchain.TenantID,
-                  vendorId: blockchain.VendorID,
-                  userId: blockchain.CreatedBy,
+                  organizationId: blockchain.organizationID,
+                  tenantId: blockchain.tenantID,
+                  vendorId: blockchain.vendorID,
+                  userId: blockchain.createdBy,
                   isVendor: invoice.createdByVendor,
                 },
                 headers: {
@@ -297,7 +299,7 @@ export const validateInvoice = async (row, Token) => {
                 });
               const ValidationData = {
                 "Submit Date": {
-                  onChain: dateFormat(blockchain.InvoiceDate, "dd-mm-yyyy"),
+                  onChain: dateFormat(blockchain.invoiceDate, "dd-mm-yyyy"),
                   offChain: dateFormat(invoice.invoiceDate, "dd-mm-yyyy"),
                   isSame: isInvoiceDateSame,
                 },
@@ -309,57 +311,57 @@ export const validateInvoice = async (row, Token) => {
                   offChainName: InvoiceNames.vendorName || null,
                 },
                 "Item Count": {
-                  onChain: blockchain.ItemCount,
+                  onChain: blockchain.itemCount,
                   offChain: invoice.items.length,
                   isSame: isItemCountSame,
                 },
                 "Gross Amount": {
                   onChain:
-                    invoice.FC_currency.Code + addZeroes(blockchain.GrossAmt),
+                    invoice.FC_currency.Code + addZeroes(blockchain.grossAmt),
                   offChain:
                     invoice.FC_currency.Code + addZeroes(invoice.grossAmt),
                   isSame: isGrossAmtSame,
                 },
                 "Organization ID": {
-                  onChain: blockchain.OrganizationID,
+                  onChain: blockchain.organizationID,
                   offChain: invoice.organizationId,
                   isSame: isOrganizationIDSame,
                   onChainName: BlockchainNames.organizationName || null,
                   offChainName: InvoiceNames.organizationName || null,
                 },
                 "Discount Percentage": {
-                  onChain: `${blockchain.DiscountPercentage}%`,
+                  onChain: `${blockchain.discountPercentage}%`,
                   offChain: `${invoice.discountPercent}%`,
                   isSame: isDiscountPercentageSame,
                 },
                 "Tax Amount": {
                   onChain:
-                    invoice.FC_currency.Code + addZeroes(blockchain.TaxAmt),
+                    invoice.FC_currency.Code + addZeroes(blockchain.taxAmt),
                   offChain:
                     invoice.FC_currency.Code + addZeroes(invoice.taxAmt),
                   isSame: isTaxAmtSame,
                 },
                 "Net Amount": {
                   onChain:
-                    invoice.FC_currency.Code + addZeroes(blockchain.NetAmt),
+                    invoice.FC_currency.Code + addZeroes(blockchain.netAmt),
                   offChain:
                     invoice.FC_currency.Code + addZeroes(invoice.netAmt),
                   isSame: isNetAmtSame,
                 },
                 "Tenant ID": {
-                  onChain: blockchain.TenantID,
+                  onChain: blockchain.tenantID,
                   offChain: invoice.tenantId,
                   isSame: isTenantIDSame,
                   onChainName: BlockchainNames.tenantName || null,
                   offChainName: InvoiceNames.tenantName || null,
                 },
                 "Created Date": {
-                  onChain: formatDateTime(blockchain.CreatedDate),
+                  onChain: formatDateTime(blockchain.createdDate),
                   offChain: formatDateTime(invoice.createdDate),
                   isSame: isCreatedDateSame,
                 },
                 "Created By": {
-                  onChain: blockchain.CreatedBy,
+                  onChain: blockchain.createdBy,
                   offChain: invoice.createdBy,
                   isSame: isCreatedBySame,
                   onChainName: BlockchainNames.userName || null,
@@ -369,6 +371,7 @@ export const validateInvoice = async (row, Token) => {
                   isSame: isValidate,
                 },
               };
+              console.log(ValidationData);
               res(ValidationData);
             }
           })

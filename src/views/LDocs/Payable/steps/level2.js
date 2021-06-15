@@ -218,6 +218,9 @@ export default function Step2({invoices, loading}) {
                               {
                                 Header: "InvoiceID",
                                 accessor: "invoiceId",
+                                filterable: true,
+                                filter: "fuzzyText",
+                                sortType: "basic",
                               },
                               {
                                 Header: "Status",

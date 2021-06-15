@@ -100,9 +100,9 @@ const StyledBadge = withStyles((theme) => ({
   badge: {
     right: -7,
     top: -2,
-    border: `2px solid #007f5e`,
+    border: `2px solid #9E2654`,
     padding: "0 4px",
-    background: "#007f5e",
+    background: "#9E2654",
   },
 }))(Badge);
 const notify = (msg) => 
@@ -1006,7 +1006,7 @@ export default function ExportList(props) {
                           style={
                             formState.filter == "totalInvCount"
                               ? {
-                                  background: "#007f5e",
+                                  background: "#9E2654",
                                   color: "white",
                                   marginRight: 5,
                                 }
@@ -1043,7 +1043,7 @@ export default function ExportList(props) {
                           style={
                             formState.filter == "paymentDueWeek"
                               ? {
-                                  background: "#095392",
+                                  background: "#5A2C66",
                                   color: "white",
                                   marginRight: 5,
                                 }
@@ -1064,7 +1064,7 @@ export default function ExportList(props) {
                           style={
                             formState.filter == "paymentDueMonth"
                               ? {
-                                  background: "#095392",
+                                  background: "#5A2C66",
                                   color: "white",
                                   marginRight: 5,
                                 }
@@ -1086,7 +1086,7 @@ export default function ExportList(props) {
                           style={
                             formState.filter == "paymentDueMonthAfter"
                               ? {
-                                  background: "#095392",
+                                  background: "#5A2C66",
                                   color: "white",
                                   marginRight: 5,
                                 }
@@ -1124,7 +1124,7 @@ export default function ExportList(props) {
                           style={
                             formState.filter == "paymentOverDueWeek"
                               ? {
-                                  background: "#007f5e",
+                                  background: "#9E2654",
                                   color: "white",
                                   marginRight: 5,
                                 }
@@ -1146,7 +1146,7 @@ export default function ExportList(props) {
                           style={
                             formState.filter == "paymentOverDueMonth"
                               ? {
-                                  background: "#007f5e",
+                                  background: "#9E2654",
                                   color: "white",
                                   marginRight: 5,
                                 }
@@ -1167,7 +1167,7 @@ export default function ExportList(props) {
                           style={
                             formState.filter == "paymentOverDueMonthAfter"
                               ? {
-                                  background: "#007f5e",
+                                  background: "#9E2654",
                                   color: "white",
                                   marginRight: 5,
                                 }
@@ -1205,7 +1205,7 @@ export default function ExportList(props) {
                         <Avatar
                           style={
                             formState.filter == "paymentInProcessCount"
-                              ? { background: "#095392", color: "white" }
+                              ? { background: "#5A2C66", color: "white" }
                               : { cursor: "pointer" }
                           }
                           onClick={() =>

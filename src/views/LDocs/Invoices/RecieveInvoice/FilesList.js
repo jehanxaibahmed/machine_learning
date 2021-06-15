@@ -116,9 +116,9 @@ const StyledBadge = withStyles((theme) => ({
   badge: {
     right: -7,
     top: -2,
-    border: `2px solid #007f5e`,
+    border: `2px solid #9E2654`,
     padding: "0 4px",
-    background: "#007f5e",
+    background: "#9E2654",
   },
 }))(Badge);
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -1574,12 +1574,12 @@ export default function FilesList(props) {
           <MyAwesomeMenu />
           {/* <GridContainer>
         <GridItem xs={12}>
-        <IconButton onClick={()=>setView('read')} style={{ float: "right",color : view == 'read' ? "#007f5e" : ""}} aria-label="Read View" component="span">
+        <IconButton onClick={()=>setView('read')} style={{ float: "right",color : view == 'read' ? "#9E2654" : ""}} aria-label="Read View" component="span">
         <StyledBadge badgeContent={1} color="secondary">
         <PlaylistAddCheckIcon   />
         </StyledBadge>
         </IconButton>
-        <IconButton onClick={()=>setView('unread')} style={{ float: "right", color : view == 'unread' ? "#007f5e" : ""}} aria-label="Unread View" component="span">
+        <IconButton onClick={()=>setView('unread')} style={{ float: "right", color : view == 'unread' ? "#9E2654" : ""}} aria-label="Unread View" component="span">
         <StyledBadge badgeContent={4} color="secondary">
         <CallReceivedIcon   />
         </StyledBadge>

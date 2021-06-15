@@ -494,13 +494,13 @@ class Sidebar extends React.Component {
         [classes.whiteAfter]: bgColor === "white",
       });
     var brand = (
-      <div style={{height:100}} className={logoClasses}>
+      <div style={{height:200}} className={logoClasses}>
         <a
           href="#"
           className={logoMini}
           style={{ width: "100%", marginLeft: "0px" }}
         >
-          <img src={logo} style={{width:250,marginTop:-33}} alt="logo" className={classes.img} />
+          <img src={logo} style={{width:200}} alt="logo" className={classes.img} />
         </a>
         {/* <a
           href="https://www.creative-tim.com?ref=mdpr-sidebar"

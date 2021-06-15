@@ -17,7 +17,7 @@
 
 // ##############################
 // // // Function that converts from hex color to rgb color
-// // // Example: input = #095392 => output = 156, 39, 176
+// // // Example: input = #5A2C66 => output = 156, 39, 176
 // // // Example: input = 9c27b0 => output = 156, 39, 176
 // // // Example: input = #999 => output = 153, 153, 153
 // // // Example: input = 999 => output = 153, 153, 153
@@ -103,7 +103,7 @@ const defaultFont = {
   lineHeight: "1.5em"
 };
 
-const primaryColor = ["#095392", "#ab47bc", "#8e24aa", "#af2cc5", "#7b1fa2"];
+const primaryColor = ["#5A2C66", "#ab47bc", "#8e24aa", "#af2cc5", "#7b1fa2"];
 
 const warningColor = [
   "#ff9800",
@@ -115,7 +115,7 @@ const warningColor = [
   "#fcf8e3"
 ];
 const dangerColor = [
-  "#007f5e",
+  "#9E2654",
   "#ef5350",
   "#e53935",
   "#f55a4e",
@@ -133,13 +133,13 @@ const successColor = [
   "#dff0d8"
 ];
 const infoColor = [
-  "#007f5e",
-  "#095392",
-  "#095392",
-  "#095392",
-  "#095392",
-  "#095392",
-  "#095392"
+  "#9E2654",
+  "#5A2C66",
+  "#5A2C66",
+  "#5A2C66",
+  "#5A2C66",
+  "#5A2C66",
+  "#5A2C66"
 ];
 const roseColor = ["#e91e63", "#ec407a", "#d81b60", "#eb3573", "#c2185b"];
 const grayColor = [

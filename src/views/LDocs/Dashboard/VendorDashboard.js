@@ -271,7 +271,7 @@ export default function VendorDashboard() {
     if(graphData && apiData){
     const quarterOptions =  {
       fill: {
-          colors: ["#007f5e"],
+          colors: ["#9E2654"],
       },
     chart: {
       toolbar: {
@@ -334,7 +334,7 @@ export default function VendorDashboard() {
   };
   const byAmountOptions = {
     fill: {
-        colors: ["#095392"],
+        colors: ["#5A2C66"],
     },
   chart: {
     toolbar: {

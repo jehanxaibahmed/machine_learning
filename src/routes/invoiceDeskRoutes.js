@@ -145,8 +145,8 @@ var invoiceRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/Payables",
-        name: "Payables",
+        path: "/vendorledger",
+        name: "Vendor 360",
         rtlName: "لوحة القيادة",
         icon: LocalAtmIcon,
         component: Payable,

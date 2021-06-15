@@ -326,15 +326,15 @@
       linear,
       left top,
       left bottom,
-      from(#095392),
-      to(#095392)
+      from(#5A2C66),
+      to(#5A2C66)
     ),
     -webkit-gradient(linear, left top, left bottom, from(#d2d2d2), to(#d2d2d2));
-  background-image: -webkit-linear-gradient(#095392, #095392),
+  background-image: -webkit-linear-gradient(#5A2C66, #5A2C66),
     -webkit-linear-gradient(#d2d2d2, #d2d2d2);
-  background-image: -o-linear-gradient(#095392, #095392),
+  background-image: -o-linear-gradient(#5A2C66, #5A2C66),
     -o-linear-gradient(#d2d2d2, #d2d2d2);
-  background-image: linear-gradient(#095392, #095392),
+  background-image: linear-gradient(#5A2C66, #5A2C66),
     linear-gradient(#d2d2d2, #d2d2d2);
   background-size: 0 2px, 100% 1px;
   background-repeat: no-repeat;
@@ -352,7 +352,7 @@
 
   &:focus {
     outline: none;
-    background-image: linear-gradient(#095392, #095392),
+    background-image: linear-gradient(#5A2C66, #5A2C66),
       linear-gradient(#d2d2d2, #d2d2d2);
     background-size: 100% 2px, 100% 1px;
     box-shadow: none;
@@ -435,7 +435,7 @@
   width: 70px;
   text-align: center;
   border: 0;
-  background-image: linear-gradient(#095392, #095392),
+  background-image: linear-gradient(#5A2C66, #5A2C66),
     linear-gradient(#d2d2d2, #d2d2d2);
   background-size: 0 2px, 100% 1px;
   background-repeat: no-repeat;
@@ -456,7 +456,7 @@
 
   &:focus {
     outline: none;
-    background-image: linear-gradient(#095392, #095392),
+    background-image: linear-gradient(#5A2C66, #5A2C66),
       linear-gradient(#d2d2d2, #d2d2d2);
     background-size: 100% 2px, 100% 1px;
     box-shadow: none;

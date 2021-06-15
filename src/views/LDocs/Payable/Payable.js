@@ -251,13 +251,13 @@ export default function Payable(props) {
                         }}
                       >
                         <h4 className={classes.cardCategory} style={{color:'grey'}}>
-                        {isVendor ? "CUSTOMER" : "VENDOR"}
+                        {isVendor ? "CUSTOMER" : "VENDOR / CUSTOMER"}
                         </h4>
                         <Divider style={{ background: "grey" }} />
                         <TextField
                           className={classes.textField}
                           fullWidth={true}
-                          label={isVendor ? "Select Customer" : "Select Vendor"}
+                          label={isVendor ? "Select Customer" : "Select Vendor / Customer"}
                          
                           className={classes.root}
                           name="cusven"
@@ -302,7 +302,7 @@ export default function Payable(props) {
                         {!isVendor ?
                         <CardBody>
                         <h4 className={classes.cardCategory} style={{color:'grey'}}>
-                          VENDOR DETAILS
+                          DETAILS
                         </h4>
                         <div className={classes.img}>
                         <Avatar alt="Remy Sharp" src={defaultAvatar} className={classes.large} />
@@ -357,7 +357,7 @@ export default function Payable(props) {
                       </CardBody>:
                       <CardBody>
                       <h4 className={classes.cardCategory} style={{color:'grey'}}>
-                        CUSTOMER DETAILS
+                        DETAILS
                       </h4>
                       <div className={classes.img}>
                       <Avatar alt="Remy Sharp" src={defaultAvatar} className={classes.large} />

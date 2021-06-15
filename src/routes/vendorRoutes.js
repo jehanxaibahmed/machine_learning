@@ -46,8 +46,8 @@ var vendorRoutes = [
     layout: "/vendor",
   },
   {
-    path: "/Receivables",
-    name: "Receivables",
+    path: "/customerledger",
+    name: "Customer 360",
     rtlName: "لوحة القيادة",
     icon: LocalAtmIcon,
     component: Payable,

@@ -89,11 +89,13 @@ export default function FileAdvanceView(props) {
   const getBlockChainData = async () => {
     await axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice-workflow-history/${fileData.vendorId}-${fileData.invoiceId}-${fileData.version}`,
+      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.vendorId}-${fileData.invoiceId}-${fileData.version}`,
     })
       .then((response) => {
-        if (response.data.length !== 0) {
-          setBlockChainData(response.data.reverse());
+        if (response.data.InvoiceWorkflowHistory.length !== 0) {
+          let blockChainData = response.data.InvoiceWorkflowHistory; 
+          console.log(blockChainData);
+          setBlockChainData(blockChainData);
         } else {
           setBlockChainData([]);
         }
@@ -292,7 +294,9 @@ export default function FileAdvanceView(props) {
     if (!isVendor) {
       await getValidator();
     }
+
     if (fileData.initWorkFlow && !isVendor) {
+      console.log('WORKFLOW INITED')
       await getBlockChainData();
       await getWorkflowSteps();
       setIsLoading(false);
@@ -316,9 +320,7 @@ export default function FileAdvanceView(props) {
 
   //Step Content
   function getStepContent(stp, ind) {
-    var step = JSON.parse(stp.Record);
-    console.log(blockChainData.length);
-    console.log(ind);
+    var step = stp;
     return (
       <Card variant="outlined" style={{ padding: "10px", marginTop: -5 }}>
         <CardHeader>
@@ -696,7 +698,7 @@ export default function FileAdvanceView(props) {
               <Stepper orientation="vertical" connector={<QontoConnector />}>
                 {blockChainData.map((data, index) => (
                   <Step active={true} key={index}>
-                    <StepLabel>{JSON.parse(data.Record).docHash}</StepLabel>
+                    <StepLabel>{index}</StepLabel>
                     <StepContent>
                       <div>{getStepContent(data, index)}</div>
                     </StepContent>

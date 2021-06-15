@@ -92,13 +92,13 @@ var adminRoutes = [
     component: Notifications,
     layout: "/admin",
   },
-  {
-    path: "/logs",
-    name: "logs",
-    icon: ErrorIcon,
-    component: Warnings,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/logs",
+  //   name: "logs",
+  //   icon: ErrorIcon,
+  //   component: Warnings,
+  //   layout: "/admin",
+  // },
   {
     collapse: true,
     name: "Configration",

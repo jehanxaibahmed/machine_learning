@@ -7,7 +7,7 @@ export const data = {
     ],
     summaryOptions: {
       fill: {
-        colors: ["#095392"],
+        colors: ["#5A2C66"],
       },
   
       chart: {
@@ -70,7 +70,7 @@ export const data = {
     ],
     purchaseOptions: {
             fill: {
-                colors: ["#007f5e"],
+                colors: ["#9E2654"],
             },
           chart: {
             toolbar: {
@@ -120,7 +120,7 @@ export const data = {
     ],
     amountOptions: {
         fill: {
-            colors: ["#095392"],
+            colors: ["#5A2C66"],
         },
       chart: {
         toolbar: {
@@ -169,13 +169,13 @@ export const data = {
         name: "Purchased",
         type: "column",
         fill: {
-            colors: ["#095392"],
+            colors: ["#5A2C66"],
         },
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         fill: {
-            colors: ["#095392"],
+            colors: ["#5A2C66"],
         },
         name: "Paid",
         type: "column",
@@ -183,7 +183,7 @@ export const data = {
       }
     ],
     TvPoptions: {
-        colors:['#095392', '#007f5e'],
+        colors:['#5A2C66', '#9E2654'],
       chart: {
         type: "line",
         height: 350,
@@ -196,7 +196,7 @@ export const data = {
       },
       plotOptions: {
         fill: {
-            colors:['#095392', '#007f5e'],
+            colors:['#5A2C66', '#9E2654'],
         },
         bar: {
           columnWidth: "70%",
@@ -241,7 +241,7 @@ export const data = {
     ],
     quarterOptions: {
             fill: {
-                colors: ["#007f5e"],
+                colors: ["#9E2654"],
             },
           chart: {
             toolbar: {
@@ -289,7 +289,7 @@ export const data = {
     ],
     byAmountOptions: {
         fill: {
-            colors: ["#095392"],
+            colors: ["#5A2C66"],
         },
       chart: {
         toolbar: {

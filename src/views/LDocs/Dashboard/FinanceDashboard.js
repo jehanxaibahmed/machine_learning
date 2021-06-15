@@ -97,7 +97,7 @@ export default function FinanceDashboard() {
     if (graphData.AgeSummery) {
       const summaryOptions = {
         fill: {
-          colors: ["#095392"],
+          colors: ["#5A2C66"],
         },
 
         chart: {
@@ -214,7 +214,7 @@ export default function FinanceDashboard() {
       ];
       const purchaseOptions = {
         fill: {
-          colors: ["#007f5e"],
+          colors: ["#9E2654"],
         },
         chart: {
           toolbar: {
@@ -316,7 +316,7 @@ export default function FinanceDashboard() {
       ];
       const amountOptions = {
         fill: {
-          colors: ["#095392"],
+          colors: ["#5A2C66"],
         },
         chart: {
           toolbar: {
@@ -412,7 +412,7 @@ export default function FinanceDashboard() {
           name: "Purchased",
           type: "column",
           fill: {
-            colors: ["#095392"],
+            colors: ["#5A2C66"],
           },
           // data: [44, 55, 41, 64, 22, 43, 44, 55, 41, 64, 21],
           data: graphData.totalPurchasedVsPaid.PurchasedInvoice
@@ -434,7 +434,7 @@ export default function FinanceDashboard() {
         },
         {
           fill: {
-            colors: ["#095392"],
+            colors: ["#5A2C66"],
           },
           name: "Paid",
           type: "column",
@@ -457,7 +457,7 @@ export default function FinanceDashboard() {
         },
       ];
       const TvPoptions = {
-        colors: ["#095392", "#007f5e"],
+        colors: ["#5A2C66", "#9E2654"],
         chart: {
           type: "line",
           height: 350,
@@ -470,7 +470,7 @@ export default function FinanceDashboard() {
         },
         plotOptions: {
           fill: {
-            colors: ["#095392", "#007f5e"],
+            colors: ["#5A2C66", "#9E2654"],
           },
           bar: {
             columnWidth: "70%",
@@ -545,7 +545,7 @@ export default function FinanceDashboard() {
                     variant="h3"
                     color="error"
                   >
-                    {graphData.avgDays && graphData.avgDays[0].days
+                    {graphData.avgDays && graphData.avgDays[0]
                       ? parseFloat(graphData.avgDays[0].days).toFixed(2)
                       : 0}
                   </Typography>

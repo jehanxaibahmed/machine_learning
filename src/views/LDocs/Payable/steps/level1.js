@@ -29,50 +29,67 @@ const styles = {
   buttonRight: {},
 };
 
-export default function Step1({transactions, loading, isVendor}) {
+export default function Step1({ transactions, loading, isVendor }) {
   const useStyles = makeStyles(styles);
   const classes = useStyles();
   const [animateStep, setAnimateStep] = useState(true);
   const [data, setData] = useState([]);
-  
 
-
-  useEffect(()=>{
+  useEffect(() => {
     setData(
       transactions.map((prop, key) => {
         return {
-          paymentID:prop.paymentID,
-          transactionAmount: `${prop.currencyCode}  ${parseFloat(prop.paidAmount).toFixed(2)}`,
-          invoiceID:prop.invoiceId,
-          payerID:isVendor ? `${prop.currencyCode}  ${parseFloat(prop.transactionFee).toFixed(2)}` : prop.payerID,
-          paymentChannel:prop.paymentGateway,
+          paymentID: prop.paymentID,
+          transactionAmount: `${prop.currencyCode}  ${parseFloat(
+            prop.paidAmount
+          ).toFixed(2)}`,
+          invoiceID: prop.invoiceId,
+          payerID: isVendor
+            ? `${prop.currencyCode}  ${parseFloat(prop.transactionFee).toFixed(
+                2
+              )}`
+            : prop.payerID,
+          paymentChannel: prop.paymentGateway,
           transactionDate: formatDateTime(prop.date),
-          payment:prop.finalPayment ?  <Tooltip title="Full Payment">
-          <Chip
-            variant="outlined"
-            size="small"
-            // avatar={<Avatar>M</Avatar>}
-            label="Full"
-            clickable
-            style={{ border: "green 1px solid", color: "green" }}
-            />
-        </Tooltip> : 
-         <Tooltip title="Partial Payment">
-         <Chip
-           variant="outlined"
-           size="small"
-           // avatar={<Avatar>M</Avatar>}
-           label="Partial"
-           clickable
-           style={{ border: "blue 1px solid", color: "blue" }}
-           />
-       </Tooltip>,
-       isFait:prop.currencyType == 1 || '1' ? "Fiat" : "Crypto" ,
-       actions:<div><a href={`${process.env.REACT_APP_LDOCS_API_URL}/${prop.receiptUrl}`} download target="_blank" ><GetApp /></a></div>
-        }
-  }));
-},[transactions]);
-
+          payment: prop.finalPayment ? (
+            <Tooltip title="Full Payment">
+              <Chip
+                variant="outlined"
+                size="small"
+                // avatar={<Avatar>M</Avatar>}
+                label="Full"
+                clickable
+                style={{ border: "green 1px solid", color: "green" }}
+              />
+            </Tooltip>
+          ) : (
+            <Tooltip title="Partial Payment">
+              <Chip
+                variant="outlined"
+                size="small"
+                // avatar={<Avatar>M</Avatar>}
+                label="Partial"
+                clickable
+                style={{ border: "blue 1px solid", color: "blue" }}
+              />
+            </Tooltip>
+          ),
+          isFait: prop.currencyType == 1 || "1" ? "Fiat" : "Crypto",
+          actions: (
+            <div>
+              <a
+                href={`${process.env.REACT_APP_LDOCS_API_URL}/${prop.receiptUrl}`}
+                download
+                target="_blank"
+              >
+                <GetApp />
+              </a>
+            </div>
+          ),
+        };
+      })
+    );
+  }, [transactions]);
 
   return (
     <Animated
@@ -83,67 +100,69 @@ export default function Step1({transactions, loading, isVendor}) {
       isVisible={animateStep}
     >
       <GridContainer>
-      <GridItem xs={12}>
-      {loading ? (
+        <GridItem xs={12}>
+          {loading ? (
             <div
               style={{ textAlign: "center", marginTop: 100, marginBottom: 100 }}
             >
               <CircularProgress style={{ width: 200, height: 200 }} />
             </div>
           ) : (
-      <ReactTable
-                      data={data}
-                      sortable={false}
-                      columns={
-                       [
-                              {
-                                Header: "Payment ID",
-                                accessor: "paymentID",
-                                filterable: true,
-                                filter: "fuzzyText",
-                                sortType: "basic",
-                              },
-                              {
-                                Header: "Txn Amount",
-                                accessor: "transactionAmount",
-                              },
-                              {
-                                Header: "Invoice ID",
-                                accessor: "invoiceID",
-                              },
-                              {
-                                Header: isVendor ? "Txn Fee" : "Payer ID" ,
-                                accessor: "payerID",
-                              },
-                              {
-                                Header: "Channel",
-                                accessor: "paymentChannel",
-                              },
-                              {
-                                Header: "Fait / Crypto",
-                                accessor: "isFait",
-                              },
-                              {
-                                Header: "Txn Date",
-                                accessor: "transactionDate",
-                              },
-                              {
-                                Header: "Payment",
-                                accessor: "payment",
-                                filterable: false,
-                              },
-                              {
-                                Header: "Actions",
-                                accessor: "actions",
-                                filterable: false,
-                              },
-                              
-                            ]
-                      }
-                      defaultPageSize={10}
-                      className="-striped -highlight"
-                    />)}
-                    </GridItem>
+            <ReactTable
+              data={data}
+              sortable={false}
+              columns={[
+                {
+                  Header: "Invoice ID",
+                  accessor: "invoiceID",
+                  filterable: true,
+                  filter: "fuzzyText",
+                  sortType: "basic",
+                },
+                {
+                  Header: "Payment ID",
+                  accessor: "paymentID",
+                  filterable: true,
+                  filter: "fuzzyText",
+                  sortType: "basic",
+                },
+                {
+                  Header: "Txn Amount",
+                  accessor: "transactionAmount",
+                },
+
+                {
+                  Header: isVendor ? "Txn Fee" : "Payer ID",
+                  accessor: "payerID",
+                },
+                {
+                  Header: "Channel",
+                  accessor: "paymentChannel",
+                },
+                {
+                  Header: "Fait / Crypto",
+                  accessor: "isFait",
+                },
+                {
+                  Header: "Txn Date",
+                  accessor: "transactionDate",
+                },
+                {
+                  Header: "Payment",
+                  accessor: "payment",
+                  filterable: false,
+                },
+                {
+                  Header: "Actions",
+                  accessor: "actions",
+                  filterable: false,
+                },
+              ]}
+              defaultPageSize={10}
+              className="-striped -highlight"
+            />
+          )}
+        </GridItem>
       </GridContainer>
     </Animated>
   );
