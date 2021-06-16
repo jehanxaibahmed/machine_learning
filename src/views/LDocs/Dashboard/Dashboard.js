@@ -322,7 +322,7 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
               <CardIcon color="danger">
               <CenterFocusWeakIcon/>
               </CardIcon>
-              <p className={classes.cardCategory}>Ready To Invoices</p>
+              <p className={classes.cardCategory}>Ready To Pay</p>
               {loadingStats ? <LinearProgress  />:<h3 className={classes.cardTitle}>{statistics.openInvoices}</h3>}
             </CardHeader>
             <CardFooter stats>
