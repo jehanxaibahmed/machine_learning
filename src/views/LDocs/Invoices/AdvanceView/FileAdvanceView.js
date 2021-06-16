@@ -46,6 +46,7 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import WizardView from "./WizardView";
 import Horizentalteppers from "../../../Components/HorizentalStepper";
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import {
   addZeroes,
   formatDateTime,
@@ -54,7 +55,7 @@ import {
 import Approve from "./approve";
 import Review from "./review";
 import { setIsTokenExpired } from "actions";
-
+import whatsonchain from "assets/img/whatsonchain.png";
 const useStyle = makeStyles(styles);
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -327,6 +328,7 @@ export default function FileAdvanceView(props) {
           <Typography variant="subtitle2" component="h2">
             {step.Event.toUpperCase()} STEP (
             {formatDateTime(step.EventInitDate)})
+            <Tooltip title="Transaction ID"><a href={`https://test.whatsonchain.com/tx/${step.TxnID}`} target="_blank" style={{float:'right'}}><VerifiedUserIcon /></a></Tooltip>
           </Typography>
         </CardHeader>
         <Divider />
@@ -698,7 +700,7 @@ export default function FileAdvanceView(props) {
               <Stepper orientation="vertical" connector={<QontoConnector />}>
                 {blockChainData.map((data, index) => (
                   <Step active={true} key={index}>
-                    {/* <StepLabel>{index}</StepLabel> */}
+                    <StepLabel> </StepLabel>
                     <StepContent>
                       <div>{getStepContent(data, index)}</div>
                     </StepContent>

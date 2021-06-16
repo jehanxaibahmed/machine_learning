@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
+import {Tooltip} from '@material-ui/core';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -174,7 +175,7 @@ return (
     {steps.map((data, index) => {
         return <Step active={true}  key={index} >
             {/* <StepLabel >#{data.InvoiceHash ||data.WorkflowHash}</StepLabel> */}
-            {data.Event ? <StepLabel >{data.Event ? `${data.Event.toUpperCase()} STEP`:''}</StepLabel>:''}
+            {data.Event ? <StepLabel >{data.Event ? <Tooltip title="Transaction ID"><a href={`https://test.whatsonchain.com/tx/${data.TxnID}`} target="_blank" >{data.TxnID}</a></Tooltip>:''}</StepLabel>:''}
             <StepContent>                
                 <div>{getStepContentTable(data, index)}</div>
             </StepContent>
