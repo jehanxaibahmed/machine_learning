@@ -113,9 +113,9 @@ export default function Payable(props) {
         const invoice = invoiceRes.data;
         if(invoice){
           setRow(invoice);
-          // setQrModal(true);
-          // setGridView(false);
-          // setAnimateQr(true);
+          setQrModal(true);
+          setGridView(false);
+          setAnimateQr(true);
         }
       })
       .catch((err) => {
