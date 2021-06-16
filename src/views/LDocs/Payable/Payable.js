@@ -38,9 +38,9 @@ import Step1 from "./steps/level1";
 import Step2 from "./steps/level2";
 import axios from "axios";
 import { setIsTokenExpired } from "actions";
+import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView.js";
 
-
-const useStyles  = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   cardIconTitle: {
     ...cardTitle,
     marginTop: "15px",
@@ -56,15 +56,15 @@ const useStyles  = makeStyles((theme) => ({
   large: {
     width: theme.spacing(18),
     height: theme.spacing(18),
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    marginLeft: "auto",
+    marginRight: "auto",
   },
-  img:{
-    textAlign:'center',
-    paddingTop:30,
-    paddingBottom:30,
-    width:'100%'
-  }
+  img: {
+    textAlign: "center",
+    paddingTop: 30,
+    paddingBottom: 30,
+    width: "100%",
+  },
 }));
 
 export default function Payable(props) {
@@ -76,6 +76,9 @@ export default function Payable(props) {
   const isVendor = decoded.isVendor;
   const classes = useStyles();
   const [gridView, setGridView] = React.useState(true);
+  const [qrModal, setQrModal] = React.useState(false);
+  const [animateQr, setAnimateQr] = React.useState(false);
+  const [row, setRow] = React.useState(null);
   const [loading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
   const [componentState, setComponentState] = React.useState({
@@ -88,11 +91,44 @@ export default function Payable(props) {
     payments: [],
     invoices: [],
     currencyCode: "",
-    selectedVendor:null,
-    selectedCustomer:null
+    selectedVendor: null,
+    selectedCustomer: null,
   });
 
-  
+  //Open Advance View
+  const viewQrView = (row) => {
+    axios({
+      method: "post", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      data: {
+        invoiceId: row.invoiceId,
+        version: row.version,
+        vendorId: row.vendorId,
+      },
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then(async (invoiceRes) => {
+        const invoice = invoiceRes.data;
+        if(invoice){
+          setRow(invoice);
+          // setQrModal(true);
+          // setGridView(false);
+          // setAnimateQr(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  //Close Views
+  const goBack = () => {
+    setQrModal(false);
+    setGridView(true);
+    setAnimateQr(false);
+  };
 
   const handleFilter = (event) => {
     event.preventDefault();
@@ -206,20 +242,24 @@ export default function Payable(props) {
   }, []);
 
   React.useEffect(() => {
-    if(!isVendor){
-      let selectedVendor = componentState.vendors.find(v=>v._id == selected);
+    if (!isVendor) {
+      let selectedVendor = componentState.vendors.find(
+        (v) => v._id == selected
+      );
       setComponentState((componentState) => ({
         ...componentState,
-        selectedVendor:selectedVendor
+        selectedVendor: selectedVendor,
       }));
-      console.log('Selected Vendor', selectedVendor);
-    }else{
-      let selectedCustomer = componentState.orgs.find(o=>o.organizationId == selected);
+      console.log("Selected Vendor", selectedVendor);
+    } else {
+      let selectedCustomer = componentState.orgs.find(
+        (o) => o.organizationId == selected
+      );
       setComponentState((componentState) => ({
         ...componentState,
-        selectedCustomer:selectedCustomer
+        selectedCustomer: selectedCustomer,
       }));
-      console.log('Selected Customer', selectedCustomer);
+      console.log("Selected Customer", selectedCustomer);
     }
     getData();
   }, [selected]);
@@ -235,36 +275,42 @@ export default function Payable(props) {
           isVisible={gridView}
         >
           {/* {isVendor || decoded.orgDetail} */}
-            <div>
-              <GridContainer>
-              {!props.vendor && !props.org ? 
+          <div>
+            <GridContainer>
+              {!props.vendor && !props.org ? (
                 <GridItem xs={12} sm={6} md={6} lg={3}>
                   <GridContainer>
                     <GridItem xs={12} sm={12} md={12} lg={12}>
                       <Card
                         style={{
-                           paddingLeft: 20,
+                          paddingLeft: 20,
                           paddingTop: 10,
                           paddingBottom: 10,
                           paddingRight: 20,
                           color: "white",
                         }}
                       >
-                        <h4 className={classes.cardCategory} style={{color:'grey'}}>
-                        {isVendor ? "CUSTOMER" : "VENDOR / CUSTOMER"}
+                        <h4
+                          className={classes.cardCategory}
+                          style={{ color: "grey" }}
+                        >
+                          {isVendor ? "CUSTOMER" : "VENDOR / CUSTOMER"}
                         </h4>
                         <Divider style={{ background: "grey" }} />
                         <TextField
                           className={classes.textField}
                           fullWidth={true}
-                          label={isVendor ? "Select Customer" : "Select Vendor / Customer"}
-                         
+                          label={
+                            isVendor
+                              ? "Select Customer"
+                              : "Select Vendor / Customer"
+                          }
                           className={classes.root}
                           name="cusven"
                           onChange={(event) => {
                             handleFilter(event);
                           }}
-                          style={{ marginTop: 5}}
+                          style={{ marginTop: 5 }}
                           select
                           value={selected || ""}
                         >
@@ -299,237 +345,312 @@ export default function Payable(props) {
                     </GridItem>
                     <GridItem xs={12} sm={12} md={12} lg={12}>
                       <Card>
-                        {!isVendor ?
-                        <CardBody>
-                        <h4 className={classes.cardCategory} style={{color:'grey'}}>
-                          DETAILS
-                        </h4>
-                        <div className={classes.img}>
-                        <Avatar alt="Remy Sharp" src={defaultAvatar} className={classes.large} />
-                        </div>
-                        <List>
-                    {/* Auto Init Workflow */}
-                    <ListItem style={{margin:0,padding:0}}>
-                      <ListItemText
-                        style={{ color: "black" }}
-                        primary="Name"
-                        secondary={
-                          componentState.selectedVendor ?
-                          componentState.selectedVendor.level1.vendorName:"..." 
-                        }
-                      />
-                    </ListItem>
-                    <Divider />
-                    <ListItem style={{margin:0,padding:0}}>
-                      <ListItemText
-                        style={{ color: "black" }}
-                        primary="Email"
-                        secondary={
-                          componentState.selectedVendor ?
-                          componentState.selectedVendor.level1.email:"..." 
-                        }
-                      />
-                    </ListItem>
-                    <Divider />
-                    <ListItem style={{margin:0,padding:0}}>
-                      <ListItemText
-                        style={{ color: "black" }}
-                        primary="Contact"
-                        secondary={
-                          componentState.selectedVendor ?
-                          componentState.selectedVendor.level1.contactNumber:"..." 
-                        }
-                      />
-                    </ListItem>
-                    <Divider />
-                    <ListItem style={{margin:0,padding:0}}>
-                      <ListItemText
-                        style={{ color: "black" }}
-                        primary="License Number"
-                        secondary={
-                          componentState.selectedVendor ?
-                          componentState.selectedVendor.level1.licenseNumber:"..." 
-                        }
-                      />
-                    </ListItem>
-                    <Divider />
-                    </List>
-                      </CardBody>:
-                      <CardBody>
-                      <h4 className={classes.cardCategory} style={{color:'grey'}}>
-                        DETAILS
-                      </h4>
-                      <div className={classes.img}>
-                      <Avatar alt="Remy Sharp" src={defaultAvatar} className={classes.large} />
-                      </div>
-                      <List>
-                  {/* Auto Init Workflow */}
-                  <ListItem style={{margin:0,padding:0}}>
-                    <ListItemText
-                      style={{ color: "black" }}
-                      primary="Name"
-                      secondary={
-                        componentState.selectedCustomer ?
-                        componentState.selectedCustomer.organizationName:"..." 
-                      }
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem style={{margin:0,padding:0}}>
-                    <ListItemText
-                      style={{ color: "black" }}
-                      primary="PBR Name"
-                      secondary={
-                        componentState.selectedCustomer ?
-                        componentState.selectedCustomer.adminLoginName:"..." 
-                      }
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem style={{margin:0,padding:0}}>
-                    <ListItemText
-                      style={{ color: "black" }}
-                      primary="PBR Email"
-                      secondary={
-                        componentState.selectedCustomer ?
-                        componentState.selectedCustomer.primaryBusinessRepresentativeEmail:"..." 
-                      }
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem style={{margin:0,padding:0}}>
-                    <ListItemText
-                      style={{ color: "black" }}
-                      primary="PBR Contact"
-                      secondary={
-                        componentState.selectedCustomer ?
-                        componentState.selectedCustomer.primaryBusinessRepresentativeCellNumber:"..." 
-                      }
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem style={{margin:0,padding:0}}>
-                    <ListItemText
-                      style={{ color: "black" }}
-                      primary="Address"
-                      secondary={
-                        componentState.selectedCustomer ?
-                        componentState.selectedCustomer.Address:"..." 
-                      }
-                    />
-                  </ListItem>
-                  <Divider />
-                  </List>
-                    </CardBody>
-                      }
-                      </Card>
-
-                    </GridItem>
-                  </GridContainer>
-                </GridItem>
-                :""}
-                <GridItem xs={9} sm={9} md={9} lg={props.vendor && props.org ? 12 : 9}>
-                  <GridContainer>
-                    <GridItem xs={12} sm={12} md={4} lg={4}>
-                      <Card
-                        style={{
-                          backgroundColor: "#56ab2f",
-                          background:
-                            "-webkit-linear-gradient(to right, #56ab2f, #a8e063)",
-                          background:
-                            "linear-gradient(to right, #56ab2f, #a8e063)",
-                          paddingLeft: 20,
-                          paddingTop: 10,
-                          paddingBottom: 20,
-                          paddingRight: 20,
-                          color: "white",
-                        }}
-                      >
-                        <h4 className={classes.cardCategory}>PAID</h4>
-                        <Divider style={{ background: "white" }} />
-                        <h5 className={classes.cardTitle}>
-                          {componentState.currencyCode}{" "}
-                          {componentState.fullPaid.toFixed(2)}
-                        </h5>
-                      </Card>
-                    </GridItem>
-                    <GridItem xs={12} sm={6} md={4} lg={4}>
-                      <Card
-                        style={{
-                          backgroundColor: "#ffb75e",
-                          background:
-                            "-webkit-linear-gradient(to right, #ffb75e, #ed8f03)",
-                          background:
-                            "linear-gradient(to right, #ffb75e, #ed8f03)",
-                          paddingLeft: 20,
-                          paddingTop: 10,
-                          paddingBottom: 20,
-                          paddingRight: 20,
-                          color: "white",
-                        }}
-                      >
-                        <h4 className={classes.cardCategory}>PENDING</h4>
-                        <Divider style={{ background: "white" }} />
-                        <h5 className={classes.cardTitle}>
-                          {componentState.currencyCode}{" "}
-                          {componentState.toBePaid.toFixed(2)}
-                        </h5>
-                      </Card>
-                    </GridItem>
-                    <GridItem xs={12} sm={6} md={4} lg={4}>
-                      <Card
-                        style={{
-                          backgroundColor: "#f85032",
-                          background:
-                            "-webkit-linear-gradient(to right, #f85032, #e73827)",
-                          background:
-                            "linear-gradient(to right, #f85032, #e73827)",
-                          paddingLeft: 20,
-                          paddingTop: 10,
-                          paddingBottom: 20,
-                          paddingRight: 20,
-                          color: "white",
-                        }}
-                      >
-                        <h4 className={classes.cardCategory}>OVERDUE</h4>
-                        <Divider style={{ background: "white" }} />
-                        <h5 className={classes.cardTitle}>
-                          {componentState.currencyCode}{" "}
-                          {componentState.overDueInvoices.toFixed(2)}
-                        </h5>
-                      </Card>
-                    </GridItem>
-                  </GridContainer>
-                  <GridContainer>
-                    <GridItem xs={12} sm={12} md={12}>
-                      <Card profile>
-                        <CardBody profile>
-                          <Wizard
-                            validate
-                            steps={[
-                              {
-                                stepName: "Transactions",
-                                stepComponent: Step1,
-                                stepId: "transactions",
-                              },
-                              {
-                                stepName: "Invoices",
-                                stepComponent: Step2,
-                                stepId: "invoices",
-                              },
-                            ]}
-                            invoices={componentState.invoices}
-                            transactions={componentState.payments}
-                            loading={loading}
-                            isVendor={isVendor}
-                          />
-                        </CardBody>
+                        {!isVendor ? (
+                          <CardBody>
+                            <h4
+                              className={classes.cardCategory}
+                              style={{ color: "grey" }}
+                            >
+                              DETAILS
+                            </h4>
+                            <div className={classes.img}>
+                              <Avatar
+                                alt="Remy Sharp"
+                                src={defaultAvatar}
+                                className={classes.large}
+                              />
+                            </div>
+                            <List>
+                              {/* Auto Init Workflow */}
+                              <ListItem style={{ margin: 0, padding: 0 }}>
+                                <ListItemText
+                                  style={{ color: "black" }}
+                                  primary="Name"
+                                  secondary={
+                                    componentState.selectedVendor
+                                      ? componentState.selectedVendor.level1
+                                          .vendorName
+                                      : "..."
+                                  }
+                                />
+                              </ListItem>
+                              <Divider />
+                              <ListItem style={{ margin: 0, padding: 0 }}>
+                                <ListItemText
+                                  style={{ color: "black" }}
+                                  primary="Email"
+                                  secondary={
+                                    componentState.selectedVendor
+                                      ? componentState.selectedVendor.level1
+                                          .email
+                                      : "..."
+                                  }
+                                />
+                              </ListItem>
+                              <Divider />
+                              <ListItem style={{ margin: 0, padding: 0 }}>
+                                <ListItemText
+                                  style={{ color: "black" }}
+                                  primary="Contact"
+                                  secondary={
+                                    componentState.selectedVendor
+                                      ? componentState.selectedVendor.level1
+                                          .contactNumber
+                                      : "..."
+                                  }
+                                />
+                              </ListItem>
+                              <Divider />
+                              <ListItem style={{ margin: 0, padding: 0 }}>
+                                <ListItemText
+                                  style={{ color: "black" }}
+                                  primary="License Number"
+                                  secondary={
+                                    componentState.selectedVendor
+                                      ? componentState.selectedVendor.level1
+                                          .licenseNumber
+                                      : "..."
+                                  }
+                                />
+                              </ListItem>
+                              <Divider />
+                            </List>
+                          </CardBody>
+                        ) : (
+                          <CardBody>
+                            <h4
+                              className={classes.cardCategory}
+                              style={{ color: "grey" }}
+                            >
+                              DETAILS
+                            </h4>
+                            <div className={classes.img}>
+                              <Avatar
+                                alt="Remy Sharp"
+                                src={defaultAvatar}
+                                className={classes.large}
+                              />
+                            </div>
+                            <List>
+                              {/* Auto Init Workflow */}
+                              <ListItem style={{ margin: 0, padding: 0 }}>
+                                <ListItemText
+                                  style={{ color: "black" }}
+                                  primary="Name"
+                                  secondary={
+                                    componentState.selectedCustomer
+                                      ? componentState.selectedCustomer
+                                          .organizationName
+                                      : "..."
+                                  }
+                                />
+                              </ListItem>
+                              <Divider />
+                              <ListItem style={{ margin: 0, padding: 0 }}>
+                                <ListItemText
+                                  style={{ color: "black" }}
+                                  primary="PBR Name"
+                                  secondary={
+                                    componentState.selectedCustomer
+                                      ? componentState.selectedCustomer
+                                          .adminLoginName
+                                      : "..."
+                                  }
+                                />
+                              </ListItem>
+                              <Divider />
+                              <ListItem style={{ margin: 0, padding: 0 }}>
+                                <ListItemText
+                                  style={{ color: "black" }}
+                                  primary="PBR Email"
+                                  secondary={
+                                    componentState.selectedCustomer
+                                      ? componentState.selectedCustomer
+                                          .primaryBusinessRepresentativeEmail
+                                      : "..."
+                                  }
+                                />
+                              </ListItem>
+                              <Divider />
+                              <ListItem style={{ margin: 0, padding: 0 }}>
+                                <ListItemText
+                                  style={{ color: "black" }}
+                                  primary="PBR Contact"
+                                  secondary={
+                                    componentState.selectedCustomer
+                                      ? componentState.selectedCustomer
+                                          .primaryBusinessRepresentativeCellNumber
+                                      : "..."
+                                  }
+                                />
+                              </ListItem>
+                              <Divider />
+                              <ListItem style={{ margin: 0, padding: 0 }}>
+                                <ListItemText
+                                  style={{ color: "black" }}
+                                  primary="Address"
+                                  secondary={
+                                    componentState.selectedCustomer
+                                      ? componentState.selectedCustomer.Address
+                                      : "..."
+                                  }
+                                />
+                              </ListItem>
+                              <Divider />
+                            </List>
+                          </CardBody>
+                        )}
                       </Card>
                     </GridItem>
                   </GridContainer>
                 </GridItem>
-              </GridContainer>
-            </div>
+              ) : (
+                ""
+              )}
+              <GridItem
+                xs={9}
+                sm={9}
+                md={9}
+                lg={props.vendor && props.org ? 12 : 9}
+              >
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={4} lg={4}>
+                    <Card
+                      style={{
+                        backgroundColor: "#56ab2f",
+                        background:
+                          "-webkit-linear-gradient(to right, #56ab2f, #a8e063)",
+                        background:
+                          "linear-gradient(to right, #56ab2f, #a8e063)",
+                        paddingLeft: 20,
+                        paddingTop: 10,
+                        paddingBottom: 20,
+                        paddingRight: 20,
+                        color: "white",
+                      }}
+                    >
+                      <h4 className={classes.cardCategory}>PAID</h4>
+                      <Divider style={{ background: "white" }} />
+                      <h5 className={classes.cardTitle}>
+                        {componentState.currencyCode}{" "}
+                        {componentState.fullPaid.toFixed(2)}
+                      </h5>
+                    </Card>
+                  </GridItem>
+                  <GridItem xs={12} sm={6} md={4} lg={4}>
+                    <Card
+                      style={{
+                        backgroundColor: "#ffb75e",
+                        background:
+                          "-webkit-linear-gradient(to right, #ffb75e, #ed8f03)",
+                        background:
+                          "linear-gradient(to right, #ffb75e, #ed8f03)",
+                        paddingLeft: 20,
+                        paddingTop: 10,
+                        paddingBottom: 20,
+                        paddingRight: 20,
+                        color: "white",
+                      }}
+                    >
+                      <h4 className={classes.cardCategory}>PENDING</h4>
+                      <Divider style={{ background: "white" }} />
+                      <h5 className={classes.cardTitle}>
+                        {componentState.currencyCode}{" "}
+                        {componentState.toBePaid.toFixed(2)}
+                      </h5>
+                    </Card>
+                  </GridItem>
+                  <GridItem xs={12} sm={6} md={4} lg={4}>
+                    <Card
+                      style={{
+                        backgroundColor: "#f85032",
+                        background:
+                          "-webkit-linear-gradient(to right, #f85032, #e73827)",
+                        background:
+                          "linear-gradient(to right, #f85032, #e73827)",
+                        paddingLeft: 20,
+                        paddingTop: 10,
+                        paddingBottom: 20,
+                        paddingRight: 20,
+                        color: "white",
+                      }}
+                    >
+                      <h4 className={classes.cardCategory}>OVERDUE</h4>
+                      <Divider style={{ background: "white" }} />
+                      <h5 className={classes.cardTitle}>
+                        {componentState.currencyCode}{" "}
+                        {componentState.overDueInvoices.toFixed(2)}
+                      </h5>
+                    </Card>
+                  </GridItem>
+                </GridContainer>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={12}>
+                    <Card profile>
+                      <CardBody profile>
+                        <Wizard
+                          validate
+                          steps={[
+                            {
+                              stepName: "Transactions",
+                              stepComponent: Step1,
+                              stepId: "transactions",
+                            },
+                            {
+                              stepName: "Invoices",
+                              stepComponent: Step2,
+                              stepId: "invoices",
+                            },
+                          ]}
+                          invoices={componentState.invoices}
+                          transactions={componentState.payments}
+                          loading={loading}
+                          isVendor={isVendor}
+                          openAdvanceView={viewQrView}
+                        />
+                      </CardBody>
+                    </Card>
+                  </GridItem>
+                </GridContainer>
+              </GridItem>
+            </GridContainer>
+          </div>
+        </Animated>
+      ) : (
+        ""
+      )}
+      {/* Advance View Model */}
+      {qrModal ? (
+        <Animated
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
+          animationInDuration={1000}
+          animationOutDuration={1000}
+          isVisible={animateQr}
+        >
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={12} className={classes.center}>
+              <Card>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
+                    <h4 className={classes.cardTitleText}>360&#176; View</h4>
+                  </CardIcon>
+                  <Button
+                    color="danger"
+                    round
+                    style={{ float: "right" }}
+                    className={classes.marginRight}
+                    onClick={() => goBack()}
+                  >
+                    Go Back
+                  </Button>
+                </CardHeader>
+                <CardBody>
+                  <FileAdvanceView isVendor={isVendor} fileData={row} />
+                </CardBody>
+              </Card>
+            </GridItem>
+          </GridContainer>
         </Animated>
       ) : (
         ""

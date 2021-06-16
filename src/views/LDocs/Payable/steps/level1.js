@@ -29,7 +29,7 @@ const styles = {
   buttonRight: {},
 };
 
-export default function Step1({ transactions, loading, isVendor }) {
+export default function Step1({ transactions, loading, isVendor, openAdvanceView}) {
   const useStyles = makeStyles(styles);
   const classes = useStyles();
   const [animateStep, setAnimateStep] = useState(true);
@@ -38,12 +38,17 @@ export default function Step1({ transactions, loading, isVendor }) {
   useEffect(() => {
     setData(
       transactions.map((prop, key) => {
+        let payload  = {
+          invoiceId : prop.invoiceId,
+          version : prop.version,
+          vendorId : prop.vendorId,
+        };
         return {
           paymentID: prop.paymentID,
           transactionAmount: `${prop.currencyCode}  ${parseFloat(
             prop.paidAmount
           ).toFixed(2)}`,
-          invoiceID: prop.invoiceId,
+          invoiceID: <span style={{cursor:'pointer', color:'blue'}} onClick={()=>openAdvanceView(payload)}>{prop.invoiceId}</span>,
           payerID: isVendor
             ? `${prop.currencyCode}  ${parseFloat(prop.transactionFee).toFixed(
                 2

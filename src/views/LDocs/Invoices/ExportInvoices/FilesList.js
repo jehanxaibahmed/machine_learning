@@ -60,7 +60,7 @@ import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import { addZeroes, formatDateTime } from "../../Functions/Functions";
+import { addZeroes, formatDate, formatDateTime } from "../../Functions/Functions";
 import {
   Menu,
   Item,
@@ -132,7 +132,7 @@ export default function ExportList(props) {
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
   const classes = useStyles();
-  const [componentName, setComponentName] = React.useState("Export To Fusion");
+  const [componentName, setComponentName] = React.useState("Financial System");
   const [classicModal, setClassicModal] = React.useState(false);
   const [tagModal, setTagModal] = React.useState(false);
   const [qrModal, setQrModal] = React.useState(false);
@@ -431,7 +431,7 @@ export default function ExportList(props) {
           ),
           dueDate: (
             <MenuProvider data={prop} id='menu_id'>
-              {dateFormat(prop.dueDate, "dd-mm-yyyy")}
+              {formatDate(prop.dueDate)}
             </MenuProvider>
           ),
           vendorName: (

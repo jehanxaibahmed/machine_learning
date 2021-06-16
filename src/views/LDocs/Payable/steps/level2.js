@@ -16,6 +16,7 @@ import ReactTable from "react-table";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
 import { currentTracking } from "views/LDocs/Functions/Functions";
 import { addZeroes } from "views/LDocs/Functions/Functions";
+import { formatDate } from "views/LDocs/Functions/Functions";
 const sweetAlertStyle = makeStyles(styles2);
 let Token = localStorage.getItem("cooljwt");
 const styles = {
@@ -30,7 +31,7 @@ const styles = {
   buttonRight: {},
 };
 
-export default function Step2({invoices, loading}) {
+export default function Step2({invoices, loading, openAdvanceView}) {
   const useStyles = makeStyles(styles);
   const classes = useStyles();
   const [animateStep, setAnimateStep] = useState(true);
@@ -42,11 +43,16 @@ export default function Step2({invoices, loading}) {
       invoices.map((prop, key) => {
         var currentStatus = currentTracking(prop.trackingStatus);
         let isCorrectionRequiredInWorkflow = prop.workFlowStatus == "correctionRequired";
+        let payload  = {
+          invoiceId : prop.invoiceId,
+          version : prop.version,
+          vendorId : prop.vendorId,
+        };
         return {
-          invoiceId:prop.invoiceId,
+          invoiceId:<span style={{cursor:'pointer', color:'blue'}} onClick={()=>openAdvanceView(payload)}>{prop.invoiceId}</span>,
           amount: `${prop.LC_currency.Code}   ${addZeroes(prop.netAmt_bc)}`,
           dueDate:(<div className="actions-right">
-          {prop.dueDate}</div>),
+          {formatDate(prop.dueDate)}</div>),
           balanceDue:`${prop.LC_currency.Code}   ${addZeroes(prop.balanceDue)}`,
           invoiceDate: formatDateTime(prop.createdDate),
           status: currentStatus.status == "rejected" ? (

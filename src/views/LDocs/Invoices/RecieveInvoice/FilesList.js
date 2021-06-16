@@ -62,6 +62,7 @@ import Filters from "./Filters";
 import {
   addZeroes,
   currentTracking,
+  formatDate,
   formatDateTime,
 } from "../../Functions/Functions";
 import {
@@ -470,7 +471,7 @@ export default function FilesList(props) {
           ),
           date: (
             <MenuProvider data={prop} id='menu_id'>
-              {formatDateTime(prop.dueDate)}
+              {formatDate(prop.dueDate)}
             </MenuProvider>
           ),
           vendorName: (

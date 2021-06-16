@@ -86,6 +86,23 @@ export const formatDateTime = (date) => {
   return someday;
 };
 
+export const formatDate = (date) => {
+  let Token = localStorage.getItem('cooljwt');
+  let user = jwt.decode(Token);
+  var offset;
+  if(user.tenantConfigs){
+    let tenantConfig = user.tenantConfigs;
+    let timeStamp = tenantConfig.timeZone;
+    offset = timeStamp.offset*60;
+  }else{
+    offset = moment().utcOffset();
+  }
+  console.log(offset);
+  var now = new Date(date);
+  const someday  = moment(now).utcOffset(offset).format('DD-MM-YYYY');
+  return someday;
+}
+
 export const currentTracking = (trackingStatus) => {
   let currentStatus;
   let activeStep;

@@ -76,7 +76,7 @@ function Row(props) {
   
     return (
       <React.Fragment>
-        {row.invoiceID ? 
+        {row.invoiceID  ? 
         //File
         <TableRow className={classes.root}>
           <TableCell>
@@ -105,12 +105,12 @@ function Row(props) {
           {row.WorkflowName}
         </TableCell>
         {/* <TableCell style={{color:'#3f51b5'}} align="left"> {row.WorkflowHash}</TableCell> */}
-        <TableCell align="left">{row.WorkflowId}</TableCell>
+        <TableCell align="left">{row.WorkflowID}</TableCell>
         <TableCell align="left">{row.OrganizationName}</TableCell>
         <TableCell align="left">{row.CompanyName}</TableCell>
         <TableCell align="left">{row.ReviewStepsCount}</TableCell>
         <TableCell align="left">{row.ActionStepsCount}</TableCell>
-        <TableCell align="left">{row.updatedBy !== "" ? row.updatedBy : row.createdBy}</TableCell>
+        <TableCell align="left">{row.UpdatedBy !== "" || "NONE" ? row.UpdatedBy : row.CreatedBy}</TableCell>
         
       </TableRow>
         }

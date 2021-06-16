@@ -10,6 +10,8 @@ import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
 import Customers from "views/LDocs/Customers/Customers";
 import Payable from "views/LDocs/Payable/Payable";
+import ReceiptIcon from '@material-ui/icons/Receipt';
+
 
 var vendorRoutes = [
   {
@@ -49,7 +51,7 @@ var vendorRoutes = [
     path: "/customerledger",
     name: "Customer 360",
     rtlName: "لوحة القيادة",
-    icon: LocalAtmIcon,
+    icon: ReceiptIcon,
     component: Payable,
     layout: "/vendor",
   },

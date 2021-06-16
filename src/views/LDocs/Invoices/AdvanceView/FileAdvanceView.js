@@ -698,7 +698,7 @@ export default function FileAdvanceView(props) {
               <Stepper orientation="vertical" connector={<QontoConnector />}>
                 {blockChainData.map((data, index) => (
                   <Step active={true} key={index}>
-                    <StepLabel>{index}</StepLabel>
+                    {/* <StepLabel>{index}</StepLabel> */}
                     <StepContent>
                       <div>{getStepContent(data, index)}</div>
                     </StepContent>

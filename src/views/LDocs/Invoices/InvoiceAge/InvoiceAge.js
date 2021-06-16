@@ -28,7 +28,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
-import { addZeroes, formatDateTime } from "views/LDocs/Functions/Functions";
+import { addZeroes, formatDateTime, formatDate } from "views/LDocs/Functions/Functions";
 
 const styles = makeStyles((theme) => ({
   cardIconTitle: {
@@ -97,7 +97,7 @@ export default function InvoiceAge(props) {
     const user = jwt.decode(Token);
     axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceAgeing/${user.orgDetail.organizationId}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceOrg/${user.orgDetail.organizationId}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -170,15 +170,16 @@ export default function InvoiceAge(props) {
                         return (
                         <TableRow key={row.invoiceId}>
                           <TableCell component="th" scope="row">
-                            {row.invoiceId}
+                            {row.invoiceId} 
                           </TableCell>
                           <TableCell align="right">{formatDateTime(row.createdDate)}</TableCell>
-                          <TableCell align="right">{formatDateTime(row.dueDate)}</TableCell>
+                          <TableCell align="right">{formatDate(row.dueDate)}</TableCell>
                           <TableCell style={{ width: 600 }}>
                             <div style={{ position: "relative" }}>
                               <BorderLinearProgress
                                 style={{
-                                  background: remainingDays < 0 ? '#ff0000b8' : ''
+                                  // background: remainingDays < 0 ? '#ff0000b8' : ''
+                                  background: '#9e2654'
                                 }}
                                 variant="determinate"
                                 value={percentage}
@@ -199,7 +200,7 @@ export default function InvoiceAge(props) {
                             </div>
                           </TableCell>
                           <TableCell align="right">
-                            SAR {addZeroes(row.netAmt)}
+                            {row.LC_currency.Code} {addZeroes(row.netAmt_bc)}
                           </TableCell>
                         </TableRow>
                        )})}

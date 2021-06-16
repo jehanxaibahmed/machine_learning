@@ -90,6 +90,7 @@ const [statistics, setStatistics] = React.useState({
 });
 const [graphData, setGraphData] = React.useState([]);
   const getGraphData = async () => {
+    decoded = jwt.decode(Token);
     if(!decoded.isVendor){
     var data = {
       tenantId:decoded.tenantId,
@@ -321,14 +322,14 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
               <CardIcon color="danger">
               <CenterFocusWeakIcon/>
               </CardIcon>
-              <p className={classes.cardCategory}>Open Invoices</p>
+              <p className={classes.cardCategory}>Ready To Invoices</p>
               {loadingStats ? <LinearProgress  />:<h3 className={classes.cardTitle}>{statistics.openInvoices}</h3>}
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
               <CenterFocusWeakIcon/>
                 <Link to="#">
-                  Show Open Invoices
+                  Show Ready To Pay Invoices
                 </Link>
               </div>
             </CardFooter>
@@ -340,14 +341,14 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
               <CardIcon color="info">
               <CenterFocusStrongIcon />
               </CardIcon>
-              <p className={classes.cardCategory}>Closed Invoices</p>
+              <p className={classes.cardCategory}>Paid Invoices</p>
               {loadingStats ? <LinearProgress  />: <h3 className={classes.cardTitle}>{statistics.closedInvoices}</h3>}
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
               <CenterFocusStrongIcon />
                 <Link to="#">
-                  Show Closed Invoices
+                  Show Paid Invoices
                 </Link>
               </div>
             </CardFooter>
@@ -473,7 +474,7 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
             </Card>
           </GridItem> 
       </GridContainer>
-      <h3>My Listings</h3>
+      <h3>Last 5 Invoices</h3>
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
           <Card>

@@ -66,7 +66,7 @@ import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import { addZeroes, formatDateTime } from "../../Functions/Functions";
+import { addZeroes, formatDate, formatDateTime } from "../../Functions/Functions";
 import {
   Menu,
   Item,
@@ -481,7 +481,7 @@ export default function PaymentList(props) {
           ),
           dueDate: (
             <MenuProvider data={prop} id='menu_id'>
-              {dateFormat(prop.dueDate, "dd-mm-yyyy")}
+              {formatDate(prop.dueDate)}
               <br />
               (Net-{prop.paymentTerms})
             </MenuProvider>

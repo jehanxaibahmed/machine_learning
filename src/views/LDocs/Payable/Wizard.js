@@ -221,7 +221,8 @@ class Wizard extends React.Component {
                     invoices={this.props.invoices}
                     transactions={this.props.transactions}
                     loading={this.props.loading}     
-                    isVendor={this.props.isVendor}     
+                    isVendor={this.props.isVendor}   
+                    openAdvanceView={this.props.openAdvanceView}  
                   />
                 </div>
               );

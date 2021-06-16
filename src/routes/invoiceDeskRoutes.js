@@ -14,7 +14,7 @@ import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
-
+import ReceiptIcon from '@material-ui/icons/Receipt';
 //Components
 
 import FilesList from "views/LDocs/Invoices/RecieveInvoice/FilesList";
@@ -148,7 +148,7 @@ var invoiceRoutes = [
         path: "/vendorledger",
         name: "Vendor 360",
         rtlName: "لوحة القيادة",
-        icon: LocalAtmIcon,
+        icon: ReceiptIcon,
         component: Payable,
         layout: "/invoice",
       },
