@@ -145,7 +145,7 @@ export default function Step1({ transactions, loading, isVendor, openAdvanceView
                   accessor: "paymentChannel",
                 },
                 {
-                  Header: "Fait / Crypto",
+                  Header: "Fiat / Crypto",
                   accessor: "isFait",
                 },
                 {

@@ -102,19 +102,19 @@ export default function GeneralConfigrations() {
         let tenantConfig = response.data.tenantConfig;
         setState((state) => ({
           ...state,
-          initWorkflow: tenantConfig.autoInitWorkFlow,
-          payments: tenantConfig.enablePayments,
-          emailNotification: tenantConfig.enableEmailNotify,
-          secure: tenantConfig.emailConfig.secure,
+          initWorkflow: tenantConfig ? tenantConfig.autoInitWorkFlow : false,
+          payments: tenantConfig ? tenantConfig.enablePayments : false,
+          emailNotification: tenantConfig ? tenantConfig.enableEmailNotify: false,
+          secure: tenantConfig.emailConfig ? tenantConfig.emailConfig.secure:false,
           values: {
             ...state.values,
-            smtp: tenantConfig.emailConfig.SMTPHost,
-            pass: tenantConfig.emailConfig.authPassword,
-            user: tenantConfig.emailConfig.authUser,
-            port: tenantConfig.emailConfig.port,
+            smtp: tenantConfig.emailConfig ? tenantConfig.emailConfig.SMTPHost : "",
+            pass: tenantConfig.emailConfig ? tenantConfig.emailConfig.authPassword : "",
+            user: tenantConfig.emailConfig ? tenantConfig.emailConfig.authUser : "",
+            port: tenantConfig.emailConfig ? tenantConfig.emailConfig.port : "",
           },
         }));
-        setSelectedTimezone(tenantConfig.timeZone);
+        setSelectedTimezone(tenantConfig.timeZone ? tenantConfig.timeZone: "");
         console.log(tenantConfig);
       })
       .catch((err) => {

@@ -28,6 +28,7 @@ import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsTokenExpired } from "actions";
+import Refresh from "@material-ui/icons/Refresh";
 
 const styles = {
   cardIconTitle: {
@@ -61,10 +62,11 @@ export default function Title() {
   const [organizations, setOrganizations] = React.useState([]);
   const [companies, setCompanies] = React.useState([]);
   const [decoded, setDecoded] = React.useState(null);
+  let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
 
 
   React.useEffect(() => {
-    let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
+    userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     setDecoded(userDetail);
     getOrganizations(userDetail);
   }, []);
@@ -355,6 +357,17 @@ export default function Title() {
                 >
                   Add New Designation
                 </Button>
+                <Tooltip
+                  id="tooltip-top"
+                  title="Refresh"
+                  style={{ float: "right" }}
+                  placement="bottom"
+                  classes={{ tooltip: classes.tooltip }}
+                >
+                <Button onClick={()=>getOrganizations(userDetail)} simple color="info" justIcon>
+                    <Refresh className={classes.underChartIcons} />
+                  </Button>
+                </Tooltip>
               </CardHeader>
               <CardBody>
                 {isLoading ? (

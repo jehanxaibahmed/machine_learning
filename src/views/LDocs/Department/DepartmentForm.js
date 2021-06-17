@@ -32,6 +32,7 @@ import jwt from "jsonwebtoken";
 import ColumnView from "./ColumnView";
 import YoutubeSearchedForIcon from '@material-ui/icons/YoutubeSearchedFor';
 import { setIsTokenExpired } from "actions";
+import Refresh from "@material-ui/icons/Refresh";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -67,10 +68,11 @@ export default function Department() {
   const [decoded, setDecoded] = React.useState(null);
   const [view, setView] = React.useState('grid');
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  let userDetail = jwt.decode(Token);
 
 
   React.useEffect(() => {
-    let userDetail = jwt.decode(Token);
+    userDetail = jwt.decode(Token);
     setDecoded(userDetail);
     getOrganizations(userDetail);
   }, []);
@@ -410,6 +412,17 @@ export default function Department() {
                 >
                   Add New
                 </Button>
+                <Tooltip
+                  id="tooltip-top"
+                  title="Refresh"
+                  style={{ float: "right" }}
+                  placement="bottom"
+                  classes={{ tooltip: classes.tooltip }}
+                >
+                <Button onClick={()=>getOrganizations(userDetail)} simple color="info" justIcon>
+                    <Refresh className={classes.underChartIcons} />
+                  </Button>
+                </Tooltip>
               </CardHeader>
               <CardBody>
                 {isLoading ? (

@@ -27,6 +27,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import { Animated } from "react-animated-css";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsTokenExpired } from "actions";
+import Refresh from "@material-ui/icons/Refresh";
 
 
 const styles = {
@@ -235,6 +236,17 @@ export default function Organization() {
                 >
                   Add New
                 </Button>
+                <Tooltip
+                  id="tooltip-top"
+                  title="Refresh"
+                  style={{ float: "right" }}
+                  placement="bottom"
+                  classes={{ tooltip: classes.tooltip }}
+                >
+                  <Button onClick={getOrganizations} simple color="info" justIcon>
+                    <Refresh className={classes.underChartIcons} />
+                  </Button>
+                </Tooltip>
               </CardHeader>
               <CardBody>
                 {isLoading ? (

@@ -26,7 +26,8 @@ import  Vendor from "views/LDocs/Vendor/Vendor";
 import Verify from "views/LDocs/Verify/Verify";
 import Currency from "views/LDocs/Currency/Currency";
 import GeneralConfigrations from "views/LDocs/Configrations/GeneralConfigrations";
-
+import DescriptionIcon from '@material-ui/icons/Description';
+import InvoiceConfigrations from "views/LDocs/Configrations/InvoiceConfigration";
 
 
 var adminRoutes = [
@@ -111,6 +112,13 @@ var adminRoutes = [
         name: "General Configrations",
         icon: PhonelinkSetupSharpIcon,
         component: GeneralConfigrations,
+        layout: "/admin",
+      },
+      {
+        path: "/invoiceconfigration",
+        name: "Invoice Configrations",
+        icon: DescriptionIcon,
+        component: InvoiceConfigrations,
         layout: "/admin",
       },
       {
