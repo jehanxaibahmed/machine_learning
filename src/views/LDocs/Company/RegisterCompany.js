@@ -6,6 +6,8 @@ import {
   makeStyles,
   CircularProgress,
   MenuItem,
+  Tooltip,
+  IconButton
 } from "@material-ui/core";
 import SweetAlert from "react-bootstrap-sweetalert";
 // core components
@@ -23,6 +25,7 @@ import styles from "assets/jss/material-dashboard-pro-react/views/validationForm
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsTokenExpired } from "actions";
+import Refresh from "@material-ui/icons/Refresh";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -369,10 +372,10 @@ export default function Register(props) {
                   />
                 </GridItem>
                 <GridItem
-                  xs={12}
-                  sm={12}
-                  md={4}
-                  lg={4}
+                  xs={10}
+                  sm={10}
+                  md={3}
+                  lg={3}
                   style={{ marginTop: "10px", marginBottom: "10px" }}
                 >
                   <TextField
@@ -416,6 +419,25 @@ export default function Register(props) {
                       );
                     })}
                   </TextField>
+                </GridItem>
+                <GridItem 
+                 xs={2}
+                 sm={2}
+                 md={1}
+                 lg={1}
+                 style={{ marginTop: "20px", marginBottom: "10px" }}
+                >
+                <Tooltip
+                  id="tooltip-top"
+                  title="Refresh"
+                  style={{ float: "right" }}
+                  placement="bottom"
+                  classes={{ tooltip: classes.tooltip }}
+                >
+                <IconButton onClick={()=>getOrganizations()} simple color="info" justIcon>
+                    <Refresh className={classes.underChartIcons} />
+                  </IconButton>
+                </Tooltip>
                 </GridItem>
                 <GridItem
                   xs={12}

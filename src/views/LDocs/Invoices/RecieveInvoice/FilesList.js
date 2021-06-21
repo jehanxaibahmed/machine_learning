@@ -1615,6 +1615,17 @@ export default function FilesList(props) {
                   >
                     Export
                   </Button>
+                  <Tooltip
+                  id="tooltip-top"
+                  title="Refresh"
+                  style={{ float: "right" }}
+                  placement="bottom"
+                  classes={{ tooltip: classes.tooltip }}
+                >
+                <Button onClick={()=>getMyFiles(userDetail, false)} simple color="info" justIcon>
+                    <Refresh className={classes.underChartIcons} />
+                  </Button>
+                </Tooltip>
                 </CardHeader>
                 <CardBody>
                   {isLoading ? (
