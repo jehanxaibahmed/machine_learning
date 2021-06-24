@@ -28,7 +28,8 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 //Redux
@@ -55,60 +56,7 @@ export default function Filter(props) {
   const [alert, setAlert] = React.useState(null);
   const dispatch = useDispatch();
 
-  const warningAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        warning
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Warning!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={
-          sweetClass.button + " " + sweetClass.warning
-        }
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => { hideAlert(); props.closeModal() }}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={
-          sweetClass.button + " " + sweetClass.success
-        }
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={
-          sweetClass.button + " " + sweetClass.danger
-        }
-      >
-        {msg}
-        <br />
-    For Details Please Contact {process.env.REACT_APP_LDOCS_FOOTER_COPYRIGHT_LEVEL_1}
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    setAlert(null);
-  };
-
+ 
   const getValues = () => {
     props.setFilters(0,formState);            
   }

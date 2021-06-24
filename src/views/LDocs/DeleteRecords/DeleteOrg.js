@@ -163,7 +163,7 @@ export default function DeleteOrg(props) {
                <OtpCheck setOtpValue={setOtpValue} /> 
           </Dialog>
         : ""}
-        {alert}        
+                 
         <GridItem
             xs={12}
             sm={12}

@@ -13,7 +13,7 @@ import {
   Card,
 } from "@material-ui/core";
 import GridItem from "components/Grid/GridItem.js";
-import { formatDateTime, addZeroes } from "../../../Functions/Functions";
+import { formatDateTime, addZeroes } from "views/LDocs/Functions/Functions";
 import GetAppIcon from '@material-ui/icons/GetApp';
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";

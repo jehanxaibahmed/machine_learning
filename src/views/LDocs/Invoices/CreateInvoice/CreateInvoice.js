@@ -17,8 +17,10 @@ import {
   Checkbox,
   Backdrop,
 } from "@material-ui/core";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import swal from 'sweetalert';
 import { Redirect } from "react-router-dom";
+
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -49,8 +51,9 @@ import Items from "./Items";
 import {
   addZeroes,
   conversionRate,
+  successAlert, errorAlert, msgAlert,
   formatDateTime,
-} from "../../Functions/Functions";
+} from "views/LDocs/Functions/Functions";
 import { Add, Person, Visibility, VisibilityOff } from "@material-ui/icons";
 import Step1 from "../../Vendor/steps/level1";
 import { defaultCurrency, VendorSites } from "./GlobalValues";
@@ -290,42 +293,7 @@ export default function CreateInvoice(props) {
         setPos([]);
       });
   };
-  const [alert, setAlert] = React.useState(null);
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideErrorAlert()}
-        onCancel={() => hideErrorAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg ? msg : ""}
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    setAlert(null);
-  };
-  const hideErrorAlert = () => {
-    setAlert(null);
-  };
-
+ 
   const getReceipts = (p) => {
     //p = PO Number
     const userDetails = jwt.decode(Token);
@@ -439,6 +407,7 @@ export default function CreateInvoice(props) {
       })
         .then((res) => {
           setReceipts(res.data);
+         
           successAlert("Receipt Has Been Generated In Oracle Fusion.");
         })
         .catch((error) => {
@@ -533,6 +502,7 @@ export default function CreateInvoice(props) {
     setSelectedFileModel(true);
   };
   const handlePdfChange = (e) => {
+    console.log(e);
     e.preventDefault();
     setPdfModal(true);
     let file = e.target.files[0];
@@ -1721,7 +1691,7 @@ export default function CreateInvoice(props) {
   };
   return (
     <div>
-      {alert}
+       
       {/* {isMarked ? <Redirect exact to="/invoice/received" /> : ''} */}
       {isCreateInvoice ? (
         <Animated
@@ -3423,7 +3393,7 @@ export default function CreateInvoice(props) {
                         round
                       >
                         {isSavingInvoice ? (
-                          <CircularProgress color="primary" />
+                          <CircularProgress style={{color:'white'}} />
                         ) : (
                           "Save Invoice"
                         )}

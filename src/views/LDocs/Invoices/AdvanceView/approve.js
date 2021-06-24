@@ -17,7 +17,8 @@ import {
 // @material-ui/icons
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import RateReview from "@material-ui/icons/RateReview";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -96,42 +97,7 @@ export default function Approve({close, invoiceData, actionDone}) {
       approveComments: "",
     },
   });
-  const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = React.useState(null);
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        Unable To Review File Please Contact{" "}
-        {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    setAlert(null);
-  };
+ 
   const handleChange = (event) => {
     event.persist();
     setFormState((formState) => ({

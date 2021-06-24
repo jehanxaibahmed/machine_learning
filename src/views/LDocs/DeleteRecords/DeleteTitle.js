@@ -206,7 +206,7 @@ export default function DeleteDept(props) {
                <OtpCheck setOtpValue={setOtpValue} /> 
           </Dialog>
         : ""}
-        {alert}      
+               
         <GridContainer style={{ marginTop: "10px", marginBottom: "20px" }}>
         <GridItem
             xs={12}

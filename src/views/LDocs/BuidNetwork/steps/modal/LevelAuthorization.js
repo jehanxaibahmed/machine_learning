@@ -27,7 +27,8 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import DeleteIcon from "@material-ui/icons/Delete";

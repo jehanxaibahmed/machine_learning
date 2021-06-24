@@ -60,7 +60,7 @@ import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import { addZeroes, formatDate, formatDateTime } from "../../Functions/Functions";
+import { addZeroes, formatDate, formatDateTime, successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
 import {
   Menu,
   Item,
@@ -71,7 +71,7 @@ import {
   Submenu,
 } from "react-contexify";
 import "react-contexify/dist/ReactContexify.min.css";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import InitWorkflow from "../InitWorkflow/InitWorkflow";
 import Pending_Invoice from "assets/img/statuses/Asset_1.png";
@@ -144,6 +144,7 @@ export default function ExportList(props) {
   const [animateBlockChain, setAnimateBlockChain] = React.useState(false);
   const [animateQr, setAnimateQr] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [exported, setExported] = React.useState(false);
   const [isViewing, setIsViewing] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [isViewingBlockChainView, setIsViewingBlockChainView] = React.useState(
@@ -172,6 +173,7 @@ export default function ExportList(props) {
     export: null,
     pos: [],
     filter: null,
+    exported:false,
     filters: {
       supplierId: true,
       poNumber: true,
@@ -669,28 +671,14 @@ export default function ExportList(props) {
         setIsLoading(false);
       });
   };
-  const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = React.useState(null);
-  //Msg Alert
-  const msgAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        alert
-        style={{ display: "block", marginTop: "-100px" }}
-        title='Info!'
-        onConfirm={() => hideErrorAlert()}
-        onCancel={() => hideErrorAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.info}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const hideErrorAlert = () => {
-    setAlert(null);
-  };
+ 
   const select = (invoice) => {
     let selectedInvoices = selected;
+    console.log(exported);
+    if(exported){
+      selectedInvoices = [];
+      setExported(false)
+    }
     if (!invoice) {
       if (selected.length == filesData.length) {
         selectedInvoices = [];
@@ -769,6 +757,8 @@ export default function ExportList(props) {
     }));
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     setExportToFusionModel(true);
+    setExported(true);
+    setSelected([]);
     axios({
       method: "post",
       url:
@@ -780,19 +770,18 @@ export default function ExportList(props) {
         cooljwt: Token,
       },
     })
-      .then((response) => {
+      .then(async (response) => {
         setFormState((formState) => ({
           ...formState,
           filter: null,
         }));
-        setSelected([]);
         let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
-        getMyFiles(userDetail, false);
+        await getMyFiles(userDetail, false);
+        
         setExportToFusionModel(false);
         notify(n == 1 ? "Exported Successfully" : "Sent For Payment");
       })
       .catch((error) => {
-        setSelected([]);
         if (error.response) {
           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
@@ -819,7 +808,7 @@ export default function ExportList(props) {
   );
   return (
     <div>
-      {alert}
+       
       {/* View File */}
       {isViewing ? (
         <Animated

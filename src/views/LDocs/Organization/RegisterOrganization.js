@@ -2,18 +2,15 @@
 import React, { useState } from "react";
 // @material-ui/core components
 import { TextField, makeStyles, CircularProgress, MenuItem } from "@material-ui/core";
-import SweetAlert from "react-bootstrap-sweetalert";
 import { getOrganizations } from "actions";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import ImageUpload from "./ImageUpload.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 // style for this view
@@ -21,6 +18,7 @@ import styles from "assets/jss/material-dashboard-pro-react/views/validationForm
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsTokenExpired } from "actions/index.js";
+import { successAlert, errorAlert }from "views/LDocs/Functions/Functions";
 
 
 const useStyles = makeStyles(styles);
@@ -94,43 +92,7 @@ export default function Register(props) {
     }
     return false;
   };
-      const sweetClass = sweetAlertStyle();
-      const [alert, setAlert] = React.useState(null);
-      const successAlert = (msg) => {
-        setAlert(
-          <SweetAlert
-            success
-            style={{ display: "block", marginTop: "-100px" }}
-            title="Success!"
-            onConfirm={() => hideAlert()}
-            onCancel={() => hideAlert()}
-            confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-          >
-            {msg}
-          </SweetAlert>
-        );
-      };
-      const errorAlert = (msg) => {
-        setAlert(
-          <SweetAlert
-            error
-            style={{ display: "block", marginTop: "-100px" }}
-            title="Error!"
-            onConfirm={() => hideErrorAlert()}
-            onCancel={() => hideErrorAlert()}
-            confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-          >
-            {msg ? msg : "Unable To Register Organization Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}"}
-          </SweetAlert>
-        );
-      };
-  const hideAlert = () => {
-        closeModal();
-        setAlert(null);
-      };
-  const hideErrorAlert = () => {
-    setAlert(null);
-  };
+     
   const handleSignUp = () => {
     setFormState((formState) => ({
       ...formState,
@@ -154,18 +116,6 @@ export default function Register(props) {
         name = "error";
         error = true;
     }
-      // if (!Check(formState.values.countryOfOrigin)) {
-      //   countryOfOrigin = "success";
-      // } else {
-      //   countryOfOrigin = "error";
-      //   error = true;
-      // }
-      // if (!Check(formState.values.tradeLicenseNumber)) {
-      //   tradeLicenseNumber = "success";
-      // } else {
-      //   tradeLicenseNumber = "error";
-      //   error = true;
-      // }
       if (!Check(formState.values.pbr)) {
         pbr = "success";
       } else {
@@ -189,24 +139,6 @@ export default function Register(props) {
        pbrloginname = "error";
        error = true;
      }
-    //  if (!Check(formState.values.pbrcellnumber)) {
-    //    pbrcellnumber = "success";
-    //  } else {
-    //    pbrcellnumber = "error";
-    //    error = true;
-    //  }
-    // if (!Check(formState.values.referenceTicket)) {
-    //   referenceTicket = "success";
-    // } else {
-    //   referenceTicket = "error";
-    //   error = true;
-    // }
-    // if (!Check(formState.values.currencyBase)) {
-    //   currencyBase = "success";
-    // } else {
-    //   currencyBase = "error";
-    //   error = true;
-    // }
     setFormState((formState) => ({
       ...formState,
       errors: {
@@ -262,6 +194,7 @@ export default function Register(props) {
            setDisplayLogo(null);
            msg = "Organization Registered Successfully! PLease Check your email and Register Organization Admin.. ";
            successAlert(msg);
+           closeModal();
          })
          .catch((error) => {
           if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
@@ -343,7 +276,7 @@ export default function Register(props) {
   }
   return (
     <GridContainer>
-      {alert}
+       
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="info" icon>

@@ -14,7 +14,8 @@ import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import { Animated } from "react-animated-css";
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 import axios from "axios";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
@@ -69,40 +70,7 @@ export default function Level1Profile(props) {
   };
   const sweetClass = sweetAlertStyle();
   const [alert, setAlert] = React.useState(null);
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        Unable To Update Profile Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    setAlert(null);
-  };
-
+  
   const saveUserLevelOne = () => {
     setFormState((formState) => ({
       ...formState,
@@ -225,7 +193,7 @@ export default function Level1Profile(props) {
       animationOutDuration={1000}
       isVisible={animateStep}
     >
-      {alert}
+       
       <GridContainer justify="center" md={12} md={12} xs={12} sm={12}>
         <GridItem
           xs={12}

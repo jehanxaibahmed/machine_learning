@@ -16,7 +16,8 @@ import {
   Typography,
   FormGroup,
 } from "@material-ui/core";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 // @material-ui/icons
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import EditIcon from '@material-ui/icons/Edit';
@@ -554,39 +555,7 @@ const viewWorkflowColumnView = (row) => {
             setApproverCheck(!approverCheck);
         }
     };
-    const sweetClass = sweetAlertStyle();
-    const [alert, setAlert] = React.useState(null);
-    const successAlert = (msg) => {
-      setAlert(
-        <SweetAlert
-          success
-          style={{ display: "block", marginTop: "-100px" }}
-          title="Success!"
-          onConfirm={() => hideAlert()}
-          onCancel={() => hideAlert()}
-          confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-        >
-          {msg}
-        </SweetAlert>
-      );
-    };
-    const errorAlert = (msg) => {
-      setAlert(
-        <SweetAlert
-          error
-          style={{ display: "block", marginTop: "-100px" }}
-          title="Error!"
-          onConfirm={() => hideAlert()}
-          onCancel={() => hideAlert()}
-          confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-        >
-          {msg ? msg : `Unable To Register  Please Contact ${process.env.REACT_APP_LDOCS_CONTACT_MAIL}`}
-        </SweetAlert>
-      );
-    };
-    const hideAlert = () => {
-      setAlert(null);
-    };
+   
 
 
 
@@ -932,7 +901,7 @@ const createWorkflow = () => {
   };
   return (
     <div>
-      {alert}
+       
       {isSavingData ? 
        <Dialog
        classes={{

@@ -21,7 +21,8 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import ChipInput from "material-ui-chip-input";
@@ -53,43 +54,7 @@ export default function Loader(props) {
   const [alert, setAlert] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => {
-          hideAlert();
-        }}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        For Details Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    props.closeModal();
-    setAlert(null);
-  };
-
+  
   React.useEffect(() => {
     // setTimeout(() => {
     //   successAlert('Exported SuccessFully');
@@ -98,7 +63,7 @@ export default function Loader(props) {
 
   return (
     <GridContainer>
-      {alert}
+       
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="info" icon>

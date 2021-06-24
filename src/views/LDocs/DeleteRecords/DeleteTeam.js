@@ -228,7 +228,7 @@ export default function DeleteTeam(props) {
                <OtpCheck setOtpValue={setOtpValue} /> 
           </Dialog>
         : ""}
-        {alert}        
+                 
         <GridContainer style={{ marginTop: "10px", marginBottom: "20px" }}>
         <GridItem
             xs={12}

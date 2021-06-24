@@ -64,7 +64,7 @@ import {
   currentTracking,
   formatDate,
   formatDateTime,
-} from "../../Functions/Functions";
+} from "views/LDocs/Functions/Functions";
 import {
   Menu,
   Item,
@@ -75,7 +75,8 @@ import {
   Submenu,
 } from "react-contexify";
 import "react-contexify/dist/ReactContexify.min.css";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import InitWorkflow from "../InitWorkflow/InitWorkflow";
 import Pending_Invoice from "assets/img/statuses/Asset_1.png";
@@ -877,26 +878,7 @@ export default function FilesList(props) {
         setIsLoading(false);
       });
   };
-  const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = React.useState(null);
-  //Msg Alert
-  const msgAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        alert
-        style={{ display: "block", marginTop: "-100px" }}
-        title='Info!'
-        onConfirm={() => hideErrorAlert()}
-        onCancel={() => hideErrorAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.info}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const hideErrorAlert = () => {
-    setAlert(null);
-  };
+ 
   //Close Models
   const closeTagModal = () => {
     setTagModal(false);
@@ -1160,7 +1142,7 @@ export default function FilesList(props) {
   );
   return (
     <div>
-      {alert}
+       
       {/* View File */}
       {isViewing ? (
         <Animated

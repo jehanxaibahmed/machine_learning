@@ -14,7 +14,8 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 // style for this view
@@ -39,39 +40,7 @@ export default function FileTasks(props) {
   const [reminder, setReminder] = React.useState(null);
   const dispatch = useDispatch();
 
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => { hideAlert(); closeModal() }}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        For Details Please Contact
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    setAlert(null);
-  };
+  
   const saveTask = () => {
     setIsSavingTask(true);
     let file = props.fileData;
@@ -81,6 +50,8 @@ export default function FileTasks(props) {
       updatedDate: '',
       taskReminderDate: new Date(reminder),
       invoiceId: `${file.invoiceId}`,
+      version: `${file.version}`,
+      vendorId: `${file.vendorId}`,
       taskStatus: 'to-do'
     };
     //Save User Task
@@ -105,9 +76,7 @@ export default function FileTasks(props) {
             : error.message
         );
         errorAlert(
-          typeof error.response != "undefined"
-            ? error.response.data
-            : error.message
+          'Issue in Adding Task'
         );
         setIsSavingTask(false);
       });
@@ -126,7 +95,7 @@ export default function FileTasks(props) {
   }
   return (
     <GridContainer>
-      {alert}
+       
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="info" icon>

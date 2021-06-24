@@ -8,7 +8,7 @@ import {
 import { Animated } from "react-animated-css";
 import GridContainer from "components/Grid/GridContainer.js";
 import {Table,TableHead,TableRow,TableCell,TableBody,Card} from '@material-ui/core';
-import { addZeroes } from "../../../Functions/Functions";
+import { addZeroes } from "views/LDocs/Functions/Functions";
 
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";

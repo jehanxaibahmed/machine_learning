@@ -7,7 +7,8 @@ import {
   CircularProgress,
   MenuItem,
 } from "@material-ui/core";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 import { useDispatch, useSelector } from "react-redux";
 import { getCompanies } from "actions";
 // core components
@@ -138,50 +139,13 @@ export default function RegisterVendor(props) {
     }
     return false;
   };
-  const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = React.useState(null);
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideErrorAlert()}
-        onCancel={() => hideErrorAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        Unable To Register Supplier Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-      </SweetAlert>
-    );
-  };
+ 
   const handleOrgFilter = (event) => {
     setOrganizationFilter(event.target.value);
     var orgDetail = organizations.find(item => item.organizationName == event.target.value);
     event.target.value == 'SHOW ALL' ? getCompanies(undefined) : getCompanies(orgDetail._id);
   }
- const hideAlert = () => {
-   closeModal();
-   setAlert(null);
- };
- const hideErrorAlert = () => {
-   setAlert(null);
- };
+
   const handleRegister = () => {
     setFormState((formState) => ({
       ...formState,
@@ -372,7 +336,7 @@ export default function RegisterVendor(props) {
     };
   return (
     <GridContainer>
-      {alert}
+       
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="info" icon>

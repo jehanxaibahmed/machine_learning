@@ -13,7 +13,8 @@ import { CircularProgress, LinearProgress, makeStyles } from "@material-ui/core"
 import FileAdvanceView from "../AdvanceView/FileAdvanceView";
 import { setIsTokenExpired } from "actions";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions.js";
 export default function InvoiceDetail() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
@@ -32,48 +33,7 @@ export default function InvoiceDetail() {
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     };
 
-    const sweetAlertStyle = makeStyles(styles2);
 
-    
-  const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = React.useState(null);
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideErrorAlert()}
-        onCancel={() => hideErrorAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-      </SweetAlert>
-    );
-  };
-
-  const hideAlert = () => {
-    setAlert(null);
-  };
-  const hideErrorAlert = () => {
-    setAlert(null);
-  };
 
 
   React.useEffect(() => {
@@ -112,7 +72,7 @@ export default function InvoiceDetail() {
 
   return (
     <React.Fragment>
-      {alert}
+       
       <div style={{paddingLeft:20,paddingRight:20, textAlign:'center'}}>
           <img src={logo} width={300} />
           </div>

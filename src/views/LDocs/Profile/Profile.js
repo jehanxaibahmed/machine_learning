@@ -4,7 +4,8 @@ import { setUserDataAction } from "../../../actions";
 // @material-ui/core components
 import { makeStyles, CircularProgress } from "@material-ui/core";
 // @material-ui/icons
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -63,41 +64,7 @@ export default function UserProfile() {
   };
 
   const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = React.useState(null);
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        Unable To Upload Image Please Contact{" "}
-        {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    setAlert(null);
-  };
+  
   return (
     <Animated
       animationIn="bounceInRight"
@@ -106,7 +73,7 @@ export default function UserProfile() {
       animationOutDuration={1000}
       isVisible={true}
     >
-      {alert}
+       
       <div>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>

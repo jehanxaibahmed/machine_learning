@@ -4,6 +4,7 @@ import axios from "axios";
 import dateFormat from "dateformat";
 import { firebaseConfig } from "../../../config/Firebase";
 import jwt from "jsonwebtoken";
+import Swal from 'sweetalert2'
 import moment from "moment";
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
@@ -70,38 +71,40 @@ export function addZeroes(num) {
 }
 
 export const formatDateTime = (date) => {
-  let Token = localStorage.getItem('cooljwt');
+  let Token = localStorage.getItem("cooljwt");
   let user = jwt.decode(Token);
   var offset;
-  if(user.tenantConfigs){
+  if (user.tenantConfigs) {
     let tenantConfig = user.tenantConfigs;
     let timeStamp = tenantConfig.timeZone;
-    offset = timeStamp.offset*60;
-  }else{
+    offset = timeStamp.offset * 60;
+  } else {
     offset = moment().utcOffset();
   }
-  console.log(offset);
   var now = new Date(date);
-  const someday  = moment(now).utcOffset(offset).format('DD-MM-YYYY hh:mm A');
+  const someday = moment(now)
+    .utcOffset(offset)
+    .format("DD-MM-YYYY hh:mm A");
   return someday;
 };
 
 export const formatDate = (date) => {
-  let Token = localStorage.getItem('cooljwt');
+  let Token = localStorage.getItem("cooljwt");
   let user = jwt.decode(Token);
   var offset;
-  if(user.tenantConfigs){
+  if (user.tenantConfigs) {
     let tenantConfig = user.tenantConfigs;
     let timeStamp = tenantConfig.timeZone;
-    offset = timeStamp.offset*60;
-  }else{
+    offset = timeStamp.offset * 60;
+  } else {
     offset = moment().utcOffset();
   }
-  console.log(offset);
   var now = new Date(date);
-  const someday  = moment(now).utcOffset(offset).format('DD-MM-YYYY');
+  const someday = moment(now)
+    .utcOffset(offset)
+    .format("DD-MM-YYYY");
   return someday;
-}
+};
 
 export const currentTracking = (trackingStatus) => {
   let currentStatus;
@@ -155,6 +158,43 @@ export const currentTracking = (trackingStatus) => {
   return activeStep;
 };
 
+export const successAlert = (msg) => {
+  Swal.fire({
+    title: "Success",
+    text: msg,
+    icon: "success",
+    showCancelButton: false,
+    confirmButtonColor: "#49b34e",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Success",
+  });
+};
+
+export const errorAlert = (msg) => {
+  Swal.fire({
+    title: "Error",
+    text: msg,
+    icon: "error",
+    showCancelButton: false,
+    confirmButtonColor: "#49b34e",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "OK",
+  });
+};
+
+
+export const msgAlert = (msg) => {
+  Swal.fire({
+    title: "INFO",
+    text: msg,
+    icon: "warning",
+    showCancelButton: false,
+    confirmButtonColor: "#49b34e",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Success",
+  });
+};
+
 export const validateInvoice = async (row, Token) => {
   return new Promise((res, rej) => {
     axios({
@@ -177,8 +217,6 @@ export const validateInvoice = async (row, Token) => {
         })
           .then(async (blockchainRes) => {
             const blockchain = blockchainRes.data.InvoiceData;
-            console.log('BlockChain',blockchain);
-            console.log('Invoice',invoice);
             if (invoice !== null || undefined) {
               let isInvoiceDateSame;
               let isVendorIDSame;
@@ -388,7 +426,6 @@ export const validateInvoice = async (row, Token) => {
                   isSame: isValidate,
                 },
               };
-              console.log(ValidationData);
               res(ValidationData);
             }
           })
@@ -402,7 +439,15 @@ export const validateInvoice = async (row, Token) => {
   });
 };
 
-export const conversionRate = (fc, bc, currencies, amount, isNotSymbol,isEdit, rate) => {
+export const conversionRate = (
+  fc,
+  bc,
+  currencies,
+  amount,
+  isNotSymbol,
+  isEdit,
+  rate
+) => {
   const bC = currencies.find((c) => c._id == bc);
   const fC = currencies.find((c) => c._id == fc);
   const bcSymbol = bC ? bC.Code : "";

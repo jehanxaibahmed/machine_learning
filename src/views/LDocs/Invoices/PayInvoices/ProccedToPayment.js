@@ -29,7 +29,7 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -47,7 +47,7 @@ import { DateRangePicker, DateRange } from "materialui-daterange-picker";
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
-import { addZeroes } from "views/LDocs/Functions/Functions";
+import { addZeroes,successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
 import { whiteColor } from "assets/jss/material-dashboard-pro-react";
 
 const useStyles = makeStyles(styles);
@@ -87,58 +87,6 @@ export default function ProccedToPayment(props) {
         logo:CoinGate
     }
   ]
-
-  const warningAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        warning
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Warning!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.warning}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => {
-          hideAlert();
-          props.closeModal();
-        }}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        For Details Please Contact{" "}
-        {process.env.REACT_APP_LDOCS_FOOTER_COPYRIGHT_LEVEL_1}
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    setAlert(null);
-  };
 
   const [checked, setChecked] = React.useState(1);
 

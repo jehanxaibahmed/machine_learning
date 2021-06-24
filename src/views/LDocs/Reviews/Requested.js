@@ -11,7 +11,8 @@ IconButton} from "@material-ui/core";
 // @material-ui/icons
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import RateReview from "@material-ui/icons/RateReview";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -32,7 +33,7 @@ import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertSty
 import Iframe from 'react-iframe'
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView";
 import ViewModuleIcon from '@material-ui/icons/ViewModule';
-import { validateInvoice, formatDateTime } from "../Functions/Functions.js";
+import { validateInvoice, formatDateTime }from "views/LDocs/Functions/Functions";
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import Validator from "../../Components/Timeline";
 import { sendNotification, getNotification } from "actions";
@@ -278,39 +279,7 @@ const goBack = () => {
      });
      const sweetClass = sweetAlertStyle();
      const [alert, setAlert] = React.useState(null);
-     const successAlert = (msg) => {
-       setAlert(
-         <SweetAlert
-           success
-           style={{ display: "block", marginTop: "-100px" }}
-           title="Success!"
-           onConfirm={() => hideAlert()}
-           onCancel={() => hideAlert()}
-           confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-         >
-           {msg}
-         </SweetAlert>
-       );
-     };
-     const errorAlert = (msg) => {
-       setAlert(
-         <SweetAlert
-           error
-           style={{ display: "block", marginTop: "-100px" }}
-           title="Error!"
-           onConfirm={() => hideAlert()}
-           onCancel={() => hideAlert()}
-           confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-         >
-           {msg}
-           <br />
-           Unable To Review Invoice Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-         </SweetAlert>
-       );
-     };
-     const hideAlert = () => {
-       setAlert(null);
-     };
+    
     const handleChange = (event) => {
       event.persist();
         setFormState((formState) => ({
@@ -387,7 +356,7 @@ const goBack = () => {
     } 
   return (
     <div>
-      {alert}
+       
       {validateModal ? (
                 <Animated
                 animationIn="bounceInRight"

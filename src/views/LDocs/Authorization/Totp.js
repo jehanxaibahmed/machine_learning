@@ -19,7 +19,8 @@ import CardFooter from "components/Card/CardFooter.js";
 import { Animated } from "react-animated-css";
 import axios from "axios";
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import  jwt  from "jsonwebtoken";
 import { useSelector } from "react-redux";
@@ -38,39 +39,7 @@ export default function Totp() {
   const [isLoading,setIsloading] = useState(false);
   let token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
   let decoded = jwt.decode(token);
-      const sweetClass = sweetAlertStyle();
-      const [alert, setAlert] = React.useState(null);
-      const successAlert = () => {
-        setAlert(
-          <SweetAlert
-            success
-            style={{ display: "block", marginTop: "-100px" }}
-            title="Success!"
-            onConfirm={() => hideAlert()}
-            onCancel={() => hideAlert()}
-            confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-          >
-            User Registered successfully!
-          </SweetAlert>
-        );
-      };
-      const errorAlert = () => {
-        setAlert(
-          <SweetAlert
-            error
-            style={{ display: "block", marginTop: "-100px" }}
-            title="Error!"
-            onConfirm={() => hideAlert()}
-            onCancel={() => hideAlert()}
-            confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-          >
-            Unable To Register user Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-          </SweetAlert>
-        );
-      };
-    const hideAlert = () => {
-      setAlert(null);
-  };
+    
   function handleClick(e) {
     // e.preventDefault();
     setIsloading(true);
@@ -118,7 +87,7 @@ export default function Totp() {
   return (
     <div className={classes.container}>
       {loggedIn ? decoded.isVendor ? <Redirect to="/auth/loginVendor" /> : <Redirect to="/auth/login" /> : ""}
-      {alert}
+       
       <GridContainer justify="center">
         <GridItem xs={12} sm={6} md={4}>
           <Animated

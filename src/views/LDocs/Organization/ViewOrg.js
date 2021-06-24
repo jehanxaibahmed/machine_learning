@@ -5,7 +5,8 @@ import { TextField, makeStyles, CircularProgress, Slide, Dialog, MenuItem } from
 // core components
 import { useSelector, useDispatch } from "react-redux";
 import { getOrganizations } from "actions";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
@@ -190,43 +191,7 @@ const [OTP, setOTP] = React.useState("");
   //     }
   //   }
   // };
-  const sweetClass = sweetAlertStyle();
-      const [alert, setAlert] = React.useState(null);
-      const successAlert = (msg) => {
-        setAlert(
-          <SweetAlert
-            success
-            style={{ display: "block", marginTop: "-100px" }}
-            title="Success!"
-            onConfirm={() => hideAlert()}
-            onCancel={() => hideAlert()}
-            confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-          >
-            {msg}
-          </SweetAlert>
-        );
-      };
-      const errorAlert = (msg) => {
-        setAlert(
-          <SweetAlert
-            error
-            style={{ display: "block", marginTop: "-100px" }}
-            title="Error!"
-            onConfirm={() => hideErrorAlert()}
-            onCancel={() => hideErrorAlert()}
-            confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-          >
-            {msg ? msg : "Unable To Update Organization Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}"}
-          </SweetAlert>
-        );
-      };
-  const hideAlert = () => {
-        closeModal();
-        setAlert(null);
-      };
-  const hideErrorAlert = () => {
-    setAlert(null);
-  };
+ 
   const handleUpdate = () => {
 
     let name;
@@ -401,7 +366,7 @@ const [OTP, setOTP] = React.useState("");
         animationOutDuration={1000}
         isVisible={animateTable}
       >
-        {alert}
+         
         {otpModal ?
         <Dialog
             classes={{

@@ -24,7 +24,7 @@ import Card from "components/Card/Card.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
@@ -51,7 +51,8 @@ import {
   addZeroes,
   formatDateTime,
   validateInvoice,
-} from "../../Functions/Functions";
+  successAlert, errorAlert, msgAlert
+} from "views/LDocs/Functions/Functions";
 import Approve from "./approve";
 import Review from "./review";
 import { setIsTokenExpired } from "actions";
@@ -135,7 +136,7 @@ export default function FileAdvanceView(props) {
   //Get QrR Code
   const getQrCode = async () => {
     await QRCode.toDataURL(
-      `https://app.matesol.net/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`
+      `${process.env.REACT_APP_LDOCS_API_SELF_URL}/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`
     )
       .then((url) => {
         setQrCode(url);
@@ -171,42 +172,7 @@ export default function FileAdvanceView(props) {
       });
   };
 
-  const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = React.useState(null);
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        Unable To Review Invoice Please Contact{" "}
-        {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    setAlert(null);
-  };
+ 
   //Get Validator
   const getValidator = async () => {
     await validateInvoice(fileData, Token).then((res) => {
@@ -412,7 +378,7 @@ export default function FileAdvanceView(props) {
       <LinearProgress />
     ) : (
       <GridContainer>
-        {alert}
+         
         {markModal ? (
           <Dialog
             classes={{
@@ -602,7 +568,7 @@ export default function FileAdvanceView(props) {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} lg={12}>
                     <CopyToClipboard
-                      text={`https://app.matesol.net/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`}
+                      text={`${process.env.REACT_APP_LDOCS_API_SELF_URL}/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`}
                       onCopy={() => {
                         setIsCopied(!isCopied);
                       }}
@@ -612,7 +578,7 @@ export default function FileAdvanceView(props) {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} lg={12}>
                     <CopyToClipboard
-                      text={`https://app.matesol.net/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`}
+                      text={`${process.env.REACT_APP_LDOCS_API_SELF_URL}/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`}
                       onCopy={() => {
                         setIsCopied(!isCopied);
                       }}

@@ -26,7 +26,8 @@ import {useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 import { Animated } from "react-animated-css";
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import jwt from "jsonwebtoken";
@@ -89,46 +90,7 @@ export default function Vendor() {
     setOrganizationFilter(org);
   }
 
-  const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = React.useState(null);
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideErrorAlert()}
-        onCancel={() => hideErrorAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg}
-        <br />
-        Unable To Register Company Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}
-      </SweetAlert>
-    );
-  };
-
-  const hideAlert = () => {
-    setAlert(null);
-  };
-  const hideErrorAlert = () => {
-    setAlert(null);
-  };
-
+ 
   const handleChangeStatus = (prop, status) => {
     setUpdatingStatus(prop._id);
     var statusNew = status.status == "Active" ? "Inactive" : "Active";
@@ -325,7 +287,7 @@ export default function Vendor() {
 
   return (
     <div>
-      {alert}
+       
       <GridContainer justify="center">
         <GridItem xs={12} sm={12} md={12} className={classes.center}>
           <Dialog

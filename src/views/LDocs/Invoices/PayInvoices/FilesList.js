@@ -66,7 +66,7 @@ import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import { addZeroes, formatDate, formatDateTime } from "../../Functions/Functions";
+import { addZeroes, formatDate, formatDateTime, successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
 import {
   Menu,
   Item,
@@ -77,7 +77,7 @@ import {
   Submenu,
 } from "react-contexify";
 import "react-contexify/dist/ReactContexify.min.css";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import InitWorkflow from "../InitWorkflow/InitWorkflow";
 import Pending_Invoice from "assets/img/statuses/Asset_1.png";
@@ -751,26 +751,7 @@ export default function PaymentList(props) {
         setIsLoading(false);
       });
   };
-  const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = React.useState(null);
-  //Msg Alert
-  const msgAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        alert
-        style={{ display: "block", marginTop: "-100px" }}
-        title='Info!'
-        onConfirm={() => hideErrorAlert()}
-        onCancel={() => hideErrorAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.info}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const hideErrorAlert = () => {
-    setAlert(null);
-  };
+ 
   const select = (invoice) => {
     let selectedInvoices = selected;
     if (!invoice) {
@@ -893,7 +874,7 @@ export default function PaymentList(props) {
   );
   return (
     <div>
-      {alert}
+       
       {/* View File */}
       {isViewing ? (
         <Animated
@@ -1432,22 +1413,22 @@ export default function PaymentList(props) {
                       data={data}
                       sortable={false}
                       columns={[
-                        {
-                          Header: (
-                            <Checkbox
-                              checked={
-                                filesData.length == selected.length &&
-                                selected.length >= 0
-                              }
-                              onChange={() => select()}
-                              disabled={formState.filter == "PaidInvoices"}
-                            />
-                          ),
+                        // {
+                        //   Header: (
+                        //     <Checkbox
+                        //       checked={
+                        //         filesData.length == selected.length &&
+                        //         selected.length >= 0
+                        //       }
+                        //       onChange={() => select()}
+                        //       disabled={formState.filter == "PaidInvoices"}
+                        //     />
+                        //   ),
 
-                          width: 50,
-                          accessor: "select",
-                          disableSortBy: false,
-                        },
+                        //   width: 50,
+                        //   accessor: "select",
+                        //   disableSortBy: false,
+                        // },
                         {
                           Header: "Invoice ID",
                           accessor: "invoiceId",

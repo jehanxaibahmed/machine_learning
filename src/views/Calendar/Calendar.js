@@ -5,6 +5,7 @@ import { Calendar as BigCalendar, momentLocalizer } from "react-big-calendar";
 // dependency plugin for react-big-calendar
 import moment from "moment";
 // react component used to create alerts
+import Swal from 'sweetalert2'
 import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
@@ -147,7 +148,7 @@ export default function Calendar() {
           </span>
         }
       /> */}
-      {alert}
+       
       <GridContainer justify="center">
         <GridItem xs={12} sm={12} md={12}>
             <CardBody calendar>

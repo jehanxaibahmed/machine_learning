@@ -5,7 +5,8 @@ import {
   makeStyles,
   CircularProgress,
 } from "@material-ui/core";
-import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from 'sweetalert2'
+import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
 import { useSelector, useDispatch } from "react-redux";
 import { getOrganizations, getCompanies, getDepartments, getTeam, getTitles } from "actions";
 // core components
@@ -59,50 +60,14 @@ export default function DeleteRecord(props) {
   },[titles])
   
   const classes = useStyles();
-  const sweetClass = sweetAlertStyle();
-  const [alert, setAlert] = useState(null);
-  const successAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Success!"
-        onConfirm={() => hideAlert()}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.success}
-      >
-        {msg}
-      </SweetAlert>
-    );
-  };
-  const errorAlert = (msg) => {
-    setAlert(
-      <SweetAlert
-        error
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Error!"
-        onConfirm={() => hideErrorAlert()}
-        onCancel={() => hideErrorAlert()}
-        confirmBtnCssClass={sweetClass.button + " " + sweetClass.danger}
-      >
-        {msg ? msg : "Unable To Register Title Please Contact {process.env.REACT_APP_LDOCS_CONTACT_MAIL}"}
-      </SweetAlert>
-    );
-  };
-  const hideAlert = () => {
-    closeModal();
-    setAlert(null);
-  };
-  const hideErrorAlert = () => {
-    setAlert(null);
-  };
+ 
   const closeModal = () => {
     props.closeModal();
   };
   
   return (
     <GridContainer>
-      {alert}
+       
       <GridItem xs={12} sm={12} md={12}>
               <GridContainer>
                 <GridItem
