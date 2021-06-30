@@ -52,6 +52,11 @@ export default function LoginSecret(props) {
     setQRrCode(getParameterByName("qr").split(' ').join('+'));
     setIsTenant(getParameterByName('isTenant'));
     setIsVendor(getParameterByName('isVendor'));
+    if(getParameterByName('isVendor')){
+      localStorage.setItem("cooljwt", getParameterByName("activate"));
+      dispatch(setToken(getParameterByName("activate")));
+      setloggedIn(true);
+    }
     }, []);
    function handletwofa(event) {
      setTwofa(event.target.value);
