@@ -5,7 +5,7 @@ name: InvoiceMate-UI-CI
 
 on:
   push:
-    branches: [dev-bsv]
+    branches: [ dev-bsv ]
 env:
   # Use docker.io for Docker Hub if empty
   # github.repository as <account>/<repo>
