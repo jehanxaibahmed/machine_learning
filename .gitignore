@@ -1,4 +1,6 @@
 # .env
 node_modules
+invoicemate-backend
+nginx
 # .env
 build
