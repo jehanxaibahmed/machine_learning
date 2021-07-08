@@ -130,7 +130,7 @@ import {
           containerElement={
             <div
               style={{
-                height: `380px`,
+                height: `500px`,
                 borderRadius: "6px",
                 overflow: "hidden"
               }}

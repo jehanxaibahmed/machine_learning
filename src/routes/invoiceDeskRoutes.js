@@ -32,6 +32,10 @@ import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
 import Requested from "views/LDocs/Reviews/Requested";
 import jwt from "jsonwebtoken";
 import Payable from "views/LDocs/Payable/Payable";
+import AgingReport from "views/LDocs/Aging/AgingReport";
+
+
+
 const Token = localStorage.getItem('cooljwt');
 let decoded = jwt.decode(Token);
 console.log(decoded);
@@ -152,6 +156,14 @@ var invoiceRoutes = [
         component: Payable,
         layout: "/invoice",
       },
+      // {
+      //   path: "/invoice-aging",
+      //   name: "Invoice Aging",
+      //   rtlName: "لوحة القيادة",
+      //   icon: ReceiptIcon,
+      //   component: AgingReport,
+      //   layout: "/invoice",
+      // }
     ]}
   ,{
     path: "/verifier",

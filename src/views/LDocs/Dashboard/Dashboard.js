@@ -8,6 +8,7 @@ import WatchLaterIcon from '@material-ui/icons/WatchLater';
 import StorageIcon from '@material-ui/icons/Storage';
 import DescriptionIcon from '@material-ui/icons/Description';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import MapIcon from '@material-ui/icons/Map';
 
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 // @material-ui/icons
@@ -50,6 +51,7 @@ import jwt from "jsonwebtoken";
 import _ from 'lodash';
 import { useSelector, useDispatch } from "react-redux";
 import { setIsTokenExpired } from "actions";
+import Map from "./Map";
 
 const useStyles = makeStyles(styles);
 
@@ -468,6 +470,27 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={12}>
                       <Calendar />    
+                    </GridItem>
+                </GridContainer>
+              </CardBody>
+            </Card>
+          </GridItem> 
+      </GridContainer>
+      <GridContainer>
+        <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="info" stats icon>
+                <CardIcon color="info">
+                <MapIcon fontSize="large" />
+                  {/* <h4 className={classes.cardTitleWhite}>
+                    Mate Map
+                  </h4> */}
+                </CardIcon>
+              </CardHeader>
+              <CardBody>
+                <GridContainer>
+                    <GridItem xs={12} sm={12} md={12}>
+                      <Map />    
                     </GridItem>
                 </GridContainer>
               </CardBody>
