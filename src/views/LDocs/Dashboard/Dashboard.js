@@ -460,16 +460,16 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
             <Card>
               <CardHeader color="info" stats icon>
                 <CardIcon color="info">
-                <DateRangeIcon fontSize="large" />
+                <MapIcon fontSize="large" />
                   {/* <h4 className={classes.cardTitleWhite}>
-                    Mate Calender
+                    Mate Map
                   </h4> */}
                 </CardIcon>
               </CardHeader>
               <CardBody>
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={12}>
-                      <Calendar />    
+                      <Map />    
                     </GridItem>
                 </GridContainer>
               </CardBody>
@@ -481,16 +481,16 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
             <Card>
               <CardHeader color="info" stats icon>
                 <CardIcon color="info">
-                <MapIcon fontSize="large" />
+                <DateRangeIcon fontSize="large" />
                   {/* <h4 className={classes.cardTitleWhite}>
-                    Mate Map
+                    Mate Calender
                   </h4> */}
                 </CardIcon>
               </CardHeader>
               <CardBody>
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={12}>
-                      <Map />    
+                      <Calendar />    
                     </GridItem>
                 </GridContainer>
               </CardBody>
