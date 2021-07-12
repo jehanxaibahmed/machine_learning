@@ -31,7 +31,7 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function BuildNetwork(props) {
+export default function ShowVendor(props) {
   const classes = useStyles();
   
   return (

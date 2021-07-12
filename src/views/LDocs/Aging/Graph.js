@@ -4,20 +4,19 @@ import Chart from "react-apexcharts";
 class Graph extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       options: {
         chart: {
           id: "basic-bar"
         },
         xaxis: {
-          categories: ["0-1", "1-2", "2-3", "3-4", "4-5", "6-7", "6-7"]
+          categories: props.intervals
         }
       },
       series: [
         {
           name: "series-1",
-          data: [10, 140, 425, 50, 549, 660, 70]
+          data: props.values
         }
       ]
     };

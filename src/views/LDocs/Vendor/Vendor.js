@@ -31,7 +31,7 @@ import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functio
 import { Animated } from "react-animated-css";
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import jwt from "jsonwebtoken";
-import BuildNetwork from "./BuildNetwork.js";
+import ShowVendor from "./ShowVendor.js";
 import { setIsTokenExpired } from "actions";
 import Payable from "../Payable/Payable";
 const styles = {
@@ -485,7 +485,7 @@ export default function Vendor() {
           animationOutDuration={1000}
           isVisible={viewComponent}
         >
-          <BuildNetwork
+          <ShowVendor
             goBack={goBack}
             vendorData={vendorData}
           />

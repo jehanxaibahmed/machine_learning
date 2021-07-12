@@ -33,6 +33,7 @@ import Requested from "views/LDocs/Reviews/Requested";
 import jwt from "jsonwebtoken";
 import Payable from "views/LDocs/Payable/Payable";
 import AgingReport from "views/LDocs/Aging/AgingReport";
+import TimerIcon from '@material-ui/icons/Timer';
 
 
 
@@ -123,7 +124,7 @@ var invoiceRoutes = [
     views: [
       {
         path: "/financeDashboard",
-        name: "AP ANALYTICS",
+        name: "AP Analytics",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         icon: EqualizerIcon,
@@ -156,14 +157,14 @@ var invoiceRoutes = [
         component: Payable,
         layout: "/invoice",
       },
-      // {
-      //   path: "/invoice-aging",
-      //   name: "Invoice Aging",
-      //   rtlName: "لوحة القيادة",
-      //   icon: ReceiptIcon,
-      //   component: AgingReport,
-      //   layout: "/invoice",
-      // }
+      {
+        path: "/invoice-aging",
+        name: "Invoice Aging",
+        rtlName: "لوحة القيادة",
+        icon: TimerIcon,
+        component: AgingReport,
+        layout: "/invoice",
+      }
     ]}
   ,{
     path: "/verifier",

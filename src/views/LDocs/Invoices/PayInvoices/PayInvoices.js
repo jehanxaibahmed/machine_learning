@@ -31,7 +31,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import { useDispatch, useSelector } from "react-redux";
-import BuildNetwork from "views/LDocs/Vendor/BuildNetwork";
+import ViewVendor from "views/LDocs/Vendor/ViewVendor";
 import Step3 from "views/LDocs/Vendor/steps/level3";
 import { formatDateTime, successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
 import ExportingInvoiceAnimation from "components/ExportingInvoiceAnimation/ExportingInvoiceAnimation";
