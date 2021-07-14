@@ -201,7 +201,7 @@ export default function InvoiceConfigrations() {
                     <ListItem>
                       <ListItemText
                         style={{ color: "black" }}
-                        primary="Payment Terms Invoice Date"
+                        primary="Invoice Date"
                         secondary={
                           "Payment Terms will starts from Invoice Date"
                         }
@@ -225,9 +225,9 @@ export default function InvoiceConfigrations() {
                     <ListItem>
                       <ListItemText
                         style={{ color: "black" }}
-                        primary="Payment Terms Due Date"
+                        primary="Due Date"
                         secondary={
-                          "Payment Terms will starts from Invoice Due Date"
+                          "Manually input Due Date while creating or updating invoice"
                         }
                       />
                       <ListItemSecondaryAction>
@@ -249,7 +249,7 @@ export default function InvoiceConfigrations() {
                     <ListItem>
                       <ListItemText
                         style={{ color: "black" }}
-                        primary="Payment Terms Approval Date"
+                        primary="Approval Date"
                         secondary={
                           "Payment Terms will starts from Invoice Approval Date"
                         }
@@ -270,28 +270,7 @@ export default function InvoiceConfigrations() {
                     </ListItem>
                     <Divider />
                     {/* Enables Payments */}
-                    <ListItem>
-                      <ListItemText
-                        style={{ color: "black" }}
-                        primary="Payment Terms Payment Process Date"
-                        secondary={
-                          "Payment Terms will starts when invoice Ready for Payment"
-                        }
-                      />
-                      <ListItemSecondaryAction>
-                        <Checkbox
-                          color="primary"
-                          value={"processDate"}
-                          checked={
-                            state.values.paymentTerms == "processDate"
-                              ? true
-                              : false
-                          }
-                          name="processDate"
-                          onChange={onChange}
-                        />
-                      </ListItemSecondaryAction>
-                    </ListItem>
+                    
                   </List>
                 </CardBody>
               </Card>

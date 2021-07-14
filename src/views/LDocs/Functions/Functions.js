@@ -166,7 +166,7 @@ export const successAlert = (msg) => {
     showCancelButton: false,
     confirmButtonColor: "#49b34e",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Success",
+    confirmButtonText: "Ok",
   });
 };
 

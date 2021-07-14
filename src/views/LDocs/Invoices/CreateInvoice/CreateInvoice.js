@@ -138,7 +138,8 @@ export default function CreateInvoice(props) {
   const [markAsReceivedModel, setMarkAsReceivedModel] = useState(false);
   let duedate = new Date();
   let today = new Date();
-  duedate = duedate.setDate(today.getDate() + 15);
+  let plusDays = 0;
+  duedate = duedate.setDate(today.getDate() + plusDays);
   const userDetails = jwt.decode(Token);
   const isVendor = userDetails.isVendor;
   const [formState, setFormState] = useState({

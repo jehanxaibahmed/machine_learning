@@ -23,6 +23,7 @@ import {
 } from "@material-ui/core";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
+import CardFooter from "components/Card/CardFooter.js";
 import defaultImage from "assets/img/image_placeholder.jpg";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -38,6 +39,9 @@ import Step1 from "./steps/level1";
 import Step2 from "./steps/level2";
 import axios from "axios";
 import { setIsTokenExpired } from "actions";
+import MoneyIcon from "@material-ui/icons/Money";
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
+import TimerOffIcon from '@material-ui/icons/TimerOff';
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView.js";
 
 const useStyles = makeStyles((theme) => ({
@@ -47,11 +51,11 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "0px",
   },
   cardTitleText: {
-    color: "white",
+    // color: "white",
   },
   buttonRight: {},
   textFieldColor: {
-    color: "white",
+    // color: "white",
   },
   large: {
     width: theme.spacing(18),
@@ -111,7 +115,7 @@ export default function Payable(props) {
     })
       .then(async (invoiceRes) => {
         const invoice = invoiceRes.data;
-        if(invoice){
+        if (invoice) {
           setRow(invoice);
           setQrModal(true);
           setGridView(false);
@@ -515,73 +519,92 @@ export default function Payable(props) {
               >
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={4} lg={4}>
-                    <Card
-                      style={{
-                        backgroundColor: "#56ab2f",
-                        background:
-                          "-webkit-linear-gradient(to right, #56ab2f, #a8e063)",
-                        background:
-                          "linear-gradient(to right, #56ab2f, #a8e063)",
-                        paddingLeft: 20,
-                        paddingTop: 10,
-                        paddingBottom: 20,
-                        paddingRight: 20,
-                        color: "white",
-                      }}
-                    >
-                      <h4 className={classes.cardCategory}>PAID</h4>
-                      <Divider style={{ background: "white" }} />
-                      <h5 className={classes.cardTitle}>
-                        {componentState.currencyCode}{" "}
-                        {componentState.fullPaid.toFixed(2)}
-                      </h5>
+                    <Card style={{ paddingBottom: 10 }}>
+                      <CardHeader
+                        style={{ padding: -10 }}
+                        color="info"
+                        stats
+                        icon
+                      >
+                        <CardIcon color="info">
+                          <MoneyIcon />
+                        </CardIcon>
+                        <h3
+                          className={classes.cardTitle}
+                          style={{ color: "grey" }}
+                        >
+                          PAID
+                        </h3>
+                        <h4
+                          className={classes.cardTitle}
+                          style={{ color: "grey" }}
+                        >
+                          {componentState.currencyCode}{" "}
+                          {componentState.fullPaid.toFixed(2)}
+                        </h4>
+                      </CardHeader>
+                      <CardFooter stats></CardFooter>
                     </Card>
+                    
                   </GridItem>
                   <GridItem xs={12} sm={6} md={4} lg={4}>
-                    <Card
-                      style={{
-                        backgroundColor: "#ffb75e",
-                        background:
-                          "-webkit-linear-gradient(to right, #ffb75e, #ed8f03)",
-                        background:
-                          "linear-gradient(to right, #ffb75e, #ed8f03)",
-                        paddingLeft: 20,
-                        paddingTop: 10,
-                        paddingBottom: 20,
-                        paddingRight: 20,
-                        color: "white",
-                      }}
-                    >
-                      <h4 className={classes.cardCategory}>PENDING</h4>
-                      <Divider style={{ background: "white" }} />
-                      <h5 className={classes.cardTitle}>
-                        {componentState.currencyCode}{" "}
+                  <Card style={{ paddingBottom: 10 }}>
+                      <CardHeader
+                        style={{ padding: -10 }}
+                        color="danger"
+                        stats
+                        icon
+                      >
+                        <CardIcon color="danger">
+                          <HourglassEmptyIcon />
+                        </CardIcon>
+                        <h3
+                          className={classes.cardTitle}
+                          style={{ color: "grey" }}
+                        >
+                          PENDING
+                        </h3>
+                        <Divider style={{ background: "white" }} />
+                        <h4
+                          className={classes.cardTitle}
+                          style={{ color: "grey" }}
+                        >
+                          {componentState.currencyCode}{" "}
                         {componentState.toBePaid.toFixed(2)}
-                      </h5>
+                        </h4>
+                      </CardHeader>
+                      <CardFooter stats></CardFooter>
                     </Card>
+                    
                   </GridItem>
                   <GridItem xs={12} sm={6} md={4} lg={4}>
-                    <Card
-                      style={{
-                        backgroundColor: "#f85032",
-                        background:
-                          "-webkit-linear-gradient(to right, #f85032, #e73827)",
-                        background:
-                          "linear-gradient(to right, #f85032, #e73827)",
-                        paddingLeft: 20,
-                        paddingTop: 10,
-                        paddingBottom: 20,
-                        paddingRight: 20,
-                        color: "white",
-                      }}
-                    >
-                      <h4 className={classes.cardCategory}>OVERDUE</h4>
-                      <Divider style={{ background: "white" }} />
-                      <h5 className={classes.cardTitle}>
-                        {componentState.currencyCode}{" "}
+                  <Card style={{ paddingBottom: 10 }}>
+                      <CardHeader
+                        style={{ padding: -10 }}
+                        color="info"
+                        stats
+                        icon
+                      >
+                        <CardIcon color="info">
+                          <TimerOffIcon />
+                        </CardIcon>
+                        <h3
+                          className={classes.cardTitle}
+                          style={{ color: "grey" }}
+                        >
+                          OVER DUE
+                        </h3>
+                        <h4
+                          className={classes.cardTitle}
+                          style={{ color: "grey" }}
+                        >
+                          {componentState.currencyCode}{" "}
                         {componentState.overDueInvoices.toFixed(2)}
-                      </h5>
+                        </h4>
+                      </CardHeader>
+                      <CardFooter stats></CardFooter>
                     </Card>
+                    
                   </GridItem>
                 </GridContainer>
                 <GridContainer>
