@@ -287,9 +287,9 @@ export default function Invoice({ data, viewInvoice }) {
         <small>{data.LC_currency.Code}</small>{" "}
         {data["col-2-bc"] ? addZeroes(data["col-2-bc"]) : 0}
         <br />
-        ({data.FC_currency.Code !== data.LC_currency.Code ? (
+        {data.FC_currency.Code !== data.LC_currency.Code ? (
           <small>
-            {data.FC_currency.Code}{" "}
+            ({data.FC_currency.Code}{" "}
             {data["col-2"] ? +addZeroes(data["col-2"]) : 0})
           </small>
         ) : (
@@ -300,9 +300,9 @@ export default function Invoice({ data, viewInvoice }) {
         <small>{data.LC_currency.Code}</small>{" "}
         {data["col-3-bc"] ? addZeroes(data["col-3-bc"]) : 0}
         <br />
-        ({data.FC_currency.Code !== data.LC_currency.Code ? (
+        {data.FC_currency.Code !== data.LC_currency.Code ? (
           <small>
-            {data.FC_currency.Code}{" "}
+            ({data.FC_currency.Code}{" "}
             {data["col-3"] ? +addZeroes(data["col-3"]) : 0})
           </small>
         ) : (
@@ -313,9 +313,9 @@ export default function Invoice({ data, viewInvoice }) {
         <small>{data.LC_currency.Code}</small>{" "}
         {data["col-4-bc"] ? addZeroes(data["col-4-bc"]) : 0}
         <br />
-        ({data.FC_currency.Code !== data.LC_currency.Code ? (
+        {data.FC_currency.Code !== data.LC_currency.Code ? (
           <small>
-            {data.FC_currency.Code}{" "}
+            ({data.FC_currency.Code}{" "}
             {data["col-4"] ? +addZeroes(data["col-4"]) : 0})
           </small>
         ) : (
@@ -326,9 +326,9 @@ export default function Invoice({ data, viewInvoice }) {
         <small>{data.LC_currency.Code}</small>{" "}
         {data["col-4+-bc"] ? addZeroes(data["col-4+-bc"]) : 0}
         <br />
-        ({data.FC_currency.Code !== data.LC_currency.Code ? (
+        {data.FC_currency.Code !== data.LC_currency.Code ? (
           <small>
-            {data.FC_currency.Code}{" "}
+            ({data.FC_currency.Code}{" "}
             {data["col-4+"] ? +addZeroes(data["col-4+"]) : 0})
           </small>
         ) : (
