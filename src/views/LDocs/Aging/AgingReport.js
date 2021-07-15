@@ -178,35 +178,37 @@ export default function AgingReport() {
       x = x + interval;
       intervals.push(`Days ${previous} - ${x}`);
       if (intervals.length == 4) {
-        intervals = [...intervals, `Days ${x}+`];
-        axios({
-          method: "post", //you can set what request you want to be
-          url: `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsx`,
-          data: {
-            organizationId: decoded.orgDetail.organizationId,
-            type: null,
-            interval: interval,
-            addPrevious: formState.addPrevious,
-          },
-          headers: {
-            cooljwt: Token,
-            // responseType: 'blob',
-          },
-        })
-          .then((response) => {
-            const downloadUrl = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.path}`;
-            const link = document.createElement("a");
-            link.href = downloadUrl;
-            link.setAttribute("download", ""); //any other extension
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
+        setTimeout(() => {
+          axios({
+            method: "post", //you can set what request you want to be
+            url: `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsx`,
+            data: {
+              organizationId: decoded.orgDetail.organizationId,
+              type: null,
+              header:[...intervals, `Days ${x}+`],
+              interval: interval,
+              addPrevious: formState.addPrevious,
+            },
+            headers: {
+              cooljwt: Token,
+              // responseType: 'blob',
+            },
           })
-          .catch((error) => {
-            console.log(error);
-          });
+            .then((response) => {
+              const downloadUrl = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.path}`;
+              const link = document.createElement("a");
+              link.href = downloadUrl;
+              link.setAttribute("download", ""); //any other extension
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }, 2000);
+        
 
-        console.log(intervals);
       }
     }
   };
