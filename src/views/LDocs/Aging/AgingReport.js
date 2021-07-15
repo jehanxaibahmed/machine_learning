@@ -164,9 +164,53 @@ export default function AgingReport() {
         console.log(err);
       });
   };
+  const exportExcel = async () => {
+    let intervals = [];
+    let x = 0;
+    let interval =
+      formState.rangeType == 2
+        ? 7
+        : formState.rangeType == 3
+        ? 30
+        : formState.range;
+    while (intervals.length < 5) {
+      let previous = x + 1;
+      x = x + interval;
+      intervals.push(`Days ${previous} - ${x}`);
+      if (intervals.length == 4) {
+        intervals = [...intervals, `Days ${x}+`];
+        axios({
+          method: "post", //you can set what request you want to be
+          url: `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsx`,
+          data: {
+            organizationId: decoded.orgDetail.organizationId,
+            type: null,
+            interval: interval,
+            addPrevious: formState.addPrevious,
+          },
+          headers: {
+            cooljwt: Token,
+            // responseType: 'blob',
+          },
+        })
+          .then((response) => {
+            const downloadUrl = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.path}`;
+            const link = document.createElement("a");
+            link.href = downloadUrl;
+            link.setAttribute("download", ""); //any other extension
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
 
+        console.log(intervals);
+      }
+    }
+  };
   const getReport = async () => {
-    console.log(formState.rangeType == 2);
     let intervals = [];
     let x = 0;
     let interval =
@@ -328,6 +372,15 @@ export default function AgingReport() {
                       >
                         View Report
                       </Button>
+                      <Button
+                        color="danger"
+                        round
+                        className={classes.marginRight}
+                        style={{ float: "right" }}
+                        onClick={exportExcel}
+                      >
+                        Export Excel
+                      </Button>
                     </GridItem>
                   </GridContainer>
                   <GridContainer style={{ marginTop: 10 }}>
@@ -443,7 +496,7 @@ export default function AgingReport() {
             <Button
               color="danger"
               round
-              style={{ float: "right", zIndex: 999}}
+              style={{ float: "right", zIndex: 999 }}
               className={classes.marginRight}
               onClick={goBack}
             >
