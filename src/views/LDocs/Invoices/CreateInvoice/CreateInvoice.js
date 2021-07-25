@@ -3425,7 +3425,7 @@ export default function CreateInvoice(props) {
           </GridContainer>
         </Animated>
       ) : (
-        <Backdrop className={classes.backdrop} open={!isCreateInvoice}>
+        <Backdrop className={classes.backdrop} open={!isCreateInvoice && !viewFile}>
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
