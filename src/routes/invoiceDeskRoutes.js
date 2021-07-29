@@ -7,14 +7,14 @@ import SystemUpdateIcon from "@material-ui/icons/SystemUpdate";
 import WrapTextIcon from "@material-ui/icons/WrapText";
 import DescriptionIcon from "@material-ui/icons/Description";
 import FingerprintIcon from "@material-ui/icons/Fingerprint";
-import EqualizerIcon from '@material-ui/icons/Equalizer';
+import EqualizerIcon from "@material-ui/icons/Equalizer";
 import AssignmentLateIcon from "@material-ui/icons/AssignmentLate";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
+import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
-import ReceiptIcon from '@material-ui/icons/Receipt';
+import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
+import ReceiptIcon from "@material-ui/icons/Receipt";
 //Components
 
 import FilesList from "views/LDocs/Invoices/RecieveInvoice/FilesList";
@@ -33,18 +33,15 @@ import Requested from "views/LDocs/Reviews/Requested";
 import jwt from "jsonwebtoken";
 import Payable from "views/LDocs/Payable/Payable";
 import AgingReport from "views/LDocs/Aging/AgingReport";
-import TimerIcon from '@material-ui/icons/Timer';
+import TimerIcon from "@material-ui/icons/Timer";
 
-
-
-const Token = localStorage.getItem('cooljwt');
+const Token = localStorage.getItem("cooljwt");
 let decoded = jwt.decode(Token);
 console.log(decoded);
 
-
-var invoiceRoutes = [
+export const invoiceApRoutes = [
   {
-    path: "/dashboard",
+    path: "/dashboard_ap",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
     icon: DashboardIcon,
@@ -102,8 +99,7 @@ var invoiceRoutes = [
         component: Requested,
         layout: "/invoice",
         icon: AssignmentLateIcon,
-      }
-      ,
+      },
       {
         path: "/approvals",
         name: "Approval Tasks",
@@ -112,8 +108,8 @@ var invoiceRoutes = [
         icon: AssignmentTurnedInIcon,
         component: ApprovalRequested,
         layout: "/invoice",
-      }
-    ]
+      },
+    ],
   },
   {
     collapse: true,
@@ -150,8 +146,8 @@ var invoiceRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/vendorledger",
-        name: "Vendor 360",
+        path: "/supplierledger",
+        name: "Supplier 360",
         rtlName: "لوحة القيادة",
         icon: ReceiptIcon,
         component: Payable,
@@ -164,9 +160,143 @@ var invoiceRoutes = [
         icon: TimerIcon,
         component: AgingReport,
         layout: "/invoice",
-      }
-    ]}
-  ,{
+      },
+    ],
+  },
+  
+];
+
+
+export const invoiceArRoutes = [
+  {
+    path: "/dashboard_ar",
+    name: "Dashboard",
+    rtlName: "لوحة القيادة",
+    icon: DashboardIcon,
+    component: Dashboard,
+    layout: "/invoice",
+  },
+  {
+    collapse: true,
+    name: "Invoice Desk",
+    rtlName: "المكونات",
+    icon: InsertDriveFileIcon,
+    state: "InvoiceDeskCollapsear",
+    views: [
+      {
+        path: "/create",
+        name: "Create Invoice",
+        rtlName: "عالتسعير",
+        icon: NoteAddIcon,
+        rtlMini: "ع",
+        component: CreateInvoice,
+        layout: "/invoice",
+      },
+      {
+        path: "/sent",
+        name: "Sent Invoice",
+        rtlName: "عالتسعير",
+        icon: SystemUpdateIcon,
+        rtlMini: "ع",
+        component: FilesList,
+        layout: "/invoice",
+      },
+      {
+        path: "/aging_ar",
+        name: "Invoice Aging",
+        rtlName: "عالتسعير",
+        icon: DescriptionIcon,
+        rtlMini: "ع",
+        component: InvoiceAge,
+        layout: "/invoice",
+      },
+    ],
+  },
+  {
+    collapse: true,
+    name: "Action Desk",
+    rtlName: "المكونات",
+    icon: AssignmentIndIcon,
+    state: "ActionDeskCollapsear",
+    views: [
+      {
+        path: "/my-requests-ar",
+        name: "Review Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        component: Requested,
+        layout: "/invoice",
+        icon: AssignmentLateIcon,
+      },
+      {
+        path: "/approvals-ar",
+        name: "Approval Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: AssignmentTurnedInIcon,
+        component: ApprovalRequested,
+        layout: "/invoice",
+      },
+    ],
+  },
+  {
+    collapse: true,
+    name: "Finance Desk",
+    rtlName: "المكونات",
+    icon: AccountBalanceIcon,
+    state: "FinanceDeskCollapsear",
+    views: [
+      {
+        path: "/financeDashboardar",
+        name: "AR Analytics",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: EqualizerIcon,
+        component: FinanceDashboard,
+        layout: "/invoice",
+      },
+      {
+        path: "/send_invoices",
+        name: "Send Invoices",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: SystemUpdateIcon,
+        component: ExportList,
+        layout: "/invoice",
+      },
+      {
+        path: "/paymentar",
+        name: "Invoice Payments",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: LocalAtmIcon,
+        component: PaymentList,
+        layout: "/invoice",
+      },
+      {
+        path: "/clientledger",
+        name: "Client 360",
+        rtlName: "لوحة القيادة",
+        icon: ReceiptIcon,
+        component: Payable,
+        layout: "/invoice",
+      },
+      {
+        path: "/invoice-agingar",
+        name: "Invoice Aging",
+        rtlName: "لوحة القيادة",
+        icon: TimerIcon,
+        component: AgingReport,
+        layout: "/invoice",
+      },
+    ],
+  },
+];
+
+
+
+export const invoiceDefaultRoutes = [
+  {
     path: "/verifier",
     name: "Tracking & Validate",
     rtlName: "أشكال عادية",
@@ -191,6 +321,5 @@ var invoiceRoutes = [
     icon: FingerprintIcon,
     component: SignatureStamp,
     layout: "/invoice",
-  },
-];
-export default invoiceRoutes;
+  }
+]

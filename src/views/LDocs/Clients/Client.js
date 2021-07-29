@@ -20,8 +20,8 @@ import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
-import RegisterVendor from "./RegisterVendor";
-import View from "./ViewVendor";
+import RegisterClient from "./RegisterClient";
+import ViewClient from "./ViewClient.js";
 import {useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
@@ -31,7 +31,7 @@ import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functio
 import { Animated } from "react-animated-css";
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import jwt from "jsonwebtoken";
-import ShowVendor from "./ShowVendor.js";
+import ShowClient from "./ShowClient.js";
 import { setIsTokenExpired } from "actions";
 import Payable from "../Payable/Payable";
 const styles = {
@@ -58,7 +58,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-export default function Vendor() {
+export default function Client() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -107,7 +107,7 @@ export default function Vendor() {
       headers: { cooljwt:Token},
     })
       .then((response) => {
-        let msg = "Supplier Status Changed Successfully!";
+        let msg = "Client Status Changed Successfully!";
         successAlert(msg);
         getVendors(status.organizationId, true);
       }).catch((err)=>{
@@ -214,7 +214,7 @@ export default function Vendor() {
             let currency =  res.find(cu=>cu._id == prop.currency);
             var status  = prop.organizations.find(item=>item.organizationsId === org._id);
             return {
-              id:  `V-00${index+1}`,
+              id:  `C-00${index+1}`,
               vendorName: prop.level1.vendorName,
               //organizationName: prop.organizationName,
               currency: currency ? `${currency.Currency.toUpperCase()} ${currency.Code}` : prop.Currency_Base,
@@ -237,7 +237,7 @@ export default function Vendor() {
               ),
               actions: (
                 <div className="actions-right">
-                  <Tooltip title="Analytics" aria-label="analytics">
+                  {/* <Tooltip title="Analytics" aria-label="analytics">
                    <Button
                      justIcon
                      round
@@ -249,9 +249,9 @@ export default function Vendor() {
                    >
                      <AssessmentIcon />
                    </Button>
-                 </Tooltip>
+                 </Tooltip> */}
                   <Tooltip
-                    title="View Supplier"
+                    title="View Client"
                     aria-label="viewvendor"
                   >
                     <Button
@@ -308,7 +308,7 @@ export default function Vendor() {
               id="classic-modal-slide-description"
               className={classes.modalBody}
             >
-              <RegisterVendor
+              <RegisterClient
                 closeModal={() => setClassicModal(false)}
                 getVendors={getVendors}
                 setFilters={setFilters}
@@ -334,7 +334,7 @@ export default function Vendor() {
               className={classes.modalBody}
             >
               {viewModal ? (
-                <View
+                <ViewClient
                   closeModal={() => setViewModal(false)}
                   getVendors={getVendors}
                   vendDetail={vendorDetail}
@@ -374,7 +374,7 @@ export default function Vendor() {
                 <TextField
                   className={classes.textField}
                   fullWidth={true}
-                  label="Select Organization To See Vendors"
+                  label="Select Organization To See Clients"
                   name="organizationFilter"
                   onChange={(event) => {
                     handleOrgFilter(event);
@@ -410,7 +410,7 @@ export default function Vendor() {
             <Card>
               <CardHeader color="info" icon>
                 <CardIcon color="info">
-                  <h4 className={classes.cardTitleText}>Supplier List</h4>
+                  <h4 className={classes.cardTitleText}>Client List</h4>
                 </CardIcon>
                 <Button
                   color="danger"
@@ -419,7 +419,7 @@ export default function Vendor() {
                   style={{ float: "right" }}
                   onClick={() => setClassicModal(true)}
                 >
-                  Add New Supplier
+                  Add New Client
                 </Button>
               </CardHeader>
               <CardBody>
@@ -431,11 +431,11 @@ export default function Vendor() {
                     sortable={false}
                     columns={[
                       {
-                        Header: "Supplier ID",
+                        Header: "Client ID",
                         accessor: "id",
                       },
                       {
-                        Header: "Supplier Name",
+                        Header: "Client Name",
                         accessor: "vendorName",
                       },
                       {
@@ -453,10 +453,6 @@ export default function Vendor() {
                       {
                         Header: "Contact Phone",
                         accessor: "contactNumber",
-                      },
-                      {
-                        Header: "Status",
-                        accessor: "status",
                       },
                       {
                         Header: "Actions",
@@ -485,7 +481,7 @@ export default function Vendor() {
           animationOutDuration={1000}
           isVisible={viewComponent}
         >
-          <ShowVendor
+          <ShowClient
             goBack={goBack}
             vendorData={vendorData}
           />

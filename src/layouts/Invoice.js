@@ -27,7 +27,7 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 import {checkIsInvoiceDesk} from "views/LDocs/Authorization/checkAuthority";
 
 // import routes from "routes.js";
-import routes from "routes/invoiceDeskRoutes";
+import  {invoiceArRoutes, invoiceApRoutes, invoiceDefaultRoutes}  from "routes/invoiceDeskRoutes";
 import UserProfile from "views/LDocs/Profile/Profile";
 import styles from "assets/jss/material-dashboard-pro-react/layouts/adminStyle.js";
 import Verify from "views/LDocs/Verify/Verify";
@@ -37,7 +37,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 
 var ps;
-
+const routes = invoiceArRoutes.concat(invoiceApRoutes).concat(invoiceDefaultRoutes);
 const useStyles = makeStyles(styles);
 
 const checkTimeCompare = (dat) => {
@@ -300,7 +300,8 @@ export default function Dashboard(props) {
           draggable
           pauseOnHover/> */}
       <Sidebar
-        routes={routes.filter(route=>route.name !== undefined)}
+        arroutes={invoiceArRoutes.filter(route=>route.name !== undefined).concat(invoiceDefaultRoutes.filter(route=>route.name !== undefined))}
+        aproutes={invoiceApRoutes.filter(route=>route.name !== undefined).concat(invoiceDefaultRoutes.filter(route=>route.name !== undefined))}
         logoText={process.env.REACT_APP_LDOCS_FOOTER_COPYRIGHT_LEVEL_1}
         logo={logo}
         image={image}

@@ -23,6 +23,7 @@ import Workflow from "views/LDocs/Workflow/Workflow";
 import SignatureStamp from "views/LDocs/SignatureStamp/SignatureStamp";
 import  Warnings from "views/LDocs/Warnings/Warnings";
 import  Vendor from "views/LDocs/Vendor/Vendor";
+import  Client from "views/LDocs/Clients/Client";
 import Verify from "views/LDocs/Verify/Verify";
 import Currency from "views/LDocs/Currency/Currency";
 import GeneralConfigrations from "views/LDocs/Configrations/GeneralConfigrations";
@@ -65,6 +66,13 @@ var adminRoutes = [
         name: "Supplier",
         icon: PeopleIcon,
         component: Vendor,
+        layout: "/admin",
+      },
+      {
+        path: "/client",
+        name: "Client",
+        icon: PeopleIcon,
+        component: Client,
         layout: "/admin",
       },
       {

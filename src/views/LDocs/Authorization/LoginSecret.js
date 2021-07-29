@@ -107,7 +107,7 @@ export default function LoginSecret(props) {
         userData.role === "Action Desk" ? (
           <Redirect to="/action/dashboard" />
         ) : userData.role === "Invoice Desk" ? (
-          <Redirect to="/invoice/dashboard" />
+          <Redirect to="/invoice/dashboard_ap" />
         ) : userData.role === "Finance Desk" ? (
           <Redirect to="/finance/dashboard" />
         ) : (
