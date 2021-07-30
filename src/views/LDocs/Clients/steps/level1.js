@@ -44,7 +44,7 @@ export default function Step1(props) {
                     name="name"
                     type="text"
                     disabled={true}
-                    value={props.vendorData.level1.vendorName || ''}
+                    value={props.vendorData.level1.clientName || ''}
                   />
                 </GridItem>
                 <GridItem

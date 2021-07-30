@@ -267,7 +267,7 @@ export default function RegisterClient(props) {
       let msg = "";
       axios({
         method: "post",
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorRegistration`,
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/clientRegistration`,
         data: bodyFormData,
         headers: { cooljwt:Token},
       })

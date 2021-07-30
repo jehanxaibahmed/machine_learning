@@ -203,7 +203,7 @@ export default function Client() {
     notLoading ? setIsLoading(false): setIsLoading(true);
     axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${org}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/clientByOrganization/${org}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -215,7 +215,7 @@ export default function Client() {
             var status  = prop.organizations.find(item=>item.organizationsId === org._id);
             return {
               id:  `C-00${index+1}`,
-              vendorName: prop.level1.vendorName,
+              vendorName: prop.level1.clientName,
               //organizationName: prop.organizationName,
               currency: currency ? `${currency.Currency.toUpperCase()} ${currency.Code}` : prop.Currency_Base,
               licenseNumber: prop.level1.licenseNumber,
@@ -445,10 +445,6 @@ export default function Client() {
                       {
                         Header: "Email",
                         accessor: "email",
-                      },
-                      {
-                        Header: "Currency",
-                        accessor: "currency",
                       },
                       {
                         Header: "Contact Phone",
