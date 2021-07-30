@@ -17,8 +17,8 @@ import {
   Checkbox,
   Backdrop,
 } from "@material-ui/core";
-import Swal from 'sweetalert2'
-import swal from 'sweetalert';
+import Swal from "sweetalert2";
+import swal from "sweetalert";
 import { Redirect } from "react-router-dom";
 
 // core components
@@ -48,10 +48,14 @@ import ScanningDocumentAnimation from "components/ScanningDocumentAnimation/Scan
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import Attachments from "./Attachments";
 import Items from "./Items";
+import { useHistory } from "react-router-dom";
+
 import {
   addZeroes,
   conversionRate,
-  successAlert, errorAlert, msgAlert,
+  successAlert,
+  errorAlert,
+  msgAlert,
   formatDateTime,
 } from "views/LDocs/Functions/Functions";
 import { Add, Person, Visibility, VisibilityOff } from "@material-ui/icons";
@@ -118,6 +122,7 @@ export default function CreateInvoice(props) {
   const [file, setFile] = useState(null);
   const [isCreateInvoice, setIsCreateInvoice] = useState(edit ? false : true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAr, setIsAr] = useState(false);
   const sweetClass = sweetAlertStyle();
   const [editIndex, setEditIndex] = useState(null);
   const [selectedFileModel, setSelectedFileModel] = useState(false);
@@ -136,14 +141,15 @@ export default function CreateInvoice(props) {
   const [showVendor, setShowVendor] = useState(false);
   const [currency, setCurrency] = useState(defaultCurrency);
   const [markAsReceivedModel, setMarkAsReceivedModel] = useState(false);
+  const history = useHistory();
   let duedate = new Date();
   let today = new Date();
   let plusDays = 0;
   duedate = duedate.setDate(today.getDate() + plusDays);
   const userDetails = jwt.decode(Token);
   const isVendor = userDetails.isVendor;
-  const [formState, setFormState] = useState({
-    conversionRate:0,
+  let initialState = {
+    conversionRate: 0,
     vendors: [],
     organizations: [],
     attachments: [],
@@ -211,7 +217,8 @@ export default function CreateInvoice(props) {
       receiptNumber: "",
       organizationId: "",
     },
-  });
+  }
+  const [formState, setFormState] = useState(initialState);
   const [baseCurrency, setBaseCurrency] = useState(
     !isVendor
       ? userDetails.currency.Currency_Base
@@ -221,7 +228,9 @@ export default function CreateInvoice(props) {
   );
 
   const getLookUp = () => {
-    const organizationId = edit ? fileData.organizationId : !isVendor
+    const organizationId = edit
+      ? fileData.organizationId
+      : !isVendor
       ? userDetails.orgDetail.organizationId
       : formState.values.organizationId;
     //Get Currencies
@@ -240,7 +249,7 @@ export default function CreateInvoice(props) {
         })
         .catch((error) => {
           if (error.response) {
-             error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
         });
@@ -261,7 +270,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });
@@ -270,7 +279,7 @@ export default function CreateInvoice(props) {
     const userDetails = jwt.decode(Token);
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoAR` : `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
         organizationId: isVendor
           ? formState.selectedOrg
@@ -284,17 +293,17 @@ export default function CreateInvoice(props) {
       },
     })
       .then((res) => {
-        setPos(res.data);
+        setPos(res.data.result ? res.data.result : res.data ? res.data : []);
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setPos([]);
       });
   };
- 
+
   const getReceipts = (p) => {
     //p = PO Number
     const userDetails = jwt.decode(Token);
@@ -317,7 +326,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setReceipts([]);
@@ -408,12 +417,12 @@ export default function CreateInvoice(props) {
       })
         .then((res) => {
           setReceipts(res.data);
-         
+
           successAlert("Receipt Has Been Generated In Oracle Fusion.");
         })
         .catch((error) => {
           if (error.response) {
-             error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
           errorAlert("Unable To Generate RECEIPT.");
@@ -875,37 +884,36 @@ export default function CreateInvoice(props) {
       currencyLookups.find((l) => l._id == formState.values.currency) ||
       defaultCurrency;
     setCurrency(choosedCurrency);
-    if(!edit){
-    const UItems = items.map((i) => {
-      let j = {
-        ...i,
-        amount_bc: conversionRate(
-          formState.values.currency,
-          baseCurrency,
-          currencyLookups,
-          parseFloat(i.amount),
-          false
-        ),
-        unitCost_bc: conversionRate(
-          formState.values.currency,
-          baseCurrency,
-          currencyLookups,
-          parseFloat(i.unitCost),
-          false
-        ),
-        discountAmt_bc: conversionRate(
-          formState.values.currency,
-          baseCurrency,
-          currencyLookups,
-          parseFloat(i.discount),
-          false
-        ),
-      };
-      return j;
-    });
-    console.log(UItems);
-    setItems(UItems);
-  }
+    if (!edit) {
+      const UItems = items.map((i) => {
+        let j = {
+          ...i,
+          amount_bc: conversionRate(
+            formState.values.currency,
+            baseCurrency,
+            currencyLookups,
+            parseFloat(i.amount),
+            false
+          ),
+          unitCost_bc: conversionRate(
+            formState.values.currency,
+            baseCurrency,
+            currencyLookups,
+            parseFloat(i.unitCost),
+            false
+          ),
+          discountAmt_bc: conversionRate(
+            formState.values.currency,
+            baseCurrency,
+            currencyLookups,
+            parseFloat(i.discount),
+            false
+          ),
+        };
+        return j;
+      });
+      setItems(UItems);
+    }
   }, [formState.values.currency, currencyLookups]);
   //Update Total
   React.useEffect(() => {
@@ -936,7 +944,7 @@ export default function CreateInvoice(props) {
     }
   }, [formState.values.selectedVendor]);
 
-  const getData = () => {
+  const getData = (is_ar) => {
     setIsLoading(true);
     window.scrollTo(0, 0);
     const userDetails = jwt.decode(Token);
@@ -944,7 +952,7 @@ export default function CreateInvoice(props) {
       const userCurrency = userDetails.currency.Currency_Base;
       axios({
         method: "get",
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
+        url: is_ar ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/clientByOrganization/${userDetails.orgDetail.organizationId}`: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}` ,
         headers: { cooljwt: Token },
       })
         .then((response) => {
@@ -966,7 +974,7 @@ export default function CreateInvoice(props) {
         })
         .catch((error) => {
           if (error.response) {
-             error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
         });
@@ -990,7 +998,7 @@ export default function CreateInvoice(props) {
           })
           .catch((error) => {
             if (error.response) {
-               error.response.status == 401 && dispatch(setIsTokenExpired(true));
+              error.response.status == 401 && dispatch(setIsTokenExpired(true));
             }
             console.log(error);
           });
@@ -1012,17 +1020,29 @@ export default function CreateInvoice(props) {
         })
         .catch((error) => {
           if (error.response) {
-             error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
         });
     }
     getLookUp();
   };
+
+  const changingPath = () => {
+    let url = history.location.pathname;
+    let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : false;
+      setIsAr(is_Ar);
+      getData(is_Ar);
+  }
+
   //On Load Component
   React.useEffect(() => {
-    getData();
+    changingPath();
   }, []);
+
+  React.useEffect(() => {
+      changingPath();
+  }, [history.location.pathname]);
 
   const setInvoice = (orgs) => {
     if (edit) {
@@ -1060,7 +1080,7 @@ export default function CreateInvoice(props) {
           currency: fileData.FC_currency._id || "",
         },
         selectedOrg: isVendor ? org || null : null,
-        conversionRate:fileData.conversionRate || 0,
+        conversionRate: fileData.conversionRate || 0,
       }));
       var invoice_items = fileData.items.map((item) => {
         const i = {
@@ -1099,9 +1119,7 @@ export default function CreateInvoice(props) {
         ...formState,
         attachments: invoice_attachments,
       }));
-      setBaseCurrency(
-        fileData.LC_currency._id
-      );
+      setBaseCurrency(fileData.LC_currency._id);
       // setCurrency(currencyLookups.find(c=>c._id == fileData.FC_currency._id ));
       getPos(fileData.organizationId);
       if (!isVendor) {
@@ -1533,18 +1551,22 @@ export default function CreateInvoice(props) {
       ),
       items: items,
       attachments: formState.attachments,
-      vendorName: isVendor
+      vendorName: isAr ? null : isVendor
         ? userData.name
         : formState.values.selectedVendor.level1.vendorName,
-      vendorId: isVendor ? userData.id : formState.values.selectedVendor._id,
-      vendorSite: isVendor ? "" : formState.values.site,
+      vendorId: isAr ? null : isVendor ? userData.id : formState.values.selectedVendor._id,
+      vendorSite: isAr ? null : isVendor ? "" : formState.values.site,
+      clientName:isAr ? formState.values.selectedVendor.level1.clientName: null,
+      clientId:  isAr ? formState.values.selectedVendor._id: null,
+      clientSite: formState.values.site,
       version: fileData ? fileData.version : "",
+      isAR:isAr,
       invoicePath: fileData ? fileData.invoicePath : "",
       FC_currency: currencyLookups.find(
         (l) => l._id == formState.values.currency
       ),
       LC_currency: userCurrency,
-      conversionRate:currencyLookups.find(
+      conversionRate: currencyLookups.find(
         (l) => l._id == formState.values.currency
       ).conversionRate,
       description: formState.values.notes,
@@ -1559,7 +1581,10 @@ export default function CreateInvoice(props) {
       isPettyCash: formState.isPeetyCash,
       isPrePayment: formState.isPrePayment,
       isExpense: formState.isExpense,
-      createdDate: new Date().toLocaleString().replace(/t/, " ").replace(/\..+/, ""),
+      createdDate: new Date()
+        .toLocaleString()
+        .replace(/t/, " ")
+        .replace(/\..+/, ""),
       grossAmt_bc: conversionRate(
         formState.values.currency,
         baseCurrency,
@@ -1606,7 +1631,7 @@ export default function CreateInvoice(props) {
       //   : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
       url: isEdit
         ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
-        : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
+        : isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/submitInvoiceAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
       data: formData,
       headers: {
         //"Content-Type": "multipart/form-data",
@@ -1680,7 +1705,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         setIsSavingInvoice(false);
         errorAlert(
@@ -1692,7 +1717,6 @@ export default function CreateInvoice(props) {
   };
   return (
     <div>
-       
       {/* {isMarked ? <Redirect exact to="/invoice/received" /> : ''} */}
       {isCreateInvoice ? (
         <Animated
@@ -2167,7 +2191,7 @@ export default function CreateInvoice(props) {
                     <CardHeader color="info" icon>
                       <CardIcon color="info">
                         <h4 className={classes.cardTitleText}>
-                          {isVendor ? "Select Customer" : "Select Supplier"}
+                          {isVendor ? "Select Customer" :  isAr ? "Select Client": "Select Supplier"}
                         </h4>
                       </CardIcon>
                     </CardHeader>
@@ -2191,12 +2215,12 @@ export default function CreateInvoice(props) {
                                 }
                                 helperText={
                                   formState.errors.selectedVendor === "error"
-                                    ? "Valid Supplier Name is required"
+                                    ? isAr ? "Valid Client Name is required" : "Valid Supplier Name is required"
                                     : null
                                 }
                                 className={classes.textField}
                                 fullWidth={true}
-                                label="Select Supplier"
+                                label={isAr ? "Select Client" : "Select Supplier"}
                                 name="selectedVendor"
                                 onChange={(event) => {
                                   handleVendorChange(event);
@@ -2210,7 +2234,7 @@ export default function CreateInvoice(props) {
                                     root: classes.selectMenuItem,
                                   }}
                                 >
-                                  Choose Supplier
+                                  {isAr ? "Choose Client" : "Choose Supplier"}
                                 </MenuItem>
                                 {formState.vendors
                                   ? formState.vendors.map((vendor, index) => {
@@ -2219,7 +2243,7 @@ export default function CreateInvoice(props) {
                                           key={index}
                                           value={vendor._id}
                                         >
-                                          {vendor.level1.vendorName}
+                                          {isAr ? vendor.level1.clientName: vendor.level1.vendorName}
                                         </MenuItem>
                                       );
                                     })
@@ -2273,12 +2297,12 @@ export default function CreateInvoice(props) {
                                     error={formState.errors.site === "error"}
                                     helperText={
                                       formState.errors.site === "error"
-                                        ? "Valid Supplier Site is required"
+                                        ? isAr ?"Valid Client Site is required" :"Valid Supplier Site is required"
                                         : null
                                     }
                                     className={classes.textField}
                                     fullWidth={true}
-                                    label="Select Supplier Site"
+                                    label={isAr ? "Select Client Site":"Select Supplier Site" }
                                     name="site"
                                     onChange={(event) => {
                                       handleChange(event);
@@ -2292,7 +2316,7 @@ export default function CreateInvoice(props) {
                                         root: classes.selectMenuItem,
                                       }}
                                     >
-                                      Choose Supplier Site
+                                      {isAr ? "Choose Client Site":"Choose Supplier Site" }
                                     </MenuItem>
                                     {VendorSites.map((site, index) => {
                                       return (
@@ -2440,7 +2464,7 @@ export default function CreateInvoice(props) {
                             onClick={() => selectVendor()}
                             round
                           >
-                            {isVendor ? "Select Customer" : "Select Supplier"}
+                            {isVendor ? "Select Customer" : isAr ? "Select Client" : "Select Supplier"}
                           </Button>
                         </GridItem>
                       </GridContainer>
@@ -2585,19 +2609,20 @@ export default function CreateInvoice(props) {
                                 <div>
                                   <Typography variant="h6" component="h2">
                                     {formState.values.selectedVendor.level1
-                                      .vendorName || "Supplier Name"}
+                                      .vendorName || formState.values.selectedVendor.level1
+                                      .clientName}
                                   </Typography>
                                   <Typography variant="body2" component="h2">
-                                    {formState.values.site || "Supplier Site"}
+                                    {formState.values.site || ""}
                                   </Typography>
                                 </div>
                               ) : (
                                 <div>
                                   <Typography variant="h6" component="h2">
-                                    Supplier Name
+                                    {isAr ? "Client Name":"Supplier Name"} 
                                   </Typography>
                                   <Typography variant="body2" component="h2">
-                                    Supplier Site
+                                  {isAr ? "Client Site":"Supplier Site"} 
                                   </Typography>
                                 </div>
                               )}
@@ -2864,11 +2889,29 @@ export default function CreateInvoice(props) {
                             id="conversionRate"
                             name="conversionrate"
                             disabled={true}
-                            
                             type="text"
                             // variant="outlined"
-                            value={formState.values.currency ? `${currency.Code ? currency.Code: ""} 1 ≈ ${currencyLookups.find(c=>c._id == baseCurrency) ? currencyLookups.find(c=>c._id == baseCurrency).Code:""} ${currency.conversionRate ? parseFloat(!edit ? currency.conversionRate : formState.conversionRate).toFixed(4):"?"}`: 
-                            "" || ""}
+                            value={
+                              formState.values.currency
+                                ? `${currency.Code ? currency.Code : ""} 1 ≈ ${
+                                    currencyLookups.find(
+                                      (c) => c._id == baseCurrency
+                                    )
+                                      ? currencyLookups.find(
+                                          (c) => c._id == baseCurrency
+                                        ).Code
+                                      : ""
+                                  } ${
+                                    currency.conversionRate
+                                      ? parseFloat(
+                                          !edit
+                                            ? currency.conversionRate
+                                            : formState.conversionRate
+                                        ).toFixed(4)
+                                      : "?"
+                                  }`
+                                : "" || ""
+                            }
                             className={classes.textField}
                           />
                         </GridItem>
@@ -3131,7 +3174,7 @@ export default function CreateInvoice(props) {
                     <Items
                       formState={formState}
                       items={items}
-                      baseCurrency={fileData ? fileData.LC_currency._id: null}
+                      baseCurrency={fileData ? fileData.LC_currency._id : null}
                       handleChange={handleChange}
                       addZeroes={addZeroes}
                       handleEditItem={handleEditItem}
@@ -3394,7 +3437,7 @@ export default function CreateInvoice(props) {
                         round
                       >
                         {isSavingInvoice ? (
-                          <CircularProgress style={{color:'white'}} />
+                          <CircularProgress style={{ color: "white" }} />
                         ) : (
                           "Save Invoice"
                         )}
@@ -3425,7 +3468,10 @@ export default function CreateInvoice(props) {
           </GridContainer>
         </Animated>
       ) : (
-        <Backdrop className={classes.backdrop} open={!isCreateInvoice && !viewFile}>
+        <Backdrop
+          className={classes.backdrop}
+          open={!isCreateInvoice && !viewFile}
+        >
           <CircularProgress color="inherit" />
         </Backdrop>
       )}

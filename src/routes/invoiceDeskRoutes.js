@@ -56,7 +56,7 @@ export const invoiceApRoutes = [
     state: "InvoiceDeskCollapse",
     views: [
       {
-        path: "/create",
+        path: "/create/ap",
         name: "Create Invoice",
         rtlName: "عالتسعير",
         icon: NoteAddIcon,
@@ -184,7 +184,7 @@ export const invoiceArRoutes = [
     state: "InvoiceDeskCollapsear",
     views: [
       {
-        path: "/create",
+        path: "/create/ar",
         name: "Create Invoice",
         rtlName: "عالتسعير",
         icon: NoteAddIcon,
