@@ -515,7 +515,7 @@ const goBack = () => {
                             value={formState.values.reviewComments || ""}
                           ></TextField>
                         </GridItem>
-                        {validation ? validation.Validate.isSame == false ? 
+                        {/* {validation ? validation.Validate.isSame == false ? 
                         <GridItem
                           xs={12}
                           sm={12}
@@ -528,7 +528,7 @@ const goBack = () => {
                         >
                            <Alert severity="warning">Invoice has been Modified — check it out!</Alert>
                         </GridItem>
-                        :'':''}
+                        :'':''} */}
                         <span style={{ float: "right" }}>
                           <Button
                             color="info"

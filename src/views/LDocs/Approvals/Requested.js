@@ -510,7 +510,7 @@ export default function ApprovalRequested() {
                             value={formState.values.approveComments || ""}
                           ></TextField>
                         </GridItem>
-                        {validation ? (
+                        {/* {validation ? (
                           validation.Validate.isSame == false ? (
                             <GridItem
                               xs={12}
@@ -531,7 +531,7 @@ export default function ApprovalRequested() {
                           )
                         ) : (
                           ""
-                        )}
+                        )} */}
                         <span style={{ float: "right" }}>
                           <Button
                             color="info"
