@@ -54,6 +54,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { CallReceived, DoneAll } from "@material-ui/icons";
 import Alert from "@material-ui/lab/Alert";
 import { setIsTokenExpired } from "actions/index.js";
+import { _IsAr } from "../Functions/Functions";
 
 const styles = {
   cardIconTitle: {
@@ -101,7 +102,7 @@ export default function ApprovalRequested() {
 
   React.useEffect(() => {
     getRequests();
-  }, [show]);
+  }, [show, isAr]);
 
   const getInvoiceDetails = (row) => {
     axios({
@@ -159,10 +160,10 @@ export default function ApprovalRequested() {
     axios({
       method: "get",
       url: show
-        ? isAr
+        ? _IsAr()
           ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveMyPending/ar`
           : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveMyPending/ap`
-        : isAr
+        : _IsAr()
         ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/myApproves/ar`
         : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/myApproves/ap`,
       headers: { cooljwt: Token },

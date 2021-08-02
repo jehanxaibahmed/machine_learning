@@ -85,7 +85,7 @@ export default function Requested() {
 
   React.useEffect(() => {
     getRequests();
-  }, [show]);
+  }, [show, isAr]);
 
   const getInvoiceDetails = (row) => {
       axios({

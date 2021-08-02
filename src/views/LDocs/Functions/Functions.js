@@ -4,6 +4,7 @@ import axios from "axios";
 import dateFormat from "dateformat";
 import { firebaseConfig } from "../../../config/Firebase";
 import jwt from "jsonwebtoken";
+import { useHistory } from "react-router-dom";
 import Swal from 'sweetalert2'
 import moment from "moment";
 if (firebase.apps.length === 0) {
@@ -438,6 +439,15 @@ export const validateInvoice = async (row, Token) => {
       });
   });
 };
+
+
+export const _IsAr = () => {
+  let url = window.location.href;
+  console.log(url);
+  let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : false;
+  console.log(is_Ar);
+  return is_Ar;
+}
 
 export const conversionRate = (
   fc,
