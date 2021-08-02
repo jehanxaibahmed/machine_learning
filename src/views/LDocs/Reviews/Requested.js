@@ -63,6 +63,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Requested() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const isAr = useSelector((state) => state.userReducer.isAr);
   const classes = useStyles();
   const [isReviewingFile, setIsReviewingFile] = React.useState(false);
   const [pdfModalData, setPdfModalData] = React.useState(false);
@@ -146,8 +147,8 @@ export default function Requested() {
     setIsLoading(true);
     axios({
       method: "get",
-      url: show ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending`
-      :`${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews`,
+      url: show ? isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending/ar` : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending/ap` 
+      : isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews/ar` :  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews/ap` ,
       headers: { cooljwt: Token },
     })
       .then((response) => {

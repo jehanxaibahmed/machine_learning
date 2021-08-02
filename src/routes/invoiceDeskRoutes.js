@@ -37,11 +37,10 @@ import TimerIcon from "@material-ui/icons/Timer";
 
 const Token = localStorage.getItem("cooljwt");
 let decoded = jwt.decode(Token);
-console.log(decoded);
 
 export const invoiceApRoutes = [
   {
-    path: "/dashboard_ap",
+    path: "/dashboard/ap",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
     icon: DashboardIcon,
@@ -92,7 +91,7 @@ export const invoiceApRoutes = [
     state: "ActionDeskCollapse",
     views: [
       {
-        path: "/my-requests",
+        path: "/my-requests/ap",
         name: "Review Tasks",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -101,7 +100,7 @@ export const invoiceApRoutes = [
         icon: AssignmentLateIcon,
       },
       {
-        path: "/approvals",
+        path: "/approvals/ap",
         name: "Approval Tasks",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -169,7 +168,7 @@ export const invoiceApRoutes = [
 
 export const invoiceArRoutes = [
   {
-    path: "/dashboard_ar",
+    path: "/dashboard/ar",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
     icon: DashboardIcon,
@@ -220,7 +219,7 @@ export const invoiceArRoutes = [
     state: "ActionDeskCollapsear",
     views: [
       {
-        path: "/my-requests-ar",
+        path: "/my-requests/ar",
         name: "Review Tasks",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -229,7 +228,7 @@ export const invoiceArRoutes = [
         icon: AssignmentLateIcon,
       },
       {
-        path: "/approvals-ar",
+        path: "/approvals/ar",
         name: "Approval Tasks",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",

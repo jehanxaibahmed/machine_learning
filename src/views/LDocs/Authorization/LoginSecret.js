@@ -105,9 +105,9 @@ export default function LoginSecret(props) {
     <div className={classes.container}>
       {loggedIn && userData !== null ? (
         userData.role === "Action Desk" ? (
-          <Redirect to="/action/dashboard" />
+          <Redirect to="/action/dashboard/ap" />
         ) : userData.role === "Invoice Desk" ? (
-          <Redirect to="/invoice/dashboard_ap" />
+          <Redirect to="/invoice/dashboard/ap" />
         ) : userData.role === "Finance Desk" ? (
           <Redirect to="/finance/dashboard" />
         ) : (

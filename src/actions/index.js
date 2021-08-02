@@ -28,6 +28,13 @@ export const setToken = (tk) => {
   }
 };
 
+
+export const setIsAr = (isAR) => {
+  return (dispatch) => { 
+    dispatch({ type: "SET_IS_AR", response: isAR });
+  }
+};
+
 export const setIsTokenExpired = (isExpired) => {
   return (dispatch) => { 
     dispatch({ type: "SET_IS_TOKEN_EXPIRE", response: isExpired });
