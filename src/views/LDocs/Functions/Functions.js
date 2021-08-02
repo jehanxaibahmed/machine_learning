@@ -196,15 +196,16 @@ export const msgAlert = (msg) => {
   });
 };
 
-export const validateInvoice = async (row, Token) => {
+export const validateInvoice = async (row, Token, isAr) => {
   return new Promise((res, rej) => {
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: row.invoiceId,
         version: row.version,
-        vendorId: row.vendorId,
+        vendorId:  isAr ?  null : row.vendorId,
+        clientId:  isAr ? row.clientId: null,
       },
       headers: {
         cooljwt: Token,

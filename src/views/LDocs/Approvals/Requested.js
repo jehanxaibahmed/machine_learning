@@ -141,7 +141,7 @@ export default function ApprovalRequested() {
 
   const reviewFile = (row) => {
     setFileData(row);
-    validateInvoice(row, Token).then((res) => {
+    validateInvoice(row, Token, isAr).then((res) => {
       setValidation(res);
       setApproverModal(true);
     });

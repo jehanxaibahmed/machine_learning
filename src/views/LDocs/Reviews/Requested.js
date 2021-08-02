@@ -129,7 +129,7 @@ export default function Requested() {
     };
     const reviewFile = async (row) => {
       setInvoiceData(row);
-      validateInvoice(row, Token).then(res=>{
+      validateInvoice(row, Token, isAr).then(res=>{
         setValidation(res);
         setReviewModal(true);   
       });
