@@ -1646,7 +1646,7 @@ export default function CreateInvoice(props) {
           successAlert("Invoice Submited SuccessFully.");
         }
         if (!edit) {
-          getData();
+          getData(isAr);
           setItems([]);
           setFormState({
             selectedVendor: null,
