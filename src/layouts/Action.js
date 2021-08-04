@@ -87,7 +87,7 @@ export default function Dashboard(props) {
   const [fixedClasses, setFixedClasses] = React.useState("dropdown");
   const [logo, setLogo] = React.useState(require("assets/img/logo.png"));
   const [darkLogo, setDarkLogo] = React.useState(
-    require("assets/img/logoexxx.png")
+    require("assets/img/logo.png")
   );
   const dispatch = useDispatch();
   const notify = (msg) =>

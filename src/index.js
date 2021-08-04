@@ -16,6 +16,7 @@ import VendorLayout from "layouts/Vendor.js";
 import AuthLayout from "layouts/Auth.js";
 import RtlLayout from "layouts/RTL.js";
 import InvoiceDetail from "views/LDocs/Invoices/InvoiceDetail/InvoiceDetail";
+import ActivateClient from "views/LDocs/Clients/ActivateClient";
 import "assets/scss/material-dashboard-pro-react.scss?v=1.8.0";
 import { registerServiceWorker } from "./register-sw";
 
@@ -57,6 +58,7 @@ hideLoader();
             <Route path="/action" component={ActionLayout} />
             <Route path="/vendor" component={VendorLayout} />
             <Route path="/invoiceDetail" component={InvoiceDetail} />
+            <Route path="/client/activate" component={ActivateClient} />
             {/**  <Redirect from="/" to="/admin/dashboard" />  */}
             <Redirect from="/" to="/auth" />
           </Switch>
