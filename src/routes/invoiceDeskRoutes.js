@@ -18,6 +18,7 @@ import ReceiptIcon from "@material-ui/icons/Receipt";
 //Components
 
 import FilesList from "views/LDocs/Invoices/RecieveInvoice/FilesList";
+import FilesListAr from "views/LDocs/Invoices/RecieveInvoice/FileListAr";
 import Dashboard from "views/LDocs/Dashboard/Dashboard";
 import FinanceDashboard from "views/LDocs/Dashboard/FinanceDashboard";
 import Notifications from "views/LDocs/Notifications/Notifications";
@@ -64,7 +65,7 @@ export const invoiceApRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/received",
+        path: "/invoices/ap",
         name: "Received Invoice",
         rtlName: "عالتسعير",
         icon: SystemUpdateIcon,
@@ -192,12 +193,12 @@ export const invoiceArRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/sent",
+        path: "/invoices/ar",
         name: "Sent Invoice",
         rtlName: "عالتسعير",
         icon: SystemUpdateIcon,
         rtlMini: "ع",
-        component: FilesList,
+        component: FilesListAr,
         layout: "/invoice",
       },
       {

@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import cx from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDataAction, getNotification, getTasks, setDarkMode, setIsTokenExpired } from "../actions";
+import { getUserDataAction, getNotification, getTasks, setDarkMode, setIsTokenExpired, setIsAr } from "../actions";
 import {  Switch, Route, Redirect } from "react-router-dom";
 import addNotification from 'react-push-notification';
 // creates a beautiful scrollbar
@@ -123,6 +123,15 @@ export default function Dashboard(props) {
   //   })
   // },[notifications]);
 
+  useEffect(()=>{
+    changingPath();
+  },[history.location.pathname])
+
+  const changingPath = () => {
+    let url = history.location.pathname;
+    let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : false;
+    dispatch(setIsAr(is_Ar));
+  }
  
   const theme = createMuiTheme({
     palette: {

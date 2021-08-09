@@ -159,6 +159,53 @@ export const currentTracking = (trackingStatus) => {
   return activeStep;
 };
 
+
+export const currentTrackingAr = (trackingStatus) => {
+  let currentStatus;
+  let activeStep;
+  console.log(trackingStatus);
+  switch (trackingStatus.current_status) {
+    case "invoiceDraft":
+      currentStatus = trackingStatus.invoiceDraft.status;
+      activeStep = { val: 0, status: currentStatus };
+      break;
+    case "underReview":
+      currentStatus = trackingStatus.underReview.status;
+      if (currentStatus) {
+        activeStep = { val: 1, status: currentStatus };
+      } else {
+        activeStep = { val: 0, status: currentStatus };
+      }
+      break;
+    case "underApprove":
+      currentStatus = trackingStatus.underApprove.status;
+      if (currentStatus) {
+        activeStep = { val: 2, status: currentStatus };
+      } else {
+        activeStep = { val: 1, status: currentStatus };
+      }
+      break;
+    case "sentToClient":
+      currentStatus = trackingStatus.paymentInProcess.status;
+      if (currentStatus) {
+        activeStep = { val: 3, status: currentStatus };
+      } else {
+        activeStep = { val: 2, status: currentStatus };
+      }
+      break;
+    case "Payment":
+      currentStatus = trackingStatus.paid.status;
+      if (currentStatus) {
+        activeStep = { val: 4, status: currentStatus };
+      } else {
+        activeStep = { val: 3, status: currentStatus };
+      }
+      break;
+  }
+  return activeStep;
+};
+
+
 export const successAlert = (msg) => {
   Swal.fire({
     title: "Success",
