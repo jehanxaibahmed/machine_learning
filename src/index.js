@@ -59,6 +59,7 @@ hideLoader();
             <Route path="/vendor" component={VendorLayout} />
             <Route path="/invoiceDetail" component={InvoiceDetail} />
             <Route path="/client/activate" component={ActivateClient} />
+            <Route path="/client/acknowladged" component={ActivateClient} />
             {/**  <Redirect from="/" to="/admin/dashboard" />  */}
             <Redirect from="/" to="/auth" />
           </Switch>

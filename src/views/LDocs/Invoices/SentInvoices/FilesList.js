@@ -8,10 +8,6 @@ import CenterFocusWeakIcon from "@material-ui/icons/CenterFocusWeak";
 import CenterFocusStrongIcon from "@material-ui/icons/CenterFocusStrong";
 import DateRangeIcon from "@material-ui/icons/DateRange";
 import styles from "assets/jss/material-dashboard-pro-react/views/dashboardStyle.js";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
 // @material-ui/core components
 import {
   makeStyles,
@@ -39,8 +35,6 @@ import {
   EditOutlined,
   Done,
 } from "@material-ui/icons";
-import ProccedToPayment from "./ProccedToPayment";
-
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -93,10 +87,11 @@ import NoStatus from "assets/img/statuses/NoStatus.png";
 import VerticalLinearStepper from "../../../Components/VerticalStepper";
 import ViewModuleIcon from "@material-ui/icons/ViewModule";
 import { useDispatch, useSelector } from "react-redux";
-import PayInvoices from "./PayInvoices";
-import InitiatePayment from "./PaymentModal";
+import ExportToFusion from "./ExportToFusion";
 import Filters from "./Filters";
+import { over } from "lodash";
 import { setIsTokenExpired } from "actions";
+import { ToastContainer, toast } from "react-toastify";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -109,6 +104,16 @@ const StyledBadge = withStyles((theme) => ({
     background: "#9E2654",
   },
 }))(Badge);
+const notify = (msg) =>
+  toast(msg, {
+    position: "top-right",
+    autoClose: 2000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: false,
+    progress: undefined,
+  });
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='down' ref={ref} {...props} />;
 });
@@ -119,28 +124,27 @@ const TransitionLeft = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='left' ref={ref} {...props} />;
 });
 
-export default function PaymentList(props) {
+export default function SentInvoices(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
   const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
-  const [poModal, setPoModal] = React.useState(false);
-  const [po, setPO] = React.useState(null);
-  const [pos, setPos] = React.useState([]);
   const classes = useStyles();
-  const [componentName, setComponentName] = React.useState("Invoice Payments");
+  const [componentName, setComponentName] = React.useState("Financial System");
   const [classicModal, setClassicModal] = React.useState(false);
   const [tagModal, setTagModal] = React.useState(false);
   const [qrModal, setQrModal] = React.useState(false);
-  const [paymentPopup, setPaymentPopup] = React.useState(false);
+  const [taskModal, setTaskModal] = React.useState(false);
+  const [reviewerModal, setReviewerModal] = React.useState(false);
   const [initWorkFlowModal, setInitWorkFlowModal] = React.useState(false);
   const [animateTable, setAnimateTable] = React.useState(true);
   const [animatePdf, setAnimatePdf] = React.useState(false);
   const [animateBlockChain, setAnimateBlockChain] = React.useState(false);
   const [animateQr, setAnimateQr] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [exported, setExported] = React.useState(false);
   const [isViewing, setIsViewing] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [isViewingBlockChainView, setIsViewingBlockChainView] = React.useState(
@@ -154,7 +158,6 @@ export default function PaymentList(props) {
   const [markAsReceivedModel, setMarkAsReceivedModel] = React.useState(false);
   const [initPaymentModel, setinitPaymentModel] = React.useState(false);
   const [exportToFusionModel, setExportToFusionModel] = React.useState(false);
-  const [paymentModal, setPaymentModal] = React.useState(false);
   const [editInvoice, setEditInvoiceModel] = React.useState(false);
   const [decoded, setDecoded] = React.useState(null);
   const [view, setView] = React.useState("read");
@@ -163,13 +166,14 @@ export default function PaymentList(props) {
   const [formState, setFormState] = React.useState({
     files: [],
     totalInvoices: 0,
-    PaidInvoices: 0,
     paymentDue: 0,
     overDue: 0,
     paymentInProcess: 0,
     vendors: [],
+    export: null,
     pos: [],
     filter: null,
+    exported:false,
     filters: {
       supplierId: true,
       poNumber: true,
@@ -191,82 +195,35 @@ export default function PaymentList(props) {
       notPaid: false,
     },
   });
-  const showPaymentPopup = () => {
-    setAnimateTable(false);
-    setPaymentPopup(true);
-  };
-
-  const viewPO = (p) => {
-    getPos().then((poss) => {
-      let po = poss.find((po) => po.poNumber == p);
-      if (po) {
-        setPO([
-          { name: "Date of Issue", value: formatDateTime(po.dateOfIssue) },
-          { name: "Payment Terms", value: po.paymentTerm },
-          { name: "Date of Expiry", value: formatDateTime(po.dateOfExpiry) },
-          {
-            name: "PO Amount:",
-            value: `${"SAR" + addZeroes(po.poAmount)}`,
-          },
-          {
-            name: "Partial Delivery:",
-            value: po.partialDelivery ? "YES" : "NO",
-          },
-        ]);
-        setPoModal(true);
-      }
-    });
-  };
-
-  const closePaymentModal = () => {
-    var css = "iframe:parent { zindex: 999999999999999 !important; }",
-      head = document.head || document.getElementsByTagName("head")[0],
-      style = document.createElement("style");
-
-    head.appendChild(style);
-
-    style.type = "text/css";
-    if (style.styleSheet) {
-      // This is required for IE8 and below.
-      style.styleSheet.cssText = css;
-    } else {
-      style.appendChild(document.createTextNode(css));
-    }
-    setPaymentModal(false);
-  };
 
   const getPos = () => {
-    return new Promise((resolve, rej) => {
-      let userDetails = jwt.decode(Token);
-      axios({
-        method: "post", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
-        data: {
-          organizationId: userDetails.orgDetail.organizationId,
-        },
-        headers: {
-          cooljwt: Token,
-        },
+    let userDetails = jwt.decode(Token);
+    axios({
+      method: "post", //you can set what request you want to be
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+      data: {
+        organizationId: userDetails.orgDetail.organizationId,
+      },
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then((res) => {
+        console.log(res.data);
+        setFormState((formState) => ({
+          ...formState,
+          pos: res.data,
+        }));
       })
-        .then((res) => {
-          resolve(res.data);
-          setPos(res.data);
-          setFormState((formState) => ({
-            ...formState,
-            pos: res.data,
-          }));
-        })
-        .catch((error) => {
-          if (error.response) {
-            error.response.status == 401 && dispatch(setIsTokenExpired(true));
-          }
-          setPos([]);
-          setFormState((formState) => ({
-            ...formState,
-            pos: [],
-          }));
-        });
-    });
+      .catch((error) => {
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
+        setFormState((formState) => ({
+          ...formState,
+          pos: [],
+        }));
+      });
   };
 
   const getVendors = () => {
@@ -362,17 +319,17 @@ export default function PaymentList(props) {
     if (from == 1) {
       let filter = "totalInvCount";
       if (data.id == 0) {
-        filter = "PaidInvoices";
+        filter = "totalInvCount";
       }
       if (data.id == 1) {
         if (data.val == 0) {
-          filter = "partialPayWeek";
+          filter = "paymentDueWeek";
         }
         if (data.val == 1) {
-          filter = "partialPayMonth";
+          filter = "paymentDueMonth";
         }
         if (data.val == 2) {
-          filter = "partialPayMonthAfter";
+          filter = "paymentDueMonthAfter";
         }
       }
       if (data.id == 2) {
@@ -417,15 +374,10 @@ export default function PaymentList(props) {
     setAnimateTable(false);
     setAnimateQr(true);
   };
-  const viewPaymentView = (row) => {
-    setRow(row);
-    setPaymentModal(true);
-  };
   //Close Views
   const goBack = () => {
     setPdfUrl();
     setQrModal(false);
-    setPaymentPopup(false);
     setIsViewing(false);
     setIsViewingBlockChainView(false);
     setAnimateTable(true);
@@ -482,13 +434,6 @@ export default function PaymentList(props) {
           dueDate: (
             <MenuProvider data={prop} id='menu_id'>
               {formatDate(prop.dueDate)}
-              <br />
-              (Net-{prop.paymentTerms})
-            </MenuProvider>
-          ),
-          balanceDue: (
-            <MenuProvider data={prop} id='menu_id'>
-              {`${prop.LC_currency.Code} ${addZeroes(prop.balanceDue)}`}
             </MenuProvider>
           ),
           vendorName: (
@@ -507,14 +452,9 @@ export default function PaymentList(props) {
             </MenuProvider>
           ),
           poNumber: (
-            // <MenuProvider  data={prop} id="menu_id">
-            <div
-              style={{ color: "blue", cursor: "pointer" }}
-              onClick={() => viewPO(prop.po)}
-            >
+            <MenuProvider data={prop} id='menu_id'>
               {prop.po}
-            </div>
-            // </MenuProvider>
+            </MenuProvider>
           ),
           customerName: (
             <MenuProvider data={prop} id='menu_id'>
@@ -532,14 +472,14 @@ export default function PaymentList(props) {
                 aria-label='conversionRate'
               >
                 <div>
+                  {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
+                  <br />
                   {prop.FC_currency && prop.LC_currency
                     ? prop.FC_currency._id !== prop.LC_currency._id
-                      ? `${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
-                          "0.00"}`
+                      ? `(${prop.LC_currency.Code || ""} ${prop.netAmt_bc ||
+                          "0.00"})`
                       : ""
                     : ""}
-                  <br />
-                  {`(${prop.FC_currency.Code} ${addZeroes(prop.netAmt)})`}
                 </div>
               </Tooltip>
             </MenuProvider>
@@ -610,7 +550,10 @@ export default function PaymentList(props) {
           select: (
             <div className='actions'>
               <Checkbox
-                disabled={formState.filter == "PaidInvoices"}
+                // disabled={
+                //   formState.filter == "totalInvCount" ||
+                //   formState.filter == "paymentInProcessCount"
+                // }
                 checked={isSelected}
                 onChange={() => select(prop)}
               />
@@ -618,25 +561,6 @@ export default function PaymentList(props) {
           ),
           actions: (
             <div className='actions-right'>
-              {formState.filter != "PaidInvoices" ? (
-                <Tooltip title='Pay Invoice' aria-label='payInvoice'>
-                  <Button
-                    justIcon
-                    round
-                    simple
-                    icon={MonetizationOnIcon}
-                    onClick={() => {
-                      viewPaymentView(prop);
-                    }}
-                    color='info'
-                    className='Edit'
-                  >
-                    <MonetizationOnIcon />
-                  </Button>
-                </Tooltip>
-              ) : (
-                ""
-              )}
               <Tooltip title='View File' aria-label='viewfile'>
                 <Button
                   justIcon
@@ -693,7 +617,7 @@ export default function PaymentList(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/InvoiceDetailFinance/${user.orgDetail.organizationId}/${formState.filter}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceCfoDetails/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
@@ -706,17 +630,13 @@ export default function PaymentList(props) {
             formState.filter == null
               ? response.data.invoicesApproved
               : response.data,
-          PaidInvoices:
-            formState.filter == null
-              ? response.data.PaidInvoices
-              : formState.PaidInvoices,
           totalInvoices:
             formState.filter == null
               ? response.data.totalInvCount
               : formState.totalInvoices,
           paymentDue:
             formState.filter == null
-              ? response.data.partiallyPay
+              ? response.data.paymentDueCount
               : formState.paymentDue,
           overDue:
             formState.filter == null
@@ -754,6 +674,11 @@ export default function PaymentList(props) {
  
   const select = (invoice) => {
     let selectedInvoices = selected;
+    console.log(exported);
+    if(exported){
+      selectedInvoices = [];
+      setExported(false)
+    }
     if (!invoice) {
       if (selected.length == filesData.length) {
         selectedInvoices = [];
@@ -771,8 +696,6 @@ export default function PaymentList(props) {
               id: file.invoiceId,
               version: file.version,
               vendorId: file.vendorId,
-              netAmt_bc: file.netAmt_bc,
-              LC_currency: file.LC_currency,
             });
           }
         });
@@ -790,8 +713,6 @@ export default function PaymentList(props) {
           id: invoice.invoiceId,
           version: invoice.version,
           vendorId: invoice.vendorId,
-          netAmt_bc: invoice.netAmt_bc,
-          LC_currency: invoice.LC_currency,
         });
       } else {
         const index = selected.findIndex(
@@ -827,25 +748,38 @@ export default function PaymentList(props) {
   const viewBlockChainViewFromAwesomeMenu = ({ event, props }) => {
     viewBlockChainView(props);
   };
-  const exportInvoices = () => {
+  const exportInvoices = (n) => {
+    // n = 1 && export Invoices
+    // n = 2 && Payment Invoices
+    setFormState((formState) => ({
+      ...formState,
+      export: n,
+    }));
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     setExportToFusionModel(true);
+    setExported(true);
+    setSelected([]);
     axios({
       method: "post",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/exportInvoices`,
+      url:
+        n == 1
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/exportInvoices`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/moveToFinance`,
       data: selected,
       headers: {
         cooljwt: Token,
       },
     })
-      .then((response) => {
+      .then(async (response) => {
         setFormState((formState) => ({
           ...formState,
           filter: null,
         }));
-        setSelected([]);
-        getMyFiles(userDetail, false);
+        let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
+        await getMyFiles(userDetail, false);
+        
         setExportToFusionModel(false);
+        notify(n == 1 ? "Exported Successfully" : "Sent For Payment");
       })
       .catch((error) => {
         if (error.response) {
@@ -923,46 +857,6 @@ export default function PaymentList(props) {
       ) : (
         ""
       )}
-      {poModal ? (
-        <Dialog
-          classes={{
-            root: classes.center + " " + classes.modalRoot,
-            paper: classes.modal,
-          }}
-          fullWidth={true}
-          maxWidth={"sm"}
-          open={poModal}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={() => setPoModal(false)}
-          aria-labelledby='vendor-modal-slide-title'
-          aria-describedby='vendor-modal-slide-description'
-        >
-          <DialogContent id='vendorSelect' className={classes.modalBody}>
-            <Card>
-              <CardHeader color='info' icon>
-                <CardIcon color='info'>
-                  <h4 className={classes.cardTitleText}>Purchase Order</h4>
-                </CardIcon>
-              </CardHeader>
-              <CardBody>
-                <Table>
-                  <TableBody>
-                    {po.map((val, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{val.name}</TableCell>
-                        <TableCell>{val.value}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardBody>
-            </Card>
-          </DialogContent>
-        </Dialog>
-      ) : (
-        ""
-      )}
       {/* Open BlockChain View */}
       {isViewingBlockChainView ? (
         <Animated
@@ -999,46 +893,7 @@ export default function PaymentList(props) {
       ) : (
         ""
       )}
-      {/* Payment Modal */}
-      {paymentModal ? (
-        <GridContainer justify='center'>
-          <GridItem xs={12} sm={12} md={12} className={classes.center}>
-            <Dialog
-              classes={{
-                root: classes.center + " " + classes.modalRoot,
-                paper: classes.modal,
-              }}
-              fullWidth={true}
-              maxWidth={"md"}
-              scroll='body'
-              open={paymentModal}
-              TransitionComponent={Transition}
-              keepMounted
-              onClose={() => closePaymentModal()}
-              aria-labelledby='tag-modal-slide-title'
-              aria-describedby='tag-modal-slide-description'
-            >
-              <DialogContent
-                id='tag-modal-slide-description'
-                className={classes.modalBody}
-              >
-                <InitiatePayment
-                  closeModal={() => closePaymentModal()}
-                  fileData={row}
-                  loadFiles={getMyFiles}
-                />
-                {/* <PayInvoices
-               closeModal={() => setPaymentModal(false)}
-               fileData={row}
-               loadFiles={getMyFiles}
-             /> */}
-              </DialogContent>
-            </Dialog>
-          </GridItem>
-        </GridContainer>
-      ) : (
-        ""
-      )}
+
       {/* Mark As Payment Model */}
       {exportToFusionModel ? (
         <GridContainer justify='center'>
@@ -1062,9 +917,10 @@ export default function PaymentList(props) {
                 id='tag-modal-slide-description'
                 className={classes.modalBody}
               >
-                <PayInvoices
+                <ExportToFusion
                   closeModal={() => setExportToFusionModel(false)}
                   fileData={row}
+                  export={formState.export || 1}
                   loadFiles={getMyFiles}
                 />
               </DialogContent>
@@ -1110,20 +966,6 @@ export default function PaymentList(props) {
         ""
       )}
 
-      {paymentPopup ? (
-        <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
-          animationInDuration={1000}
-          animationOutDuration={1000}
-          isVisible={paymentPopup}
-        >
-          <ProccedToPayment goBack={goBack} selectedInvoices={selected} />
-        </Animated>
-      ) : (
-        ""
-      )}
-
       {animateTable ? (
         <Animated
           animationIn='bounceInRight'
@@ -1137,80 +979,22 @@ export default function PaymentList(props) {
           <GridContainer>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color='danger' stats icon>
-                  <CardIcon color='danger'>
-                    {/* <Store /> */}
-                    <InsertDriveFileIcon />
-                  </CardIcon>
-                  <p className={classes.cardCategory}>To be Paid</p>
-                  <h3 className={classes.cardTitle}>
-                    {formState.paymentInProcess}
-                  </h3>
-                </CardHeader>
-                <CardFooter stats>
-                  <div className={classes.stats}>
-                    <Tooltip title='To be Paid'>
-                      <Typography varient='body2' component='h2'>
-                        <Avatar
-                          style={
-                            formState.filter == "paymentInProcessCount"
-                              ? { background: "#5A2C66", color: "white" }
-                              : { cursor: "pointer" }
-                          }
-                          onClick={() =>
-                            setFilter(1, {
-                              id: 3,
-                              val: "paymentInProcessCount",
-                            })
-                          }
-                        >
-                          <Done fontSize='large' />
-                        </Avatar>
-                      </Typography>
-                    </Tooltip>
-                  </div>
-                </CardFooter>
-              </Card>
-            </GridItem>
-            <GridItem xs={12} sm={6} md={6} lg={3}>
-              <Card>
                 <CardHeader color='info' stats icon>
                   <CardIcon color='info'>
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Fully Paid</p>
+                  <p className={classes.cardCategory}>Ready To Send Count</p>
                   <h3 className={classes.cardTitle}>
-                    {formState.PaidInvoices}
+                    {formState.totalInvoices}
                   </h3>
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title='Paid Invoices'>
-                      <Typography varient='body2' component='h2'>
-                        <Avatar
-                          style={
-                            formState.filter == "PaidInvoices"
-                              ? {
-                                  background: "#9E2654",
-                                  color: "white",
-                                  marginRight: 5,
-                                }
-                              : {
-                                  cursor: "pointer",
-                                }
-                          }
-                          onClick={() =>
-                            setFilter(1, { id: 0, val: "PaidInvoices" })
-                          }
-                        >
-                          <Done fontSize='large' />
-                        </Avatar>
-                      </Typography>
-                    </Tooltip>
+                   
                   </div>
                 </CardFooter>
-              </Card>
+                          </Card>
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
@@ -1218,77 +1002,12 @@ export default function PaymentList(props) {
                   <CardIcon color='danger'>
                     <CenterFocusWeakIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Partially Paid</p>
+                  <p className={classes.cardCategory}>Sent Count</p>
                   <h3 className={classes.cardTitle}>{formState.paymentDue}</h3>
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title='Weekly'>
-                      <Typography varient='body2' component='h2'>
-                        <Avatar
-                          style={
-                            formState.filter == "partialPayWeek"
-                              ? {
-                                  background: "#5A2C66",
-                                  color: "white",
-                                  marginRight: 5,
-                                }
-                              : {
-                                  cursor: "pointer",
-                                  marginRight: 5,
-                                }
-                          }
-                          onClick={() => setFilter(1, { id: 1, val: 0 })}
-                        >
-                          W
-                        </Avatar>
-                      </Typography>
-                    </Tooltip>
-                    <Tooltip title='Monthly'>
-                      <Typography varient='body2' component='h2'>
-                        <Avatar
-                          style={
-                            formState.filter == "partialPayMonth"
-                              ? {
-                                  background: "#5A2C66",
-                                  color: "white",
-                                  marginRight: 5,
-                                }
-                              : {
-                                  cursor: "pointer",
-                                  marginRight: 5,
-                                }
-                          }
-                          onClick={() => setFilter(1, { id: 1, val: 1 })}
-                        >
-                          {" "}
-                          M
-                        </Avatar>
-                      </Typography>
-                    </Tooltip>
-                    <Tooltip title='Above Month'>
-                      <Typography varient='body2' component='h2'>
-                        <Avatar
-                          style={
-                            formState.filter == "partialPayMonthAfter"
-                              ? {
-                                  background: "#5A2C66",
-                                  color: "white",
-                                  marginRight: 5,
-                                }
-                              : {
-                                  cursor: "pointer",
-                                  marginRight: 5,
-                                }
-                          }
-                          onClick={() => setFilter(1, { id: 1, val: 2 })}
-                        >
-                          +
-                        </Avatar>
-                      </Typography>
-                    </Tooltip>
-                    {/* <CenterFocusWeakIcon />
-                    <Link to="#">Show Payment Due Invoices</Link> */}
+                   
                   </div>
                 </CardFooter>
               </Card>
@@ -1299,80 +1018,35 @@ export default function PaymentList(props) {
                   <CardIcon color='info'>
                     <CenterFocusStrongIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Over Due</p>
+                  <p className={classes.cardCategory}>Acknowledged Count</p>
                   <h3 className={classes.cardTitle}>{formState.overDue}</h3>
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title='Weekly'>
-                      <Typography varient='body2' component='h2'>
-                        <Avatar
-                          style={
-                            formState.filter == "paymentOverDueWeek"
-                              ? {
-                                  background: "#9E2654",
-                                  color: "white",
-                                  marginRight: 5,
-                                }
-                              : {
-                                  cursor: "pointer",
-                                  marginRight: 5,
-                                }
-                          }
-                          onClick={() => setFilter(1, { id: 2, val: 0 })}
-                        >
-                          {" "}
-                          W
-                        </Avatar>
-                      </Typography>
-                    </Tooltip>
-                    <Tooltip title='Monthly'>
-                      <Typography varient='body2' component='h2'>
-                        <Avatar
-                          style={
-                            formState.filter == "paymentOverDueMonth"
-                              ? {
-                                  background: "#9E2654",
-                                  color: "white",
-                                  marginRight: 5,
-                                }
-                              : {
-                                  cursor: "pointer",
-                                  marginRight: 5,
-                                }
-                          }
-                          onClick={() => setFilter(1, { id: 2, val: 1 })}
-                        >
-                          M
-                        </Avatar>
-                      </Typography>
-                    </Tooltip>
-                    <Tooltip title='Above Month'>
-                      <Typography varient='body2' component='h2'>
-                        <Avatar
-                          style={
-                            formState.filter == "paymentOverDueMonthAfter"
-                              ? {
-                                  background: "#9E2654",
-                                  color: "white",
-                                  marginRight: 5,
-                                }
-                              : {
-                                  cursor: "pointer",
-                                  marginRight: 5,
-                                }
-                          }
-                          onClick={() => setFilter(1, { id: 2, val: 2 })}
-                        >
-                          +
-                        </Avatar>
-                      </Typography>
-                    </Tooltip>
+                   
                   </div>
                 </CardFooter>
               </Card>
             </GridItem>
-
+            <GridItem xs={12} sm={6} md={6} lg={3}>
+              <Card>
+                <CardHeader color='danger' stats icon>
+                  <CardIcon color='danger'>
+                    {/* <Store /> */}
+                    <InsertDriveFileIcon />
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Notified Count</p>
+                  <h3 className={classes.cardTitle}>
+                    {formState.paymentInProcess}
+                  </h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div className={classes.stats}>
+                   
+                  </div>
+                </CardFooter>
+              </Card>
+            </GridItem>
             <GridItem xs={12}>
               <Card>
                 <CardHeader color='danger' icon>
@@ -1382,28 +1056,22 @@ export default function PaymentList(props) {
                   <p style={{ color: "gray" }}>
                     Note: Right click on any file to see multiple options
                   </p>
-                  <Button
-                    color='info'
-                    round
-                    style={{ float: "right", padding: "10x 0px" }}
-                    className={classes.marginRight}
-                    onClick={() => setShowFiltersModel(true)}
-                  >
-                    Filters
-                  </Button>
-                  {/* <Button
-                    color="danger"
-                    round
-                    style={{ float: "right" }}
-                    className={classes.marginRight}
-                    onClick={() => {
-                      selected.length > 0
-                        ? showPaymentPopup()
-                        : msgAlert("Please Select a Invoice.");
-                    }}
-                  >
-                    Proceed to Payment
-                  </Button> */}
+                
+                    <React.Fragment>
+                      <Button
+                        color='info'
+                        round
+                        style={{ float: "right" }}
+                        className={classes.marginRight}
+                        onClick={() =>
+                          selected.length > 0
+                            ? exportInvoices(1)
+                            : msgAlert("Please Select a Invoice.")
+                        }
+                      >
+                        Sent to Client ({selected.length})
+                      </Button>
+                      </React.Fragment>
                 </CardHeader>
                 <CardBody>
                   {isLoading ? (
@@ -1413,22 +1081,23 @@ export default function PaymentList(props) {
                       data={data}
                       sortable={false}
                       columns={[
-                        // {
-                        //   Header: (
-                        //     <Checkbox
-                        //       checked={
-                        //         filesData.length == selected.length &&
-                        //         selected.length >= 0
-                        //       }
-                        //       onChange={() => select()}
-                        //       disabled={formState.filter == "PaidInvoices"}
-                        //     />
-                        //   ),
-
-                        //   width: 50,
-                        //   accessor: "select",
-                        //   disableSortBy: false,
-                        // },
+                        {
+                          Header: (
+                            <Checkbox
+                              checked={
+                                filesData.length == selected.length &&
+                                selected.length >= 0
+                              }
+                              onChange={() => select()}
+                              // disabled={
+                              //   formState.filter == "totalInvCount" ||
+                              //   formState.filter == "paymentInProcessCount"
+                              // }
+                            />
+                          ),
+                          accessor: "select",
+                          disableSortBy: false,
+                        },
                         {
                           Header: "Invoice ID",
                           accessor: "invoiceId",
@@ -1440,7 +1109,7 @@ export default function PaymentList(props) {
                           accessor: "createdDate",
                         },
                         {
-                          Header: "Due Date / (PT)",
+                          Header: "Due Date",
                           accessor: "dueDate",
                         },
                         {
@@ -1450,10 +1119,6 @@ export default function PaymentList(props) {
                         {
                           Header: "Po Number",
                           accessor: "poNumber",
-                        },
-                        {
-                          Header: "Balance",
-                          accessor: "balanceDue",
                         },
                         {
                           Header: "Amount",
@@ -1504,7 +1169,7 @@ export default function PaymentList(props) {
             filters={formState.filters}
             values={formState.values}
             vendors={formState.vendors}
-            pos={pos}
+            pos={formState.pos}
             closeModal={() => setShowFiltersModel(false)}
             setFilters={setFilter}
             isVendor={isVendor}

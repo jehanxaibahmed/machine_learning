@@ -27,6 +27,7 @@ import Verify from "views/LDocs/Verify/Verify";
 import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import CreateInvoice from "views/LDocs/Invoices/CreateInvoice/CreateInvoice";
 import InvoiceTracking from "views/LDocs/Invoices/InvoiceTracking/InvoiceTracking";
+import SentList from "views/LDocs/Invoices/SentInvoices/FilesList";
 import ExportList from "views/LDocs/Invoices/ExportInvoices/FilesList";
 import PaymentList from "views/LDocs/Invoices/PayInvoices/FilesList";
 import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
@@ -35,6 +36,7 @@ import jwt from "jsonwebtoken";
 import Payable from "views/LDocs/Payable/Payable";
 import AgingReport from "views/LDocs/Aging/AgingReport";
 import TimerIcon from "@material-ui/icons/Timer";
+import Receivable from "views/LDocs/Receivable/Receivable";
 
 const Token = localStorage.getItem("cooljwt");
 let decoded = jwt.decode(Token);
@@ -261,7 +263,7 @@ export const invoiceArRoutes = [
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         icon: SystemUpdateIcon,
-        component: ExportList,
+        component: SentList,
         layout: "/invoice",
       },
       {
@@ -278,11 +280,11 @@ export const invoiceArRoutes = [
         name: "Client 360",
         rtlName: "لوحة القيادة",
         icon: ReceiptIcon,
-        component: Payable,
+        component: Receivable,
         layout: "/invoice",
       },
       {
-        path: "/invoice-agingar",
+        path: "/invoice-aging/ar",
         name: "Invoice Aging",
         rtlName: "لوحة القيادة",
         icon: TimerIcon,
