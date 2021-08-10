@@ -329,7 +329,7 @@ const goBack = () => {
             };
             axios({
                 method: "post",
-                url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdate` : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdateAR`,
+                url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdateAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdate`,
                 data: data,
                 headers: {
                     cooljwt: Token,
