@@ -352,7 +352,7 @@ export default function ApprovalRequested() {
       };
       axios({
         method: "post",
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveUpdate`,
+        url:isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveUpdateAR`:`${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveUpdate`,
         data: data,
         headers: {
           cooljwt: Token,
