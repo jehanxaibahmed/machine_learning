@@ -121,7 +121,7 @@ export const invoiceApRoutes = [
     state: "FinanceDeskCollapse",
     views: [
       {
-        path: "/financeDashboard",
+        path: "/financeDashboard/ap",
         name: "AP Analytics",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -249,7 +249,7 @@ export const invoiceArRoutes = [
     state: "FinanceDeskCollapsear",
     views: [
       {
-        path: "/financeDashboardar",
+        path: "/financeDashboard/ar",
         name: "AR Analytics",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",

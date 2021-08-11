@@ -44,6 +44,7 @@ export default function FinanceDashboard() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+  const isAr = useSelector((state) => state.userReducer.isAr);
   const [graphData, setGraphData] = React.useState([]);
   const [summaryOptions, setSummaryOptions] = React.useState({
     summaryOptions: data.summaryOptions,
@@ -73,7 +74,7 @@ export default function FinanceDashboard() {
   const getChartData = async () => {
     await axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/financeBoard`,
+      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/financeBoardAR` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/financeBoard`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -89,9 +90,13 @@ export default function FinanceDashboard() {
         console.log(error);
       });
   };
+
+
   React.useEffect(() => {
     getChartData();
-  }, []);
+  }, [isAr]);
+
+
   React.useEffect(() => {
     //Summary Options
     if (graphData.AgeSummery) {

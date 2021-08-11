@@ -72,17 +72,28 @@ function LinearProgressWithLabel(props) {
 
 export default function Dashboard() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const isAr = useSelector((state) => state.userReducer.isAr);
   let decoded = jwt.decode(Token);
   const classes = useStyles();
   const pendingApprovalIcon = require("assets/img/pendingApproval.png");
   const dispatch = useDispatch();
-  React.useEffect(() => {
+
+  const getStats = () => {
     getDashboardData();
     getFilesHistory();
     getCountReviewChart();
     getCountApproveChart();
     getGraphData();
-  }, []);
+  }
+
+
+  // React.useEffect(() => {
+  //   getStats();
+  // }, []);
+
+  React.useEffect(() => {
+    getStats();
+  }, [isAr]);
 
 const [statistics, setStatistics] = React.useState({
   totalInvoice:0,
@@ -101,7 +112,7 @@ const [graphData, setGraphData] = React.useState([]);
     }
     await axios({
       method: "post",
-      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/getBarMapDataTent` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/getBarMapDataOrg`,
+      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/getBarMapDataTent` : isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/getBarMapDataOrgAR` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/getBarMapDataOrg`,
       data:data,
       headers: { cooljwt: Token },
     })
@@ -128,7 +139,7 @@ const [graphData, setGraphData] = React.useState([]);
     if(!decoded.isVendor){
     await axios({
       method: "get",
-      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantOpenInvoice` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/openInvoice/${decoded.orgDetail.organizationId}`,
+      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantOpenInvoice` : isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/openInvoiceAR/${decoded.orgDetail.organizationId}`:`${process.env.REACT_APP_LDOCS_API_URL}/dashboard/openInvoice/${decoded.orgDetail.organizationId}` ,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -141,7 +152,7 @@ const [graphData, setGraphData] = React.useState([]);
        //Close Invoices
     await axios({
       method: "get",
-      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantCloseInvoice` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/closeInvoice/${decoded.orgDetail.organizationId}`,
+      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantCloseInvoice` : isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/closeInvoiceAR/${decoded.orgDetail.organizationId}` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/closeInvoice/${decoded.orgDetail.organizationId}` ,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -154,7 +165,7 @@ const [graphData, setGraphData] = React.useState([]);
        //Total Invoices
     await axios({
       method: "get",
-      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantTotalInvoices` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/totalInvoices/${decoded.orgDetail.organizationId}`,
+      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantTotalInvoices` : isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/totalInvoicesAR/${decoded.orgDetail.organizationId}` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/totalInvoices/${decoded.orgDetail.organizationId}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -167,7 +178,7 @@ const [graphData, setGraphData] = React.useState([]);
      //Pending Invoices
     await axios({
       method: "get",
-      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantPendingInvoice` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/pendingInvoice/${decoded.orgDetail.organizationId}`,
+      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantPendingInvoice` : isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/pendingInvoiceAR/${decoded.orgDetail.organizationId}`: `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/pendingInvoice/${decoded.orgDetail.organizationId}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -207,7 +218,7 @@ const [loadingFiles, setLoadingFiles] = React.useState(true);
     setLoadingFiles(true);
     axios({
       method: "get",
-      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantRecentInvoice`: `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/recentInvoice/${decoded.orgDetail.organizationId}`,
+      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantRecentInvoice`: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/recentInvoiceAR/${decoded.orgDetail.organizationId}` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/recentInvoice/${decoded.orgDetail.organizationId}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -229,7 +240,7 @@ const [loadingChartOne, setLoadingChartOne] = React.useState(false);
     setLoadingChartOne(true);
     axios({
       method: "get",
-      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantInvoiceReviewChart`: `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/invoiceReviewChart/${decoded.orgDetail.organizationId}`,
+      url: decoded.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantInvoiceReviewChart`: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/invoiceReviewChartAR/${decoded.orgDetail.organizationId}` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/invoiceReviewChart/${decoded.orgDetail.organizationId}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -263,7 +274,7 @@ const [loadingChartTwo, setLoadingChartTwo] = React.useState(false);
     setLoadingChartTwo(true);
     axios({
       method: "get",
-      url: decoded.isTenant ?`${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantInvoiceApproveChart`: `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/invoiceApproveChart/${decoded.orgDetail.organizationId}`,
+      url: decoded.isTenant ?`${process.env.REACT_APP_LDOCS_API_URL}/dashboard/tenantInvoiceApproveChart`: isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/invoiceApproveChartAR/${decoded.orgDetail.organizationId}` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/invoiceApproveChart/${decoded.orgDetail.organizationId}` ,
       headers: { cooljwt: Token },
     })
       .then((response) => {
