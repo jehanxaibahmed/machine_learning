@@ -60,7 +60,14 @@ import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import { addZeroes, formatDate, formatDateTime, successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
+import {
+  addZeroes,
+  formatDate,
+  formatDateTime,
+  successAlert,
+  errorAlert,
+  msgAlert,
+} from "views/LDocs/Functions/Functions";
 import {
   Menu,
   Item,
@@ -71,7 +78,7 @@ import {
   Submenu,
 } from "react-contexify";
 import "react-contexify/dist/ReactContexify.min.css";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import InitWorkflow from "../InitWorkflow/InitWorkflow";
 import Pending_Invoice from "assets/img/statuses/Asset_1.png";
@@ -115,13 +122,13 @@ const notify = (msg) =>
     progress: undefined,
   });
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='down' ref={ref} {...props} />;
+  return <Slide direction="down" ref={ref} {...props} />;
 });
 const TransitionRight = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='right' ref={ref} {...props} />;
+  return <Slide direction="right" ref={ref} {...props} />;
 });
 const TransitionLeft = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='left' ref={ref} {...props} />;
+  return <Slide direction="left" ref={ref} {...props} />;
 });
 
 export default function SentInvoices(props) {
@@ -165,15 +172,15 @@ export default function SentInvoices(props) {
   const [showFiltersModel, setShowFiltersModel] = React.useState(false);
   const [formState, setFormState] = React.useState({
     files: [],
-    totalInvoices: 0,
-    paymentDue: 0,
-    overDue: 0,
-    paymentInProcess: 0,
+    readyToSendCount: 0,
+    sentCount: 0,
+    notifiedCount: 0,
+    acknowledgedCount: 0,
     vendors: [],
     export: null,
     pos: [],
     filter: null,
-    exported:false,
+    exported: false,
     filters: {
       supplierId: true,
       poNumber: true,
@@ -411,65 +418,65 @@ export default function SentInvoices(props) {
           id: prop._id,
           invoiceId: prop.invoiceId,
           status: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.markedAs == "unread" ? (
                 <Chip
                   style={{ background: "#deb725", color: "#fff" }}
-                  label='Pending'
+                  label="Pending"
                 />
               ) : prop.markedAs == "read" ? (
-                <Chip label='Received' color='primary' />
+                <Chip label="Received" color="primary" />
               ) : prop.markedAs == "rejected" ? (
-                <Chip color='secondary' label='Rejected' />
+                <Chip color="secondary" label="Rejected" />
               ) : (
                 ""
               )}
             </MenuProvider>
           ),
           createdDate: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.createdDate)}
             </MenuProvider>
           ),
           dueDate: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {formatDate(prop.dueDate)}
             </MenuProvider>
           ),
           vendorName: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.clientName}
             </MenuProvider>
           ),
           approvedDate: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.approved)}
             </MenuProvider>
           ),
           requester: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.createdByVendor ? "Supplier" : prop.createdBy.split("@")[0]}
             </MenuProvider>
           ),
           poNumber: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.po}
             </MenuProvider>
           ),
           customerName: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.organizationName}
             </MenuProvider>
           ),
           netAmt: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               <Tooltip
                 title={`${prop.LC_currency.Code} 1 ≈ ${prop.FC_currency.Code} ${
                   prop.conversionRate
                     ? parseFloat(prop.conversionRate).toFixed(4)
                     : ""
                 }`}
-                aria-label='conversionRate'
+                aria-label="conversionRate"
               >
                 <div>
                   {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
@@ -485,33 +492,33 @@ export default function SentInvoices(props) {
             </MenuProvider>
           ),
           version: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.version}
             </MenuProvider>
           ),
           reviewed: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.reviewStatus == "pending" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Pending} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : prop.reviewStatus == "reviewed" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Success} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : prop.reviewStatus == "rejected" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Rejected} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={NoStatus} alt={prop.reviewedStatus} />
                   </div>
                 </div>
@@ -519,28 +526,28 @@ export default function SentInvoices(props) {
             </MenuProvider>
           ),
           approved: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.approveStatus == "pending" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Pending} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : prop.approveStatus == "approved" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Success} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : prop.approveStatus == "rejected" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Rejected} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={NoStatus} alt={prop.approvedstatus} />
                   </div>
                 </div>
@@ -548,7 +555,7 @@ export default function SentInvoices(props) {
             </MenuProvider>
           ),
           select: (
-            <div className='actions'>
+            <div className="actions">
               <Checkbox
                 // disabled={
                 //   formState.filter == "totalInvCount" ||
@@ -560,8 +567,8 @@ export default function SentInvoices(props) {
             </div>
           ),
           actions: (
-            <div className='actions-right'>
-              <Tooltip title='View File' aria-label='viewfile'>
+            <div className="actions-right">
+              <Tooltip title="View File" aria-label="viewfile">
                 <Button
                   justIcon
                   round
@@ -570,13 +577,13 @@ export default function SentInvoices(props) {
                   onClick={() => {
                     viewFile(prop);
                   }}
-                  color='danger'
-                  className='Edit'
+                  color="danger"
+                  className="Edit"
                 >
                   <Visibility />
                 </Button>
               </Tooltip>
-              <Tooltip title='BlockChain View' aria-label='blockChainView'>
+              <Tooltip title="BlockChain View" aria-label="blockChainView">
                 <Button
                   justIcon
                   round
@@ -585,13 +592,13 @@ export default function SentInvoices(props) {
                   onClick={() => {
                     viewBlockChainView(prop);
                   }}
-                  color='info'
-                  className='Edit'
+                  color="info"
+                  className="Edit"
                 >
                   <ClearAllIcon />
                 </Button>
               </Tooltip>
-              <Tooltip title='360&#176; View' aria-label='advanceDocumentView'>
+              <Tooltip title="360&#176; View" aria-label="advanceDocumentView">
                 <Button
                   justIcon
                   round
@@ -600,8 +607,8 @@ export default function SentInvoices(props) {
                   onClick={() => {
                     viewQrView(prop);
                   }}
-                  color='info'
-                  className='Edit'
+                  color="info"
+                  className="Edit"
                 >
                   <ViewModuleIcon />
                 </Button>
@@ -617,7 +624,7 @@ export default function SentInvoices(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceCfoDetails/${user.orgDetail.organizationId}/${formState.filter}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/getInvoiceArClientDetails/${user.orgDetail.organizationId}/null`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
@@ -630,22 +637,22 @@ export default function SentInvoices(props) {
             formState.filter == null
               ? response.data.invoicesApproved
               : response.data,
-          totalInvoices:
+          readyToSendCount:
             formState.filter == null
-              ? response.data.totalInvCount
-              : formState.totalInvoices,
-          paymentDue:
+              ? response.data.readyToSendCount
+              : formState.readyToSendCount,
+          sentCount:
             formState.filter == null
-              ? response.data.paymentDueCount
-              : formState.paymentDue,
-          overDue:
+              ? response.data.sentCount
+              : formState.sentCount,
+          acknowledgedCount:
             formState.filter == null
-              ? response.data.paymentOverDueCount
-              : formState.overDue,
-          paymentInProcess:
+              ? response.data.acknowledgedCount
+              : formState.acknowledgedCount,
+          notifiedCount:
             formState.filter == null
-              ? response.data.paymentInProcessCount
-              : formState.paymentInProcess,
+              ? response.data.notifiedCount
+              : formState.notifiedCount,
         }));
         setFilesData(
           formState.filter == null
@@ -671,13 +678,13 @@ export default function SentInvoices(props) {
         setIsLoading(false);
       });
   };
- 
+
   const select = (invoice) => {
     let selectedInvoices = selected;
     console.log(exported);
-    if(exported){
+    if (exported) {
       selectedInvoices = [];
-      setExported(false)
+      setExported(false);
     }
     if (!invoice) {
       if (selected.length == filesData.length) {
@@ -763,8 +770,8 @@ export default function SentInvoices(props) {
       method: "post",
       url:
         n == 1
-          ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/exportInvoices`
-          : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/moveToFinance`,
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/InvoiceSent`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/AR/moveToFinance`,
       data: selected,
       headers: {
         cooljwt: Token,
@@ -777,9 +784,9 @@ export default function SentInvoices(props) {
         }));
         let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
         await getMyFiles(userDetail, false);
-        
+
         setExportToFusionModel(false);
-        notify(n == 1 ? "Exported Successfully" : "Sent For Payment");
+        notify(n == 1 ? "SENT Successfully" : "Sent For Payment");
       })
       .catch((error) => {
         if (error.response) {
@@ -790,7 +797,7 @@ export default function SentInvoices(props) {
   };
   //Right Click Menu
   const MyAwesomeMenu = () => (
-    <Menu id='menu_id' theme={theme.dark} animation={animation.zoom}>
+    <Menu id="menu_id" theme={theme.dark} animation={animation.zoom}>
       {!isVendor ? (
         <Item onClick={viewBlockChainViewFromAwesomeMenu}>
           <ClearAllIcon />
@@ -808,21 +815,20 @@ export default function SentInvoices(props) {
   );
   return (
     <div>
-       
       {/* View File */}
       {isViewing ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animatePdf}
         >
-          <GridContainer justify='center'>
+          <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>
                       Invoice:
                       {pdfModalData.invoiceId +
@@ -831,7 +837,7 @@ export default function SentInvoices(props) {
                     </h4>
                   </CardIcon>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -843,10 +849,10 @@ export default function SentInvoices(props) {
                 <CardBody>
                   <Iframe
                     url={pdfUrl}
-                    width='100%'
-                    id='myId'
+                    width="100%"
+                    id="myId"
                     allow="print 'none'; download 'none'"
-                    className='myClassname'
+                    className="myClassname"
                     height={window.screen.height}
                   />
                 </CardBody>
@@ -860,21 +866,21 @@ export default function SentInvoices(props) {
       {/* Open BlockChain View */}
       {isViewingBlockChainView ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateBlockChain}
         >
-          <GridContainer justify='center'>
+          <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>Blockchain View</h4>
                   </CardIcon>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -896,7 +902,7 @@ export default function SentInvoices(props) {
 
       {/* Mark As Payment Model */}
       {exportToFusionModel ? (
-        <GridContainer justify='center'>
+        <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -905,16 +911,16 @@ export default function SentInvoices(props) {
               }}
               fullWidth={true}
               maxWidth={"sm"}
-              scroll='body'
+              scroll="body"
               open={exportToFusionModel}
               TransitionComponent={Transition}
               keepMounted
               onClose={() => setExportToFusionModel(false)}
-              aria-labelledby='tag-modal-slide-title'
-              aria-describedby='tag-modal-slide-description'
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
             >
               <DialogContent
-                id='tag-modal-slide-description'
+                id="tag-modal-slide-description"
                 className={classes.modalBody}
               >
                 <ExportToFusion
@@ -932,21 +938,21 @@ export default function SentInvoices(props) {
       )}
       {qrModal ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateQr}
         >
-          <GridContainer justify='center'>
+          <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>360&#176; View</h4>
                   </CardIcon>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -968,8 +974,8 @@ export default function SentInvoices(props) {
 
       {animateTable ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateTable}
@@ -979,99 +985,91 @@ export default function SentInvoices(props) {
           <GridContainer>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color='info' stats icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" stats icon>
+                  <CardIcon color="info">
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Ready To Send Count</p>
                   <h3 className={classes.cardTitle}>
-                    {formState.totalInvoices}
+                    {formState.readyToSendCount}
                   </h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div className={classes.stats}>
-                   
-                  </div>
+                  <div className={classes.stats}></div>
                 </CardFooter>
-                          </Card>
+              </Card>
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color='danger' stats icon>
-                  <CardIcon color='danger'>
+                <CardHeader color="danger" stats icon>
+                  <CardIcon color="danger">
                     <CenterFocusWeakIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Sent Count</p>
-                  <h3 className={classes.cardTitle}>{formState.paymentDue}</h3>
+                  <h3 className={classes.cardTitle}>{formState.sentCount}</h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div className={classes.stats}>
-                   
-                  </div>
+                  <div className={classes.stats}></div>
                 </CardFooter>
               </Card>
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color='info' stats icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" stats icon>
+                  <CardIcon color="info">
                     <CenterFocusStrongIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Acknowledged Count</p>
-                  <h3 className={classes.cardTitle}>{formState.overDue}</h3>
+                  <h3 className={classes.cardTitle}>{formState.acknowledgedCount}</h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div className={classes.stats}>
-                   
-                  </div>
+                  <div className={classes.stats}></div>
                 </CardFooter>
               </Card>
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color='danger' stats icon>
-                  <CardIcon color='danger'>
+                <CardHeader color="danger" stats icon>
+                  <CardIcon color="danger">
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Notified Count</p>
                   <h3 className={classes.cardTitle}>
-                    {formState.paymentInProcess}
+                    {formState.notifiedCount}
                   </h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div className={classes.stats}>
-                   
-                  </div>
+                  <div className={classes.stats}></div>
                 </CardFooter>
               </Card>
             </GridItem>
             <GridItem xs={12}>
               <Card>
-                <CardHeader color='danger' icon>
-                  <CardIcon color='danger'>
+                <CardHeader color="danger" icon>
+                  <CardIcon color="danger">
                     <h4 className={classes.cardTitleText}>{componentName}</h4>
                   </CardIcon>
                   <p style={{ color: "gray" }}>
                     Note: Right click on any file to see multiple options
                   </p>
-                
-                    <React.Fragment>
-                      <Button
-                        color='info'
-                        round
-                        style={{ float: "right" }}
-                        className={classes.marginRight}
-                        onClick={() =>
-                          selected.length > 0
-                            ? exportInvoices(1)
-                            : msgAlert("Please Select a Invoice.")
-                        }
-                      >
-                        Sent to Client ({selected.length})
-                      </Button>
-                      </React.Fragment>
+
+                  <React.Fragment>
+                    <Button
+                      color="info"
+                      round
+                      style={{ float: "right" }}
+                      className={classes.marginRight}
+                      onClick={() =>
+                        selected.length > 0
+                          ? exportInvoices(1)
+                          : msgAlert("Please Select a Invoice.")
+                      }
+                    >
+                      Sent to Client ({selected.length})
+                    </Button>
+                  </React.Fragment>
                 </CardHeader>
                 <CardBody>
                   {isLoading ? (
@@ -1141,7 +1139,7 @@ export default function SentInvoices(props) {
                       defaultPageSize={10}
                       showPaginationTop
                       showPaginationBottom={true}
-                      className='-striped -highlight'
+                      className="-striped -highlight"
                     />
                   )}
                 </CardBody>
@@ -1159,8 +1157,8 @@ export default function SentInvoices(props) {
         // onOpen={}
       >
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={showFiltersModel}
