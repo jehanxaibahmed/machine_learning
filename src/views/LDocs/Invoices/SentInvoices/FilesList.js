@@ -926,6 +926,7 @@ export default function SentInvoices(props) {
                 <ExportToFusion
                   closeModal={() => setExportToFusionModel(false)}
                   fileData={row}
+                  title="SENT TO CLIENT"
                   export={formState.export || 1}
                   loadFiles={getMyFiles}
                 />
