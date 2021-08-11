@@ -21,7 +21,7 @@ export default function AcknowledgedClient(props) {
     let tenantId = getParameterByName('tenantId') ;
     let organizationId = getParameterByName('organizationId') ;
     let clientId = getParameterByName('clientId') ;
-    let invoiceId =getParameterByName('invoiceId') ;
+    let invoiceId = getParameterByName('invoiceId') ;
     let version = getParameterByName('version');
     var body = {
         clientId,
@@ -54,7 +54,7 @@ export default function AcknowledgedClient(props) {
             {response === true ?  "Acknowledged !" : response === false ? "Oops !":""}
           </Typography>
           <Typography variant="h6" component="h4">
-          {response === true ? "Invoice" + invoiceId + "has been Acknowledged ." : response === false ? "Sorry, There is Some issue in Acknowledge Invoice . ":""}
+          {response === true ? "Invoice has been Acknowledged ." : response === false ? "Sorry, There is Some issue in Acknowledge Invoice . ":""}
           </Typography>
           <Typography variant="span" component="body2">
             For More Information Contact at : info@matesol.net
