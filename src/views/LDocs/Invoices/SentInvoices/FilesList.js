@@ -174,7 +174,7 @@ export default function SentInvoices(props) {
     files: [],
     readyToSendCount: 0,
     sentCount: 0,
-    notifiedCount: 0,
+    totalInvCount: 0,
     acknowledgedCount: 0,
     vendors: [],
     export: null,
@@ -622,10 +622,10 @@ export default function SentInvoices(props) {
             formState.filter == null
               ? response.data.acknowledgedCount
               : formState.acknowledgedCount,
-          notifiedCount:
+          totalInvCount:
             formState.filter == null
-              ? response.data.notifiedCount
-              : formState.notifiedCount,
+              ? response.data.totalInvCount
+              : formState.totalInvCount,
         }));
         setFilesData(
           formState.filter == null
@@ -1080,9 +1080,9 @@ export default function SentInvoices(props) {
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Notified Count</p>
+                  <p className={classes.cardCategory}>Total Count</p>
                   <h3 className={classes.cardTitle}>
-                    {formState.notifiedCount}
+                    {formState.totalInvCount}
                   </h3>
                 </CardHeader>
                 <CardFooter stats>
@@ -1091,7 +1091,7 @@ export default function SentInvoices(props) {
                       <Typography varient="body2" component="h2">
                         <Avatar
                           style={
-                            formState.filter == "notifiedCount"
+                            formState.filter == "totalInvCount"
                               ? {
                                   background: "#9E2654",
                                   color: "white",
@@ -1102,7 +1102,7 @@ export default function SentInvoices(props) {
                                 }
                           }
                           onClick={() =>
-                            setFilter(1, { id: 0, val: "notifiedCount" })
+                            setFilter(1, { id: 0, val: "totalInvCount" })
                           }
                         >
                           <Done fontSize="large" />

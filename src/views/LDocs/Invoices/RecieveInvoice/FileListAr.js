@@ -338,7 +338,7 @@ export default function FilesListAr(props) {
                     color='secondary'
                   />
                 </Tooltip>
-              ) : prop.trackingStatus.Payment.status == "partial" ? (
+              ) : prop.trackingStatus.paid.status == "partial" ? (
                 <Tooltip title='PARTIALLY PAID'>
                   <Chip
                     variant='outlined'
@@ -352,7 +352,7 @@ export default function FilesListAr(props) {
                     }}
                   />
                 </Tooltip>
-              ) : prop.trackingStatus.Payment.status == "completed" ? (
+              ) : prop.trackingStatus.paid.status == "completed" ? (
                 <Tooltip title='FULLY PAID'>
                   <Chip
                     variant='outlined'

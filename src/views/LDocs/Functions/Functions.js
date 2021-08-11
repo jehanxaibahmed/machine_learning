@@ -193,7 +193,7 @@ export const currentTrackingAr = (trackingStatus) => {
         activeStep = { val: 2, status: currentStatus };
       }
       break;
-    case "Payment":
+    case "paid":
       currentStatus = trackingStatus.paid.status;
       if (currentStatus) {
         activeStep = { val: 4, status: currentStatus };
@@ -202,6 +202,7 @@ export const currentTrackingAr = (trackingStatus) => {
       }
       break;
   }
+  console.log(activeStep);
   return activeStep;
 };
 
