@@ -4,7 +4,7 @@ import GridItem from "components/Grid/GridItem.js";
 import { Typography } from "@material-ui/core";
 import axios from "axios";
 
-export default function ActivateClient(props) {
+export default function AcknowledgedClient(props) {
   const logo = require("assets/img/logo_color.png");
     const [response, setResponse] = useState(null);
     //Get URl Params

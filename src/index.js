@@ -19,6 +19,7 @@ import InvoiceDetail from "views/LDocs/Invoices/InvoiceDetail/InvoiceDetail";
 import ActivateClient from "views/LDocs/Clients/ActivateClient";
 import "assets/scss/material-dashboard-pro-react.scss?v=1.8.0";
 import { registerServiceWorker } from "./register-sw";
+import AcknowledgedClient from "views/LDocs/Clients/AcknowledgedClient";
 
 navigator.serviceWorker.addEventListener("notificationclick", (message) => {
   console.log(message);
@@ -59,7 +60,7 @@ hideLoader();
             <Route path="/vendor" component={VendorLayout} />
             <Route path="/invoiceDetail" component={InvoiceDetail} />
             <Route path="/client/activate" component={ActivateClient} />
-            <Route path="/client/acknowladged" component={ActivateClient} />
+            <Route path="/client/acknowladged" component={AcknowledgedClient} />
             {/**  <Redirect from="/" to="/admin/dashboard" />  */}
             <Redirect from="/" to="/auth" />
           </Switch>
