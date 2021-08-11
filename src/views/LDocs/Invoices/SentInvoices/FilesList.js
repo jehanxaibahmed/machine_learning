@@ -325,37 +325,10 @@ export default function SentInvoices(props) {
     }
     if (from == 1) {
       let filter = "totalInvCount";
-      if (data.id == 0) {
-        filter = "totalInvCount";
-      }
-      if (data.id == 1) {
-        if (data.val == 0) {
-          filter = "paymentDueWeek";
-        }
-        if (data.val == 1) {
-          filter = "paymentDueMonth";
-        }
-        if (data.val == 2) {
-          filter = "paymentDueMonthAfter";
-        }
-      }
-      if (data.id == 2) {
-        if (data.val == 0) {
-          filter = "paymentOverDueWeek";
-        }
-        if (data.val == 1) {
-          filter = "paymentOverDueMonth";
-        }
-        if (data.val == 2) {
-          filter = "paymentOverDueMonthAfter";
-        }
-      }
-      if (data.id == 3) {
-        filter = "paymentInProcessCount";
-      }
+
       setFormState((formState) => ({
         ...formState,
-        filter: filter,
+        filter: data.val,
       }));
     }
   };
@@ -624,7 +597,7 @@ export default function SentInvoices(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/getInvoiceArClientDetails/${user.orgDetail.organizationId}/null`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/getInvoiceArClientDetails/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
@@ -997,7 +970,30 @@ export default function SentInvoices(props) {
                   </h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div className={classes.stats}></div>
+                  <div className={classes.stats}>
+                    <Tooltip title="Ready to Sent">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "readyToSendCount"
+                              ? {
+                                  background: "#9E2654",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                }
+                          }
+                          onClick={() =>
+                            setFilter(1, { id: 0, val: "readyToSendCount" })
+                          }
+                        >
+                          <Done fontSize="large" />
+                        </Avatar>
+                      </Typography>
+                    </Tooltip>
+                  </div>
                 </CardFooter>
               </Card>
             </GridItem>
@@ -1011,7 +1007,30 @@ export default function SentInvoices(props) {
                   <h3 className={classes.cardTitle}>{formState.sentCount}</h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div className={classes.stats}></div>
+                  <div className={classes.stats}>
+                    <Tooltip title="Ready to Sent">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "sentCount"
+                              ? {
+                                  background: "#9E2654",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                }
+                          }
+                          onClick={() =>
+                            setFilter(1, { id: 0, val: "sentCount" })
+                          }
+                        >
+                          <Done fontSize="large" />
+                        </Avatar>
+                      </Typography>
+                    </Tooltip>
+                  </div>
                 </CardFooter>
               </Card>
             </GridItem>
@@ -1022,10 +1041,35 @@ export default function SentInvoices(props) {
                     <CenterFocusStrongIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Acknowledged Count</p>
-                  <h3 className={classes.cardTitle}>{formState.acknowledgedCount}</h3>
+                  <h3 className={classes.cardTitle}>
+                    {formState.acknowledgedCount}
+                  </h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div className={classes.stats}></div>
+                  <div className={classes.stats}>
+                    <Tooltip title="Acknowledged">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "acknowledgedCount"
+                              ? {
+                                  background: "#9E2654",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                }
+                          }
+                          onClick={() =>
+                            setFilter(1, { id: 0, val: "acknowledgedCount" })
+                          }
+                        >
+                          <Done fontSize="large" />
+                        </Avatar>
+                      </Typography>
+                    </Tooltip>
+                  </div>
                 </CardFooter>
               </Card>
             </GridItem>
@@ -1042,7 +1086,30 @@ export default function SentInvoices(props) {
                   </h3>
                 </CardHeader>
                 <CardFooter stats>
-                  <div className={classes.stats}></div>
+                  <div className={classes.stats}>
+                    <Tooltip title="Notified">
+                      <Typography varient="body2" component="h2">
+                        <Avatar
+                          style={
+                            formState.filter == "notifiedCount"
+                              ? {
+                                  background: "#9E2654",
+                                  color: "white",
+                                  marginRight: 5,
+                                }
+                              : {
+                                  cursor: "pointer",
+                                }
+                          }
+                          onClick={() =>
+                            setFilter(1, { id: 0, val: "notifiedCount" })
+                          }
+                        >
+                          <Done fontSize="large" />
+                        </Avatar>
+                      </Typography>
+                    </Tooltip>
+                  </div>
                 </CardFooter>
               </Card>
             </GridItem>
@@ -1055,22 +1122,25 @@ export default function SentInvoices(props) {
                   <p style={{ color: "gray" }}>
                     Note: Right click on any file to see multiple options
                   </p>
-
-                  <React.Fragment>
-                    <Button
-                      color="info"
-                      round
-                      style={{ float: "right" }}
-                      className={classes.marginRight}
-                      onClick={() =>
-                        selected.length > 0
-                          ? exportInvoices(1)
-                          : msgAlert("Please Select a Invoice.")
-                      }
-                    >
-                      Sent to Client ({selected.length})
-                    </Button>
-                  </React.Fragment>
+                  {formState.filter === "readyToSendCount" || formState.filter === null ? (
+                    <React.Fragment>
+                      <Button
+                        color="info"
+                        round
+                        style={{ float: "right" }}
+                        className={classes.marginRight}
+                        onClick={() =>
+                          selected.length > 0
+                            ? exportInvoices(1)
+                            : msgAlert("Please Select a Invoice.")
+                        }
+                      >
+                        Sent to Client ({selected.length})
+                      </Button>
+                    </React.Fragment>
+                  ) : (
+                    ""
+                  )}
                 </CardHeader>
                 <CardBody>
                   {isLoading ? (
