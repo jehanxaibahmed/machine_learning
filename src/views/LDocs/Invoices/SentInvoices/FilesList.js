@@ -613,7 +613,7 @@ export default function SentInvoices(props) {
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
-              {formState.filter == "sentCount" ? (
+              {formState.filter == "acknowledgedCount" ? (
                 <React.Fragment>
                   <Tooltip
                     title="Notify Client"
