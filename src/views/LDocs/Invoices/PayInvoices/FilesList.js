@@ -123,6 +123,7 @@ export default function PaymentList(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+  const isAr = useSelector((state) => state.userReducer.isAr);
   const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
@@ -441,7 +442,7 @@ export default function PaymentList(props) {
     getVendors();
     setDecoded(userDetail);
     getMyFiles(userDetail, true);
-  }, []);
+  }, [isAr]);
 
   const setTableData = (response) => {
     setData(
@@ -693,7 +694,7 @@ export default function PaymentList(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/InvoiceDetailFinance/${user.orgDetail.organizationId}/${formState.filter}`,
+      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/InvoiceDetailFinanceAR/${user.orgDetail.organizationId}/${formState.filter}` :  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/InvoiceDetailFinance/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,

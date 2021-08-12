@@ -88,7 +88,8 @@ export default function AgingReport() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-  const decoded = jwt.decode(Token);
+    const isAr = useSelector((state) => state.userReducer.isAr);
+    const decoded = jwt.decode(Token);
   const dispatch = useDispatch();
   const Check = require("is-null-empty-or-undefined").Check;
   const [viewVendor, setViewVendor] = useState(false);
@@ -181,7 +182,7 @@ export default function AgingReport() {
         setTimeout(() => {
           axios({
             method: "post", //you can set what request you want to be
-            url: `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsx`,
+            url: isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsxAR` :  `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsx`,
             data: {
               organizationId: decoded.orgDetail.organizationId,
               type: null,
@@ -240,7 +241,7 @@ export default function AgingReport() {
     };
     await axios({
       method: "post",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceAging`,
+      url:isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/invoiceAgingAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceAging`,
       data: data,
       headers: { cooljwt: Token },
     })
@@ -260,7 +261,7 @@ export default function AgingReport() {
 
   useEffect(() => {
     getReport();
-  }, []);
+  }, [isAr]);
 
   return (
     <React.Fragment>

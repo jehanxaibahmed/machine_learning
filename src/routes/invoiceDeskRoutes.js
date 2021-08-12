@@ -139,7 +139,7 @@ export const invoiceApRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/payment",
+        path: "/payment/ap",
         name: "Invoice Payments",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -156,7 +156,7 @@ export const invoiceApRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/invoice-aging",
+        path: "/invoice-aging/ap",
         name: "Invoice Aging",
         rtlName: "لوحة القيادة",
         icon: TimerIcon,
@@ -267,7 +267,7 @@ export const invoiceArRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/paymentar",
+        path: "/payment/ar",
         name: "Invoice Payments",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",

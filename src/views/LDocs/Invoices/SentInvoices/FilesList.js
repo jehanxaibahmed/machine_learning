@@ -60,6 +60,7 @@ import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 import {
   addZeroes,
   formatDate,
@@ -98,6 +99,7 @@ import ExportToFusion from "./ExportToFusion";
 import Filters from "./Filters";
 import { over } from "lodash";
 import { setIsTokenExpired } from "actions";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 import { ToastContainer, toast } from "react-toastify";
 
 const useStyles = makeStyles(styles);
@@ -202,6 +204,31 @@ export default function SentInvoices(props) {
       notPaid: false,
     },
   });
+
+  const sendNotificationToClient = (prop) => {
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/invoiceNotified`,
+      data: {
+        invoiceId: prop.invoiceId,
+        version: prop.version,
+        organizationId: prop.organizationId,
+        tenantId: prop.tenantId,
+      },
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then(async (response) => {
+        notify("SENT Successfully");
+      })
+      .catch((error) => {
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
+        console.log(error);
+      });
+  };
 
   const getPos = () => {
     let userDetails = jwt.decode(Token);
@@ -586,6 +613,30 @@ export default function SentInvoices(props) {
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
+              {formState.filter == "sentCount" ? (
+                <React.Fragment>
+                  <Tooltip
+                    title="Notify Client"
+                    aria-label="advanceDocumentView"
+                  >
+                    <Button
+                      justIcon
+                      round
+                      simple
+                      icon={NotificationsIcon}
+                      onClick={() => {
+                        sendNotificationToClient(prop);
+                      }}
+                      color="info"
+                      className="Edit"
+                    >
+                      <NotificationsIcon />
+                    </Button>
+                  </Tooltip>
+                </React.Fragment>
+              ) : (
+                ""
+              )}
             </div>
           ),
         };
@@ -1122,7 +1173,8 @@ export default function SentInvoices(props) {
                   <p style={{ color: "gray" }}>
                     Note: Right click on any file to see multiple options
                   </p>
-                  {formState.filter === "readyToSendCount" || formState.filter === null ? (
+                  {formState.filter === "readyToSendCount" ||
+                  formState.filter === null ? (
                     <React.Fragment>
                       <Button
                         color="info"

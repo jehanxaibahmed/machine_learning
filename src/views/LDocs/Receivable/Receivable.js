@@ -141,33 +141,10 @@ export default function Receivable(props) {
 
   const getCustomers = () => {
     setIsLoading(true);
-    axios({
-      method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/organizationByVender`,
-      headers: {
-        cooljwt: Token,
-      },
-    })
-      .then((response) => {
-        let orgs = response.data.organizations;
-        // setSelected(orgs[0].organizationId);
-        setComponentState((componentState) => ({
-          ...componentState,
-          orgs: orgs,
-          // selectedCustomer: orgs.find(o=>o.organizationId == orgs[0].organizationId)
-        }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const getVendors = () => {
-    setIsLoading(true);
     decoded.orgDetail &&
       axios({
         method: "get", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${decoded.orgDetail.organizationId}`,
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/clientByOrganization/${decoded.orgDetail.organizationId}`,
         headers: {
           cooljwt: Token,
         },
@@ -201,7 +178,7 @@ export default function Receivable(props) {
     let filter = null;
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/GetInvoicePaymentDetails/${orgID}/${vendorID}/${filter}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/GetInvoicePaymentDetailsAR/${orgID}/${vendorID}/${filter}`,
       headers: {
         cooljwt: Token,
       },
@@ -240,9 +217,7 @@ export default function Receivable(props) {
   };
 
   React.useEffect(() => {
-    let vendorID = props.vendor;
-    let orgID = props.org;
-    vendorID && orgID ? getData() : isVendor ? getCustomers() : getVendors();
+    getCustomers();
   }, []);
 
   React.useEffect(() => {
@@ -326,21 +301,10 @@ export default function Receivable(props) {
                           >
                             {isVendor ? "Select Customer" : "Select Vendor"}
                           </MenuItem>
-                          {isVendor
-                            ? componentState.orgs.map((org, index) => {
-                                return (
-                                  <MenuItem
-                                    key={index}
-                                    value={org.organizationId}
-                                  >
-                                    {org.organizationName}
-                                  </MenuItem>
-                                );
-                              })
-                            : componentState.vendors.map((ven, index) => {
+                         {componentState.vendors.map((ven, index) => {
                                 return (
                                   <MenuItem key={index} value={ven._id}>
-                                    {ven.level1.vendorName}
+                                    {ven.level1.clientName}
                                   </MenuItem>
                                 );
                               })}
@@ -373,7 +337,7 @@ export default function Receivable(props) {
                                   secondary={
                                     componentState.selectedVendor
                                       ? componentState.selectedVendor.level1
-                                          .vendorName
+                                          .clientName
                                       : "..."
                                   }
                                 />
