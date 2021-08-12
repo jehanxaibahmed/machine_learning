@@ -21,8 +21,12 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import Swal from 'sweetalert2'
-import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
+import Swal from "sweetalert2";
+import {
+  successAlert,
+  errorAlert,
+  msgAlert,
+} from "views/LDocs/Functions/Functions";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import ChipInput from "material-ui-chip-input";
@@ -50,6 +54,7 @@ export default function InitiatePayment(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+  const isAr = useSelector((state) => state.userReducer.isAr);
   const decoded = jwt.decode(Token);
   const [vendorData, setVendorData] = React.useState();
   const [clientID, setClientID] = React.useState();
@@ -75,86 +80,79 @@ export default function InitiatePayment(props) {
       currencyType: "",
     },
   });
-  
 
-  const onLoad =  (load) => {
-   console.log('Load', load);
-}
-
-function onMoneyButtonPayment (payment) {
-  let data = {
-    tenantId: props.fileData.tenantId,
-    organizationId: props.fileData.organizationId,
-    invoiceId: props.fileData.invoiceId,
-    version: props.fileData.version,
-    paidAmount:
-      formState.values.paymentType == "full"
-        ? parseFloat(props.fileData.balanceDue).toFixed(2)
-        : parseFloat(formState.values.paidAmount).toFixed(2),
-    updatedBy: decoded.email,
-    paymentID: "",
-    payerID: "",
-    paymentType: formState.values.paymentType,
-    currencyType: formState.values.currencyType,
-    orderId: orderId,
-    paymentGateway: formState.values.paymentBy,
-    currencyCode: props.fileData.LC_currency.Code,
-    balanceDue:
-      formState.values.paymentType == "full"
-        ? 0
-        : parseFloat(props.fileData.balanceDue) -
-          parseFloat(formState.values.paidAmount),
-    paymentMethod: formState.values.paymentBy,
-    transactionFee: "1",
+  const onLoad = (load) => {
+    console.log("Load", load);
   };
-  axios({
-    method: "post",
-    url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
-    data: data,
-    headers: {
-      cooljwt: Token,
-    },
-  })
-    .then(async (response) => {
-      console.log(response);
-      await props.loadFiles(decoded, false);
-      setPaymentInProcess(false);
-      // setButtonLoaded(true);
-      successAlert("Payment Successful...");
+
+  function onMoneyButtonPayment(payment) {
+    let data = {
+      tenantId: props.fileData.tenantId,
+      organizationId: props.fileData.organizationId,
+      invoiceId: props.fileData.invoiceId,
+      version: props.fileData.version,
+      paidAmount:
+        formState.values.paymentType == "full"
+          ? parseFloat(props.fileData.balanceDue).toFixed(2)
+          : parseFloat(formState.values.paidAmount).toFixed(2),
+      updatedBy: decoded.email,
+      paymentID: "",
+      payerID: "",
+      paymentType: formState.values.paymentType,
+      currencyType: formState.values.currencyType,
+      orderId: orderId,
+      paymentGateway: formState.values.paymentBy,
+      currencyCode: props.fileData.LC_currency.Code,
+      balanceDue:
+        formState.values.paymentType == "full"
+          ? 0
+          : parseFloat(props.fileData.balanceDue) -
+            parseFloat(formState.values.paidAmount),
+      paymentMethod: formState.values.paymentBy,
+      transactionFee: "1",
+    };
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
+      data: data,
+      headers: {
+        cooljwt: Token,
+      },
     })
-    .catch((err) => {
-      errorAlert("Payment Already Done");
-    });}
+      .then(async (response) => {
+        console.log(response);
+        await props.loadFiles(decoded, false);
+        setPaymentInProcess(false);
+        // setButtonLoaded(true);
+        successAlert("Payment Successful...");
+      })
+      .catch((err) => {
+        errorAlert("Payment Already Done");
+      });
+  }
 
- 
-
- 
   React.useEffect(() => {
     getPaymentMethods();
     getVendorData();
     getClientId();
   }, []);
 
-
-
-  React.useEffect(()=>{
-         
-    var css = 'div[style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; z-index: 1001;"] {z-index: 99999999999999 !important; }div[style="position: relative; display: inline-block; width: 280px; height: 50px;"]{width:195px !important}iframe[style="border: none; width: 280px; height: 50px;"]{width:195px !important}',
-    head = document.head || document.getElementsByTagName('head')[0],
-    style = document.createElement('style');
+  React.useEffect(() => {
+    var css =
+        'div[style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; z-index: 1001;"] {z-index: 99999999999999 !important; }div[style="position: relative; display: inline-block; width: 280px; height: 50px;"]{width:195px !important}iframe[style="border: none; width: 280px; height: 50px;"]{width:195px !important}',
+      head = document.head || document.getElementsByTagName("head")[0],
+      style = document.createElement("style");
 
     head.appendChild(style);
 
-    style.type = 'text/css';
-    if (style.styleSheet){
+    style.type = "text/css";
+    if (style.styleSheet) {
       // This is required for IE8 and below.
       style.styleSheet.cssText = css;
     } else {
       style.appendChild(document.createTextNode(css));
     }
-      },[])
-
-
+  }, []);
 
   React.useEffect(() => {
     paymentButton();
@@ -195,6 +193,51 @@ function onMoneyButtonPayment (payment) {
       },
     }));
   };
+
+  const payNow = () => {
+    let data = {
+      tenantId: props.fileData.tenantId,
+      organizationId: props.fileData.organizationId,
+      invoiceId: props.fileData.invoiceId,
+      version: props.fileData.version,
+      paidAmount:
+        formState.values.paymentType == "full"
+          ? parseFloat(props.fileData.balanceDue).toFixed(2)
+          : parseFloat(formState.values.paidAmount).toFixed(2),
+      updatedBy: decoded.email,
+      paymentID: "",
+      payerID: "",
+      paymentType: formState.values.paymentType,
+      currencyType: formState.values.currencyType,
+      orderId: "",
+      paymentGateway: formState.values.paymentBy,
+      currencyCode: props.fileData.LC_currency.Code,
+      balanceDue:
+        formState.values.paymentType == "full"
+          ? 0
+          : parseFloat(props.fileData.balanceDue) -
+            parseFloat(formState.values.paidAmount),
+      paymentMethod: formState.values.paymentBy,
+      transactionFee: "1",
+    };
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePaymentAR`,
+      data: data,
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then(async (response) => {
+        await props.loadFiles(decoded, false);
+        setPaymentInProcess(false);
+        // setButtonLoaded(true);
+        successAlert("Payment Successful...");
+      })
+      .catch((err) => {
+        errorAlert("Payment Already Done");
+      });
+  }
 
   const getPaymentMethods = () => {
     axios({
@@ -245,7 +288,7 @@ function onMoneyButtonPayment (payment) {
   };
 
   useEffect(() => {
-    if (vendorData && clientID) {
+    if (vendorData?.level3 && clientID) {
       let ClientID = clientID;
       let vendorMerchantID =
         vendorData.level3.payPalAcc_details.merchantIdInPayPal;
@@ -353,7 +396,7 @@ function onMoneyButtonPayment (payment) {
                       tenantId: props.fileData.tenantId,
                       organizationId: props.fileData.organizationId,
                       invoiceId: props.fileData.invoiceId,
-                      vendorId:props.fileData.vendorId,
+                      vendorId: props.fileData.vendorId,
                       version: props.fileData.version,
                       paidAmount:
                         formState.values.paymentType == "full"
@@ -403,12 +446,13 @@ function onMoneyButtonPayment (payment) {
           }, 3000);
         });
       }
-    if (formState.values.paymentBy == "moneybutton") {
-      setButtonLoaded(false);
-      setTimeout(() => {
-        setButtonLoaded(true);
-      }, 3000);
-    }
+      if (formState.values.paymentBy == "moneybutton") {
+        setButtonLoaded(false);
+        setTimeout(() => {
+          setButtonLoaded(true);
+        }, 3000);
+      }
+
       // if (formState.values.paymentBy == "moneybutton") {
       //   const div = document.getElementById("my-money-button");
       //   moneyButton.render(div, {
@@ -439,7 +483,6 @@ function onMoneyButtonPayment (payment) {
   }
   return (
     <GridContainer ref={div}>
-       
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="info" icon>
@@ -452,47 +495,53 @@ function onMoneyButtonPayment (payment) {
           </CardHeader>
           <CardBody>
             <GridContainer>
-              <GridItem
-                xs={10}
-                sm={10}
-                md={11}
-                lg={11}
-                style={{
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                }}
-              >
-                <TextField
-                  className={classes.textField}
-                  type="text"
-                  fullWidth={true}
-                  label="Supplier Name"
-                  disabled={true}
-                  value={props.fileData.vendorName || ""}
-                ></TextField>
-              </GridItem>
-              <GridItem
-                xs={2}
-                sm={2}
-                md={1}
-                lg={1}
-                style={{
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                }}
-              >
-                <Tooltip title="Show Bank Details">
-                  <IconButton
-                    onClick={() => setShowVendorDetails(!showVendorDetails)}
+              {!isAr ? (
+                <React.Fragment>
+                  <GridItem
+                    xs={10}
+                    sm={10}
+                    md={11}
+                    lg={11}
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                    }}
                   >
-                    {showVendorDetails ? (
-                      <VisibilityIcon fontSize="small" />
-                    ) : (
-                      <VisibilityOffIcon fontSize="small" />
-                    )}
-                  </IconButton>
-                </Tooltip>
-              </GridItem>
+                    <TextField
+                      className={classes.textField}
+                      type="text"
+                      fullWidth={true}
+                      label="Supplier Name"
+                      disabled={true}
+                      value={props.fileData.vendorName || ""}
+                    ></TextField>
+                  </GridItem>
+                  <GridItem
+                    xs={2}
+                    sm={2}
+                    md={1}
+                    lg={1}
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <Tooltip title="Show Bank Details">
+                      <IconButton
+                        onClick={() => setShowVendorDetails(!showVendorDetails)}
+                      >
+                        {showVendorDetails ? (
+                          <VisibilityIcon fontSize="small" />
+                        ) : (
+                          <VisibilityOffIcon fontSize="small" />
+                        )}
+                      </IconButton>
+                    </Tooltip>
+                  </GridItem>
+                </React.Fragment>
+              ) : (
+                ""
+              )}
               {showVendorDetails ? (
                 <GridItem
                   xs={12}
@@ -636,7 +685,9 @@ function onMoneyButtonPayment (payment) {
                         Choose Currency Type
                       </MenuItem>
                       <MenuItem value={1}>Fiat Payment</MenuItem>
-                      <MenuItem value={2}>Crypto Payment</MenuItem>
+                      <MenuItem disabled={isAr} value={2}>
+                        Crypto Payment
+                      </MenuItem>
                     </TextField>
                   </GridItem>
 
@@ -680,10 +731,12 @@ function onMoneyButtonPayment (payment) {
                           parseInt(formState.values.currencyType)
                         )
                       ).map((p) => (
-                        <MenuItem value={p.serviceName}>
+                        <MenuItem disabled={isAr} value={p.serviceName}>
                           <div className="fileinput text-right">
                             <div className="" style={{ marginTop: 20 }}>
-                              {`${p.serviceName.toUpperCase()} ${p.default ? "(Preferred)":""}`}
+                              {`${p.serviceName.toUpperCase()} ${
+                                p.default ? "(Preferred)" : ""
+                              }`}
                             </div>
                           </div>
                           {/* <div className="fileinput text-right">
@@ -699,6 +752,13 @@ function onMoneyButtonPayment (payment) {
                           </div> */}
                         </MenuItem>
                       ))}
+                      <MenuItem disabled={!isAr} value="manual">
+                        <div className="fileinput text-right">
+                          <div className="" style={{ marginTop: 20 }}>
+                            Manual Input
+                          </div>
+                        </div>
+                      </MenuItem>
                     </TextField>
                   </GridItem>
                   <GridItem
@@ -752,40 +812,44 @@ function onMoneyButtonPayment (payment) {
                 ) : (
                   ""
                 )}
-                 {formState.values.paymentBy == "moneybutton" ? 
-                 (
-                   <MoneyButton
-                   style={{
-                    marginTop: "20px",
-                    display: buttonLoaded ? "block" : "none",
-                  }}
-                   to={vendorData.level3.moneyButton_details.email}
-                   amount={formState.values.paymentType == "full"
-                   ? parseFloat(props.fileData.balanceDue).toFixed(2)
-                   : parseFloat(formState.values.paidAmount).toFixed(
-                       2
-                     )}
-                  label="Pay Now"
-                  onError={()=>{ props.closeModal(); }}
-                  onLoad={(payload)=>console.log("Loaded")}
-                  onPayment={onMoneyButtonPayment}
-                  successMessage="Payment SuccessFully Transfered"
-                  devMode={true}
-                   currency={props.fileData.LC_currency.Code}
-                 />
+                {formState.values.paymentBy == "moneybutton" ? (
+                  <MoneyButton
+                    style={{
+                      marginTop: "20px",
+                      display: buttonLoaded ? "block" : "none",
+                    }}
+                    to={vendorData.level3.moneyButton_details.email}
+                    amount={
+                      formState.values.paymentType == "full"
+                        ? parseFloat(props.fileData.balanceDue).toFixed(2)
+                        : parseFloat(formState.values.paidAmount).toFixed(2)
+                    }
+                    label="Pay Now"
+                    onError={() => {
+                      props.closeModal();
+                    }}
+                    onLoad={(payload) => console.log("Loaded")}
+                    onPayment={onMoneyButtonPayment}
+                    successMessage="Payment SuccessFully Transfered"
+                    devMode={true}
+                    currency={props.fileData.LC_currency.Code}
+                  />
+                ) : (
+                  ""
+                )}
+                {formState.values.paymentBy == "manual" ? (
+                  <Button
+                    round
+                    onClick={payNow}
+                    color="danger"
+                    className="Edit"
+                  >
+                    Pay Now
+                  </Button>
                 ) : (
                   ""
                 )}
                 {buttonLoaded == false ? <CircularProgress /> : ""}
-                {/* {formState.values.paymentBy == "moneybutton" ? (
-                  <div style={{ maxWidth: 237 }}>
-                    <span id="my-money-button"></span>
-                  </div>
-                ) : (
-                  ""
-                )} */}
-
-              
               </span>
             ) : (
               ""
