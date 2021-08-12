@@ -186,7 +186,7 @@ export const currentTrackingAr = (trackingStatus) => {
       }
       break;
     case "sentToClient":
-      currentStatus = trackingStatus.paymentInProcess.status;
+      currentStatus = trackingStatus.sentToClient.status;
       if (currentStatus) {
         activeStep = { val: 3, status: currentStatus };
       } else {
