@@ -55,6 +55,7 @@ const useStyles = makeStyles(styles);
     });
   }
 export default function Verify() {
+    const isAr = useSelector((state) => state.userReducer.isAr);
     const[animateFileInfo, setAnimateFileInfo] = useState(false);
     const[disabledSearch, setDisabledSearch] = useState(true);
     const[isSearching, setIsSearching] = useState(false);
@@ -126,7 +127,7 @@ export default function Verify() {
         setIsSearching(true);
         axios({
           method: "post", //you can set what request you want to be
-          url: userDetails.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceFullSearch` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceFullSearchOrg` ,
+          url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/invoiceFullSearchOrgAR`  : userDetails.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceFullSearch` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceFullSearchOrg` ,
           data: userDetails.isTenant ?
           {
             invoiceId:selectedOption.invoiceId,
@@ -168,7 +169,7 @@ export default function Verify() {
         if(options.length <= 0){
           axios({
             method: "post",
-            url: userDetails.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoicePartialSearch` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoicePartialSearchOrg`,
+            url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/invoicePartialSearchOrgAR` :  userDetails.isTenant ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoicePartialSearch` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoicePartialSearchOrg`,
             data: userDetails.isTenant ? 
             {
               query : inputValue,

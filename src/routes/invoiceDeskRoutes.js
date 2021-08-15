@@ -166,7 +166,15 @@ export const invoiceApRoutes = [
       },
     ],
   },
-  
+  {
+    path: "/verifier/ap",
+    name: "Tracking & Validate",
+    rtlName: "أشكال عادية",
+    rtlMini: "صو",
+    icon: VerifiedUserIcon,
+    component: Verify,
+    layout: "/invoice",
+  }
 ];
 
 
@@ -294,13 +302,8 @@ export const invoiceArRoutes = [
       },
     ],
   },
-];
-
-
-
-export const invoiceDefaultRoutes = [
   {
-    path: "/verifier",
+    path: "/verifier/ar",
     name: "Tracking & Validate",
     rtlName: "أشكال عادية",
     rtlMini: "صو",
@@ -308,6 +311,12 @@ export const invoiceDefaultRoutes = [
     component: Verify,
     layout: "/invoice",
   },
+];
+
+
+
+export const invoiceDefaultRoutes = [
+ 
   {
     path: "/notifications",
     name: "Notifications",
