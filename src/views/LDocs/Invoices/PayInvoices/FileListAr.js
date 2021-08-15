@@ -119,7 +119,7 @@ const TransitionLeft = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='left' ref={ref} {...props} />;
 });
 
-export default function PaymentList(props) {
+export default function PaymentListAr(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
@@ -444,7 +444,7 @@ export default function PaymentList(props) {
     getVendors();
     setDecoded(userDetail);
     getMyFiles(userDetail, true);
-  }, [isAr]);
+  }, []);
 
   const setTableData = (response) => {
     setData(
@@ -697,7 +697,7 @@ export default function PaymentList(props) {
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url:  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/InvoiceDetailFinance/${user.orgDetail.organizationId}/${formState.filter}`,
+      url:`${process.env.REACT_APP_LDOCS_API_URL}/AR/InvoiceDetailFinanceAR/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,

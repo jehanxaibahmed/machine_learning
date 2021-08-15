@@ -30,6 +30,7 @@ import InvoiceTracking from "views/LDocs/Invoices/InvoiceTracking/InvoiceTrackin
 import SentList from "views/LDocs/Invoices/SentInvoices/FilesList";
 import ExportList from "views/LDocs/Invoices/ExportInvoices/FilesList";
 import PaymentList from "views/LDocs/Invoices/PayInvoices/FilesList";
+import PaymentListAr from "views/LDocs/Invoices/PayInvoices/FileListAr";
 import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
 import Requested from "views/LDocs/Reviews/Requested";
 import jwt from "jsonwebtoken";
@@ -272,7 +273,7 @@ export const invoiceArRoutes = [
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         icon: LocalAtmIcon,
-        component: PaymentList,
+        component: PaymentListAr,
         layout: "/invoice",
       },
       {

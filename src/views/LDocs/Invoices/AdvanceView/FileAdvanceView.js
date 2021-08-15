@@ -24,7 +24,7 @@ import Card from "components/Card/Card.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
@@ -46,12 +46,15 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import WizardView from "./WizardView";
 import Horizentalteppers from "../../../Components/HorizentalStepper";
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
+import HorizentalteppersAr from "../../../Components/HorizentalStepperAr";
+import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import {
   addZeroes,
   formatDateTime,
   validateInvoice,
-  successAlert, errorAlert, msgAlert
+  successAlert,
+  errorAlert,
+  msgAlert,
 } from "views/LDocs/Functions/Functions";
 import Approve from "./approve";
 import Review from "./review";
@@ -69,7 +72,7 @@ export default function FileAdvanceView(props) {
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
   const dispatch = useDispatch();
-
+  const isAr = useSelector((state) => state.userReducer.isAr);
   const decoded = jwt.decode(Token);
   const classes = useStyle();
   const isVendor = props.isVendor;
@@ -95,7 +98,7 @@ export default function FileAdvanceView(props) {
     })
       .then((response) => {
         if (response.data.InvoiceWorkflowHistory.length !== 0) {
-          let blockChainData = response.data.InvoiceWorkflowHistory; 
+          let blockChainData = response.data.InvoiceWorkflowHistory;
           console.log(blockChainData);
           setBlockChainData(blockChainData);
         } else {
@@ -104,7 +107,7 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setBlockChainData([]);
@@ -126,7 +129,7 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setPaymentData([]);
@@ -143,7 +146,7 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.error(error);
       });
@@ -165,14 +168,13 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setWorkflow([]);
       });
   };
 
- 
   //Get Validator
   const getValidator = async () => {
     await validateInvoice(fileData, Token).then((res) => {
@@ -198,7 +200,7 @@ export default function FileAdvanceView(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });
@@ -256,14 +258,16 @@ export default function FileAdvanceView(props) {
     setBlockChainData([]);
     setIsLoading(true);
     await getQrCode();
-    await getFileVersions();
+    if (isAr) {
+      await getFileVersions();
+    }
     await getPaymentData();
-    if (!isVendor) {
+    if (!isVendor && !isAr) {
       await getValidator();
     }
 
     if (fileData.initWorkFlow && !isVendor) {
-      console.log('WORKFLOW INITED')
+      console.log("WORKFLOW INITED");
       await getBlockChainData();
       await getWorkflowSteps();
       setIsLoading(false);
@@ -294,7 +298,15 @@ export default function FileAdvanceView(props) {
           <Typography variant="subtitle2" component="h2">
             {step.Event.toUpperCase()} STEP (
             {formatDateTime(step.EventInitDate)})
-            <Tooltip title="Transaction ID"><a href={`https://test.whatsonchain.com/tx/${step.TxnID}`} target="_blank" style={{float:'right'}}><VerifiedUserIcon /></a></Tooltip>
+            <Tooltip title="Transaction ID">
+              <a
+                href={`https://test.whatsonchain.com/tx/${step.TxnID}`}
+                target="_blank"
+                style={{ float: "right" }}
+              >
+                <VerifiedUserIcon />
+              </a>
+            </Tooltip>
           </Typography>
         </CardHeader>
         <Divider />
@@ -378,7 +390,6 @@ export default function FileAdvanceView(props) {
       <LinearProgress />
     ) : (
       <GridContainer>
-         
         {markModal ? (
           <Dialog
             classes={{
@@ -431,7 +442,11 @@ export default function FileAdvanceView(props) {
                 lg={12}
                 style={{ marginBottom: "20px" }}
               >
-                <Horizentalteppers fileData={fileData} />
+                {isAr ? (
+                  <HorizentalteppersAr fileData={fileData} />
+                ) : (
+                  <Horizentalteppers fileData={fileData} />
+                )}
               </GridItem>
               <GridItem xs={12} sm={12} md={4} lg={4}>
                 <List className={classesList.list}>
@@ -452,8 +467,9 @@ export default function FileAdvanceView(props) {
                     ${
                       fileData.FC_currency && fileData.LC_currency
                         ? fileData.FC_currency._id !== fileData.LC_currency._id
-                          ? ` / ${fileData.LC_currency.Code ||
-                              ""} ${addZeroes(fileData.grossAmt_bc) || "0.00"}`
+                          ? ` / ${fileData.LC_currency.Code || ""} ${addZeroes(
+                              fileData.grossAmt_bc
+                            ) || "0.00"}`
                           : ""
                         : ""
                     }
@@ -467,23 +483,26 @@ export default function FileAdvanceView(props) {
                     ${
                       fileData.FC_currency && fileData.LC_currency
                         ? fileData.FC_currency._id !== fileData.LC_currency._id
-                          ? ` / ${fileData.LC_currency.Code ||
-                              ""} ${addZeroes(fileData.discountAmt_bc) || "0.00"}`
+                          ? ` / ${fileData.LC_currency.Code || ""} ${addZeroes(
+                              fileData.discountAmt_bc
+                            ) || "0.00"}`
                           : ""
                         : ""
                     }
                     `}
                   />
                   <ListItemText
-                    primary={`Tax (${(fileData.taxAmt * 100) / fileData.grossAmt}%)`}
+                    primary={`Tax (${(fileData.taxAmt * 100) /
+                      fileData.grossAmt}%)`}
                     secondary={`${fileData.FC_currency.Code} ${addZeroes(
                       fileData.taxAmt
                     )}
                     ${
                       fileData.FC_currency && fileData.LC_currency
                         ? fileData.FC_currency._id !== fileData.LC_currency._id
-                          ? ` / ${fileData.LC_currency.Code ||
-                              ""} ${addZeroes(fileData.taxAmt_bc) || "0.00"}`
+                          ? ` / ${fileData.LC_currency.Code || ""} ${addZeroes(
+                              fileData.taxAmt_bc
+                            ) || "0.00"}`
                           : ""
                         : ""
                     }
@@ -522,11 +541,17 @@ export default function FileAdvanceView(props) {
                   />
                   <ListItemText
                     primary="Currency"
-                    secondary={fileData.FC_currency.Code ? fileData.FC_currency.Code.toUpperCase():""}
+                    secondary={
+                      fileData.FC_currency.Code
+                        ? fileData.FC_currency.Code.toUpperCase()
+                        : ""
+                    }
                   />
                   <ListItemText
                     primary={`Created By`}
-                    secondary={`${fileData.createdBy.split("@")[0].toUpperCase()} ${
+                    secondary={`${fileData.createdBy
+                      .split("@")[0]
+                      .toUpperCase()} ${
                       fileData.createdByVendor ? "(SUPPLIER)" : "(REQUESTER)"
                     }`}
                   />
@@ -540,6 +565,7 @@ export default function FileAdvanceView(props) {
                 style={{ textAlign: "center" }}
               >
                 <GridContainer>
+                  {!isAr ? 
                   <GridItem xs={12} sm={12} md={12} lg={12}>
                     <FormControl
                       variant="outlined"
@@ -565,7 +591,7 @@ export default function FileAdvanceView(props) {
                         })}
                       </Select>
                     </FormControl>
-                  </GridItem>
+                  </GridItem>:""}
                   <GridItem xs={12} sm={12} md={12} lg={12}>
                     <CopyToClipboard
                       text={`${process.env.REACT_APP_LDOCS_API_SELF_URL}/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`}
@@ -646,7 +672,10 @@ export default function FileAdvanceView(props) {
                   workflow={workflow}
                   attachments={fileData.attachments}
                   payments={paymentData}
-                  currency={{fc:fileData.FC_currency,bc:fileData.LC_currency}}
+                  currency={{
+                    fc: fileData.FC_currency,
+                    bc: fileData.LC_currency,
+                  }}
                   validation={validation}
                   isVendor={isVendor}
                   isExported={fileData.trackingStatus.paymentInProcess}
