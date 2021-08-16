@@ -69,7 +69,7 @@ class SidebarWrapper extends React.Component {
     
   
   render() {
-    const { className, user, headerLinks, links, userData, tabValue, handleTabChange, isTabs } = this.props;
+    const { className, user, headerLinks, links, userData, tabValue, handleTabChange, isTabs, isAr } = this.props;
     const a11yProps = (index) => {
       return {
         id: `simple-tab-${index}`,
@@ -143,12 +143,12 @@ class SidebarWrapper extends React.Component {
 
 class Sidebar extends React.Component {
   constructor(props) {
-    
     super(props);
     this.state = {
       openAvatar: false,
       miniActive: true,
       level1: "",
+      isAr:props?.isAr,
       LogoutCheck: false,
       tabValue:0,
       ...this.getCollapseStates(props.routes ? props.routes: []),
@@ -172,7 +172,6 @@ class Sidebar extends React.Component {
   // this creates the intial state of this component based on the collapse routes
   // that it gets through this.props.routes
   getCollapseStates = (routes) => {
-    console.log(routes);
     let initialState = {};
     routes.map((prop) => {
       if (prop.collapse) {
@@ -647,6 +646,7 @@ class Sidebar extends React.Component {
               userData={this.state.level1}
               headerLinks={<AdminNavbarLinks rtlActive={rtlActive} />}
               links={links}
+              isAr={this.state.isAr}
               isTabs={arroutes && aproutes ? true : false}
               tabValue={this.state.tabValue}
               handleTabChange={this.handleTabChange}
@@ -728,6 +728,7 @@ SidebarWrapper.propTypes = {
 function mapStateToProps(state) {
   return {
     userData: state.userReducer.userListData,
+    isAr : state.userReducer.isAr
   };
 }
 export default connect(
