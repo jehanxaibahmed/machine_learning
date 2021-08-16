@@ -314,13 +314,14 @@ export default function CreateInvoice(props) {
     const userDetails = jwt.decode(Token);
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceipts`,
+      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceiptsAr` : `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceipts`,
       data: {
         poNumber: p,
         organizationId: isVendor
           ? formState.selectedOrg.organizationId || null
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
+        clientId: isVendor ? userDetails.id : formState.selectedVendor
       },
       headers: {
         cooljwt: Token,
@@ -410,11 +411,12 @@ export default function CreateInvoice(props) {
       const userDetails = jwt.decode(Token);
       axios({
         method: "post", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceipt`,
+        url: isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceiptAR` : `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceipt`,
         data: {
           receiptDate: new Date(),
           organizationId: userDetails.orgDetail.organizationId,
           vendorId: formState.selectedVendor,
+          clientId: formState.selectedVendor,
           poNumber: formState.values.poNumber,
           receivedBy: userDetails.email,
         },
