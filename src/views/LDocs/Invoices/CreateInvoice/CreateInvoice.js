@@ -35,6 +35,7 @@ import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
 import { useDispatch, useSelector } from "react-redux";
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -141,6 +142,8 @@ export default function CreateInvoice(props) {
   const [showVendor, setShowVendor] = useState(false);
   const [currency, setCurrency] = useState(defaultCurrency);
   const [markAsReceivedModel, setMarkAsReceivedModel] = useState(false);
+  const [createPOModel, setCreatePOModel] = useState(false);
+
   const history = useHistory();
   let duedate = new Date();
   let today = new Date();
@@ -217,7 +220,7 @@ export default function CreateInvoice(props) {
       receiptNumber: "",
       organizationId: "",
     },
-  }
+  };
   const [formState, setFormState] = useState(initialState);
   const [baseCurrency, setBaseCurrency] = useState(
     !isVendor
@@ -279,7 +282,9 @@ export default function CreateInvoice(props) {
     const userDetails = jwt.decode(Token);
     axios({
       method: "post", //you can set what request you want to be
-      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoAR` : `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoAR`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
         organizationId: isVendor
           ? formState.selectedOrg
@@ -398,7 +403,9 @@ export default function CreateInvoice(props) {
   const createReceipts = () => {
     const Check = require("is-null-empty-or-undefined").Check;
     if (Check(formState.selectedVendor) || Check(formState.values.poNumber)) {
-      errorAlert("Please Select Valid Vendor and PO Number");
+      errorAlert(
+        `Please Select Valid ${isAr ? "Client" : "Vendor"} and PO Number`
+      );
     } else {
       const userDetails = jwt.decode(Token);
       axios({
@@ -418,7 +425,7 @@ export default function CreateInvoice(props) {
         .then((res) => {
           setReceipts(res.data);
 
-          successAlert("Receipt Has Been Generated In Oracle Fusion.");
+          successAlert("Receipt Has Been Generated");
         })
         .catch((error) => {
           if (error.response) {
@@ -429,6 +436,44 @@ export default function CreateInvoice(props) {
         });
     }
   };
+
+  const createPO = () => {
+    const Check = require("is-null-empty-or-undefined").Check;
+    if (Check(formState.selectedVendor) || Check(formState.values.poNumber)) {
+      errorAlert(
+        `Please Select Valid ${isAr ? "Client" : "Vendor"} and PO Number`
+      );
+    } else {
+      const userDetails = jwt.decode(Token);
+      // axios({
+      //   method: "post", //you can set what request you want to be
+      //   url: `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceipt`,
+      //   data: {
+      //     receiptDate: new Date(),
+      //     organizationId: userDetails.orgDetail.organizationId,
+      //     vendorId: formState.selectedVendor,
+      //     poNumber: formState.values.poNumber,
+      //     receivedBy: userDetails.email,
+      //   },
+      //   headers: {
+      //     cooljwt: Token,
+      //   },
+      // })
+      //   .then((res) => {
+      //     setReceipts(res.data);
+
+      successAlert("PO Has Been Generated");
+      // })
+      // .catch((error) => {
+      //   if (error.response) {
+      //     error.response.status == 401 && dispatch(setIsTokenExpired(true));
+      //   }
+      //   console.log(error);
+      //   errorAlert("Unable To Generate RECEIPT.");
+      // });
+    }
+  };
+
   const closeMarkAsReceivedModel = async () => {
     const userData = jwt.decode(Token);
     await setMarkAsReceivedModel(false);
@@ -952,7 +997,9 @@ export default function CreateInvoice(props) {
       const userCurrency = userDetails.currency.Currency_Base;
       axios({
         method: "get",
-        url: is_ar ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/clientByOrganization/${userDetails.orgDetail.organizationId}`: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}` ,
+        url: is_ar
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/clientByOrganization/${userDetails.orgDetail.organizationId}`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
         headers: { cooljwt: Token },
       })
         .then((response) => {
@@ -1031,9 +1078,9 @@ export default function CreateInvoice(props) {
   const changingPath = () => {
     let url = history.location.pathname;
     let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : false;
-      setIsAr(is_Ar);
-      getData(is_Ar);
-  }
+    setIsAr(is_Ar);
+    getData(is_Ar);
+  };
 
   //On Load Component
   React.useEffect(() => {
@@ -1041,7 +1088,7 @@ export default function CreateInvoice(props) {
   }, []);
 
   React.useEffect(() => {
-      changingPath();
+    changingPath();
   }, [history.location.pathname]);
 
   const setInvoice = (orgs) => {
@@ -1551,16 +1598,24 @@ export default function CreateInvoice(props) {
       ),
       items: items,
       attachments: formState.attachments,
-      vendorName: isAr ? null : isVendor
+      vendorName: isAr
+        ? null
+        : isVendor
         ? userData.name
         : formState.values.selectedVendor.level1.vendorName,
-      vendorId: isAr ? null : isVendor ? userData.id : formState.values.selectedVendor._id,
+      vendorId: isAr
+        ? null
+        : isVendor
+        ? userData.id
+        : formState.values.selectedVendor._id,
       vendorSite: isAr ? null : isVendor ? "" : formState.values.site,
-      clientName:isAr ? formState.values.selectedVendor.level1.clientName: null,
-      clientId:  isAr ? formState.values.selectedVendor._id: null,
+      clientName: isAr
+        ? formState.values.selectedVendor.level1.clientName
+        : null,
+      clientId: isAr ? formState.values.selectedVendor._id : null,
       clientSite: formState.values.site,
       version: fileData ? fileData.version : "",
-      isAR:isAr,
+      isAR: isAr,
       invoicePath: fileData ? fileData.invoicePath : "",
       FC_currency: currencyLookups.find(
         (l) => l._id == formState.values.currency
@@ -1631,7 +1686,9 @@ export default function CreateInvoice(props) {
       //   : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
       url: isEdit
         ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
-        : isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/submitInvoiceAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
+        : isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/submitInvoiceAR`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
       data: formData,
       headers: {
         //"Content-Type": "multipart/form-data",
@@ -2058,6 +2115,100 @@ export default function CreateInvoice(props) {
             ) : (
               ""
             )}
+            {createPOModel ? (
+              <Dialog
+                fullWidth={true}
+                maxWidth={"md"}
+                disableBackdropClick
+                disableEscapeKeyDown
+                open={createPOModel}
+                onClose={() => setCreatePOModel(false)}
+              >
+                <DialogContent>
+                  <Card>
+                    <CardHeader color="info" icon>
+                      <CardIcon color="info">
+                        <h4 className={classes.cardTitleText}>Create PO</h4>
+                      </CardIcon>
+                    </CardHeader>
+                    <CardBody>
+                      <GridContainer>
+                        <GridItem xs={6} sm={6} md={6} lg={6}>
+                          <TextField
+                            error={formState.errors.overallDiscount === "error"}
+                            helperText={
+                              formState.errors.overallDiscount === "error"
+                                ? "Valid Discount is required"
+                                : null
+                            }
+                            className={classes.textField}
+                            fullWidth={true}
+                            label="Discount"
+                            type="number"
+                            name="overallDiscount"
+                            onChange={(event) => {
+                              handleChange(event);
+                            }}
+                            value={formState.values.overallDiscount || ""}
+                          />
+                        </GridItem>
+                        <GridItem xs={6} sm={6} md={6} lg={6}>
+                          <TextField
+                            labelId="demo-dialog-select-label"
+                            id="demo-dialog-select"
+                            label="Discount Type"
+                            name="discountType"
+                            onChange={(event) => {
+                              handleChange(event);
+                            }}
+                            value={formState.values.discountType || ""}
+                            fullWidth={true}
+                            select
+                          >
+                            <MenuItem value={1}>
+                              Amount ({currency.Code || "$"})
+                            </MenuItem>
+                            <MenuItem value={2}>Percentage (%)</MenuItem>
+                          </TextField>
+                        </GridItem>
+                        <GridItem
+                          style={{
+                            display: "flex",
+                            alignItems: "right",
+                            justifyContent: "flex-end",
+                            marginTop: "20px",
+                          }}
+                          xs={12}
+                          sm={12}
+                          md={12}
+                          lg={12}
+                        >
+                          <Button
+                            color="danger"
+                            size="small"
+                            onClick={() => setCreatePOModel(false)}
+                            round
+                          >
+                            Close
+                          </Button>
+                          <Button
+                            color="info"
+                            size="small"
+                            onClick={() => createPO()}
+                            round
+                          >
+                            Create PO
+                          </Button>
+                        </GridItem>
+                      </GridContainer>
+                    </CardBody>
+                  </Card>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              ""
+            )}
+
             {markAsReceivedModel ? (
               <Dialog
                 classes={{
@@ -2191,7 +2342,11 @@ export default function CreateInvoice(props) {
                     <CardHeader color="info" icon>
                       <CardIcon color="info">
                         <h4 className={classes.cardTitleText}>
-                          {isVendor ? "Select Customer" :  isAr ? "Select Client": "Select Supplier"}
+                          {isVendor
+                            ? "Select Customer"
+                            : isAr
+                            ? "Select Client"
+                            : "Select Supplier"}
                         </h4>
                       </CardIcon>
                     </CardHeader>
@@ -2215,12 +2370,16 @@ export default function CreateInvoice(props) {
                                 }
                                 helperText={
                                   formState.errors.selectedVendor === "error"
-                                    ? isAr ? "Valid Client Name is required" : "Valid Supplier Name is required"
+                                    ? isAr
+                                      ? "Valid Client Name is required"
+                                      : "Valid Supplier Name is required"
                                     : null
                                 }
                                 className={classes.textField}
                                 fullWidth={true}
-                                label={isAr ? "Select Client" : "Select Supplier"}
+                                label={
+                                  isAr ? "Select Client" : "Select Supplier"
+                                }
                                 name="selectedVendor"
                                 onChange={(event) => {
                                   handleVendorChange(event);
@@ -2243,7 +2402,9 @@ export default function CreateInvoice(props) {
                                           key={index}
                                           value={vendor._id}
                                         >
-                                          {isAr ? vendor.level1.clientName: vendor.level1.vendorName}
+                                          {isAr
+                                            ? vendor.level1.clientName
+                                            : vendor.level1.vendorName}
                                         </MenuItem>
                                       );
                                     })
@@ -2297,12 +2458,18 @@ export default function CreateInvoice(props) {
                                     error={formState.errors.site === "error"}
                                     helperText={
                                       formState.errors.site === "error"
-                                        ? isAr ?"Valid Client Site is required" :"Valid Supplier Site is required"
+                                        ? isAr
+                                          ? "Valid Client Site is required"
+                                          : "Valid Supplier Site is required"
                                         : null
                                     }
                                     className={classes.textField}
                                     fullWidth={true}
-                                    label={isAr ? "Select Client Site":"Select Supplier Site" }
+                                    label={
+                                      isAr
+                                        ? "Select Client Site"
+                                        : "Select Supplier Site"
+                                    }
                                     name="site"
                                     onChange={(event) => {
                                       handleChange(event);
@@ -2316,7 +2483,9 @@ export default function CreateInvoice(props) {
                                         root: classes.selectMenuItem,
                                       }}
                                     >
-                                      {isAr ? "Choose Client Site":"Choose Supplier Site" }
+                                      {isAr
+                                        ? "Choose Client Site"
+                                        : "Choose Supplier Site"}
                                     </MenuItem>
                                     {VendorSites.map((site, index) => {
                                       return (
@@ -2464,7 +2633,11 @@ export default function CreateInvoice(props) {
                             onClick={() => selectVendor()}
                             round
                           >
-                            {isVendor ? "Select Customer" : isAr ? "Select Client" : "Select Supplier"}
+                            {isVendor
+                              ? "Select Customer"
+                              : isAr
+                              ? "Select Client"
+                              : "Select Supplier"}
                           </Button>
                         </GridItem>
                       </GridContainer>
@@ -2609,8 +2782,9 @@ export default function CreateInvoice(props) {
                                 <div>
                                   <Typography variant="h6" component="h2">
                                     {formState.values.selectedVendor.level1
-                                      .vendorName || formState.values.selectedVendor.level1
-                                      .clientName}
+                                      .vendorName ||
+                                      formState.values.selectedVendor.level1
+                                        .clientName}
                                   </Typography>
                                   <Typography variant="body2" component="h2">
                                     {formState.values.site || ""}
@@ -2619,10 +2793,10 @@ export default function CreateInvoice(props) {
                               ) : (
                                 <div>
                                   <Typography variant="h6" component="h2">
-                                    {isAr ? "Client Name":"Supplier Name"} 
+                                    {isAr ? "Client Name" : "Supplier Name"}
                                   </Typography>
                                   <Typography variant="body2" component="h2">
-                                  {isAr ? "Client Site":"Supplier Site"} 
+                                    {isAr ? "Client Site" : "Supplier Site"}
                                   </Typography>
                                 </div>
                               )}
@@ -2918,69 +3092,113 @@ export default function CreateInvoice(props) {
                         {!formState.isPeetyCash &&
                         !formState.isExpense &&
                         formState.isPo ? (
-                          <React.Fragment>
-                            <GridItem
-                              xs={10}
-                              sm={10}
-                              md={5}
-                              lg={5}
-                              style={{
-                                marginTop: "10px",
-                                marginBottom: "10px",
-                              }}
-                            >
-                              <TextField
-                                fullWidth={true}
-                                // error={formState.errors.poNumber}
-                                // helperText={
-                                //   formState.errors.poNumber == "error"
-                                //     ? "Valid PO Number is required"
-                                //     : null
-                                // }
-                                label={`PO Number`}
-                                id="poNumber"
-                                name="poNumber"
-                                disabled={formState.isPeetyCash}
-                                onChange={(event) => {
-                                  handleChange(event);
+                          !isAr ? (
+                            <React.Fragment>
+                              <GridItem
+                                xs={10}
+                                sm={10}
+                                md={5}
+                                lg={5}
+                                style={{
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
                                 }}
-                                value={formState.values.poNumber || ""}
-                                select
                               >
-                                <MenuItem key={""} disabled={true}>
-                                  PO NUMBER
-                                </MenuItem>
-                                {pos.map((po, index) => (
-                                  <MenuItem key={index} value={po.poNumber}>
-                                    {po.poNumber}
-                                  </MenuItem>
-                                ))}
-                              </TextField>
-                            </GridItem>
-                            <GridItem
-                              xs={2}
-                              sm={2}
-                              md={1}
-                              lg={1}
-                              style={{
-                                marginTop: "15px",
-                                marginBottom: "10px",
-                              }}
-                            >
-                              <Tooltip title="View PO">
-                                <IconButton
-                                  style={{ background: "lightgrey" }}
-                                  onClick={() => viewPO()}
+                                <TextField
+                                  fullWidth={true}
+                                  // error={formState.errors.poNumber}
+                                  // helperText={
+                                  //   formState.errors.poNumber == "error"
+                                  //     ? "Valid PO Number is required"
+                                  //     : null
+                                  // }
+                                  label={`PO Number`}
+                                  id="poNumber"
+                                  name="poNumber"
+                                  disabled={formState.isPeetyCash}
+                                  onChange={(event) => {
+                                    handleChange(event);
+                                  }}
+                                  value={formState.values.poNumber || ""}
+                                  select
                                 >
-                                  {poModal ? (
-                                    <VisibilityOff fontSize="small" />
-                                  ) : (
-                                    <Visibility fontSize="small" />
-                                  )}
-                                </IconButton>
-                              </Tooltip>
-                            </GridItem>
-                          </React.Fragment>
+                                  <MenuItem key={""} disabled={true}>
+                                    PO NUMBER
+                                  </MenuItem>
+                                  {pos.map((po, index) => (
+                                    <MenuItem key={index} value={po.poNumber}>
+                                      {po.poNumber}
+                                    </MenuItem>
+                                  ))}
+                                </TextField>
+                              </GridItem>
+                              <GridItem
+                                xs={2}
+                                sm={2}
+                                md={1}
+                                lg={1}
+                                style={{
+                                  marginTop: "15px",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                {/* {formState.values.poNumber ? */}
+                                <Tooltip title="View PO">
+                                  <IconButton
+                                    style={{ background: "lightgrey" }}
+                                    onClick={() => viewPO()}
+                                  >
+                                    {poModal ? (
+                                      <VisibilityOff fontSize="small" />
+                                    ) : (
+                                      <Visibility fontSize="small" />
+                                    )}
+                                  </IconButton>
+                                </Tooltip>
+                                {
+                                  // : <Tooltip title="Create PO">
+                                  //   <IconButton
+                                  //     style={{ background: "lightgrey" }}
+                                  //     onClick={() => setCreatePOModel(true)}
+                                  //   >
+                                  //       <AddCircleOutlineIcon fontSize="small" />
+                                  //   </IconButton>
+                                  // </Tooltip>
+                                }
+                              </GridItem>
+                            </React.Fragment>
+                          ) : (
+                            <React.Fragment>
+                              <GridItem
+                                xs={12}
+                                sm={12}
+                                md={6}
+                                lg={6}
+                                style={{
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                <TextField
+                                  fullWidth={true}
+                                  // error={formState.errors.poNumber}
+                                  // helperText={
+                                  //   formState.errors.poNumber == "error"
+                                  //     ? "Valid PO Number is required"
+                                  //     : null
+                                  // }
+                                  label={`PO Number`}
+                                  id="poNumber"
+                                  name="poNumber"
+                                  disabled={formState.isPeetyCash}
+                                  onChange={(event) => {
+                                    handleChange(event);
+                                  }}
+                                  value={formState.values.poNumber || ""}
+                                />
+                              </GridItem>
+                            </React.Fragment>
+                          )
                         ) : (
                           ""
                         )}
