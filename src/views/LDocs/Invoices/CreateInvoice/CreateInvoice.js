@@ -1631,7 +1631,7 @@ export default function CreateInvoice(props) {
       po: formState.values.poNumber,
       // receiptNumber: formState.values.receiptNumber,
       paymentTerms: formState.values.paymentTerms.split("-")[1],
-      isPo: po ? formState.isPo : false,
+      isPo: isAr ? formState.isPo : po ? formState.isPo : false,
       isReceipt: formState.isPo ? formState.isReceipt : false,
       requesterId: isVendor ? (po ? po.requesterId : null) : userData.email,
       expenseType: formState.values.expenseType,
