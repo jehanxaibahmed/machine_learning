@@ -1015,7 +1015,7 @@ export default function SentInvoices(props) {
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Ready To Send Count</p>
+                  <p className={classes.cardCategory}>Ready To Send</p>
                   <h3 className={classes.cardTitle}>
                     {formState.readyToSendCount}
                   </h3>
@@ -1054,7 +1054,7 @@ export default function SentInvoices(props) {
                   <CardIcon color="danger">
                     <CenterFocusWeakIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Sent Count</p>
+                  <p className={classes.cardCategory}>Sent To Client</p>
                   <h3 className={classes.cardTitle}>{formState.sentCount}</h3>
                 </CardHeader>
                 <CardFooter stats>
@@ -1091,7 +1091,7 @@ export default function SentInvoices(props) {
                   <CardIcon color="info">
                     <CenterFocusStrongIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Acknowledged Count</p>
+                  <p className={classes.cardCategory}>Sent & Acknowledged </p>
                   <h3 className={classes.cardTitle}>
                     {formState.acknowledgedCount}
                   </h3>
@@ -1131,7 +1131,7 @@ export default function SentInvoices(props) {
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Total Count</p>
+                  <p className={classes.cardCategory}>Total Invoices</p>
                   <h3 className={classes.cardTitle}>
                     {formState.totalInvCount}
                   </h3>

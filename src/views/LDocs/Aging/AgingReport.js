@@ -50,6 +50,7 @@ import jwt from "jsonwebtoken";
 import Row from "./Row";
 import { addZeroes } from "../Functions/Functions";
 import Payable from "../Payable/Payable";
+import Receivable from "../Receivable/Receivable";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -394,7 +395,7 @@ export default function AgingReport() {
                       >
                         <TableHead>
                           <TableRow>
-                            <StyledTableCell>Vendor / Customer</StyledTableCell>
+                            <StyledTableCell>{isAr ? "Client":"Supplier"}</StyledTableCell>
                             <StyledTableCell></StyledTableCell>
                             <StyledTableCell align="right">
                               Outstanding
@@ -505,11 +506,17 @@ export default function AgingReport() {
             >
               Go Back
             </Button>
+            {isAr ? 
+            <Receivable 
+              goBack={goBack}
+              vendor={formState.vendorDetails._id}
+              org={decoded.orgDetail.organizationId}
+            />:
             <Payable
               goBack={goBack}
               vendor={formState.vendorDetails._id}
               org={decoded.orgDetail.organizationId}
-            />
+            />}
           </React.Fragment>
         </Animated>
       ) : (

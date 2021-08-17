@@ -312,15 +312,16 @@ export default function InvoiceConfigrations() {
                   </CardIcon>
                 </CardHeader>
                 <CardBody>
+                  <GridContainer>
                   {state.templates.map((template, index) => (
-                    <GridItem xs={3}>
+                    <GridItem xs={2}>
                       <Card className={classes.root}>
                         <a
                           href={`${process.env.REACT_APP_LDOCS_API_URL}/${template.templateUrl}`}
                           target="_blank"
                         >
                           <img
-                            style={{ width: "100%", height: 400 }}
+                            style={{ width: "100%", height: 200 }}
                             src={`${process.env.REACT_APP_LDOCS_API_URL}/${template.templateUrl}`}
                           />
                         </a>
@@ -341,6 +342,7 @@ export default function InvoiceConfigrations() {
                       </Card>
                     </GridItem>
                   ))}
+                  </GridContainer>
                 </CardBody>
               </Card>
             </GridItem>

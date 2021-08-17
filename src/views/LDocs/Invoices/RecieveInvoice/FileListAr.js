@@ -453,7 +453,7 @@ export default function FilesListAr(props) {
           ),
           vendorName: (
             <MenuProvider data={prop} id='menu_id'>
-              {prop.vendorName}
+              {prop.clientName}
             </MenuProvider>
           ),
           customerName: (
@@ -676,8 +676,8 @@ export default function FilesListAr(props) {
       method: "post", //you can set what request you want to be
       url:
         file == undefined
-          ? `${process.env.REACT_APP_LDOCS_API_URL}/report/ExportToCsv`
-          : `${process.env.REACT_APP_LDOCS_API_URL}/report/InvoiceToXlsx`,
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/report/ExportToCsvAR`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/report/InvoiceToXlsxAR`,
       data:
         file == undefined
           ? { organizationId: userDetail.orgDetail.organizationId }
@@ -1496,7 +1496,7 @@ export default function FilesListAr(props) {
                                 accessor: "createdDate",
                               },
                               {
-                                Header: "Supplier Name",
+                                Header: "Client Name",
                                 accessor: "vendorName",
                               },
                               {

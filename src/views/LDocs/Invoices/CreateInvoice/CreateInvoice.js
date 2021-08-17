@@ -112,6 +112,8 @@ export default function CreateInvoice(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+    const isAr =
+    useSelector((state) => state.userReducer.isAr);
   const dispatch = useDispatch();
   const { edit, fileData, closeModal } = props;
   const [pdfModal, setPdfModal] = useState(false);
@@ -123,7 +125,6 @@ export default function CreateInvoice(props) {
   const [file, setFile] = useState(null);
   const [isCreateInvoice, setIsCreateInvoice] = useState(edit ? false : true);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAr, setIsAr] = useState(false);
   const sweetClass = sweetAlertStyle();
   const [editIndex, setEditIndex] = useState(null);
   const [selectedFileModel, setSelectedFileModel] = useState(false);
@@ -314,14 +315,16 @@ export default function CreateInvoice(props) {
     const userDetails = jwt.decode(Token);
     axios({
       method: "post", //you can set what request you want to be
-      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceiptsAr` : `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceipts`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceiptsAr`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceipts`,
       data: {
         poNumber: p,
         organizationId: isVendor
           ? formState.selectedOrg.organizationId || null
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
-        clientId: isVendor ? userDetails.id : formState.selectedVendor
+        clientId: isVendor ? userDetails.id : formState.selectedVendor,
       },
       headers: {
         cooljwt: Token,
@@ -411,7 +414,9 @@ export default function CreateInvoice(props) {
       const userDetails = jwt.decode(Token);
       axios({
         method: "post", //you can set what request you want to be
-        url: isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceiptAR` : `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceipt`,
+        url: isAr
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceiptAR`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceipt`,
         data: {
           receiptDate: new Date(),
           organizationId: userDetails.orgDetail.organizationId,
@@ -1004,7 +1009,7 @@ export default function CreateInvoice(props) {
           : `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
         headers: { cooljwt: Token },
       })
-        .then((response) => {
+        .then(async (response) => {
           setFormState((formState) => ({
             ...formState,
             selectedVendor: "",
@@ -1017,7 +1022,7 @@ export default function CreateInvoice(props) {
             },
           }));
           if (edit) {
-            setInvoice();
+            setInvoice(null, response.data);
           }
           setIsLoading(false);
         })
@@ -1065,7 +1070,7 @@ export default function CreateInvoice(props) {
             ...formState,
             organizations: orgs,
           }));
-          setInvoice(orgs);
+          setInvoice(orgs, null);
         })
         .catch((error) => {
           if (error.response) {
@@ -1077,32 +1082,25 @@ export default function CreateInvoice(props) {
     getLookUp();
   };
 
-  const changingPath = () => {
-    let url = history.location.pathname;
-    let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : false;
-    setIsAr(is_Ar);
-    getData(is_Ar);
-  };
+
 
   //On Load Component
   React.useEffect(() => {
-    changingPath();
-  }, []);
+    getData(isAr);
+  }, [isAr]);
 
-  React.useEffect(() => {
-    changingPath();
-  }, [history.location.pathname]);
 
-  const setInvoice = (orgs) => {
+  const setInvoice = (orgs, vendors) => {
     if (edit) {
-      orgs = orgs || formState.organizations;
+      orgs = orgs ? orgs : formState.organizations;
+      vendors = vendors ? vendors : formState.vendors;
       let org = orgs.find((o) => o.organizationId == fileData.organizationId);
-      let vendor = formState.vendors.find((v) => v._id == fileData.vendorId);
-      console.log(fileData.conversionRate);
+      let client = isVendor ? null : vendors.find((v) => v._id == fileData.clientId);
+      let vendor = isVendor ? null : vendors.find((v) => v._id == fileData.vendorId);
       getLookUp();
       setFormState((formState) => ({
         ...formState,
-        selectedVendor: fileData.vendorId,
+        selectedVendor: isAr ? fileData.clientId : fileData.vendorId,
         isPo: fileData.isPo,
         isReceipt: fileData.isReceipt,
         isPeetyCash: fileData.isPettyCash,
@@ -1111,7 +1109,7 @@ export default function CreateInvoice(props) {
         values: {
           ...formState.values,
           InvoiceNumber: fileData.invoiceId,
-          site: fileData.vendorSite,
+          site: isAr ? fileData.clientSite : fileData.vendorSite,
           invoiceDate: getDateFormet(fileData.createdDate),
           notes: fileData.description,
           taxType: 1,
@@ -1122,15 +1120,17 @@ export default function CreateInvoice(props) {
           organizationId: fileData.organizationId,
           paymentTerms: `NET-${fileData.paymentTerms}`,
           poNumber: fileData.po,
-          selectedVendor: !isVendor
-            ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
-            : null,
+          selectedVendor: isAr ? client : vendor,
           expenseType: fileData.expenseType,
           currency: fileData.FC_currency._id || "",
         },
         selectedOrg: isVendor ? org || null : null,
         conversionRate: fileData.conversionRate || 0,
       }));
+
+
+
+
       var invoice_items = fileData.items.map((item) => {
         const i = {
           additionalDetails: item.additionalDetails,
