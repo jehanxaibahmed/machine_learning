@@ -103,11 +103,11 @@ export default function Receivable(props) {
   const viewQrView = (row) => {
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      url:  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`,
       data: {
         invoiceId: row.invoiceId,
         version: row.version,
-        vendorId: row.vendorId,
+        clientId: row.clientId,
       },
       headers: {
         cooljwt: Token,

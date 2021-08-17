@@ -233,11 +233,12 @@ export default function FileAdvanceView(props) {
     setMarkModal(false);
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
-        invoiceId: fileData.invoiceId,
-        version: fileData.version,
-        vendorId: fileData.vendorId,
+        invoiceId: row.invoiceId,
+        version: row.version,
+        vendorId:  isAr ?  null : row.vendorId,
+        clientId:  isAr ? row.clientId: null,
       },
       headers: {
         cooljwt: Token,

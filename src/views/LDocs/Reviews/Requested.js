@@ -88,18 +88,19 @@ export default function Requested() {
   }, [show, isAr]);
 
   const getInvoiceDetails = (row) => {
-      axios({
-        method: "post", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
-        data: { 
-          invoiceId:row.invoiceId,
-          version:row.version,
-          vendorId:row.vendorId
-         },
-       headers: {
-         cooljwt: Token,
-       },
-     })
+    axios({
+      method: "post", //you can set what request you want to be
+      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
+      data: {
+        invoiceId: row.invoiceId,
+        version: row.version,
+        vendorId:  isAr ?  null : row.vendorId,
+        clientId:  isAr ? row.clientId: null,
+      },
+      headers: {
+        cooljwt: Token,
+      },
+    })
        .then((response) => {
          console.log(row);
          console.log(response.data);
