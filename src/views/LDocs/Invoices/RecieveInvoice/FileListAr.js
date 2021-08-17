@@ -403,7 +403,7 @@ export default function FilesListAr(props) {
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label="SENT & ACKNOWLEDGED"
+                    label="ACKNOWLEDGED"
                     clickable
                     style={{ border: "green 1px solid", color: "green" }}
                   />

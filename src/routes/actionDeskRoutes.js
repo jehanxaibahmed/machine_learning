@@ -120,33 +120,6 @@ export const actionArRoutes = [
       },
     ],
   },
-  {
-    collapse: true,
-    name: "Finance Desk",
-    rtlName: "المكونات",
-    icon: LocalAtmIcon,
-    state: "FinanceDeskCollapse",
-    views: [
-      {
-        path: "/financeDashboard",
-        name: "AP ANALYTICS",
-        rtlName: "انهيار متعدد المستويات",
-        rtlMini: "ر",
-        icon: EqualizerIcon,
-        component: FinanceDashboard,
-        layout: "/action",
-      },
-      {
-        path: "/export",
-        name: "Export Invoices",
-        rtlName: "انهيار متعدد المستويات",
-        rtlMini: "ر",
-        icon: SystemUpdateIcon,
-        component: ExportList,
-        layout: "/action",
-      },
-    ],
-  },
 ];
 
 export const invoiceDefaultRoutes = [
