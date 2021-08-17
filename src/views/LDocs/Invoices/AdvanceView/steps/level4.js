@@ -56,11 +56,7 @@ export default function Step4(props) {
   const [animateStep, setAnimateStep] = useState(true);
   const [payments, setPayments] = useState(props.payments);
   const isVendor = props.isVendor;
-  const isExported = props.isExported.status
-    ? props.isExported.status == "completed"
-      ? true
-      : false
-    : false;
+  const isExported = props.isExported?.status == "completed" ? true : false;
   console.log(isExported, props.isExported);
   return (
     <Animated

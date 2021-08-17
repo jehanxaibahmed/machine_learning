@@ -63,6 +63,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Requested() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const isAr = useSelector((state) => state.userReducer.isAr);
   const classes = useStyles();
   const [isReviewingFile, setIsReviewingFile] = React.useState(false);
   const [pdfModalData, setPdfModalData] = React.useState(false);
@@ -84,21 +85,22 @@ export default function Requested() {
 
   React.useEffect(() => {
     getRequests();
-  }, [show]);
+  }, [show, isAr]);
 
   const getInvoiceDetails = (row) => {
-      axios({
-        method: "post", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
-        data: { 
-          invoiceId:row.invoiceId,
-          version:row.version,
-          vendorId:row.vendorId
-         },
-       headers: {
-         cooljwt: Token,
-       },
-     })
+    axios({
+      method: "post", //you can set what request you want to be
+      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
+      data: {
+        invoiceId: row.invoiceId,
+        version: row.version,
+        vendorId:  isAr ?  null : row.vendorId,
+        clientId:  isAr ? row.clientId: null,
+      },
+      headers: {
+        cooljwt: Token,
+      },
+    })
        .then((response) => {
          console.log(row);
          console.log(response.data);
@@ -128,14 +130,14 @@ export default function Requested() {
     };
     const reviewFile = async (row) => {
       setInvoiceData(row);
-      validateInvoice(row, Token).then(res=>{
-        setValidation(res);
+      // validateInvoice(row, Token, isAr).then(res=>{
+        // setValidation(res);
         setReviewModal(true);   
-      });
+      // });
     }
     const ValidateFile = async (row) => {
         setInvoiceData(row);
-        validateInvoice(row, Token).then(res=>{
+        validateInvoice(row, Token, isAr).then(res=>{
         setAnimateTable(false);
         setValidation(res);
         setValidateModal(true);   
@@ -146,8 +148,8 @@ export default function Requested() {
     setIsLoading(true);
     axios({
       method: "get",
-      url: show ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending`
-      :`${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews`,
+      url: show ? isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending/ar` : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending/ap` 
+      : isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews/ar` :  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews/ap` ,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -328,7 +330,7 @@ const goBack = () => {
             };
             axios({
                 method: "post",
-                url: `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdate`,
+                url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdateAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdate`,
                 data: data,
                 headers: {
                     cooljwt: Token,
@@ -514,7 +516,7 @@ const goBack = () => {
                             value={formState.values.reviewComments || ""}
                           ></TextField>
                         </GridItem>
-                        {validation ? validation.Validate.isSame == false ? 
+                        {/* {validation ? validation.Validate.isSame == false ? 
                         <GridItem
                           xs={12}
                           sm={12}
@@ -527,7 +529,7 @@ const goBack = () => {
                         >
                            <Alert severity="warning">Invoice has been Modified — check it out!</Alert>
                         </GridItem>
-                        :'':''}
+                        :'':''} */}
                         <span style={{ float: "right" }}>
                           <Button
                             color="info"

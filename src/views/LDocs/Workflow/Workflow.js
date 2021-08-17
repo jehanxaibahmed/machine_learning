@@ -118,6 +118,7 @@ export default function Workflow() {
       notificationHour:"",
       timeOut:"",
       role:true,
+      type:true,
       comments: "",
       createdBy:"",
       workflowDescription:""
@@ -412,6 +413,15 @@ const viewWorkflowColumnView = (row) => {
       },
     }));
   }
+  else if (event.target.name == "type") {
+    setFormState((formState) => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        [event.target.name]: !formState.values.type
+      },
+    }));
+  }
   else {
       setFormState((formState) => ({
         ...formState,
@@ -641,7 +651,8 @@ const createWorkflow = () => {
       comments:formState.values.comments,
       created:new Date(Date.now()),
       createdBy:userEmail,
-      steps :steps
+      steps :steps,
+      isAr:!formState.values.type
     };
     let msg = "";
     let url = `${process.env.REACT_APP_LDOCS_API_WORKFLOW_URL}/workflow/createworkflow`;
@@ -1292,6 +1303,36 @@ const createWorkflow = () => {
                         // type="text"
                         value={formState.values.comments || ""}
                       />
+                    </GridItem>
+                    <GridItem
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      style={{ marginTop: "10px", marginBottom: "10px" }}
+                    >
+                       <FormGroup row>
+                          <FormControlLabel
+                            onChange={(event) => {
+                              handleChange(event);
+                            }}
+                            value="ap"
+                            control={<Checkbox name="type" color="info" />}
+                            label="AP"
+                            name="type"
+                            checked={formState.values.type ?true : false}
+                          />
+                          <FormControlLabel
+                            onChange={(event) => {
+                              handleChange(event);
+                            }}
+                            value="ar"
+                            control={<Checkbox name="type" color="info" />}
+                            label="AR"
+                            name="type"
+                            checked={formState.values.type ?false : true}
+                          />
+                          </FormGroup>
                     </GridItem>
                     </GridContainer>
                     </CardBody>

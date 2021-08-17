@@ -12,13 +12,17 @@ import {
   Dialog,
   DialogContent,
   Tooltip,
-  IconButton
+  IconButton,
 } from "@material-ui/core";
 // @material-ui/icons
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import RateReview from "@material-ui/icons/RateReview";
-import Swal from 'sweetalert2'
-import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
+import Swal from "sweetalert2";
+import {
+  successAlert,
+  errorAlert,
+  msgAlert,
+} from "views/LDocs/Functions/Functions";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -37,18 +41,20 @@ import NoStatus from "assets/img/statuses/NoStatus.png";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import jwt from "jsonwebtoken";
 import Iframe from "react-iframe";
-import { validateInvoice, formatDateTime }from "views/LDocs/Functions/Functions";
+import {
+  validateInvoice,
+  formatDateTime,
+} from "views/LDocs/Functions/Functions";
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView";
 import ViewModuleIcon from "@material-ui/icons/ViewModule";
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
+import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import { sendNotification, getNotification } from "actions";
 import Validator from "../../Components/Timeline";
 import { useSelector, useDispatch } from "react-redux";
 import { CallReceived, DoneAll } from "@material-ui/icons";
-import Alert from '@material-ui/lab/Alert';
+import Alert from "@material-ui/lab/Alert";
 import { setIsTokenExpired } from "actions/index.js";
-
-
+import { _IsAr } from "../Functions/Functions";
 
 const styles = {
   cardIconTitle: {
@@ -73,6 +79,7 @@ export default function ApprovalRequested() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+  const isAr = useSelector((state) => state.userReducer.isAr);
   const userDetails = jwt.decode(Token);
   const classes = useStyles();
   const [isApprovingFile, setIsApprovingFile] = React.useState(false);
@@ -95,17 +102,18 @@ export default function ApprovalRequested() {
 
   React.useEffect(() => {
     getRequests();
-  }, [show]);
+  }, [show, isAr]);
 
   const getInvoiceDetails = (row) => {
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
-      data: { 
-        invoiceId:row.invoiceId,
-        version:row.version,
-        vendorId:row.vendorId
-       },
+      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
+      data: {
+        invoiceId: row.invoiceId,
+        version: row.version,
+        vendorId:  isAr ?  null : row.vendorId,
+        clientId:  isAr ? row.clientId: null,
+      },
       headers: {
         cooljwt: Token,
       },
@@ -134,26 +142,31 @@ export default function ApprovalRequested() {
 
   const reviewFile = (row) => {
     setFileData(row);
-    validateInvoice(row, Token).then(res=>{
-      setValidation(res);
+    // validateInvoice(row, Token, isAr).then((res) => {
+      // setValidation(res);
       setApproverModal(true);
-    });
+    // });
   };
 
   const ValidateFile = async (row) => {
     setInvoiceData(row);
-    validateInvoice(row, Token).then(res=>{
-    setAnimateTable(false);
-    setValidation(res);
-    setValidateModal(true);   
-  });
-}
+    validateInvoice(row, Token, isAr).then((res) => {
+      setAnimateTable(false);
+      setValidation(res);
+      setValidateModal(true);
+    });
+  };
   const getRequests = () => {
     setIsLoading(true);
     axios({
       method: "get",
-      url: show ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveMyPending` :
-      `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/myApproves`,
+      url: show
+        ? _IsAr()
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveMyPending/ar`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveMyPending/ap`
+        : _IsAr()
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/myApproves/ar`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/myApproves/ap`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -231,19 +244,22 @@ export default function ApprovalRequested() {
                       <VisibilityIcon />
                     </Button>
                   </Tooltip>
-                  {show ? 
-                  <Tooltip title="Review File" aria-label="reviewfile">
-                    <Button
-                      justIcon
-                      round
-                      simple
-                      icon={RateReview}
-                      onClick={() => reviewFile(prop)}
-                      color="info"
-                    >
-                      <RateReview />
-                    </Button>
-                  </Tooltip>:''}
+                  {show ? (
+                    <Tooltip title="Review File" aria-label="reviewfile">
+                      <Button
+                        justIcon
+                        round
+                        simple
+                        icon={RateReview}
+                        onClick={() => reviewFile(prop)}
+                        color="info"
+                      >
+                        <RateReview />
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                    ""
+                  )}
                 </div>
               ),
             };
@@ -252,7 +268,9 @@ export default function ApprovalRequested() {
         setIsLoading(false);
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };        ;
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -283,7 +301,7 @@ export default function ApprovalRequested() {
       approveComments: "",
     },
   });
- 
+
   const handleChange = (event) => {
     event.persist();
     setFormState((formState) => ({
@@ -328,11 +346,14 @@ export default function ApprovalRequested() {
         ...FileData,
         approveComments: formState.values.approveComments,
         status: formState.values.status,
-        updateTime: new Date().toLocaleString().replace(/t/, " ").replace(/\..+/, ""),
+        updateTime: new Date()
+          .toLocaleString()
+          .replace(/t/, " ")
+          .replace(/\..+/, ""),
       };
       axios({
         method: "post",
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveUpdate`,
+        url:isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveUpdateAR`:`${process.env.REACT_APP_LDOCS_API_URL}/invoiceApprove/approveUpdate`,
         data: data,
         headers: {
           cooljwt: Token,
@@ -349,12 +370,14 @@ export default function ApprovalRequested() {
             values: {
               ...formState.values,
               status: "",
-              approveComments: ""
+              approveComments: "",
             },
           }));
         })
         .catch((error) => {
-          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };        ;
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
           console.log(
             typeof error.response != "undefined"
               ? error.response.data
@@ -367,8 +390,6 @@ export default function ApprovalRequested() {
   };
   return (
     <div>
-       
-
       {reviewModal ? (
         <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
@@ -461,7 +482,6 @@ export default function ApprovalRequested() {
                                 </div>
                               </div>
                             </MenuItem>
-                            
                           </TextField>
                         </GridItem>
                         <GridItem
@@ -491,20 +511,28 @@ export default function ApprovalRequested() {
                             value={formState.values.approveComments || ""}
                           ></TextField>
                         </GridItem>
-                        {validation ? validation.Validate.isSame == false ? 
-                        <GridItem
-                          xs={12}
-                          sm={12}
-                          md={12}
-                          lg={12}
-                          style={{
-                            marginTop: "10px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                           <Alert severity="warning">Invoice has been Modified — check it out!</Alert>
-                        </GridItem>
-                        :'':''}
+                        {/* {validation ? (
+                          validation.Validate.isSame == false ? (
+                            <GridItem
+                              xs={12}
+                              sm={12}
+                              md={12}
+                              lg={12}
+                              style={{
+                                marginTop: "10px",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <Alert severity="warning">
+                                Invoice has been Modified — check it out!
+                              </Alert>
+                            </GridItem>
+                          ) : (
+                            ""
+                          )
+                        ) : (
+                          ""
+                        )} */}
                         <span style={{ float: "right" }}>
                           <Button
                             color="info"
@@ -671,35 +699,38 @@ export default function ApprovalRequested() {
               <CardHeader color="info" icon>
                 <CardIcon color="info">
                   <h4 className={classes.cardTitleText}>
-                    {show ? 'Invoices Requested For Approval' : 'Invoices Approved' }
+                    {show
+                      ? "Invoices Requested For Approval"
+                      : "Invoices Approved"}
                   </h4>
                 </CardIcon>
-                {show ?
-                <Tooltip title="Show Approve Done">
-                  <Button
-                    color="danger"
-                    round
-                    size="sm"
-                    style={{ float: "right" }}
-                    className={classes.marginRight}
-                    onClick={() => setShow(!show)}
-                  >
-                    <DoneAll />
-                  </Button>
-                  </Tooltip>:
+                {show ? (
+                  <Tooltip title="Show Approve Done">
+                    <Button
+                      color="danger"
+                      round
+                      size="sm"
+                      style={{ float: "right" }}
+                      className={classes.marginRight}
+                      onClick={() => setShow(!show)}
+                    >
+                      <DoneAll />
+                    </Button>
+                  </Tooltip>
+                ) : (
                   <Tooltip title="Show Requested">
-                  <Button
-                  color="danger"
-                  round
-                  size="sm"
-                  style={{ float: "right" }}
-                  className={classes.marginRight}
-                  onClick={() => setShow(!show)}
-                >
-                  <CallReceived />
-                </Button>
-                </Tooltip>
-                  }
+                    <Button
+                      color="danger"
+                      round
+                      size="sm"
+                      style={{ float: "right" }}
+                      className={classes.marginRight}
+                      onClick={() => setShow(!show)}
+                    >
+                      <CallReceived />
+                    </Button>
+                  </Tooltip>
+                )}
               </CardHeader>
               <CardBody>
                 {isLoading ? (

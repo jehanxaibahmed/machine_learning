@@ -211,6 +211,27 @@ const sidebarStyle = theme => ({
       paddingBottom: "0px"
     }
   },
+  itemLinkAr: {
+    paddingLeft: "10px",
+    paddingRight: "10px",
+    transition: "all 300ms linear",
+    margin: "10px 15px 0",
+    borderRadius: "3px",
+    position: "relative",
+    display: "block",
+    padding: "10px 15px",
+    backgroundColor: "transparent",
+    ...defaultFont,
+    width: "auto",
+    "&:hover": {
+      outline: "none",
+      backgroundColor: "rgba(" + hexToRgb(infoColor[0]) + ", 0.7)",
+      boxShadow: "none"
+    },
+    "&,&:hover,&:focus": {
+      color: "inherit"
+    }
+  },
   itemLink: {
     paddingLeft: "10px",
     paddingRight: "10px",
@@ -303,6 +324,11 @@ const sidebarStyle = theme => ({
     backgroundColor: "rgba(" + hexToRgb(infoColor[0]) + ", 0.7)",
     boxShadow: "none"
   },
+  collapseActiveAr: {
+    outline: "none",
+    backgroundColor: "rgba(" + hexToRgb(infoColor[1]) + ", 0.7)",
+    boxShadow: "none"
+  },
   collapseItemLink: {
     transition: "all 300ms linear",
     margin: "0 15px",
@@ -316,6 +342,25 @@ const sidebarStyle = theme => ({
     "&:hover": {
       outline: "none",
       backgroundColor: "rgba(" + hexToRgb(infoColor[0]) + ", 0.7)",
+      boxShadow: "none"
+    },
+    "&,&:hover,&:focus": {
+      color: "inherit"
+    }
+  },
+  collapseItemLinkAr: {
+    transition: "all 300ms linear",
+    margin: "0 15px",
+    borderRadius: "3px",
+    position: "relative",
+    display: "block",
+    padding: "10px",
+    backgroundColor: "transparent",
+    ...defaultFont,
+    width: "auto",
+    "&:hover": {
+      outline: "none",
+      backgroundColor: "rgba(" + hexToRgb(infoColor[1]) + ", 0.7)",
       boxShadow: "none"
     },
     "&,&:hover,&:focus": {

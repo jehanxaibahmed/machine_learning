@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import cx from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDataAction, getNotification, getTasks, setDarkMode, setIsTokenExpired } from "../actions";
+import { getUserDataAction, getNotification, getTasks, setDarkMode, setIsTokenExpired, setIsAr } from "../actions";
 import {  Switch, Route, Redirect } from "react-router-dom";
 import addNotification from 'react-push-notification';
 // creates a beautiful scrollbar
@@ -27,7 +27,7 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 import {checkIsInvoiceDesk} from "views/LDocs/Authorization/checkAuthority";
 
 // import routes from "routes.js";
-import routes from "routes/invoiceDeskRoutes";
+import  {invoiceArRoutes, invoiceApRoutes, invoiceDefaultRoutes}  from "routes/invoiceDeskRoutes";
 import UserProfile from "views/LDocs/Profile/Profile";
 import styles from "assets/jss/material-dashboard-pro-react/layouts/adminStyle.js";
 import Verify from "views/LDocs/Verify/Verify";
@@ -37,7 +37,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 
 var ps;
-
+const routes = invoiceArRoutes.concat(invoiceApRoutes).concat(invoiceDefaultRoutes);
 const useStyles = makeStyles(styles);
 
 const checkTimeCompare = (dat) => {
@@ -123,6 +123,17 @@ export default function Dashboard(props) {
   //   })
   // },[notifications]);
 
+  useEffect(()=>{
+    changingPath();
+  },[history.location.pathname])
+
+  const changingPath = () => {
+    let url = history.location.pathname;
+    let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : url.substring(url.lastIndexOf("/") + 1) == "ap"  ? false : null;
+    if(is_Ar !== null){
+      dispatch(setIsAr(is_Ar));
+    }
+  }
  
   const theme = createMuiTheme({
     palette: {
@@ -300,7 +311,8 @@ export default function Dashboard(props) {
           draggable
           pauseOnHover/> */}
       <Sidebar
-        routes={routes.filter(route=>route.name !== undefined)}
+        arroutes={invoiceArRoutes.filter(route=>route.name !== undefined).concat(invoiceDefaultRoutes.filter(route=>route.name !== undefined))}
+        aproutes={invoiceApRoutes.filter(route=>route.name !== undefined).concat(invoiceDefaultRoutes.filter(route=>route.name !== undefined))}
         logoText={process.env.REACT_APP_LDOCS_FOOTER_COPYRIGHT_LEVEL_1}
         logo={logo}
         image={image}

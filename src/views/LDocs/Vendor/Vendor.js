@@ -374,7 +374,7 @@ export default function Vendor() {
                 <TextField
                   className={classes.textField}
                   fullWidth={true}
-                  label="Select Organization To See Companies"
+                  label="Select Organization To See Vendors"
                   name="organizationFilter"
                   onChange={(event) => {
                     handleOrgFilter(event);

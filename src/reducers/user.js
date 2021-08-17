@@ -12,11 +12,16 @@ const initialState = {
   tasks:[],
   unreadedTasks:0,
   events:[],
-  darkmode:false
+  darkmode:false,
+  isAr:false,
 };
+
 const userReducer = (state = initialState, action) => {
   // eslint-disable-next-line default-case
   switch (action.type) {
+    case "SET_IS_AR": {
+      return { ...state, isAr: action.response};
+    }
     case "SET_TOKEN": {
       return { ...state, Token: action.response.token , userData : action.response.userData};
     }

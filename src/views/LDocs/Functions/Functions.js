@@ -4,6 +4,7 @@ import axios from "axios";
 import dateFormat from "dateformat";
 import { firebaseConfig } from "../../../config/Firebase";
 import jwt from "jsonwebtoken";
+import { useHistory } from "react-router-dom";
 import Swal from 'sweetalert2'
 import moment from "moment";
 if (firebase.apps.length === 0) {
@@ -158,6 +159,54 @@ export const currentTracking = (trackingStatus) => {
   return activeStep;
 };
 
+
+export const currentTrackingAr = (trackingStatus) => {
+  let currentStatus;
+  let activeStep;
+  console.log(trackingStatus);
+  switch (trackingStatus.current_status) {
+    case "invoiceDraft":
+      currentStatus = trackingStatus.invoiceDraft.status;
+      activeStep = { val: 0, status: currentStatus };
+      break;
+    case "underReview":
+      currentStatus = trackingStatus.underReview.status;
+      if (currentStatus) {
+        activeStep = { val: 1, status: currentStatus };
+      } else {
+        activeStep = { val: 0, status: currentStatus };
+      }
+      break;
+    case "underApprove":
+      currentStatus = trackingStatus.underApprove.status;
+      if (currentStatus) {
+        activeStep = { val: 2, status: currentStatus };
+      } else {
+        activeStep = { val: 1, status: currentStatus };
+      }
+      break;
+    case "sentToClient":
+      currentStatus = trackingStatus.sentToClient.status;
+      if (currentStatus) {
+        activeStep = { val: 3, status: currentStatus };
+      } else {
+        activeStep = { val: 2, status: currentStatus };
+      }
+      break;
+    case "paid":
+      currentStatus = trackingStatus.paid.status;
+      if (currentStatus) {
+        activeStep = { val: 4, status: currentStatus };
+      } else {
+        activeStep = { val: 3, status: currentStatus };
+      }
+      break;
+  }
+  console.log(activeStep);
+  return activeStep;
+};
+
+
 export const successAlert = (msg) => {
   Swal.fire({
     title: "Success",
@@ -195,15 +244,16 @@ export const msgAlert = (msg) => {
   });
 };
 
-export const validateInvoice = async (row, Token) => {
+export const validateInvoice = async (row, Token, isAr) => {
   return new Promise((res, rej) => {
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: row.invoiceId,
         version: row.version,
-        vendorId: row.vendorId,
+        vendorId:  isAr ?  null : row.vendorId,
+        clientId:  isAr ? row.clientId: null,
       },
       headers: {
         cooljwt: Token,
@@ -211,9 +261,10 @@ export const validateInvoice = async (row, Token) => {
     })
       .then(async (invoiceRes) => {
         const invoice = invoiceRes.data;
+        const  isAR = invoice.isAR;
         axios({
           method: "get",
-          url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
+          url: isAR ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.clientId}-${row.invoiceId}-${row.version}` : `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
         })
           .then(async (blockchainRes) => {
             const blockchain = blockchainRes.data.InvoiceData;
@@ -318,6 +369,7 @@ export const validateInvoice = async (row, Token) => {
                   organizationId: invoice.organizationId,
                   tenantId: invoice.tenantId,
                   vendorId: invoice.vendorId,
+                  clientId: invoice.clientId,
                   userId: invoice.createdBy,
                   isVendor: invoice.createdByVendor,
                 },
@@ -339,6 +391,7 @@ export const validateInvoice = async (row, Token) => {
                   organizationId: blockchain.organizationID,
                   tenantId: blockchain.tenantID,
                   vendorId: blockchain.vendorID,
+                  clientId: blockchain.clientID,
                   userId: blockchain.createdBy,
                   isVendor: invoice.createdByVendor,
                 },
@@ -438,6 +491,15 @@ export const validateInvoice = async (row, Token) => {
       });
   });
 };
+
+
+export const _IsAr = () => {
+  let url = window.location.href;
+  console.log(url);
+  let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : url.substring(url.lastIndexOf("/") + 1) == "ar"  ? false : null;
+  console.log(is_Ar);
+  return is_Ar;
+}
 
 export const conversionRate = (
   fc,

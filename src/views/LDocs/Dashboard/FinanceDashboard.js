@@ -21,6 +21,7 @@ import axios from "axios";
 import { data } from "./Data";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsTokenExpired } from "actions";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +45,12 @@ export default function FinanceDashboard() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-  const [graphData, setGraphData] = React.useState([]);
+    const history = useHistory();
+    const isAr =
+      history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+        ? true
+        : false ;
+          const [graphData, setGraphData] = React.useState([]);
   const [summaryOptions, setSummaryOptions] = React.useState({
     summaryOptions: data.summaryOptions,
     summarySeries: data.summarySeries,
@@ -73,7 +79,7 @@ export default function FinanceDashboard() {
   const getChartData = async () => {
     await axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/financeBoard`,
+      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/financeBoardAR` : `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/financeBoard`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -89,9 +95,13 @@ export default function FinanceDashboard() {
         console.log(error);
       });
   };
+
+
   React.useEffect(() => {
     getChartData();
-  }, []);
+  }, [isAr]);
+
+
   React.useEffect(() => {
     //Summary Options
     if (graphData.AgeSummery) {
@@ -409,7 +419,7 @@ export default function FinanceDashboard() {
 
       const TvPseries = [
         {
-          name: "Purchased",
+          name: isAr ?"Sales" :"Purchased",
           type: "column",
           fill: {
             colors: ["#5A2C66"],
@@ -654,7 +664,7 @@ export default function FinanceDashboard() {
                 <CardHeader color="info" icon>
                   <CardText color="info">
                     <h4 className={classes.cardTitleWhite}>
-                      Top 5 Vendors By Purchases !
+                      {isAr ?"Top 5 Clients By Sales" : "Top 5 Vendors By Purchases !"}
                     </h4>
                   </CardText>
                 </CardHeader>
@@ -671,7 +681,7 @@ export default function FinanceDashboard() {
                 <CardHeader color="danger" icon>
                   <CardText color="danger">
                     <h4 className={classes.cardTitleWhite}>
-                      Top 5 Vendors By Amount Due !
+                      {isAr ?"Top 5 Clients By Amount Due !" :"Top 5 Vendors By Amount Due !"}
                     </h4>
                   </CardText>
                 </CardHeader>

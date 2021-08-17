@@ -17,8 +17,8 @@ import {
   Checkbox,
   Backdrop,
 } from "@material-ui/core";
-import Swal from 'sweetalert2'
-import swal from 'sweetalert';
+import Swal from "sweetalert2";
+import swal from "sweetalert";
 import { Redirect } from "react-router-dom";
 
 // core components
@@ -35,6 +35,7 @@ import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
 import { useDispatch, useSelector } from "react-redux";
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -48,10 +49,14 @@ import ScanningDocumentAnimation from "components/ScanningDocumentAnimation/Scan
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import Attachments from "./Attachments";
 import Items from "./Items";
+import { useHistory } from "react-router-dom";
+
 import {
   addZeroes,
   conversionRate,
-  successAlert, errorAlert, msgAlert,
+  successAlert,
+  errorAlert,
+  msgAlert,
   formatDateTime,
 } from "views/LDocs/Functions/Functions";
 import { Add, Person, Visibility, VisibilityOff } from "@material-ui/icons";
@@ -107,6 +112,11 @@ export default function CreateInvoice(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+  const history = useHistory();
+  const isAr =
+    history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+      ? true
+      : false;
   const dispatch = useDispatch();
   const { edit, fileData, closeModal } = props;
   const [pdfModal, setPdfModal] = useState(false);
@@ -136,14 +146,15 @@ export default function CreateInvoice(props) {
   const [showVendor, setShowVendor] = useState(false);
   const [currency, setCurrency] = useState(defaultCurrency);
   const [markAsReceivedModel, setMarkAsReceivedModel] = useState(false);
+  const [createPOModel, setCreatePOModel] = useState(false);
   let duedate = new Date();
   let today = new Date();
   let plusDays = 0;
   duedate = duedate.setDate(today.getDate() + plusDays);
   const userDetails = jwt.decode(Token);
   const isVendor = userDetails.isVendor;
-  const [formState, setFormState] = useState({
-    conversionRate:0,
+  let initialState = {
+    conversionRate: 0,
     vendors: [],
     organizations: [],
     attachments: [],
@@ -211,7 +222,8 @@ export default function CreateInvoice(props) {
       receiptNumber: "",
       organizationId: "",
     },
-  });
+  };
+  const [formState, setFormState] = useState(initialState);
   const [baseCurrency, setBaseCurrency] = useState(
     !isVendor
       ? userDetails.currency.Currency_Base
@@ -221,7 +233,9 @@ export default function CreateInvoice(props) {
   );
 
   const getLookUp = () => {
-    const organizationId = edit ? fileData.organizationId : !isVendor
+    const organizationId = edit
+      ? fileData.organizationId
+      : !isVendor
       ? userDetails.orgDetail.organizationId
       : formState.values.organizationId;
     //Get Currencies
@@ -240,7 +254,7 @@ export default function CreateInvoice(props) {
         })
         .catch((error) => {
           if (error.response) {
-             error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
         });
@@ -261,7 +275,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
       });
@@ -270,7 +284,9 @@ export default function CreateInvoice(props) {
     const userDetails = jwt.decode(Token);
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoAR`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
       data: {
         organizationId: isVendor
           ? formState.selectedOrg
@@ -284,29 +300,32 @@ export default function CreateInvoice(props) {
       },
     })
       .then((res) => {
-        setPos(res.data);
+        setPos(res.data.result ? res.data.result : res.data ? res.data : []);
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setPos([]);
       });
   };
- 
+
   const getReceipts = (p) => {
     //p = PO Number
     const userDetails = jwt.decode(Token);
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceipts`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceiptsAr`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/po/getReceipts`,
       data: {
         poNumber: p,
         organizationId: isVendor
           ? formState.selectedOrg.organizationId || null
           : userDetails.orgDetail.organizationId,
         vendorId: isVendor ? userDetails.id : formState.selectedVendor,
+        clientId: isVendor ? userDetails.id : formState.selectedVendor,
       },
       headers: {
         cooljwt: Token,
@@ -317,7 +336,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
         setReceipts([]);
@@ -389,16 +408,21 @@ export default function CreateInvoice(props) {
   const createReceipts = () => {
     const Check = require("is-null-empty-or-undefined").Check;
     if (Check(formState.selectedVendor) || Check(formState.values.poNumber)) {
-      errorAlert("Please Select Valid Vendor and PO Number");
+      errorAlert(
+        `Please Select Valid ${isAr ? "Client" : "Vendor"} and PO Number`
+      );
     } else {
       const userDetails = jwt.decode(Token);
       axios({
         method: "post", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceipt`,
+        url: isAr
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceiptAR`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceipt`,
         data: {
           receiptDate: new Date(),
           organizationId: userDetails.orgDetail.organizationId,
           vendorId: formState.selectedVendor,
+          clientId: formState.selectedVendor,
           poNumber: formState.values.poNumber,
           receivedBy: userDetails.email,
         },
@@ -408,18 +432,56 @@ export default function CreateInvoice(props) {
       })
         .then((res) => {
           setReceipts(res.data);
-         
-          successAlert("Receipt Has Been Generated In Oracle Fusion.");
+
+          successAlert("Receipt Has Been Generated");
         })
         .catch((error) => {
           if (error.response) {
-             error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
           errorAlert("Unable To Generate RECEIPT.");
         });
     }
   };
+
+  const createPO = () => {
+    const Check = require("is-null-empty-or-undefined").Check;
+    if (Check(formState.selectedVendor) || Check(formState.values.poNumber)) {
+      errorAlert(
+        `Please Select Valid ${isAr ? "Client" : "Vendor"} and PO Number`
+      );
+    } else {
+      const userDetails = jwt.decode(Token);
+      // axios({
+      //   method: "post", //you can set what request you want to be
+      //   url: `${process.env.REACT_APP_LDOCS_API_URL}/po/submitReceipt`,
+      //   data: {
+      //     receiptDate: new Date(),
+      //     organizationId: userDetails.orgDetail.organizationId,
+      //     vendorId: formState.selectedVendor,
+      //     poNumber: formState.values.poNumber,
+      //     receivedBy: userDetails.email,
+      //   },
+      //   headers: {
+      //     cooljwt: Token,
+      //   },
+      // })
+      //   .then((res) => {
+      //     setReceipts(res.data);
+
+      successAlert("PO Has Been Generated");
+      // })
+      // .catch((error) => {
+      //   if (error.response) {
+      //     error.response.status == 401 && dispatch(setIsTokenExpired(true));
+      //   }
+      //   console.log(error);
+      //   errorAlert("Unable To Generate RECEIPT.");
+      // });
+    }
+  };
+
   const closeMarkAsReceivedModel = async () => {
     const userData = jwt.decode(Token);
     await setMarkAsReceivedModel(false);
@@ -875,37 +937,36 @@ export default function CreateInvoice(props) {
       currencyLookups.find((l) => l._id == formState.values.currency) ||
       defaultCurrency;
     setCurrency(choosedCurrency);
-    if(!edit){
-    const UItems = items.map((i) => {
-      let j = {
-        ...i,
-        amount_bc: conversionRate(
-          formState.values.currency,
-          baseCurrency,
-          currencyLookups,
-          parseFloat(i.amount),
-          false
-        ),
-        unitCost_bc: conversionRate(
-          formState.values.currency,
-          baseCurrency,
-          currencyLookups,
-          parseFloat(i.unitCost),
-          false
-        ),
-        discountAmt_bc: conversionRate(
-          formState.values.currency,
-          baseCurrency,
-          currencyLookups,
-          parseFloat(i.discount),
-          false
-        ),
-      };
-      return j;
-    });
-    console.log(UItems);
-    setItems(UItems);
-  }
+    if (!edit) {
+      const UItems = items.map((i) => {
+        let j = {
+          ...i,
+          amount_bc: conversionRate(
+            formState.values.currency,
+            baseCurrency,
+            currencyLookups,
+            parseFloat(i.amount),
+            false
+          ),
+          unitCost_bc: conversionRate(
+            formState.values.currency,
+            baseCurrency,
+            currencyLookups,
+            parseFloat(i.unitCost),
+            false
+          ),
+          discountAmt_bc: conversionRate(
+            formState.values.currency,
+            baseCurrency,
+            currencyLookups,
+            parseFloat(i.discount),
+            false
+          ),
+        };
+        return j;
+      });
+      setItems(UItems);
+    }
   }, [formState.values.currency, currencyLookups]);
   //Update Total
   React.useEffect(() => {
@@ -936,7 +997,7 @@ export default function CreateInvoice(props) {
     }
   }, [formState.values.selectedVendor]);
 
-  const getData = () => {
+  const getData = (is_ar) => {
     setIsLoading(true);
     window.scrollTo(0, 0);
     const userDetails = jwt.decode(Token);
@@ -944,10 +1005,12 @@ export default function CreateInvoice(props) {
       const userCurrency = userDetails.currency.Currency_Base;
       axios({
         method: "get",
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
+        url: is_ar
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/clientByOrganization/${userDetails.orgDetail.organizationId}`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
         headers: { cooljwt: Token },
       })
-        .then((response) => {
+        .then(async (response) => {
           setFormState((formState) => ({
             ...formState,
             selectedVendor: "",
@@ -960,13 +1023,13 @@ export default function CreateInvoice(props) {
             },
           }));
           if (edit) {
-            setInvoice();
+            setInvoice(null, response.data);
           }
           setIsLoading(false);
         })
         .catch((error) => {
           if (error.response) {
-             error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
         });
@@ -990,7 +1053,7 @@ export default function CreateInvoice(props) {
           })
           .catch((error) => {
             if (error.response) {
-               error.response.status == 401 && dispatch(setIsTokenExpired(true));
+              error.response.status == 401 && dispatch(setIsTokenExpired(true));
             }
             console.log(error);
           });
@@ -1008,32 +1071,38 @@ export default function CreateInvoice(props) {
             ...formState,
             organizations: orgs,
           }));
-          setInvoice(orgs);
+          setInvoice(orgs, null);
         })
         .catch((error) => {
           if (error.response) {
-             error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
         });
     }
     getLookUp();
   };
+
   //On Load Component
   React.useEffect(() => {
-    getData();
+    getData(isAr);
   }, []);
 
-  const setInvoice = (orgs) => {
+  const setInvoice = (orgs, vendors) => {
     if (edit) {
-      orgs = orgs || formState.organizations;
+      orgs = orgs ? orgs : formState.organizations;
+      vendors = vendors ? vendors : formState.vendors;
       let org = orgs.find((o) => o.organizationId == fileData.organizationId);
-      let vendor = formState.vendors.find((v) => v._id == fileData.vendorId);
-      console.log(fileData.conversionRate);
+      let client = isVendor
+        ? null
+        : vendors.find((v) => v._id == fileData.clientId);
+      let vendor = isVendor
+        ? null
+        : vendors.find((v) => v._id == fileData.vendorId);
       getLookUp();
       setFormState((formState) => ({
         ...formState,
-        selectedVendor: fileData.vendorId,
+        selectedVendor: isAr ? fileData.clientId : fileData.vendorId,
         isPo: fileData.isPo,
         isReceipt: fileData.isReceipt,
         isPeetyCash: fileData.isPettyCash,
@@ -1042,7 +1111,7 @@ export default function CreateInvoice(props) {
         values: {
           ...formState.values,
           InvoiceNumber: fileData.invoiceId,
-          site: fileData.vendorSite,
+          site: isAr ? fileData.clientSite : fileData.vendorSite,
           invoiceDate: getDateFormet(fileData.createdDate),
           notes: fileData.description,
           taxType: 1,
@@ -1053,15 +1122,14 @@ export default function CreateInvoice(props) {
           organizationId: fileData.organizationId,
           paymentTerms: `NET-${fileData.paymentTerms}`,
           poNumber: fileData.po,
-          selectedVendor: !isVendor
-            ? formState.vendors.find((v) => v._id == fileData.vendorId) || null
-            : null,
+          selectedVendor: isAr ? client : vendor,
           expenseType: fileData.expenseType,
           currency: fileData.FC_currency._id || "",
         },
         selectedOrg: isVendor ? org || null : null,
-        conversionRate:fileData.conversionRate || 0,
+        conversionRate: fileData.conversionRate || 0,
       }));
+
       var invoice_items = fileData.items.map((item) => {
         const i = {
           additionalDetails: item.additionalDetails,
@@ -1099,9 +1167,7 @@ export default function CreateInvoice(props) {
         ...formState,
         attachments: invoice_attachments,
       }));
-      setBaseCurrency(
-        fileData.LC_currency._id
-      );
+      setBaseCurrency(fileData.LC_currency._id);
       // setCurrency(currencyLookups.find(c=>c._id == fileData.FC_currency._id ));
       getPos(fileData.organizationId);
       if (!isVendor) {
@@ -1533,18 +1599,30 @@ export default function CreateInvoice(props) {
       ),
       items: items,
       attachments: formState.attachments,
-      vendorName: isVendor
+      vendorName: isAr
+        ? null
+        : isVendor
         ? userData.name
         : formState.values.selectedVendor.level1.vendorName,
-      vendorId: isVendor ? userData.id : formState.values.selectedVendor._id,
-      vendorSite: isVendor ? "" : formState.values.site,
+      vendorId: isAr
+        ? null
+        : isVendor
+        ? userData.id
+        : formState.values.selectedVendor._id,
+      vendorSite: isAr ? null : isVendor ? "" : formState.values.site,
+      clientName: isAr
+        ? formState.values.selectedVendor.level1.clientName
+        : null,
+      clientId: isAr ? formState.values.selectedVendor._id : null,
+      clientSite: formState.values.site,
       version: fileData ? fileData.version : "",
+      isAR: isAr,
       invoicePath: fileData ? fileData.invoicePath : "",
       FC_currency: currencyLookups.find(
         (l) => l._id == formState.values.currency
       ),
       LC_currency: userCurrency,
-      conversionRate:currencyLookups.find(
+      conversionRate: currencyLookups.find(
         (l) => l._id == formState.values.currency
       ).conversionRate,
       description: formState.values.notes,
@@ -1552,14 +1630,17 @@ export default function CreateInvoice(props) {
       po: formState.values.poNumber,
       // receiptNumber: formState.values.receiptNumber,
       paymentTerms: formState.values.paymentTerms.split("-")[1],
-      isPo: po ? formState.isPo : false,
+      isPo: isAr ? formState.isPo : po ? formState.isPo : false,
       isReceipt: formState.isPo ? formState.isReceipt : false,
       requesterId: isVendor ? (po ? po.requesterId : null) : userData.email,
       expenseType: formState.values.expenseType,
       isPettyCash: formState.isPeetyCash,
       isPrePayment: formState.isPrePayment,
       isExpense: formState.isExpense,
-      createdDate: new Date().toLocaleString().replace(/t/, " ").replace(/\..+/, ""),
+      createdDate: new Date()
+        .toLocaleString()
+        .replace(/t/, " ")
+        .replace(/\..+/, ""),
       grossAmt_bc: conversionRate(
         formState.values.currency,
         baseCurrency,
@@ -1606,6 +1687,8 @@ export default function CreateInvoice(props) {
       //   : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
       url: isEdit
         ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
+        : isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/submitInvoiceAR`
         : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
       data: formData,
       headers: {
@@ -1621,7 +1704,7 @@ export default function CreateInvoice(props) {
           successAlert("Invoice Submited SuccessFully.");
         }
         if (!edit) {
-          getData();
+          getData(isAr);
           setItems([]);
           setFormState({
             selectedVendor: null,
@@ -1680,7 +1763,7 @@ export default function CreateInvoice(props) {
       })
       .catch((error) => {
         if (error.response) {
-           error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         setIsSavingInvoice(false);
         errorAlert(
@@ -1692,7 +1775,6 @@ export default function CreateInvoice(props) {
   };
   return (
     <div>
-       
       {/* {isMarked ? <Redirect exact to="/invoice/received" /> : ''} */}
       {isCreateInvoice ? (
         <Animated
@@ -2034,6 +2116,100 @@ export default function CreateInvoice(props) {
             ) : (
               ""
             )}
+            {createPOModel ? (
+              <Dialog
+                fullWidth={true}
+                maxWidth={"md"}
+                disableBackdropClick
+                disableEscapeKeyDown
+                open={createPOModel}
+                onClose={() => setCreatePOModel(false)}
+              >
+                <DialogContent>
+                  <Card>
+                    <CardHeader color="info" icon>
+                      <CardIcon color="info">
+                        <h4 className={classes.cardTitleText}>Create PO</h4>
+                      </CardIcon>
+                    </CardHeader>
+                    <CardBody>
+                      <GridContainer>
+                        <GridItem xs={6} sm={6} md={6} lg={6}>
+                          <TextField
+                            error={formState.errors.overallDiscount === "error"}
+                            helperText={
+                              formState.errors.overallDiscount === "error"
+                                ? "Valid Discount is required"
+                                : null
+                            }
+                            className={classes.textField}
+                            fullWidth={true}
+                            label="Discount"
+                            type="number"
+                            name="overallDiscount"
+                            onChange={(event) => {
+                              handleChange(event);
+                            }}
+                            value={formState.values.overallDiscount || ""}
+                          />
+                        </GridItem>
+                        <GridItem xs={6} sm={6} md={6} lg={6}>
+                          <TextField
+                            labelId="demo-dialog-select-label"
+                            id="demo-dialog-select"
+                            label="Discount Type"
+                            name="discountType"
+                            onChange={(event) => {
+                              handleChange(event);
+                            }}
+                            value={formState.values.discountType || ""}
+                            fullWidth={true}
+                            select
+                          >
+                            <MenuItem value={1}>
+                              Amount ({currency.Code || "$"})
+                            </MenuItem>
+                            <MenuItem value={2}>Percentage (%)</MenuItem>
+                          </TextField>
+                        </GridItem>
+                        <GridItem
+                          style={{
+                            display: "flex",
+                            alignItems: "right",
+                            justifyContent: "flex-end",
+                            marginTop: "20px",
+                          }}
+                          xs={12}
+                          sm={12}
+                          md={12}
+                          lg={12}
+                        >
+                          <Button
+                            color="danger"
+                            size="small"
+                            onClick={() => setCreatePOModel(false)}
+                            round
+                          >
+                            Close
+                          </Button>
+                          <Button
+                            color="info"
+                            size="small"
+                            onClick={() => createPO()}
+                            round
+                          >
+                            Create PO
+                          </Button>
+                        </GridItem>
+                      </GridContainer>
+                    </CardBody>
+                  </Card>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              ""
+            )}
+
             {markAsReceivedModel ? (
               <Dialog
                 classes={{
@@ -2167,7 +2343,11 @@ export default function CreateInvoice(props) {
                     <CardHeader color="info" icon>
                       <CardIcon color="info">
                         <h4 className={classes.cardTitleText}>
-                          {isVendor ? "Select Customer" : "Select Supplier"}
+                          {isVendor
+                            ? "Select Customer"
+                            : isAr
+                            ? "Select Client"
+                            : "Select Supplier"}
                         </h4>
                       </CardIcon>
                     </CardHeader>
@@ -2191,12 +2371,16 @@ export default function CreateInvoice(props) {
                                 }
                                 helperText={
                                   formState.errors.selectedVendor === "error"
-                                    ? "Valid Supplier Name is required"
+                                    ? isAr
+                                      ? "Valid Client Name is required"
+                                      : "Valid Supplier Name is required"
                                     : null
                                 }
                                 className={classes.textField}
                                 fullWidth={true}
-                                label="Select Supplier"
+                                label={
+                                  isAr ? "Select Client" : "Select Supplier"
+                                }
                                 name="selectedVendor"
                                 onChange={(event) => {
                                   handleVendorChange(event);
@@ -2210,7 +2394,7 @@ export default function CreateInvoice(props) {
                                     root: classes.selectMenuItem,
                                   }}
                                 >
-                                  Choose Supplier
+                                  {isAr ? "Choose Client" : "Choose Supplier"}
                                 </MenuItem>
                                 {formState.vendors
                                   ? formState.vendors.map((vendor, index) => {
@@ -2219,7 +2403,9 @@ export default function CreateInvoice(props) {
                                           key={index}
                                           value={vendor._id}
                                         >
-                                          {vendor.level1.vendorName}
+                                          {isAr
+                                            ? vendor.level1.clientName
+                                            : vendor.level1.vendorName}
                                         </MenuItem>
                                       );
                                     })
@@ -2273,12 +2459,18 @@ export default function CreateInvoice(props) {
                                     error={formState.errors.site === "error"}
                                     helperText={
                                       formState.errors.site === "error"
-                                        ? "Valid Supplier Site is required"
+                                        ? isAr
+                                          ? "Valid Client Site is required"
+                                          : "Valid Supplier Site is required"
                                         : null
                                     }
                                     className={classes.textField}
                                     fullWidth={true}
-                                    label="Select Supplier Site"
+                                    label={
+                                      isAr
+                                        ? "Select Client Site"
+                                        : "Select Supplier Site"
+                                    }
                                     name="site"
                                     onChange={(event) => {
                                       handleChange(event);
@@ -2292,7 +2484,9 @@ export default function CreateInvoice(props) {
                                         root: classes.selectMenuItem,
                                       }}
                                     >
-                                      Choose Supplier Site
+                                      {isAr
+                                        ? "Choose Client Site"
+                                        : "Choose Supplier Site"}
                                     </MenuItem>
                                     {VendorSites.map((site, index) => {
                                       return (
@@ -2440,7 +2634,11 @@ export default function CreateInvoice(props) {
                             onClick={() => selectVendor()}
                             round
                           >
-                            {isVendor ? "Select Customer" : "Select Supplier"}
+                            {isVendor
+                              ? "Select Customer"
+                              : isAr
+                              ? "Select Client"
+                              : "Select Supplier"}
                           </Button>
                         </GridItem>
                       </GridContainer>
@@ -2585,19 +2783,21 @@ export default function CreateInvoice(props) {
                                 <div>
                                   <Typography variant="h6" component="h2">
                                     {formState.values.selectedVendor.level1
-                                      .vendorName || "Supplier Name"}
+                                      .vendorName ||
+                                      formState.values.selectedVendor.level1
+                                        .clientName}
                                   </Typography>
                                   <Typography variant="body2" component="h2">
-                                    {formState.values.site || "Supplier Site"}
+                                    {formState.values.site || ""}
                                   </Typography>
                                 </div>
                               ) : (
                                 <div>
                                   <Typography variant="h6" component="h2">
-                                    Supplier Name
+                                    {isAr ? "Client Name" : "Supplier Name"}
                                   </Typography>
                                   <Typography variant="body2" component="h2">
-                                    Supplier Site
+                                    {isAr ? "Client Site" : "Supplier Site"}
                                   </Typography>
                                 </div>
                               )}
@@ -2864,80 +3064,142 @@ export default function CreateInvoice(props) {
                             id="conversionRate"
                             name="conversionrate"
                             disabled={true}
-                            
                             type="text"
                             // variant="outlined"
-                            value={formState.values.currency ? `${currency.Code ? currency.Code: ""} 1 ≈ ${currencyLookups.find(c=>c._id == baseCurrency) ? currencyLookups.find(c=>c._id == baseCurrency).Code:""} ${currency.conversionRate ? parseFloat(!edit ? currency.conversionRate : formState.conversionRate).toFixed(4):"?"}`: 
-                            "" || ""}
+                            value={
+                              formState.values.currency
+                                ? `${currency.Code ? currency.Code : ""} 1 ≈ ${
+                                    currencyLookups.find(
+                                      (c) => c._id == baseCurrency
+                                    )
+                                      ? currencyLookups.find(
+                                          (c) => c._id == baseCurrency
+                                        ).Code
+                                      : ""
+                                  } ${
+                                    currency.conversionRate
+                                      ? parseFloat(
+                                          !edit
+                                            ? currency.conversionRate
+                                            : formState.conversionRate
+                                        ).toFixed(4)
+                                      : "?"
+                                  }`
+                                : "" || ""
+                            }
                             className={classes.textField}
                           />
                         </GridItem>
                         {!formState.isPeetyCash &&
                         !formState.isExpense &&
                         formState.isPo ? (
-                          <React.Fragment>
-                            <GridItem
-                              xs={10}
-                              sm={10}
-                              md={5}
-                              lg={5}
-                              style={{
-                                marginTop: "10px",
-                                marginBottom: "10px",
-                              }}
-                            >
-                              <TextField
-                                fullWidth={true}
-                                // error={formState.errors.poNumber}
-                                // helperText={
-                                //   formState.errors.poNumber == "error"
-                                //     ? "Valid PO Number is required"
-                                //     : null
-                                // }
-                                label={`PO Number`}
-                                id="poNumber"
-                                name="poNumber"
-                                disabled={formState.isPeetyCash}
-                                onChange={(event) => {
-                                  handleChange(event);
+                          !isAr ? (
+                            <React.Fragment>
+                              <GridItem
+                                xs={10}
+                                sm={10}
+                                md={5}
+                                lg={5}
+                                style={{
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
                                 }}
-                                value={formState.values.poNumber || ""}
-                                select
                               >
-                                <MenuItem key={""} disabled={true}>
-                                  PO NUMBER
-                                </MenuItem>
-                                {pos.map((po, index) => (
-                                  <MenuItem key={index} value={po.poNumber}>
-                                    {po.poNumber}
-                                  </MenuItem>
-                                ))}
-                              </TextField>
-                            </GridItem>
-                            <GridItem
-                              xs={2}
-                              sm={2}
-                              md={1}
-                              lg={1}
-                              style={{
-                                marginTop: "15px",
-                                marginBottom: "10px",
-                              }}
-                            >
-                              <Tooltip title="View PO">
-                                <IconButton
-                                  style={{ background: "lightgrey" }}
-                                  onClick={() => viewPO()}
+                                <TextField
+                                  fullWidth={true}
+                                  // error={formState.errors.poNumber}
+                                  // helperText={
+                                  //   formState.errors.poNumber == "error"
+                                  //     ? "Valid PO Number is required"
+                                  //     : null
+                                  // }
+                                  label={`PO Number`}
+                                  id="poNumber"
+                                  name="poNumber"
+                                  disabled={formState.isPeetyCash}
+                                  onChange={(event) => {
+                                    handleChange(event);
+                                  }}
+                                  value={formState.values.poNumber || ""}
+                                  select
                                 >
-                                  {poModal ? (
-                                    <VisibilityOff fontSize="small" />
-                                  ) : (
-                                    <Visibility fontSize="small" />
-                                  )}
-                                </IconButton>
-                              </Tooltip>
-                            </GridItem>
-                          </React.Fragment>
+                                  <MenuItem key={""} disabled={true}>
+                                    PO NUMBER
+                                  </MenuItem>
+                                  {pos.map((po, index) => (
+                                    <MenuItem key={index} value={po.poNumber}>
+                                      {po.poNumber}
+                                    </MenuItem>
+                                  ))}
+                                </TextField>
+                              </GridItem>
+                              <GridItem
+                                xs={2}
+                                sm={2}
+                                md={1}
+                                lg={1}
+                                style={{
+                                  marginTop: "15px",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                {/* {formState.values.poNumber ? */}
+                                <Tooltip title="View PO">
+                                  <IconButton
+                                    style={{ background: "lightgrey" }}
+                                    onClick={() => viewPO()}
+                                  >
+                                    {poModal ? (
+                                      <VisibilityOff fontSize="small" />
+                                    ) : (
+                                      <Visibility fontSize="small" />
+                                    )}
+                                  </IconButton>
+                                </Tooltip>
+                                {
+                                  // : <Tooltip title="Create PO">
+                                  //   <IconButton
+                                  //     style={{ background: "lightgrey" }}
+                                  //     onClick={() => setCreatePOModel(true)}
+                                  //   >
+                                  //       <AddCircleOutlineIcon fontSize="small" />
+                                  //   </IconButton>
+                                  // </Tooltip>
+                                }
+                              </GridItem>
+                            </React.Fragment>
+                          ) : (
+                            <React.Fragment>
+                              <GridItem
+                                xs={12}
+                                sm={12}
+                                md={6}
+                                lg={6}
+                                style={{
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                <TextField
+                                  fullWidth={true}
+                                  // error={formState.errors.poNumber}
+                                  // helperText={
+                                  //   formState.errors.poNumber == "error"
+                                  //     ? "Valid PO Number is required"
+                                  //     : null
+                                  // }
+                                  label={`PO Number`}
+                                  id="poNumber"
+                                  name="poNumber"
+                                  disabled={formState.isPeetyCash}
+                                  onChange={(event) => {
+                                    handleChange(event);
+                                  }}
+                                  value={formState.values.poNumber || ""}
+                                />
+                              </GridItem>
+                            </React.Fragment>
+                          )
                         ) : (
                           ""
                         )}
@@ -3131,7 +3393,7 @@ export default function CreateInvoice(props) {
                     <Items
                       formState={formState}
                       items={items}
-                      baseCurrency={fileData ? fileData.LC_currency._id: null}
+                      baseCurrency={fileData ? fileData.LC_currency._id : null}
                       handleChange={handleChange}
                       addZeroes={addZeroes}
                       handleEditItem={handleEditItem}
@@ -3394,7 +3656,7 @@ export default function CreateInvoice(props) {
                         round
                       >
                         {isSavingInvoice ? (
-                          <CircularProgress style={{color:'white'}} />
+                          <CircularProgress style={{ color: "white" }} />
                         ) : (
                           "Save Invoice"
                         )}
@@ -3425,7 +3687,10 @@ export default function CreateInvoice(props) {
           </GridContainer>
         </Animated>
       ) : (
-        <Backdrop className={classes.backdrop} open={!isCreateInvoice && !viewFile}>
+        <Backdrop
+          className={classes.backdrop}
+          open={!isCreateInvoice && !viewFile}
+        >
           <CircularProgress color="inherit" />
         </Backdrop>
       )}

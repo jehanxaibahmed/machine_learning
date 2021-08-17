@@ -6,7 +6,7 @@ import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import AssignmentLateIcon from "@material-ui/icons/AssignmentLate";
 import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 import FingerprintIcon from "@material-ui/icons/Fingerprint";
-import EqualizerIcon from '@material-ui/icons/Equalizer';
+import EqualizerIcon from "@material-ui/icons/Equalizer";
 //Components
 import Dashboard from "views/LDocs/Dashboard/Dashboard";
 import FinanceDashboard from "views/LDocs/Dashboard/FinanceDashboard";
@@ -16,12 +16,12 @@ import ApprovalRequested from "views/LDocs/Approvals/Requested";
 import ExportList from "views/LDocs/Invoices/ExportInvoices/FilesList";
 import SignatureStamp from "views/LDocs/SignatureStamp/SignatureStamp";
 import Verify from "views/LDocs/Verify/Verify";
-import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
+import SystemUpdateIcon from "@material-ui/icons/SystemUpdate";
+import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 
-var actionRoutes = [
+export const actionApRoutes = [
   {
-    path: "/dashboard",
+    path: "/dashboard/ap",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
     icon: DashboardIcon,
@@ -36,7 +36,7 @@ var actionRoutes = [
     state: "ActionDeskCollapse",
     views: [
       {
-        path: "/my-requests",
+        path: "/my-requests/ap",
         name: "Review Tasks",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -45,14 +45,14 @@ var actionRoutes = [
         icon: AssignmentLateIcon,
       },
       {
-        path: "/approvals",
+        path: "/approvals/ap",
         name: "Approval Tasks",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         icon: AssignmentTurnedInIcon,
         component: ApprovalRequested,
         layout: "/action",
-      }
+      },
     ],
   },
   {
@@ -79,9 +79,50 @@ var actionRoutes = [
         icon: SystemUpdateIcon,
         component: ExportList,
         layout: "/action",
-      }
-    ]
+      },
+    ],
   },
+];
+
+export const actionArRoutes = [
+  {
+    path: "/dashboard/ar",
+    name: "Dashboard",
+    rtlName: "لوحة القيادة",
+    icon: DashboardIcon,
+    component: Dashboard,
+    layout: "/action",
+  },
+  {
+    collapse: true,
+    name: "Action Desk",
+    rtlName: "المكونات",
+    icon: AssignmentIndIcon,
+    state: "ActionDeskCollapse",
+    views: [
+      {
+        path: "/my-requests/ar",
+        name: "Review Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        component: Requested,
+        layout: "/action",
+        icon: AssignmentLateIcon,
+      },
+      {
+        path: "/approvals/ar",
+        name: "Approval Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: AssignmentTurnedInIcon,
+        component: ApprovalRequested,
+        layout: "/action",
+      },
+    ],
+  },
+];
+
+export const invoiceDefaultRoutes = [
   {
     path: "/verifier",
     name: "Tracking & Validate",
@@ -109,4 +150,3 @@ var actionRoutes = [
     layout: "/action",
   },
 ];
-export default actionRoutes;

@@ -71,7 +71,7 @@ export default function Dashboard(props) {
   // const [hasImage, setHasImage] = React.useState(true);
   const [fixedClasses, setFixedClasses] = React.useState("dropdown");
   const [logo, setLogo] = React.useState(require("assets/img/logo.png"));
-  const [darkLogo, setDarkLogo] = React.useState(require("assets/img/logoexxx.png"));
+  const [darkLogo, setDarkLogo] = React.useState(require("assets/img/logo.png"));
   const dispatch = useDispatch();
   const notify = (msg) => 
   toast(msg, {
@@ -172,7 +172,7 @@ export default function Dashboard(props) {
   const handleBgColorClick = (bgColor) => {
     switch (bgColor) {
       case "white":
-        setLogo(require("assets/img/logoexxx.png"));
+        setLogo(require("assets/img/logo.png"));
         break;
       default:
         setLogo(require("assets/img/logo.png"));

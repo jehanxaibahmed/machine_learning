@@ -48,6 +48,7 @@ const Check = require("is-null-empty-or-undefined").Check;
 
 export default function Filter(props) {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const isAr = props.isAr;
   const decoded = jwt.decode(Token);
   const classes = useStyles();
 
@@ -133,7 +134,7 @@ export default function Filter(props) {
                 <TextField
                     className={classes.textField}
                     fullWidth={true}
-                    label="Supplier Name"
+                    label={isAr ?"Client Name" : "Supplier Name"}
                     name="supplierId"
                     defaultValue={0}
                     select
@@ -144,11 +145,12 @@ export default function Filter(props) {
                    >
                     {props.vendors.map((v=>(
                         <MenuItem value={v._id}>
-                          {v.level1.vendorName}
+                          {v.level1.vendorName || v.level1.clientName}
                         </MenuItem>
                      )))}
                      </TextField>
                 </GridItem>
+                {isAr ?
                 <GridItem 
                  xs={12}
                  sm={12}
@@ -162,19 +164,40 @@ export default function Filter(props) {
                     label="PO Number"
                     name="poNumber"
                     defaultValue={0}
-                    select
                     onChange={(event) => {
                       handleChange(event);
                     }}
                     value={formState.values.poNumber || ""}
-                   >
-                     {props.pos.map((pos=>(
-                        <MenuItem value={pos.poNumber}>
-                          {pos.poNumber}
-                        </MenuItem>
-                     )))}
-                     </TextField>
-                </GridItem>
+                  />
+                  </GridItem>
+                    :
+                <GridItem 
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+                style={{ marginTop: "10px" }}
+               >
+               <TextField
+                   className={classes.textField}
+                   fullWidth={true}
+                   label="PO Number"
+                   name="poNumber"
+                   defaultValue={0}
+                   select
+                   onChange={(event) => {
+                     handleChange(event);
+                   }}
+                   value={formState.values.poNumber || ""}
+                  >
+                    {props.pos.map((pos=>(
+                       <MenuItem value={pos.poNumber}>
+                         {pos.poNumber}
+                       </MenuItem>
+                    )))}
+                    </TextField>
+               </GridItem>
+                }
                 <GridItem
                   xs={12}
                   sm={12}

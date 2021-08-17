@@ -30,6 +30,7 @@ const sweetAlertStyle = makeStyles(styles2);
 
 export default function FileTags(props) {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const isAr = useSelector(state => state.userReducer.isAr);
   const decoded = jwt.decode(Token);
   const classes = useStyles();
   const sweetClass = sweetAlertStyle();
@@ -54,7 +55,7 @@ export default function FileTags(props) {
     };
     axios({
       method: "PUT",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoiceTags`,
+      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/updateInvoiceTagsAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoiceTags`,
       data: data,
       headers: {
         cooljwt: Token,
@@ -83,7 +84,7 @@ export default function FileTags(props) {
     let file = props.fileData;
     axios({
       method: "GET", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceTags/${file.invoiceId}`,
+      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/getInvoiceTagsAR/${file.invoiceId}` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getInvoiceTags/${file.invoiceId}`,
       headers: {
         cooljwt: Token,
       },

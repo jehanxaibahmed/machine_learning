@@ -97,6 +97,7 @@ import PayInvoices from "./PayInvoices";
 import InitiatePayment from "./PaymentModal";
 import Filters from "./Filters";
 import { setIsTokenExpired } from "actions";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -123,6 +124,11 @@ export default function PaymentList(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+    const history = useHistory();
+    const isAr =
+      history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+        ? true
+        : false ;
   const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
@@ -434,14 +440,15 @@ export default function PaymentList(props) {
     setAnimateQr(false);
     setPdfModalData("");
   };
-  //Use Effect Hook
+  
+
   React.useEffect(() => {
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     getPos();
     getVendors();
     setDecoded(userDetail);
     getMyFiles(userDetail, true);
-  }, []);
+  }, [isAr]);
 
   const setTableData = (response) => {
     setData(
@@ -493,7 +500,7 @@ export default function PaymentList(props) {
           ),
           vendorName: (
             <MenuProvider data={prop} id='menu_id'>
-              {prop.vendorName}
+              {prop.clientName}
             </MenuProvider>
           ),
           approvedDate: (
@@ -690,10 +697,11 @@ export default function PaymentList(props) {
   };
   //Get Files
   const getMyFiles = async (user, loading) => {
+    console.log('isAr', isAr);
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/InvoiceDetailFinance/${user.orgDetail.organizationId}/${formState.filter}`,
+      url:  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/InvoiceDetailFinance/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
@@ -811,6 +819,7 @@ export default function PaymentList(props) {
   React.useEffect(() => {
     setTableData(filesData);
   }, [selected.length]);
+  
   React.useEffect(() => {
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     getMyFiles(userDetail, true);
@@ -1444,7 +1453,7 @@ export default function PaymentList(props) {
                           accessor: "dueDate",
                         },
                         {
-                          Header: "Supplier Name",
+                          Header: "Client Name",
                           accessor: "vendorName",
                         },
                         {

@@ -7,17 +7,18 @@ import SystemUpdateIcon from "@material-ui/icons/SystemUpdate";
 import WrapTextIcon from "@material-ui/icons/WrapText";
 import DescriptionIcon from "@material-ui/icons/Description";
 import FingerprintIcon from "@material-ui/icons/Fingerprint";
-import EqualizerIcon from '@material-ui/icons/Equalizer';
+import EqualizerIcon from "@material-ui/icons/Equalizer";
 import AssignmentLateIcon from "@material-ui/icons/AssignmentLate";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
+import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
-import ReceiptIcon from '@material-ui/icons/Receipt';
+import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
+import ReceiptIcon from "@material-ui/icons/Receipt";
 //Components
 
 import FilesList from "views/LDocs/Invoices/RecieveInvoice/FilesList";
+import FilesListAr from "views/LDocs/Invoices/RecieveInvoice/FileListAr";
 import Dashboard from "views/LDocs/Dashboard/Dashboard";
 import FinanceDashboard from "views/LDocs/Dashboard/FinanceDashboard";
 import Notifications from "views/LDocs/Notifications/Notifications";
@@ -26,25 +27,24 @@ import Verify from "views/LDocs/Verify/Verify";
 import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import CreateInvoice from "views/LDocs/Invoices/CreateInvoice/CreateInvoice";
 import InvoiceTracking from "views/LDocs/Invoices/InvoiceTracking/InvoiceTracking";
+import SentList from "views/LDocs/Invoices/SentInvoices/FilesList";
 import ExportList from "views/LDocs/Invoices/ExportInvoices/FilesList";
 import PaymentList from "views/LDocs/Invoices/PayInvoices/FilesList";
+import PaymentListAr from "views/LDocs/Invoices/PayInvoices/FileListAr";
 import InvoiceAge from "views/LDocs/Invoices/InvoiceAge/InvoiceAge";
 import Requested from "views/LDocs/Reviews/Requested";
 import jwt from "jsonwebtoken";
 import Payable from "views/LDocs/Payable/Payable";
 import AgingReport from "views/LDocs/Aging/AgingReport";
-import TimerIcon from '@material-ui/icons/Timer';
+import TimerIcon from "@material-ui/icons/Timer";
+import Receivable from "views/LDocs/Receivable/Receivable";
 
-
-
-const Token = localStorage.getItem('cooljwt');
+const Token = localStorage.getItem("cooljwt");
 let decoded = jwt.decode(Token);
-console.log(decoded);
 
-
-var invoiceRoutes = [
+export const invoiceApRoutes = [
   {
-    path: "/dashboard",
+    path: "/dashboard/ap",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
     icon: DashboardIcon,
@@ -59,7 +59,7 @@ var invoiceRoutes = [
     state: "InvoiceDeskCollapse",
     views: [
       {
-        path: "/create",
+        path: "/create/ap",
         name: "Create Invoice",
         rtlName: "عالتسعير",
         icon: NoteAddIcon,
@@ -68,7 +68,7 @@ var invoiceRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/received",
+        path: "/invoices/ap",
         name: "Received Invoice",
         rtlName: "عالتسعير",
         icon: SystemUpdateIcon,
@@ -76,15 +76,15 @@ var invoiceRoutes = [
         component: FilesList,
         layout: "/invoice",
       },
-      {
-        path: "/aging",
-        name: "Invoice Aging",
-        rtlName: "عالتسعير",
-        icon: DescriptionIcon,
-        rtlMini: "ع",
-        component: InvoiceAge,
-        layout: "/invoice",
-      },
+      // {
+      //   path: "/aging",
+      //   name: "Invoice Aging",
+      //   rtlName: "عالتسعير",
+      //   icon: DescriptionIcon,
+      //   rtlMini: "ع",
+      //   component: InvoiceAge,
+      //   layout: "/invoice",
+      // },
     ],
   },
   {
@@ -95,25 +95,24 @@ var invoiceRoutes = [
     state: "ActionDeskCollapse",
     views: [
       {
-        path: "/my-requests",
+        path: "/my-requests/ap",
         name: "Review Tasks",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         component: Requested,
         layout: "/invoice",
         icon: AssignmentLateIcon,
-      }
-      ,
+      },
       {
-        path: "/approvals",
+        path: "/approvals/ap",
         name: "Approval Tasks",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
         icon: AssignmentTurnedInIcon,
         component: ApprovalRequested,
         layout: "/invoice",
-      }
-    ]
+      },
+    ],
   },
   {
     collapse: true,
@@ -123,7 +122,7 @@ var invoiceRoutes = [
     state: "FinanceDeskCollapse",
     views: [
       {
-        path: "/financeDashboard",
+        path: "/financeDashboard/ap",
         name: "AP Analytics",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -141,7 +140,7 @@ var invoiceRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/payment",
+        path: "/payment/ap",
         name: "Invoice Payments",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -150,24 +149,161 @@ var invoiceRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/vendorledger",
-        name: "Vendor 360",
+        path: "/supplierledger",
+        name: "Supplier 360",
         rtlName: "لوحة القيادة",
         icon: ReceiptIcon,
         component: Payable,
         layout: "/invoice",
       },
       {
-        path: "/invoice-aging",
+        path: "/invoice-aging/ap",
         name: "Invoice Aging",
         rtlName: "لوحة القيادة",
         icon: TimerIcon,
         component: AgingReport,
         layout: "/invoice",
-      }
-    ]}
-  ,{
-    path: "/verifier",
+      },
+    ],
+  },
+  {
+    path: "/verifier/ap",
+    name: "Tracking & Validate",
+    rtlName: "أشكال عادية",
+    rtlMini: "صو",
+    icon: VerifiedUserIcon,
+    component: Verify,
+    layout: "/invoice",
+  }
+];
+
+
+export const invoiceArRoutes = [
+  {
+    path: "/dashboard/ar",
+    name: "Dashboard",
+    rtlName: "لوحة القيادة",
+    icon: DashboardIcon,
+    component: Dashboard,
+    layout: "/invoice",
+  },
+  {
+    collapse: true,
+    name: "Invoice Desk",
+    rtlName: "المكونات",
+    icon: InsertDriveFileIcon,
+    state: "InvoiceDeskCollapsear",
+    views: [
+      {
+        path: "/create/ar",
+        name: "Create Invoice",
+        rtlName: "عالتسعير",
+        icon: NoteAddIcon,
+        rtlMini: "ع",
+        component: CreateInvoice,
+        layout: "/invoice",
+      },
+      {
+        path: "/invoices/ar",
+        name: "Sent Invoice",
+        rtlName: "عالتسعير",
+        icon: SystemUpdateIcon,
+        rtlMini: "ع",
+        component: FilesListAr,
+        layout: "/invoice",
+      },
+      // {
+      //   path: "/aging_ar",
+      //   name: "Invoice Aging",
+      //   rtlName: "عالتسعير",
+      //   icon: DescriptionIcon,
+      //   rtlMini: "ع",
+      //   component: InvoiceAge,
+      //   layout: "/invoice",
+      // },
+    ],
+  },
+  {
+    collapse: true,
+    name: "Action Desk",
+    rtlName: "المكونات",
+    icon: AssignmentIndIcon,
+    state: "ActionDeskCollapsear",
+    views: [
+      {
+        path: "/my-requests/ar",
+        name: "Review Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        component: Requested,
+        layout: "/invoice",
+        icon: AssignmentLateIcon,
+      },
+      {
+        path: "/approvals/ar",
+        name: "Approval Tasks",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: AssignmentTurnedInIcon,
+        component: ApprovalRequested,
+        layout: "/invoice",
+      },
+    ],
+  },
+  {
+    collapse: true,
+    name: "Finance Desk",
+    rtlName: "المكونات",
+    icon: AccountBalanceIcon,
+    state: "FinanceDeskCollapsear",
+    views: [
+      {
+        path: "/financeDashboard/ar",
+        name: "AR Analytics",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: EqualizerIcon,
+        component: FinanceDashboard,
+        layout: "/invoice",
+      },
+      {
+        path: "/send_invoices",
+        name: "Send Invoices",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: SystemUpdateIcon,
+        component: SentList,
+        layout: "/invoice",
+      },
+      {
+        path: "/payment/ar",
+        name: "Invoice Payments",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: LocalAtmIcon,
+        component: PaymentListAr,
+        layout: "/invoice",
+      },
+      {
+        path: "/clientledger",
+        name: "Client 360",
+        rtlName: "لوحة القيادة",
+        icon: ReceiptIcon,
+        component: Receivable,
+        layout: "/invoice",
+      },
+      {
+        path: "/invoice-aging/ar",
+        name: "Invoice Aging",
+        rtlName: "لوحة القيادة",
+        icon: TimerIcon,
+        component: AgingReport,
+        layout: "/invoice",
+      },
+    ],
+  },
+  {
+    path: "/verifier/ar",
     name: "Tracking & Validate",
     rtlName: "أشكال عادية",
     rtlMini: "صو",
@@ -175,6 +311,12 @@ var invoiceRoutes = [
     component: Verify,
     layout: "/invoice",
   },
+];
+
+
+
+export const invoiceDefaultRoutes = [
+ 
   {
     path: "/notifications",
     name: "Notifications",
@@ -191,6 +333,5 @@ var invoiceRoutes = [
     icon: FingerprintIcon,
     component: SignatureStamp,
     layout: "/invoice",
-  },
-];
-export default invoiceRoutes;
+  }
+]

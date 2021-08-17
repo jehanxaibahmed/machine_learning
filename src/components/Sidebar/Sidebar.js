@@ -8,9 +8,7 @@ import { NavLink, Link, Redirect } from "react-router-dom";
 import { logoutUserAction } from "actions";
 import cx from "classnames";
 // @material-ui/core components
-import {
-  CircularProgress
-} from "@material-ui/core";
+import { CircularProgress, Avatar, Divider } from "@material-ui/core";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Drawer from "@material-ui/core/Drawer";
@@ -20,8 +18,15 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Hidden from "@material-ui/core/Hidden";
 import Collapse from "@material-ui/core/Collapse";
 import Icon from "@material-ui/core/Icon";
-import FaceIcon from '@material-ui/icons/Face';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import FaceIcon from "@material-ui/icons/Face";
+import ArImage from "assets/img/icons/ar.png";
+import ApImage from "assets/img/icons/ap.png";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+
 // core components
 import AdminNavbarLinks from "components/Navbars/AdminNavbarLinks.js";
 import sidebarStyle from "assets/jss/material-dashboard-pro-react/components/sidebarStyle.js";
@@ -38,9 +43,16 @@ const action = {
 // There might be something with the Hidden component from material-ui, and we didn't have access to
 // the links, and couldn't initialize the plugin.
 class SidebarWrapper extends React.Component {
-
-  
   sidebarWrapper = React.createRef();
+  constructor(props) {
+    super(props);
+    this.state = props.isTabs
+    // if(props.isTabs){
+    //   console.log("IN CONDITION");
+    //   this.setState({ isTabs: true});
+    //   this.forceUpdate();
+    // }
+  }
   componentDidMount() {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.sidebarWrapper.current, {
@@ -54,13 +66,75 @@ class SidebarWrapper extends React.Component {
       ps.destroy();
     }
   }
+    
+  
   render() {
-
-    const { className, user, headerLinks, links, userData } = this.props;
+    const { className, user, headerLinks, links, userData, tabValue, handleTabChange, isTabs, isAr } = this.props;
+    const a11yProps = (index) => {
+      return {
+        id: `simple-tab-${index}`,
+        "aria-controls": `simple-tabpanel-${index}`,
+      };
+    };
     return (
       <div className={className} ref={this.sidebarWrapper}>
         {userData ? user : <CircularProgress disableShrink />}
         {headerLinks}
+        {isTabs ?  
+        <Tabs
+          style={{ zIndex: 999999999, width: "calc(100% - 30px)", margin:15 }}
+          value={tabValue}
+          onChange={handleTabChange}
+          aria-label="simple tabs example"
+        >
+          <Tab
+            style={{ minWidth: "50%" }}
+            label={
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Avatar
+                  alt="ap icon"
+                  src={ApImage}
+                  variant="square"
+                  style={{
+                    verticalAlign: "middle",
+                    width: 30,
+                    marginRight: 20,
+                  }}
+                />{" "}
+                AP{" "}
+              </div>
+            }
+            {...a11yProps(0)}
+          />
+          <Tab
+            style={{ minWidth: "50%" }}
+            label={
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Avatar
+                  alt="ap icon"
+                  src={ArImage}
+                  variant="square"
+                  style={{
+                    verticalAlign: "middle",
+                    width: 30,
+                    marginRight: 20,
+                  }}
+                />{" "}
+                AR{" "}
+              </div>
+            }
+            {...a11yProps(1)}
+          />
+        </Tabs>:""}
+        <Divider
+          style={{
+            background: "hsla(0,0%,100%,.3)",
+            width: "calc(100% - 30px)",
+            bottom: 0,
+            height: 1,
+            margin: 15,
+          }}
+        />
         {links}
       </div>
     );
@@ -74,14 +148,23 @@ class Sidebar extends React.Component {
       openAvatar: false,
       miniActive: true,
       level1: "",
+      isAr:props?.isAr,
       LogoutCheck: false,
-      ...this.getCollapseStates(props.routes),
+      tabValue:0,
+      ...this.getCollapseStates(props.routes ? props.routes: []),
+      ...this.getCollapseStates(props.aproutes ? props.aproutes: []),
+      ...this.getCollapseStates(props.arroutes ? props.arroutes: []),
     };
+  }
+  handleTabChange = (event, newValue) => {
+    this.setState({ tabValue: newValue });
+    let routes = this.props.aproutes;
+    // this.createLinks(this.props.routes ? this.props.routes : newValue === 0 ? this.props.aproutes : routes)
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.userData != this.props.userData) {
       this.setState({
-        level1: this.props.userData.level1
+        level1: this.props.userData.level1,
       });
     }
   }
@@ -90,8 +173,7 @@ class Sidebar extends React.Component {
   // that it gets through this.props.routes
   getCollapseStates = (routes) => {
     let initialState = {};
-    routes.
-    map((prop) => {
+    routes.map((prop) => {
       if (prop.collapse) {
         initialState = {
           [prop.state]: this.getCollapseInitialState(prop.views),
@@ -123,8 +205,9 @@ class Sidebar extends React.Component {
   openCollapse(collapse) {
     var st = {};
     st[collapse] = !this.state[collapse];
-    this.props.routes.map((prop,key) => {
-      if(typeof prop["state"] !== "undefined" && prop["state"] !== collapse){
+    let routes = this.props.aproutes && this.props.arroutes ? this.props.aproutes.concat(this.props.arroutes) : this.props.routes;
+    routes.map((prop, key) => {
+      if (typeof prop["state"] !== "undefined" && prop["state"] !== collapse) {
         st[prop["state"]] = false;
       }
     });
@@ -142,7 +225,7 @@ class Sidebar extends React.Component {
         var st = {};
         st[prop["state"]] = !this.state[prop.state];
         const navLinkClasses =
-          classes.itemLink +
+             classes.itemLink  +
           " " +
           cx({
             [" " + classes.collapseActive]: this.getCollapseInitialState(
@@ -216,6 +299,7 @@ class Sidebar extends React.Component {
               )}
               <ListItemText
                 primary={rtlActive ? prop.rtlName : prop.name}
+                style={{color: this.state.tabValue == 0 ? "white": "#D8AABB"}}
                 secondary={
                   <b
                     className={
@@ -233,10 +317,14 @@ class Sidebar extends React.Component {
               />
             </NavLink>
             <Collapse in={this.state[prop.state]} unmountOnExit>
-              <List className={this.props.miniActive ? classes.list + " " + classes.collapseListMini:classes.list + " " + classes.collapseList }>
-                {
-                this.createLinks(prop.views)
+              <List
+                className={
+                  this.props.miniActive
+                    ? classes.list + " " + classes.collapseListMini
+                    : classes.list + " " + classes.collapseList
                 }
+              >
+                {this.createLinks(prop.views)}
               </List>
             </Collapse>
           </ListItem>
@@ -255,7 +343,7 @@ class Sidebar extends React.Component {
           [classes.collapseItemMiniRTL]: rtlActive,
         });
       const navLinkClasses =
-        classes.itemLink +
+      classes.itemLink +
         " " +
         cx({
           [" " + classes[color]]: this.activeRoute(prop.path),
@@ -315,6 +403,7 @@ class Sidebar extends React.Component {
             <ListItemText
               primary={rtlActive ? prop.rtlName : prop.name}
               disableTypography={true}
+              style={{color: this.state.tabValue == 0 ? "white": "#D8AABB"}}
               className={cx(
                 { [itemText]: prop.icon !== undefined },
                 { [collapseItemText]: prop.icon === undefined }
@@ -326,24 +415,17 @@ class Sidebar extends React.Component {
     });
   };
   handleLogoutUser = () => {
-     localStorage.clear();
-     this.props.logoutUserAction();
+    localStorage.clear();
+    this.props.logoutUserAction();
     this.setState({
-      LogoutCheck: true
+      LogoutCheck: true,
     });
-  }
+  };
   render() {
     const Token = localStorage.getItem("cooljwt");
-    const loginName = jwt.decode(Token).loginName || jwt.decode(Token).name ;
+    const loginName = jwt.decode(Token).loginName || jwt.decode(Token).name;
     const displayName = jwt.decode(Token).displayName || jwt.decode(Token).name;
-    const {
-      classes,
-      logo,
-      image,
-      routes,
-      bgColor,
-      rtlActive,
-    } = this.props;
+    const { classes, logo, image, aproutes,arroutes,routes, bgColor, rtlActive } = this.props;
     const itemText =
       classes.itemText +
       " " +
@@ -400,14 +482,16 @@ class Sidebar extends React.Component {
           <ListItem className={classes.item + " " + classes.userItem}>
             <NavLink
               to={"#"}
-              className={classes.itemLink + " " + classes.userCollapseButton}
+              className={classes.itemLink+ " " + classes.userCollapseButton}
               onClick={() => this.openCollapse("openAvatar")}
             >
               <ListItemText
                 primary={
                   rtlActive
                     ? "تانيا أندرو"
-                    : displayName ? displayName : loginName || loginName
+                    : displayName
+                    ? displayName
+                    : loginName || loginName
                 }
                 // secondary={
                 //   <b
@@ -468,7 +552,9 @@ class Sidebar extends React.Component {
       </div>
     );
     var links = (
-      <List className={classes.list}>{this.createLinks(routes)}</List>
+      <List style={{ zIndex: 99999999999999 }} className={classes.list}>
+        {this.createLinks(routes ? routes : this.state.tabValue == 0 ? aproutes: arroutes)}
+      </List>
     );
 
     const logoNormal =
@@ -494,13 +580,18 @@ class Sidebar extends React.Component {
         [classes.whiteAfter]: bgColor === "white",
       });
     var brand = (
-      <div style={{height:200}} className={logoClasses}>
+      <div style={{ height: 200 }} className={logoClasses}>
         <a
           href="#"
           className={logoMini}
           style={{ width: "100%", marginLeft: "0px" }}
         >
-          <img src={logo} style={{width:200}} alt="logo" className={classes.img} />
+          <img
+            src={logo}
+            style={{ width: 200 }}
+            alt="logo"
+            className={classes.img}
+          />
         </a>
         {/* <a
           href="https://www.creative-tim.com?ref=mdpr-sidebar"
@@ -530,7 +621,11 @@ class Sidebar extends React.Component {
       });
     return (
       <div ref={this.mainPanel}>
-        {this.state.LogoutCheck ? <Redirect exact from="/" to="/auth/login" /> : ""}
+        {this.state.LogoutCheck ? (
+          <Redirect exact from="/" to="/auth/login" />
+        ) : (
+          ""
+        )}
         <Hidden mdUp implementation="css">
           <Drawer
             variant="temporary"
@@ -551,6 +646,10 @@ class Sidebar extends React.Component {
               userData={this.state.level1}
               headerLinks={<AdminNavbarLinks rtlActive={rtlActive} />}
               links={links}
+              isAr={this.state.isAr}
+              isTabs={arroutes && aproutes ? true : false}
+              tabValue={this.state.tabValue}
+              handleTabChange={this.handleTabChange}
             />
             {image !== undefined ? (
               <div
@@ -577,6 +676,9 @@ class Sidebar extends React.Component {
               user={user}
               userData={this.state.level1}
               links={links}
+              isTabs={arroutes && aproutes ? true : false}
+              tabValue={this.state.tabValue}
+              handleTabChange={this.handleTabChange}
             />
             {image !== undefined ? (
               <div
@@ -626,6 +728,7 @@ SidebarWrapper.propTypes = {
 function mapStateToProps(state) {
   return {
     userData: state.userReducer.userListData,
+    isAr : state.userReducer.isAr
   };
 }
 export default connect(

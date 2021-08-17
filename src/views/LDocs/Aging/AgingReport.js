@@ -50,6 +50,8 @@ import jwt from "jsonwebtoken";
 import Row from "./Row";
 import { addZeroes } from "../Functions/Functions";
 import Payable from "../Payable/Payable";
+import Receivable from "../Receivable/Receivable";
+import { useHistory } from "react-router-dom";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -88,6 +90,11 @@ export default function AgingReport() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+    const history = useHistory();
+    const isAr =
+      history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+        ? true
+        : false;
   const decoded = jwt.decode(Token);
   const dispatch = useDispatch();
   const Check = require("is-null-empty-or-undefined").Check;
@@ -137,14 +144,17 @@ export default function AgingReport() {
     setViewVendor(true);
   };
 
+
+
   const openInvoice = (payload) => {
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: payload.invoiceId,
         version: payload.version,
-        vendorId: payload.vendorId,
+        vendorId:  isAr ?  null : payload.vendorId,
+        clientId:  isAr ? payload.clientId: null,
       },
       headers: {
         cooljwt: Token,
@@ -181,7 +191,7 @@ export default function AgingReport() {
         setTimeout(() => {
           axios({
             method: "post", //you can set what request you want to be
-            url: `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsx`,
+            url: isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsxAR` :  `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsx`,
             data: {
               organizationId: decoded.orgDetail.organizationId,
               type: null,
@@ -240,7 +250,7 @@ export default function AgingReport() {
     };
     await axios({
       method: "post",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceAging`,
+      url:isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/invoiceAgingAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceAging`,
       data: data,
       headers: { cooljwt: Token },
     })
@@ -259,8 +269,8 @@ export default function AgingReport() {
   };
 
   useEffect(() => {
-    getReport();
-  }, []);
+      getReport();      
+  }, [isAr]);
 
   return (
     <React.Fragment>
@@ -393,7 +403,7 @@ export default function AgingReport() {
                       >
                         <TableHead>
                           <TableRow>
-                            <StyledTableCell>Vendor / Customer</StyledTableCell>
+                            <StyledTableCell>{isAr ? "Client":"Supplier"}</StyledTableCell>
                             <StyledTableCell></StyledTableCell>
                             <StyledTableCell align="right">
                               Outstanding
@@ -504,11 +514,17 @@ export default function AgingReport() {
             >
               Go Back
             </Button>
+            {isAr ? 
+            <Receivable 
+              goBack={goBack}
+              vendor={formState.vendorDetails._id}
+              org={decoded.orgDetail.organizationId}
+            />:
             <Payable
               goBack={goBack}
               vendor={formState.vendorDetails._id}
               org={decoded.orgDetail.organizationId}
-            />
+            />}
           </React.Fragment>
         </Animated>
       ) : (
