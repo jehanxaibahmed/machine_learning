@@ -392,7 +392,7 @@ export default function FilesListAr(props) {
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label="SENT"
+                    label="SENT TO CLIENT"
                     clickable
                     style={{ border: "orange 1px solid", color: "orange" }}
                   />
