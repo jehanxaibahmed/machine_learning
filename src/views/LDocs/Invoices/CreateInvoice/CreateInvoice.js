@@ -112,8 +112,11 @@ export default function CreateInvoice(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-    const isAr =
-    useSelector((state) => state.userReducer.isAr);
+  const history = useHistory();
+  const isAr =
+    history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+      ? true
+      : false;
   const dispatch = useDispatch();
   const { edit, fileData, closeModal } = props;
   const [pdfModal, setPdfModal] = useState(false);
@@ -144,8 +147,6 @@ export default function CreateInvoice(props) {
   const [currency, setCurrency] = useState(defaultCurrency);
   const [markAsReceivedModel, setMarkAsReceivedModel] = useState(false);
   const [createPOModel, setCreatePOModel] = useState(false);
-
-  const history = useHistory();
   let duedate = new Date();
   let today = new Date();
   let plusDays = 0;
@@ -1082,21 +1083,22 @@ export default function CreateInvoice(props) {
     getLookUp();
   };
 
-
-
   //On Load Component
   React.useEffect(() => {
     getData(isAr);
-  }, [isAr]);
-
+  }, []);
 
   const setInvoice = (orgs, vendors) => {
     if (edit) {
       orgs = orgs ? orgs : formState.organizations;
       vendors = vendors ? vendors : formState.vendors;
       let org = orgs.find((o) => o.organizationId == fileData.organizationId);
-      let client = isVendor ? null : vendors.find((v) => v._id == fileData.clientId);
-      let vendor = isVendor ? null : vendors.find((v) => v._id == fileData.vendorId);
+      let client = isVendor
+        ? null
+        : vendors.find((v) => v._id == fileData.clientId);
+      let vendor = isVendor
+        ? null
+        : vendors.find((v) => v._id == fileData.vendorId);
       getLookUp();
       setFormState((formState) => ({
         ...formState,
@@ -1127,9 +1129,6 @@ export default function CreateInvoice(props) {
         selectedOrg: isVendor ? org || null : null,
         conversionRate: fileData.conversionRate || 0,
       }));
-
-
-
 
       var invoice_items = fileData.items.map((item) => {
         const i = {

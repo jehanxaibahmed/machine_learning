@@ -52,6 +52,7 @@ import _ from 'lodash';
 import { useSelector, useDispatch } from "react-redux";
 import { setIsTokenExpired } from "actions";
 import Map from "./Map";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(styles);
 
@@ -72,7 +73,11 @@ function LinearProgressWithLabel(props) {
 
 export default function Dashboard() {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
-  const isAr = useSelector((state) => state.userReducer.isAr);
+  const history = useHistory();
+  const isAr =
+    history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+      ? true
+      : false;
   let decoded = jwt.decode(Token);
   const classes = useStyles();
   const pendingApprovalIcon = require("assets/img/pendingApproval.png");

@@ -314,7 +314,7 @@ export default function Verify() {
                     tableHeaderColor="info"
                     tableShopping={true}
                     tableHead={[
-                      "Invoice ID", "Submit Date", "Due Date", "Vendor Name", "Amount", "Version","Action"
+                      "Invoice ID", "Submit Date", "Due Date", isAr ? "Client Name" :"Vendor Name", "Amount", "Version","Action"
                     ]}
                     tableData={fileData.map((file,index)=>{return [file.invoiceId, formatDateTime(file.invoiceDate), formatDate(file.dueDate) ,file.vendorName,`${file.FC_currency.Code}${addZeroes(file.netAmt)}`,file.version,(<Button
                         round

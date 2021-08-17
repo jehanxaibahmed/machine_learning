@@ -21,6 +21,7 @@ import axios from "axios";
 import { data } from "./Data";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsTokenExpired } from "actions";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,8 +45,12 @@ export default function FinanceDashboard() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-  const isAr = useSelector((state) => state.userReducer.isAr);
-  const [graphData, setGraphData] = React.useState([]);
+    const history = useHistory();
+    const isAr =
+      history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+        ? true
+        : false ;
+          const [graphData, setGraphData] = React.useState([]);
   const [summaryOptions, setSummaryOptions] = React.useState({
     summaryOptions: data.summaryOptions,
     summarySeries: data.summarySeries,

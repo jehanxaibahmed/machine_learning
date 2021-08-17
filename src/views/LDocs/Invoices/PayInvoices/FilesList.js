@@ -97,6 +97,7 @@ import PayInvoices from "./PayInvoices";
 import InitiatePayment from "./PaymentModal";
 import Filters from "./Filters";
 import { setIsTokenExpired } from "actions";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -123,8 +124,11 @@ export default function PaymentList(props) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-  const isAr = useSelector((state) => state.userReducer.isAr);
-  console.log('isAr', isAr);
+    const history = useHistory();
+    const isAr =
+      history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+        ? true
+        : false ;
   const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;

@@ -51,6 +51,7 @@ import Row from "./Row";
 import { addZeroes } from "../Functions/Functions";
 import Payable from "../Payable/Payable";
 import Receivable from "../Receivable/Receivable";
+import { useHistory } from "react-router-dom";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -89,8 +90,12 @@ export default function AgingReport() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-    const isAr = useSelector((state) => state.userReducer.isAr);
-    const decoded = jwt.decode(Token);
+    const history = useHistory();
+    const isAr =
+      history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+        ? true
+        : false;
+  const decoded = jwt.decode(Token);
   const dispatch = useDispatch();
   const Check = require("is-null-empty-or-undefined").Check;
   const [viewVendor, setViewVendor] = useState(false);
@@ -261,7 +266,7 @@ export default function AgingReport() {
   };
 
   useEffect(() => {
-    getReport();
+      getReport();      
   }, [isAr]);
 
   return (
