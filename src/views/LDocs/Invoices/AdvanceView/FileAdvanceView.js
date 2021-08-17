@@ -94,7 +94,7 @@ export default function FileAdvanceView(props) {
   const getBlockChainData = async () => {
     await axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.vendorId}-${fileData.invoiceId}-${fileData.version}`,
+      url: isAr ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.clientId}-${fileData.invoiceId}-${fileData.version}` : `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.vendorId}-${fileData.invoiceId}-${fileData.version}`,
     })
       .then((response) => {
         if (response.data.InvoiceWorkflowHistory.length !== 0) {

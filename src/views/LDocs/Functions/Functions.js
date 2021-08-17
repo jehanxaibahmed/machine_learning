@@ -261,9 +261,10 @@ export const validateInvoice = async (row, Token, isAr) => {
     })
       .then(async (invoiceRes) => {
         const invoice = invoiceRes.data;
+        const  isAR = invoice.isAR;
         axios({
           method: "get",
-          url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
+          url: isAR ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.clientId}-${row.invoiceId}-${row.version}` : `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
         })
           .then(async (blockchainRes) => {
             const blockchain = blockchainRes.data.InvoiceData;
@@ -368,6 +369,7 @@ export const validateInvoice = async (row, Token, isAr) => {
                   organizationId: invoice.organizationId,
                   tenantId: invoice.tenantId,
                   vendorId: invoice.vendorId,
+                  clientId: invoice.clientId,
                   userId: invoice.createdBy,
                   isVendor: invoice.createdByVendor,
                 },
@@ -389,6 +391,7 @@ export const validateInvoice = async (row, Token, isAr) => {
                   organizationId: blockchain.organizationID,
                   tenantId: blockchain.tenantID,
                   vendorId: blockchain.vendorID,
+                  clientId: blockchain.clientID,
                   userId: blockchain.createdBy,
                   isVendor: invoice.createdByVendor,
                 },
