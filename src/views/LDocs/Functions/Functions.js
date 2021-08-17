@@ -493,7 +493,7 @@ export const validateInvoice = async (row, Token, isAr) => {
 export const _IsAr = () => {
   let url = window.location.href;
   console.log(url);
-  let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : false;
+  let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : url.substring(url.lastIndexOf("/") + 1) == "ar"  ? false : null;
   console.log(is_Ar);
   return is_Ar;
 }

@@ -129,8 +129,10 @@ export default function Dashboard(props) {
 
   const changingPath = () => {
     let url = history.location.pathname;
-    let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : false;
-    dispatch(setIsAr(is_Ar));
+    let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : url.substring(url.lastIndexOf("/") + 1) == "ap"  ? false : null;
+    if(is_Ar !== null){
+      dispatch(setIsAr(is_Ar));
+    }
   }
  
   const theme = createMuiTheme({
