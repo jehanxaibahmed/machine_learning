@@ -127,9 +127,8 @@ function ColorlibStepIcon(props) {
     1: <SystemUpdateIcon />,
     2: <FindInPageIcon />,
     3: <DeviceHubIcon />,
-    4: <LocalAtmIcon />,
-    5: <QueryBuilderIcon />,
-    6: <MoneyIcon />,
+    4: <QueryBuilderIcon />,
+    5: <MoneyIcon />,
   };
 
   return (
@@ -235,7 +234,7 @@ export default function HorizentalteppersAr(props) {
       comments: props.fileData.trackingStatus.sentToClient.comment || null,
     },
     {
-      label: "Paid",
+      label: "Payment",
       remarks: props.fileData.trackingStatus.paid
         ? props.fileData.trackingStatus.paid.status == "rejected"
           ? "Rejected"
@@ -330,7 +329,14 @@ export default function HorizentalteppersAr(props) {
                           ? "red"
                           : step.remarks == "In Process"
                           ? "blue"
-                          : step.remarks == "Done" || "Paid" || "Ready to Pay"
+                          : step.remarks == "Sent"
+                          ? "orange"
+                          : step.remarks == "Ready To Send"
+                          ? "blue"
+                          : step.remarks == "Done" ||
+                            "Paid" ||
+                            "Ready to Pay" ||
+                            "Sent & Acknowledged"
                           ? "green"
                           : "inherted",
                     }}

@@ -195,6 +195,7 @@ export default function InitiatePayment(props) {
   };
 
   const payNow = () => {
+    setPaymentInProcess(true);
     let data = {
       tenantId: props.fileData.tenantId,
       organizationId: props.fileData.organizationId,
@@ -432,6 +433,7 @@ export default function InitiatePayment(props) {
                         setPaymentInProcess(false);
                         // setButtonLoaded(true);
                         successAlert("Payment Successful...");
+                        props.closeModal();
                       })
                       .catch((err) => {
                         errorAlert("Payment Already Done");
@@ -838,6 +840,7 @@ export default function InitiatePayment(props) {
                   ""
                 )}
                 {formState.values.paymentBy == "manual" ? (
+                  <React.Fragment>
                   <Button
                     round
                     onClick={payNow}
@@ -846,6 +849,15 @@ export default function InitiatePayment(props) {
                   >
                     Pay Now
                   </Button>
+                   <Button
+                   round
+                   onClick={()=>props.closeModal()}
+                   color="info"
+                   className="Edit"
+                 >
+                   Close
+                 </Button>
+                 </React.Fragment>
                 ) : (
                   ""
                 )}
@@ -854,9 +866,9 @@ export default function InitiatePayment(props) {
             ) : (
               ""
             )}
-            {/* {paymentInProcess? 
+            {paymentInProcess? 
             <CircularProgress />:""  
-            } */}
+            }
           </CardBody>
         </Card>
       </GridItem>

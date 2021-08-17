@@ -2,8 +2,6 @@ import React from "react";
 // react component for creating dynamic tables
 import ReactTable from "react-table";
 
-import { filters } from "./FiltersJson";
-
 import Iframe from "react-iframe";
 
 import { useReactToPrint } from "react-to-print";
@@ -100,6 +98,22 @@ import CreateInvoice from "../CreateInvoice/CreateInvoice";
 import ExportToFusion from "./ExportToFusion";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { setIsTokenExpired } from "actions";
+
+
+
+//Filters
+const filters = 
+[
+  { id: "unread", value: "Pending for Acceptance", id: 1},
+  { id: "read", value: "Accepted (Initially Reviewed)", id: 2},
+  { id: "rejected", value: "Pending for Review", id: 3},
+  { id: "pending", value: "Reviewed", id: 4},
+  { id: "reviewed", value: "Pending For Approval", id: 5},
+  { id: "rejected", value: "Approved",id: 6},
+  { id: "pending", value: "Correction Required",id:7},
+  { id: "approved", value: "Rejected ",id:8},
+];
+
 
 const styles = {
   cardIconTitle: {

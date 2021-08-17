@@ -2,8 +2,6 @@ import React from "react";
 // react component for creating dynamic tables
 import ReactTable from "react-table";
 
-import { filters } from "./FiltersJson";
-
 import Iframe from "react-iframe";
 
 import { useReactToPrint } from "react-to-print";
@@ -75,8 +73,12 @@ import {
   Submenu,
 } from "react-contexify";
 import "react-contexify/dist/ReactContexify.min.css";
-import Swal from 'sweetalert2'
-import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
+import Swal from "sweetalert2";
+import {
+  successAlert,
+  errorAlert,
+  msgAlert,
+} from "views/LDocs/Functions/Functions";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import InitWorkflow from "../InitWorkflow/InitWorkflow";
 import Pending_Invoice from "assets/img/statuses/Asset_1.png";
@@ -111,6 +113,16 @@ const styles = {
     color: "white",
   },
 };
+//Filters
+const filters = [
+  { id: "draft", value: "Draft Invoice", id: 1 },
+  { id: "rejected", value: "Pending for Review", id: 3 },
+  { id: "pending", value: "Reviewed", id: 4 },
+  { id: "reviewed", value: "Pending For Approval", id: 5 },
+  { id: "rejected", value: "Approved", id: 6 },
+  { id: "pending", value: "Correction Required", id: 7 },
+  { id: "approved", value: "Rejected ", id: 8 },
+];
 
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
@@ -124,13 +136,13 @@ const StyledBadge = withStyles((theme) => ({
   },
 }))(Badge);
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='down' ref={ref} {...props} />;
+  return <Slide direction="down" ref={ref} {...props} />;
 });
 const TransitionRight = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='right' ref={ref} {...props} />;
+  return <Slide direction="right" ref={ref} {...props} />;
 });
 const TransitionLeft = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='left' ref={ref} {...props} />;
+  return <Slide direction="left" ref={ref} {...props} />;
 });
 
 export default function FilesListAr(props) {
@@ -293,7 +305,7 @@ export default function FilesListAr(props) {
     setData(
       response.reverse().map((prop, key) => {
         var currentStatus = currentTrackingAr(prop.trackingStatus);
-        console.log(`${prop.invoiceId}` ,currentStatus);
+        console.log(`${prop.invoiceId}`, currentStatus);
         let isSubmitedByVendor =
           !prop.initWorkFLow && !isVendor && prop.markedAs == "unread";
         let isCorrectionRequiredInWorkflow =
@@ -302,49 +314,49 @@ export default function FilesListAr(props) {
           id: prop._id,
           invoiceId: prop.invoiceId,
           status: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {/* {isVendor ? ( */}
               {currentStatus.status == "rejected" ? (
-                <Tooltip title='REJECTED'>
+                <Tooltip title="REJECTED">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='REJECTED'
+                    label="REJECTED"
                     clickable
-                    color='secondary'
+                    color="secondary"
                   />
                 </Tooltip>
-              ) : (currentStatus.status == "correctionRequired" &&
+              ) : currentStatus.status == "correctionRequired" &&
                 isCorrectionRequiredInWorkflow ? (
-                <Tooltip title='SENT FOR CORRECTION'>
+                <Tooltip title="SENT FOR CORRECTION">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='SENT FOR CORRECTION'
+                    label="SENT FOR CORRECTION"
                     clickable
                     style={{ border: "orange 1px solid", color: "orange" }}
                   />
                 </Tooltip>
               ) : currentStatus.status == "rejected" ? (
-                <Tooltip title='REJECTED'>
+                <Tooltip title="REJECTED">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='REJECTED'
+                    label="REJECTED"
                     clickable
-                    color='secondary'
+                    color="secondary"
                   />
                 </Tooltip>
               ) : prop.trackingStatus.paid.status == "partial" ? (
-                <Tooltip title='PARTIALLY PAID'>
+                <Tooltip title="PARTIALLY PAID">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='PARTIALLY PAID'
+                    label="PARTIALLY PAID"
                     clickable
                     style={{
                       border: "lightgreen 1px solid",
@@ -353,84 +365,105 @@ export default function FilesListAr(props) {
                   />
                 </Tooltip>
               ) : prop.trackingStatus.paid.status == "completed" ? (
-                <Tooltip title='FULLY PAID'>
+                <Tooltip title="FULLY PAID">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='FULLY PAID'
+                    label="FULLY PAID"
                     clickable
                     style={{ border: "green 1px solid", color: "green" }}
                   />
                 </Tooltip>
-              ) : currentStatus.status == "readyToPay" ? (
-                <Tooltip title='READY TO PAY'>
+              ) : currentStatus.status == "readyToSend" ? (
+                <Tooltip title="Ready to Sent">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='READY TO PAY'
+                    label="READY TO SENT"
+                    clickable
+                    style={{ border: "blue 1px solid", color: "blue" }}
+                  />
+                </Tooltip>
+              ) : currentStatus.status == "sent" ? (
+                <Tooltip title="Sent">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="SENT"
                     clickable
                     style={{ border: "orange 1px solid", color: "orange" }}
                   />
                 </Tooltip>
-              ) : currentStatus.val == 0 ? (
-                <Tooltip title='DRAFT INVOICE'>
+              ) : currentStatus.status == "acknowledged" ? (
+                <Tooltip title="Sent & Acknowledged">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='DRAFT INVOICE'
+                    label="SENT & ACKNOWLEDGED"
+                    clickable
+                    style={{ border: "green 1px solid", color: "green" }}
+                  />
+                </Tooltip>
+              ) : currentStatus.val == 0 ? (
+                <Tooltip title="DRAFT INVOICE">
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    // avatar={<Avatar>M</Avatar>}
+                    label="DRAFT INVOICE"
                     clickable
                     style={{ border: "orange 1px solid", color: "orange" }}
                   />
                 </Tooltip>
               ) : currentStatus.val == 1 ? (
-                <Tooltip title='UNDER REVIEW'>
+                <Tooltip title="UNDER REVIEW">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='UNDER REVIEW'
+                    label="UNDER REVIEW"
                     clickable
-                    color='primary'
+                    color="primary"
                   />
                 </Tooltip>
               ) : currentStatus.val == 2 ? (
-                <Tooltip title='UNDER APPROVAL'>
+                <Tooltip title="UNDER APPROVAL">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='UNDER APPROVE'
+                    label="UNDER APPROVE"
                     clickable
-                    color='primary'
+                    color="primary"
                   />
                 </Tooltip>
               ) : currentStatus.val == 3 ? (
-                <Tooltip title='DONE'>
+                <Tooltip title="DONE">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='APPROVAL DONE'
+                    label="APPROVAL DONE"
                     clickable
                     style={{ border: "green 1px solid", color: "green" }}
                   />
                 </Tooltip>
               ) : (
-                <Tooltip title='NO STATUS'>
+                <Tooltip title="NO STATUS">
                   <Chip
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label='NO STATUS'
+                    label="NO STATUS"
                     clickable
-                    color='primary'
+                    color="primary"
                   />
                 </Tooltip>
-              ))
-              }
+              )}
             </MenuProvider>
           ),
           po: prop.po,
@@ -442,34 +475,34 @@ export default function FilesListAr(props) {
             ? "With Receipt"
             : "",
           createdDate: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.createdDate)}
             </MenuProvider>
           ),
           date: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {formatDate(prop.dueDate)}
             </MenuProvider>
           ),
           vendorName: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.clientName}
             </MenuProvider>
           ),
           customerName: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.organizationName}
             </MenuProvider>
           ),
           netAmt: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               <Tooltip
                 title={`${prop.LC_currency.Code} 1 ≈ ${prop.FC_currency.Code} ${
                   prop.conversionRate
                     ? parseFloat(prop.conversionRate).toFixed(4)
                     : ""
                 }`}
-                aria-label='conversionRate'
+                aria-label="conversionRate"
               >
                 <div>
                   {`${prop.FC_currency.Code} ${addZeroes(prop.netAmt)}`}
@@ -485,33 +518,33 @@ export default function FilesListAr(props) {
             </MenuProvider>
           ),
           version: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.version}
             </MenuProvider>
           ),
           reviewed: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.reviewStatus == "pending" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Pending} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : prop.reviewStatus == "reviewed" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Success} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : prop.reviewStatus == "rejected" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Rejected} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={NoStatus} alt={prop.reviewedStatus} />
                   </div>
                 </div>
@@ -519,28 +552,28 @@ export default function FilesListAr(props) {
             </MenuProvider>
           ),
           approved: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.approveStatus == "pending" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Pending} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : prop.approveStatus == "approved" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Success} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : prop.approveStatus == "rejected" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Rejected} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={NoStatus} alt={prop.approvedstatus} />
                   </div>
                 </div>
@@ -548,8 +581,8 @@ export default function FilesListAr(props) {
             </MenuProvider>
           ),
           actions: (
-            <div className='actions-right'>
-              <Tooltip title='View File' aria-label='viewfile'>
+            <div className="actions-right">
+              <Tooltip title="View File" aria-label="viewfile">
                 <Button
                   justIcon
                   round
@@ -558,13 +591,13 @@ export default function FilesListAr(props) {
                   onClick={() => {
                     viewFile(prop);
                   }}
-                  color='danger'
-                  className='Edit'
+                  color="danger"
+                  className="Edit"
                 >
                   <Visibility />
                 </Button>
               </Tooltip>
-              <Tooltip title='Add Task' aria-label='addtask'>
+              <Tooltip title="Add Task" aria-label="addtask">
                 <Button
                   justIcon
                   round
@@ -573,13 +606,13 @@ export default function FilesListAr(props) {
                   onClick={() => {
                     addFileTasks(prop);
                   }}
-                  color='info'
-                  className='Edit'
+                  color="info"
+                  className="Edit"
                 >
                   <PlaylistAddIcon />
                 </Button>
               </Tooltip>
-              <Tooltip title='Add Tags' aria-label='addtags'>
+              <Tooltip title="Add Tags" aria-label="addtags">
                 <Button
                   justIcon
                   round
@@ -588,14 +621,14 @@ export default function FilesListAr(props) {
                   onClick={() => {
                     addFileTags(prop);
                   }}
-                  color='info'
-                  className='Edit'
+                  color="info"
+                  className="Edit"
                 >
                   <LocalOffer />
                 </Button>
               </Tooltip>
               {prop.initWorkFlow && !isVendor ? (
-                <Tooltip title='BlockChain View' aria-label='blockChainView'>
+                <Tooltip title="BlockChain View" aria-label="blockChainView">
                   <Button
                     justIcon
                     round
@@ -604,8 +637,8 @@ export default function FilesListAr(props) {
                     onClick={() => {
                       viewBlockChainView(prop);
                     }}
-                    color='info'
-                    className='Edit'
+                    color="info"
+                    className="Edit"
                   >
                     <ClearAllIcon />
                   </Button>
@@ -614,7 +647,7 @@ export default function FilesListAr(props) {
                 ""
               )}
               {!isVendor ? (
-                <Tooltip title='XLRS FILE' aria-label='export'>
+                <Tooltip title="XLRS FILE" aria-label="export">
                   <Button
                     justIcon
                     round
@@ -623,8 +656,8 @@ export default function FilesListAr(props) {
                     onClick={() => {
                       exportToCSV(prop);
                     }}
-                    color='info'
-                    className='Edit'
+                    color="info"
+                    className="Edit"
                   >
                     <GetApp />
                   </Button>
@@ -632,7 +665,7 @@ export default function FilesListAr(props) {
               ) : (
                 ""
               )}
-              <Tooltip title='360&#176; View' aria-label='advanceDocumentView'>
+              <Tooltip title="360&#176; View" aria-label="advanceDocumentView">
                 <Button
                   justIcon
                   round
@@ -641,29 +674,29 @@ export default function FilesListAr(props) {
                   onClick={() => {
                     viewQrView(prop);
                   }}
-                  color='info'
-                  className='Edit'
+                  color="info"
+                  className="Edit"
                 >
                   <ViewModuleIcon />
                 </Button>
               </Tooltip>
-            
-              {prop.approveStatus !== "approved"? 
-                <Tooltip title={"Edit Invoice"} aria-label='received'>
+
+              {prop.approveStatus !== "approved" ? (
+                <Tooltip title={"Edit Invoice"} aria-label="received">
                   <Button
                     justIcon
                     round
                     simple
                     icon={EditOutlined}
                     onClick={() => editSelectedInvoice(prop, 1)}
-                    color='info'
+                    color="info"
                   >
                     <EditOutlined />
                   </Button>
                 </Tooltip>
-              :""}
-
-          
+              ) : (
+                ""
+              )}
             </div>
           ),
         };
@@ -739,7 +772,7 @@ export default function FilesListAr(props) {
         setIsLoading(false);
       });
   };
- 
+
   //Close Models
   const closeTagModal = () => {
     setTagModal(false);
@@ -976,7 +1009,7 @@ export default function FilesListAr(props) {
 
   //Right Click Menu
   const MyAwesomeMenu = () => (
-    <Menu id='menu_id' theme={theme.dark} animation={animation.zoom}>
+    <Menu id="menu_id" theme={theme.dark} animation={animation.zoom}>
       {!isVendor ? (
         <Item onClick={viewBlockChainViewFromAwesomeMenu}>
           <ClearAllIcon />
@@ -1003,21 +1036,20 @@ export default function FilesListAr(props) {
   );
   return (
     <div>
-       
       {/* View File */}
       {isViewing ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animatePdf}
         >
-          <GridContainer justify='center'>
+          <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>
                       Invoice:{" "}
                       {pdfModalData.invoiceId +
@@ -1026,7 +1058,7 @@ export default function FilesListAr(props) {
                     </h4>
                   </CardIcon>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -1054,10 +1086,10 @@ export default function FilesListAr(props) {
                   /> */}
                   <Iframe
                     url={pdfUrl}
-                    width='100%'
-                    id='myId'
+                    width="100%"
+                    id="myId"
                     allow="print 'none'; download 'none'"
-                    className='myClassname'
+                    className="myClassname"
                     height={window.screen.height}
                   />
                 </CardBody>
@@ -1071,21 +1103,21 @@ export default function FilesListAr(props) {
       {/* Open BlockChain View */}
       {isViewingBlockChainView ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateBlockChain}
         >
-          <GridContainer justify='center'>
+          <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>Blockchain View</h4>
                   </CardIcon>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -1106,7 +1138,7 @@ export default function FilesListAr(props) {
       )}
       {/* Tag Model */}
       {tagModal ? (
-        <GridContainer justify='center'>
+        <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -1119,11 +1151,11 @@ export default function FilesListAr(props) {
               TransitionComponent={Transition}
               keepMounted
               onClose={closeTagModal}
-              aria-labelledby='tag-modal-slide-title'
-              aria-describedby='tag-modal-slide-description'
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
             >
               <DialogContent
-                id='tag-modal-slide-description'
+                id="tag-modal-slide-description"
                 className={classes.modalBody}
               >
                 <FileTags closeTagModal={closeTagModal} fileData={row} />
@@ -1136,7 +1168,7 @@ export default function FilesListAr(props) {
       )}
       {/* Mark As Received Model */}
       {markAsReceivedModel ? (
-        <GridContainer justify='center'>
+        <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -1149,11 +1181,11 @@ export default function FilesListAr(props) {
               TransitionComponent={Transition}
               keepMounted
               onClose={closeMarkAsReceivedModel}
-              aria-labelledby='tag-modal-slide-title'
-              aria-describedby='tag-modal-slide-description'
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
             >
               <DialogContent
-                id='tag-modal-slide-description'
+                id="tag-modal-slide-description"
                 className={classes.modalBody}
               >
                 <FileReceived
@@ -1170,7 +1202,7 @@ export default function FilesListAr(props) {
       )}
       {/* Mark As Payment Model */}
       {initPaymentModel ? (
-        <GridContainer justify='center'>
+        <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -1179,16 +1211,16 @@ export default function FilesListAr(props) {
               }}
               fullWidth={true}
               maxWidth={"md"}
-              scroll='body'
+              scroll="body"
               open={initPaymentModel}
               TransitionComponent={Transition}
               keepMounted
               onClose={closePaymentModel}
-              aria-labelledby='tag-modal-slide-title'
-              aria-describedby='tag-modal-slide-description'
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
             >
               <DialogContent
-                id='tag-modal-slide-description'
+                id="tag-modal-slide-description"
                 className={classes.modalBody}
               >
                 <InitiatePayment
@@ -1205,7 +1237,7 @@ export default function FilesListAr(props) {
       )}
       {/* Mark As Payment Model */}
       {exportToFusionModel ? (
-        <GridContainer justify='center'>
+        <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -1214,16 +1246,16 @@ export default function FilesListAr(props) {
               }}
               fullWidth={true}
               maxWidth={"sm"}
-              scroll='body'
+              scroll="body"
               open={exportToFusionModel}
               TransitionComponent={Transition}
               keepMounted
               onClose={() => setExportToFusionModel(false)}
-              aria-labelledby='tag-modal-slide-title'
-              aria-describedby='tag-modal-slide-description'
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
             >
               <DialogContent
-                id='tag-modal-slide-description'
+                id="tag-modal-slide-description"
                 className={classes.modalBody}
               >
                 <ExportToFusion
@@ -1271,7 +1303,7 @@ export default function FilesListAr(props) {
       )} */}
       {/* Task Model */}
       {taskModal ? (
-        <GridContainer justify='center'>
+        <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -1284,11 +1316,11 @@ export default function FilesListAr(props) {
               TransitionComponent={Transition}
               keepMounted
               onClose={closeTaskModal}
-              aria-labelledby='tag-modal-slide-title'
-              aria-describedby='tag-modal-slide-description'
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
             >
               <DialogContent
-                id='tag-modal-slide-description'
+                id="tag-modal-slide-description"
                 className={classes.modalBody}
               >
                 <FileTasks closeTaskModal={closeTaskModal} fileData={row} />
@@ -1302,21 +1334,21 @@ export default function FilesListAr(props) {
       {/* Advance View Model */}
       {qrModal ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateQr}
         >
-          <GridContainer justify='center'>
+          <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>360&#176; View</h4>
                   </CardIcon>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -1337,7 +1369,7 @@ export default function FilesListAr(props) {
       )}
       {/* Init Workflow Model */}
       {initWorkFlowModal ? (
-        <GridContainer justify='center'>
+        <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -1347,15 +1379,15 @@ export default function FilesListAr(props) {
               fullWidth={true}
               maxWidth={"md"}
               open={initWorkFlowModal}
-              scroll='body'
+              scroll="body"
               TransitionComponent={Transition}
               keepMounted
               onClose={() => setInitWorkFlowModal(false)}
-              aria-labelledby='classic-modal-slide-title'
-              aria-describedby='classic-modal-slide-description'
+              aria-labelledby="classic-modal-slide-title"
+              aria-describedby="classic-modal-slide-description"
             >
               <DialogContent
-                id='classic-modal-slide-description'
+                id="classic-modal-slide-description"
                 className={classes.modalBody}
               >
                 <InitWorkflow
@@ -1408,8 +1440,8 @@ export default function FilesListAr(props) {
       )} */}
       {animateTable ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateTable}
@@ -1433,15 +1465,15 @@ export default function FilesListAr(props) {
           <GridContainer>
             <GridItem xs={12}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>{componentName}</h4>
                   </CardIcon>
                   <p style={{ color: "gray" }}>
                     Note: Right click on any file to see multiple options
                   </p>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -1450,7 +1482,7 @@ export default function FilesListAr(props) {
                     Filters
                   </Button>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -1459,16 +1491,21 @@ export default function FilesListAr(props) {
                     Export
                   </Button>
                   <Tooltip
-                  id="tooltip-top"
-                  title="Refresh"
-                  style={{ float: "right" }}
-                  placement="bottom"
-                  classes={{ tooltip: classes.tooltip }}
-                >
-                <Button onClick={()=>getMyFiles(userDetail, false)} simple color="info" justIcon>
-                    <Refresh className={classes.underChartIcons} />
-                  </Button>
-                </Tooltip>
+                    id="tooltip-top"
+                    title="Refresh"
+                    style={{ float: "right" }}
+                    placement="bottom"
+                    classes={{ tooltip: classes.tooltip }}
+                  >
+                    <Button
+                      onClick={() => getMyFiles(userDetail, false)}
+                      simple
+                      color="info"
+                      justIcon
+                    >
+                      <Refresh className={classes.underChartIcons} />
+                    </Button>
+                  </Tooltip>
                 </CardHeader>
                 <CardBody>
                   {isLoading ? (
@@ -1572,7 +1609,7 @@ export default function FilesListAr(props) {
                       defaultPageSize={10}
                       showPaginationTop
                       showPaginationBottom={true}
-                      className='-striped -highlight'
+                      className="-striped -highlight"
                     />
                   )}
                 </CardBody>
@@ -1585,8 +1622,8 @@ export default function FilesListAr(props) {
       )}
       {editInvoice ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={editInvoice}
@@ -1609,8 +1646,8 @@ export default function FilesListAr(props) {
         // onOpen={}
       >
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={showFiltersModel}

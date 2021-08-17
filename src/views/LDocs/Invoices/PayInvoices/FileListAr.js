@@ -66,7 +66,14 @@ import RateReview from "@material-ui/icons/RateReview";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import { addZeroes, formatDate, formatDateTime, successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
+import {
+  addZeroes,
+  formatDate,
+  formatDateTime,
+  successAlert,
+  errorAlert,
+  msgAlert,
+} from "views/LDocs/Functions/Functions";
 import {
   Menu,
   Item,
@@ -77,7 +84,7 @@ import {
   Submenu,
 } from "react-contexify";
 import "react-contexify/dist/ReactContexify.min.css";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import InitWorkflow from "../InitWorkflow/InitWorkflow";
 import Pending_Invoice from "assets/img/statuses/Asset_1.png";
@@ -110,13 +117,13 @@ const StyledBadge = withStyles((theme) => ({
   },
 }))(Badge);
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='down' ref={ref} {...props} />;
+  return <Slide direction="down" ref={ref} {...props} />;
 });
 const TransitionRight = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='right' ref={ref} {...props} />;
+  return <Slide direction="right" ref={ref} {...props} />;
 });
 const TransitionLeft = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='left' ref={ref} {...props} />;
+  return <Slide direction="left" ref={ref} {...props} />;
 });
 
 export default function PaymentListAr(props) {
@@ -124,7 +131,7 @@ export default function PaymentListAr(props) {
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
   const isAr = useSelector((state) => state.userReducer.isAr);
-  console.log('isAr', isAr);
+  console.log("isAr", isAr);
   const dispatch = useDispatch();
   let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
   let isVendor = userDetail.isVendor;
@@ -242,7 +249,7 @@ export default function PaymentListAr(props) {
       let userDetails = jwt.decode(Token);
       axios({
         method: "post", //you can set what request you want to be
-        url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoc`,
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/po/getPoAR`,
         data: {
           organizationId: userDetails.orgDetail.organizationId,
         },
@@ -251,11 +258,11 @@ export default function PaymentListAr(props) {
         },
       })
         .then((res) => {
-          resolve(res.data);
-          setPos(res.data);
+          resolve(res.data.result ? res.data.result : res.data ? res.data : []);
+          setPos(res.data.result ? res.data.result : res.data ? res.data : []);
           setFormState((formState) => ({
             ...formState,
-            pos: res.data,
+            pos: res.data.result ? res.data.result : res.data ? res.data : [],
           }));
         })
         .catch((error) => {
@@ -275,7 +282,7 @@ export default function PaymentListAr(props) {
     let userDetails = jwt.decode(Token);
     axios({
       method: "get",
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/vendor/vendorsByOrganization/${userDetails.orgDetail.organizationId}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/clientByOrganization/${userDetails.orgDetail.organizationId}`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -313,7 +320,7 @@ export default function PaymentListAr(props) {
       }));
       let files = formState.files;
       if (data.filters.supplierId && data.values.supplierId) {
-        files = files.filter((file) => file.vendorId == data.values.supplierId);
+        files = files.filter((file) => file.clientId == data.values.supplierId);
       }
 
       if (data.filters.poNumber && data.values.poNumber) {
@@ -436,7 +443,6 @@ export default function PaymentListAr(props) {
     setAnimateQr(false);
     setPdfModalData("");
   };
-  
 
   React.useEffect(() => {
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
@@ -462,50 +468,50 @@ export default function PaymentListAr(props) {
           id: prop._id,
           invoiceId: prop.invoiceId,
           status: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.markedAs == "unread" ? (
                 <Chip
                   style={{ background: "#deb725", color: "#fff" }}
-                  label='Pending'
+                  label="Pending"
                 />
               ) : prop.markedAs == "read" ? (
-                <Chip label='Received' color='primary' />
+                <Chip label="Received" color="primary" />
               ) : prop.markedAs == "rejected" ? (
-                <Chip color='secondary' label='Rejected' />
+                <Chip color="secondary" label="Rejected" />
               ) : (
                 ""
               )}
             </MenuProvider>
           ),
           createdDate: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.createdDate)}
             </MenuProvider>
           ),
           dueDate: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {formatDate(prop.dueDate)}
               <br />
               (Net-{prop.paymentTerms})
             </MenuProvider>
           ),
           balanceDue: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {`${prop.LC_currency.Code} ${addZeroes(prop.balanceDue)}`}
             </MenuProvider>
           ),
           vendorName: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.clientName}
             </MenuProvider>
           ),
           approvedDate: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {formatDateTime(prop.approved)}
             </MenuProvider>
           ),
           requester: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.createdByVendor ? "Supplier" : prop.createdBy.split("@")[0]}
             </MenuProvider>
           ),
@@ -520,19 +526,19 @@ export default function PaymentListAr(props) {
             // </MenuProvider>
           ),
           customerName: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.organizationName}
             </MenuProvider>
           ),
           netAmt: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               <Tooltip
                 title={`${prop.LC_currency.Code} 1 ≈ ${prop.FC_currency.Code} ${
                   prop.conversionRate
                     ? parseFloat(prop.conversionRate).toFixed(4)
                     : ""
                 }`}
-                aria-label='conversionRate'
+                aria-label="conversionRate"
               >
                 <div>
                   {prop.FC_currency && prop.LC_currency
@@ -548,33 +554,33 @@ export default function PaymentListAr(props) {
             </MenuProvider>
           ),
           version: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.version}
             </MenuProvider>
           ),
           reviewed: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.reviewStatus == "pending" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Pending} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : prop.reviewStatus == "reviewed" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Success} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : prop.reviewStatus == "rejected" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Rejected} alt={prop.reviewStatus} />
                   </div>
                 </div>
               ) : (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={NoStatus} alt={prop.reviewedStatus} />
                   </div>
                 </div>
@@ -582,28 +588,28 @@ export default function PaymentListAr(props) {
             </MenuProvider>
           ),
           approved: (
-            <MenuProvider data={prop} id='menu_id'>
+            <MenuProvider data={prop} id="menu_id">
               {prop.approveStatus == "pending" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Pending} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : prop.approveStatus == "approved" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Success} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : prop.approveStatus == "rejected" ? (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={Rejected} alt={prop.approvedstatus} />
                   </div>
                 </div>
               ) : (
-                <div className='fileinput text-center'>
-                  <div className='thumbnail img-circle2'>
+                <div className="fileinput text-center">
+                  <div className="thumbnail img-circle2">
                     <img src={NoStatus} alt={prop.approvedstatus} />
                   </div>
                 </div>
@@ -611,7 +617,7 @@ export default function PaymentListAr(props) {
             </MenuProvider>
           ),
           select: (
-            <div className='actions'>
+            <div className="actions">
               <Checkbox
                 disabled={formState.filter == "PaidInvoices"}
                 checked={isSelected}
@@ -620,9 +626,9 @@ export default function PaymentListAr(props) {
             </div>
           ),
           actions: (
-            <div className='actions-right'>
+            <div className="actions-right">
               {formState.filter != "PaidInvoices" ? (
-                <Tooltip title='Pay Invoice' aria-label='payInvoice'>
+                <Tooltip title="Pay Invoice" aria-label="payInvoice">
                   <Button
                     justIcon
                     round
@@ -631,8 +637,8 @@ export default function PaymentListAr(props) {
                     onClick={() => {
                       viewPaymentView(prop);
                     }}
-                    color='info'
-                    className='Edit'
+                    color="info"
+                    className="Edit"
                   >
                     <MonetizationOnIcon />
                   </Button>
@@ -640,7 +646,7 @@ export default function PaymentListAr(props) {
               ) : (
                 ""
               )}
-              <Tooltip title='View File' aria-label='viewfile'>
+              <Tooltip title="View File" aria-label="viewfile">
                 <Button
                   justIcon
                   round
@@ -649,13 +655,13 @@ export default function PaymentListAr(props) {
                   onClick={() => {
                     viewFile(prop);
                   }}
-                  color='danger'
-                  className='Edit'
+                  color="danger"
+                  className="Edit"
                 >
                   <Visibility />
                 </Button>
               </Tooltip>
-              <Tooltip title='BlockChain View' aria-label='blockChainView'>
+              <Tooltip title="BlockChain View" aria-label="blockChainView">
                 <Button
                   justIcon
                   round
@@ -664,13 +670,13 @@ export default function PaymentListAr(props) {
                   onClick={() => {
                     viewBlockChainView(prop);
                   }}
-                  color='info'
-                  className='Edit'
+                  color="info"
+                  className="Edit"
                 >
                   <ClearAllIcon />
                 </Button>
               </Tooltip>
-              <Tooltip title='360&#176; View' aria-label='advanceDocumentView'>
+              <Tooltip title="360&#176; View" aria-label="advanceDocumentView">
                 <Button
                   justIcon
                   round
@@ -679,8 +685,8 @@ export default function PaymentListAr(props) {
                   onClick={() => {
                     viewQrView(prop);
                   }}
-                  color='info'
-                  className='Edit'
+                  color="info"
+                  className="Edit"
                 >
                   <ViewModuleIcon />
                 </Button>
@@ -693,11 +699,11 @@ export default function PaymentListAr(props) {
   };
   //Get Files
   const getMyFiles = async (user, loading) => {
-    console.log('isAr', isAr);
+    console.log("isAr", isAr);
     setIsLoading(loading);
     axios({
       method: "get", //you can set what request you want to be
-      url:`${process.env.REACT_APP_LDOCS_API_URL}/AR/InvoiceDetailFinanceAR/${user.orgDetail.organizationId}/${formState.filter}`,
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/InvoiceDetailFinanceAR/${user.orgDetail.organizationId}/${formState.filter}`,
       data: { pagination: "30", page: "1" },
       headers: {
         cooljwt: Token,
@@ -755,7 +761,7 @@ export default function PaymentListAr(props) {
         setIsLoading(false);
       });
   };
- 
+
   const select = (invoice) => {
     let selectedInvoices = selected;
     if (!invoice) {
@@ -815,7 +821,7 @@ export default function PaymentListAr(props) {
   React.useEffect(() => {
     setTableData(filesData);
   }, [selected.length]);
-  
+
   React.useEffect(() => {
     let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
     getMyFiles(userDetail, true);
@@ -861,7 +867,7 @@ export default function PaymentListAr(props) {
   };
   //Right Click Menu
   const MyAwesomeMenu = () => (
-    <Menu id='menu_id' theme={theme.dark} animation={animation.zoom}>
+    <Menu id="menu_id" theme={theme.dark} animation={animation.zoom}>
       {!isVendor ? (
         <Item onClick={viewBlockChainViewFromAwesomeMenu}>
           <ClearAllIcon />
@@ -879,21 +885,20 @@ export default function PaymentListAr(props) {
   );
   return (
     <div>
-       
       {/* View File */}
       {isViewing ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animatePdf}
         >
-          <GridContainer justify='center'>
+          <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>
                       Invoice:
                       {pdfModalData.invoiceId +
@@ -902,7 +907,7 @@ export default function PaymentListAr(props) {
                     </h4>
                   </CardIcon>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -914,10 +919,10 @@ export default function PaymentListAr(props) {
                 <CardBody>
                   <Iframe
                     url={pdfUrl}
-                    width='100%'
-                    id='myId'
+                    width="100%"
+                    id="myId"
                     allow="print 'none'; download 'none'"
-                    className='myClassname'
+                    className="myClassname"
                     height={window.screen.height}
                   />
                 </CardBody>
@@ -940,13 +945,13 @@ export default function PaymentListAr(props) {
           TransitionComponent={Transition}
           keepMounted
           onClose={() => setPoModal(false)}
-          aria-labelledby='vendor-modal-slide-title'
-          aria-describedby='vendor-modal-slide-description'
+          aria-labelledby="vendor-modal-slide-title"
+          aria-describedby="vendor-modal-slide-description"
         >
-          <DialogContent id='vendorSelect' className={classes.modalBody}>
+          <DialogContent id="vendorSelect" className={classes.modalBody}>
             <Card>
-              <CardHeader color='info' icon>
-                <CardIcon color='info'>
+              <CardHeader color="info" icon>
+                <CardIcon color="info">
                   <h4 className={classes.cardTitleText}>Purchase Order</h4>
                 </CardIcon>
               </CardHeader>
@@ -971,21 +976,21 @@ export default function PaymentListAr(props) {
       {/* Open BlockChain View */}
       {isViewingBlockChainView ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateBlockChain}
         >
-          <GridContainer justify='center'>
+          <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>Blockchain View</h4>
                   </CardIcon>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -1006,7 +1011,7 @@ export default function PaymentListAr(props) {
       )}
       {/* Payment Modal */}
       {paymentModal ? (
-        <GridContainer justify='center'>
+        <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -1015,16 +1020,16 @@ export default function PaymentListAr(props) {
               }}
               fullWidth={true}
               maxWidth={"md"}
-              scroll='body'
+              scroll="body"
               open={paymentModal}
               TransitionComponent={Transition}
               keepMounted
               onClose={() => closePaymentModal()}
-              aria-labelledby='tag-modal-slide-title'
-              aria-describedby='tag-modal-slide-description'
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
             >
               <DialogContent
-                id='tag-modal-slide-description'
+                id="tag-modal-slide-description"
                 className={classes.modalBody}
               >
                 <InitiatePayment
@@ -1046,7 +1051,7 @@ export default function PaymentListAr(props) {
       )}
       {/* Mark As Payment Model */}
       {exportToFusionModel ? (
-        <GridContainer justify='center'>
+        <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={12} className={classes.center}>
             <Dialog
               classes={{
@@ -1055,16 +1060,16 @@ export default function PaymentListAr(props) {
               }}
               fullWidth={true}
               maxWidth={"sm"}
-              scroll='body'
+              scroll="body"
               open={exportToFusionModel}
               TransitionComponent={Transition}
               keepMounted
               onClose={() => setExportToFusionModel(false)}
-              aria-labelledby='tag-modal-slide-title'
-              aria-describedby='tag-modal-slide-description'
+              aria-labelledby="tag-modal-slide-title"
+              aria-describedby="tag-modal-slide-description"
             >
               <DialogContent
-                id='tag-modal-slide-description'
+                id="tag-modal-slide-description"
                 className={classes.modalBody}
               >
                 <PayInvoices
@@ -1081,21 +1086,21 @@ export default function PaymentListAr(props) {
       )}
       {qrModal ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateQr}
         >
-          <GridContainer justify='center'>
+          <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12} className={classes.center}>
               <Card>
-                <CardHeader color='info' icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
                     <h4 className={classes.cardTitleText}>360&#176; View</h4>
                   </CardIcon>
                   <Button
-                    color='danger'
+                    color="danger"
                     round
                     style={{ float: "right" }}
                     className={classes.marginRight}
@@ -1117,8 +1122,8 @@ export default function PaymentListAr(props) {
 
       {paymentPopup ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={paymentPopup}
@@ -1131,8 +1136,8 @@ export default function PaymentListAr(props) {
 
       {animateTable ? (
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={animateTable}
@@ -1142,8 +1147,8 @@ export default function PaymentListAr(props) {
           <GridContainer>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color='danger' stats icon>
-                  <CardIcon color='danger'>
+                <CardHeader color="danger" stats icon>
+                  <CardIcon color="danger">
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
@@ -1154,8 +1159,8 @@ export default function PaymentListAr(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title='To be Paid'>
-                      <Typography varient='body2' component='h2'>
+                    <Tooltip title="To be Paid">
+                      <Typography varient="body2" component="h2">
                         <Avatar
                           style={
                             formState.filter == "paymentInProcessCount"
@@ -1169,7 +1174,7 @@ export default function PaymentListAr(props) {
                             })
                           }
                         >
-                          <Done fontSize='large' />
+                          <Done fontSize="large" />
                         </Avatar>
                       </Typography>
                     </Tooltip>
@@ -1179,8 +1184,8 @@ export default function PaymentListAr(props) {
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color='info' stats icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" stats icon>
+                  <CardIcon color="info">
                     {/* <Store /> */}
                     <InsertDriveFileIcon />
                   </CardIcon>
@@ -1191,8 +1196,8 @@ export default function PaymentListAr(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title='Paid Invoices'>
-                      <Typography varient='body2' component='h2'>
+                    <Tooltip title="Paid Invoices">
+                      <Typography varient="body2" component="h2">
                         <Avatar
                           style={
                             formState.filter == "PaidInvoices"
@@ -1209,7 +1214,7 @@ export default function PaymentListAr(props) {
                             setFilter(1, { id: 0, val: "PaidInvoices" })
                           }
                         >
-                          <Done fontSize='large' />
+                          <Done fontSize="large" />
                         </Avatar>
                       </Typography>
                     </Tooltip>
@@ -1219,8 +1224,8 @@ export default function PaymentListAr(props) {
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color='danger' stats icon>
-                  <CardIcon color='danger'>
+                <CardHeader color="danger" stats icon>
+                  <CardIcon color="danger">
                     <CenterFocusWeakIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Partially Paid</p>
@@ -1228,8 +1233,8 @@ export default function PaymentListAr(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title='Weekly'>
-                      <Typography varient='body2' component='h2'>
+                    <Tooltip title="Weekly">
+                      <Typography varient="body2" component="h2">
                         <Avatar
                           style={
                             formState.filter == "partialPayWeek"
@@ -1249,8 +1254,8 @@ export default function PaymentListAr(props) {
                         </Avatar>
                       </Typography>
                     </Tooltip>
-                    <Tooltip title='Monthly'>
-                      <Typography varient='body2' component='h2'>
+                    <Tooltip title="Monthly">
+                      <Typography varient="body2" component="h2">
                         <Avatar
                           style={
                             formState.filter == "partialPayMonth"
@@ -1271,8 +1276,8 @@ export default function PaymentListAr(props) {
                         </Avatar>
                       </Typography>
                     </Tooltip>
-                    <Tooltip title='Above Month'>
-                      <Typography varient='body2' component='h2'>
+                    <Tooltip title="Above Month">
+                      <Typography varient="body2" component="h2">
                         <Avatar
                           style={
                             formState.filter == "partialPayMonthAfter"
@@ -1300,8 +1305,8 @@ export default function PaymentListAr(props) {
             </GridItem>
             <GridItem xs={12} sm={6} md={6} lg={3}>
               <Card>
-                <CardHeader color='info' stats icon>
-                  <CardIcon color='info'>
+                <CardHeader color="info" stats icon>
+                  <CardIcon color="info">
                     <CenterFocusStrongIcon />
                   </CardIcon>
                   <p className={classes.cardCategory}>Over Due</p>
@@ -1309,8 +1314,8 @@ export default function PaymentListAr(props) {
                 </CardHeader>
                 <CardFooter stats>
                   <div className={classes.stats}>
-                    <Tooltip title='Weekly'>
-                      <Typography varient='body2' component='h2'>
+                    <Tooltip title="Weekly">
+                      <Typography varient="body2" component="h2">
                         <Avatar
                           style={
                             formState.filter == "paymentOverDueWeek"
@@ -1331,8 +1336,8 @@ export default function PaymentListAr(props) {
                         </Avatar>
                       </Typography>
                     </Tooltip>
-                    <Tooltip title='Monthly'>
-                      <Typography varient='body2' component='h2'>
+                    <Tooltip title="Monthly">
+                      <Typography varient="body2" component="h2">
                         <Avatar
                           style={
                             formState.filter == "paymentOverDueMonth"
@@ -1352,8 +1357,8 @@ export default function PaymentListAr(props) {
                         </Avatar>
                       </Typography>
                     </Tooltip>
-                    <Tooltip title='Above Month'>
-                      <Typography varient='body2' component='h2'>
+                    <Tooltip title="Above Month">
+                      <Typography varient="body2" component="h2">
                         <Avatar
                           style={
                             formState.filter == "paymentOverDueMonthAfter"
@@ -1380,15 +1385,15 @@ export default function PaymentListAr(props) {
 
             <GridItem xs={12}>
               <Card>
-                <CardHeader color='danger' icon>
-                  <CardIcon color='danger'>
+                <CardHeader color="danger" icon>
+                  <CardIcon color="danger">
                     <h4 className={classes.cardTitleText}>{componentName}</h4>
                   </CardIcon>
                   <p style={{ color: "gray" }}>
                     Note: Right click on any file to see multiple options
                   </p>
                   <Button
-                    color='info'
+                    color="info"
                     round
                     style={{ float: "right", padding: "10x 0px" }}
                     className={classes.marginRight}
@@ -1481,7 +1486,7 @@ export default function PaymentListAr(props) {
                       defaultPageSize={10}
                       showPaginationTop
                       showPaginationBottom={true}
-                      className='-striped -highlight'
+                      className="-striped -highlight"
                     />
                   )}
                 </CardBody>
@@ -1499,8 +1504,8 @@ export default function PaymentListAr(props) {
         // onOpen={}
       >
         <Animated
-          animationIn='bounceInRight'
-          animationOut='bounceOutLeft'
+          animationIn="bounceInRight"
+          animationOut="bounceOutLeft"
           animationInDuration={1000}
           animationOutDuration={1000}
           isVisible={showFiltersModel}
@@ -1513,6 +1518,7 @@ export default function PaymentListAr(props) {
             closeModal={() => setShowFiltersModel(false)}
             setFilters={setFilter}
             isVendor={isVendor}
+            isAr={true}
           />
         </Animated>
       </SwipeableDrawer>
