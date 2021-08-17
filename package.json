@@ -2,7 +2,7 @@
   "name": "invoicemate",
   "version": "0.1.0",
   "private": true,
-  "author": "SPL",
+  "author": "SPL", 
   "dependencies": {
     "@amcharts/amcharts4": "^4.9.19",
     "@material-ui/core": "latest",
