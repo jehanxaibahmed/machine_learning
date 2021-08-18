@@ -339,9 +339,11 @@ export default function FileAdvanceView(props) {
                       ? "pointer"
                       : "",
                   background:
-                    step.EventStatus == "pending"
+                  step.EventStatus == "Ready To Send"
+                      ? "blue":
+                    step.EventStatus == "pending" || "Sent"
                       ? "#c1a12f"
-                      : step.EventStatus == "reviewed" || "approved"
+                      : step.EventStatus == "reviewed" || "approved" || "Acknowledged"
                       ? "green"
                       : "red",
                 }}

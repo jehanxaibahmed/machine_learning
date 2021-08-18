@@ -236,13 +236,7 @@ export default function HorizentalteppersAr(props) {
     {
       label: "Payment",
       remarks: props.fileData.trackingStatus.paid
-        ? props.fileData.trackingStatus.paid.status == "rejected"
-          ? "Rejected"
-          : props.fileData.trackingStatus.paid.status == "correctionRequired"
-          ? "Correction Required"
-          : props.fileData.trackingStatus.paid.status == "completed"
-          ? "Ready to Pay"
-          : props.fileData.trackingStatus.paid.status == "partial"
+        ? props.fileData.trackingStatus.paid.status == "partial"
           ? "Partially Paid"
           : props.fileData.trackingStatus.paid.status == "completed"
           ? "Fully Paid"
@@ -254,11 +248,6 @@ export default function HorizentalteppersAr(props) {
       status: props.fileData.trackingStatus.paid.status || null,
       comments: props.fileData.trackingStatus.paid.comment || null,
     },
-    // {
-    //   label: "Paid",
-    //   status: props.fileData.trackingStatus.paid.status || null,
-    //   comments: props.fileData.trackingStatus.paid.comment || null,
-    // },
   ]);
 
   React.useEffect(() => {

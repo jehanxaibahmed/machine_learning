@@ -127,7 +127,7 @@ export default function InitiatePayment(props) {
         successAlert("Payment Successful...");
       })
       .catch((err) => {
-        errorAlert("Payment Already Done");
+        errorAlert("Error in Payment ");
       });
   }
 
@@ -236,7 +236,7 @@ export default function InitiatePayment(props) {
         successAlert("Payment Successful...");
       })
       .catch((err) => {
-        errorAlert("Payment Already Done");
+        errorAlert("Error in Payment ");
       });
   }
 
@@ -436,7 +436,7 @@ export default function InitiatePayment(props) {
                         props.closeModal();
                       })
                       .catch((err) => {
-                        errorAlert("Payment Already Done");
+                        errorAlert("Error in Payment ");
                       });
                   }
                 });
