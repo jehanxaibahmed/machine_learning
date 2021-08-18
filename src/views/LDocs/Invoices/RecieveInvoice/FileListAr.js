@@ -115,13 +115,15 @@ const styles = {
 };
 //Filters
 const filters = [
-  { id: "draft", value: "Draft Invoice", id: 1 },
-  { id: "rejected", value: "Pending for Review", id: 3 },
-  { id: "pending", value: "Reviewed", id: 4 },
-  { id: "reviewed", value: "Pending For Approval", id: 5 },
-  { id: "rejected", value: "Approved", id: 6 },
-  { id: "pending", value: "Correction Required", id: 7 },
-  { id: "approved", value: "Rejected ", id: 8 },
+  { value: "Draft Invoice", id: 1 },
+  { value: "Pending For Review", id: 2 },
+  { value: "Reviewed", id: 3 },
+  { value: "Pending For Approval", id: 4 },
+  { value: "Approved", id: 5 },
+  { value: "Sent To Client", id: 6 },
+  { value: "Acknowledged", id: 7 },
+  { value: "Correction Required", id: 8 },
+  { value: "Rejected ", id: 9 },
 ];
 
 const useStyles = makeStyles(styles);
@@ -817,44 +819,30 @@ export default function FilesListAr(props) {
           statusFilter.map((s) => {
             //s = Filter Status
             const currentStatus = currentTrackingAr(f.trackingStatus);
-            //Waiting for Acceptance
+            //Draft
             if (
               s.id == 1 &&
-              currentStatus.val == 1 &&
-              currentStatus.status == "inProgress"
+              currentStatus.val == 0 
             ) {
               if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
                 //fi == If !exit in Filtered Files Push else !
                 filteredFiles.push(f);
               }
             }
-            //Accepted Intial Review
+            //Pending for Review
             if (
               s.id == 2 &&
-              currentStatus.val == 2 &&
-              currentStatus.status == "inProgress"
+              currentStatus.val == 1
             ) {
               if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
                 //fi == If !exit in Filtered Files Push else !
                 filteredFiles.push(f);
               }
             }
-            //Pending Review
+            // Review
             if (
               s.id == 3 &&
-              currentStatus.val == 2 &&
-              currentStatus.status == "inProgress"
-            ) {
-              if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
-                //fi == If !exit in Filtered Files Push else !
-                filteredFiles.push(f);
-              }
-            }
-            //Reviewed
-            if (
-              s.id == 4 &&
-              currentStatus.val == 3 &&
-              currentStatus.status == "inProgress"
+              currentStatus.val == 2
             ) {
               if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
                 //fi == If !exit in Filtered Files Push else !
@@ -863,9 +851,8 @@ export default function FilesListAr(props) {
             }
             //Pending Approval
             if (
-              s.id == 5 &&
-              currentStatus.val == 3 &&
-              currentStatus.status == "inProgress"
+              s.id == 4 &&
+              currentStatus.val == 2 
             ) {
               if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
                 //fi == If !exit in Filtered Files Push else !
@@ -874,9 +861,28 @@ export default function FilesListAr(props) {
             }
             //Approved
             if (
+              s.id == 5 &&
+              currentStatus.val == 3
+            ) {
+              if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
+                //fi == If !exit in Filtered Files Push else !
+                filteredFiles.push(f);
+              }
+            }
+             //Sent
+             if (
               s.id == 6 &&
-              currentStatus.val == 3 &&
-              currentStatus.status == "completed"
+              currentStatus.status == "sent"
+            ) {
+              if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
+                //fi == If !exit in Filtered Files Push else !
+                filteredFiles.push(f);
+              }
+            }
+             //Acknowledged
+             if (
+              s.id == 7 &&
+              currentStatus.status == "acknowledged"
             ) {
               if (filteredFiles.find((fi) => fi._id == f._id) == undefined) {
                 //fi == If !exit in Filtered Files Push else !
@@ -885,7 +891,7 @@ export default function FilesListAr(props) {
             }
             //Correction Required
             if (
-              (s.id == 7 && currentStatus.status == "correctionRequired") ||
+              (s.id == 8 && currentStatus.status == "correctionRequired") ||
               f.workFlowStatus == "correctionRequired"
             ) {
               if (filteredFiles.find((ff) => ff._id == f._id) == undefined) {
@@ -893,7 +899,7 @@ export default function FilesListAr(props) {
               }
             }
             //Rejected
-            if (s.id == 8 && currentStatus.status == "rejected") {
+            if (s.id == 9 && currentStatus.status == "rejected") {
               if (filteredFiles.find((ff) => ff._id == f._id) == undefined) {
                 filteredFiles.push(f);
               }

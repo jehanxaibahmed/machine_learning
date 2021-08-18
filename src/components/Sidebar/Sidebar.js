@@ -46,7 +46,7 @@ class SidebarWrapper extends React.Component {
   sidebarWrapper = React.createRef();
   constructor(props) {
     super(props);
-    this.state = props.isTabs
+    this.state = {}
     // if(props.isTabs){
     //   console.log("IN CONDITION");
     //   this.setState({ isTabs: true});

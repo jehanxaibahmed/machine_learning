@@ -10,7 +10,7 @@ import {
   Select,
   Input,
   FormControlLabel,
-  FormGroup
+  FormGroup,
 } from "@material-ui/core";
 
 import WarningIcon from "@material-ui/icons/Warning";
@@ -28,8 +28,12 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import Swal from 'sweetalert2'
-import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
+import Swal from "sweetalert2";
+import {
+  successAlert,
+  errorAlert,
+  msgAlert,
+} from "views/LDocs/Functions/Functions";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 //Redux
@@ -51,28 +55,29 @@ export default function Filter(props) {
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
   const isAr = useSelector((state) => state.userReducer.isAr);
-  const filters = isAr ? 
-  [
-    { id: "draft", value: "Draft Invoice", id: 1},
-    { id: "rejected", value: "Pending for Review", id: 3},
-    { id: "pending", value: "Reviewed", id: 4},
-    { id: "reviewed", value: "Pending For Approval", id: 5},
-    { id: "rejected", value: "Approved",id: 6},
-    { id: "pending", value: "Correction Required",id:7},
-    { id: "approved", value: "Rejected ",id:8},
-  ]
-  :
-  [
-    { id: "unread", value: "Pending for Acceptance", id: 1},
-    { id: "read", value: "Accepted (Initially Reviewed)", id: 2},
-    { id: "rejected", value: "Pending for Review", id: 3},
-    { id: "pending", value: "Reviewed", id: 4},
-    { id: "reviewed", value: "Pending For Approval", id: 5},
-    { id: "rejected", value: "Approved",id: 6},
-    { id: "pending", value: "Correction Required",id:7},
-    { id: "approved", value: "Rejected ",id:8},
-  ];
-  
+  const filters = isAr
+    ? [
+        { value: "Draft Invoice", id: 1 },
+        { value: "Pending For Review", id: 2 },
+        { value: "Reviewed", id: 3 },
+        { value: "Pending For Approval", id: 4 },
+        { value: "Approved", id: 5 },
+        { value: "Sent To Client", id: 6 },
+        { value: "Acknowledged", id: 7 },
+        { value: "Correction Required", id: 8 },
+        { value: "Rejected ", id: 9 },
+      ]
+    : [
+        { value: "Pending for Acceptance", id: 1 },
+        { value: "Accepted (Initially Reviewed)", id: 2 },
+        { value: "Pending for Review", id: 3 },
+        { value: "Reviewed", id: 4 },
+        { value: "Pending For Approval", id: 5 },
+        { value: "Approved", id: 6 },
+        { value: "Correction Required", id: 7 },
+        { value: "Rejected ", id: 8 },
+      ];
+
   const [customers, setCustomers] = useState([]);
   const decoded = jwt.decode(Token);
   const isVendor = props.isVendor;
@@ -109,7 +114,7 @@ export default function Filter(props) {
         partialPaid: false,
         fullPaid: false,
         notPaid: false,
-        invoiceType: null
+        invoiceType: null,
       },
     });
   };
@@ -144,7 +149,9 @@ export default function Filter(props) {
           setCustomers(response.data.organizations);
         })
         .catch((error) => {
-          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
           console.log(error);
         });
     }
@@ -347,7 +354,7 @@ export default function Filter(props) {
                   }
                   label="Pre-Payment"
                 />
-                 <FormControlLabel
+                <FormControlLabel
                   control={
                     <Checkbox
                       checked={formState.values.invoiceType == 2 ? true : false}
@@ -359,7 +366,7 @@ export default function Filter(props) {
                   }
                   label="With Receipt"
                 />
-                 <FormControlLabel
+                <FormControlLabel
                   control={
                     <Checkbox
                       checked={formState.values.invoiceType == 3 ? true : false}

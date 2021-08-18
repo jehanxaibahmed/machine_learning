@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles, LinearProgress, Typography, Box, List, ListItem, ListItemAvatar, Divider, Grid, Avatar, ListItemText } from "@material-ui/core";
+import styles from "assets/jss/material-dashboard-pro-react/views/gridSystemStyle";
 import GridContainer from "components/Grid/GridContainer.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
@@ -24,7 +25,7 @@ import { Animated } from "react-animated-css";
 import { formatDateTime } from "../Functions/Functions";
 
 
-const useStyles = makeStyles();
+const useStyles = makeStyles(styles);
 
  
 
