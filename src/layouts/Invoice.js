@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import cx from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDataAction, getNotification, getTasks, setDarkMode, setIsTokenExpired, setIsAr } from "../actions";
+import { getUserDataAction, getNotification, getTasks, setDarkMode, setIsTokenExpired, setIsAr,setTabVal } from "../actions";
 import {  Switch, Route, Redirect } from "react-router-dom";
 import addNotification from 'react-push-notification';
 // creates a beautiful scrollbar
@@ -60,6 +60,7 @@ const checkTimeCompare = (dat) => {
 
 export default function Dashboard(props) {
   const notifications = useSelector(state => state.userReducer.notifications);
+  const tabVal = useSelector(state => state.userReducer.tabVal);
   const isTokenExpired = useSelector(state => state.userReducer.isTokenExpired);
   const tasks = useSelector(state => state.userReducer.tasks);
   const { ...rest } = props;
@@ -132,9 +133,15 @@ export default function Dashboard(props) {
     let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : url.substring(url.lastIndexOf("/") + 1) == "ap"  ? false : null;
     if(is_Ar !== null){
       dispatch(setIsAr(is_Ar));
+      dispatch(setTabVal(is_Ar ? 1: 0));
     }
   }
  
+  const changeTabHandler = (val) => {
+    dispatch(setTabVal(val));
+  }
+
+
   const theme = createMuiTheme({
     palette: {
       type: darkmood ? "dark": "light"
@@ -321,6 +328,7 @@ export default function Dashboard(props) {
         color={color}
         bgColor={bgColor}
         miniActive={miniActive}
+        handleTabVal={changeTabHandler}
         {...rest}
       />
       <div className={mainPanelClasses} ref={mainPanel}>

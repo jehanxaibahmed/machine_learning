@@ -7,6 +7,7 @@ import axios from "axios";
 export default function AcknowledgedClient(props) {
   const logo = require("assets/img/logo_color.png");
     const [response, setResponse] = useState(null);
+    const [invoiceId, setInvoiceId] = useState("");
     //Get URl Params
     function getParameterByName(name, url) {
         if (!url) url = window.location.href;
@@ -23,6 +24,7 @@ export default function AcknowledgedClient(props) {
     let clientId = getParameterByName('clientId') ;
     let invoiceId = getParameterByName('invoiceId') ;
     let version = getParameterByName('version');
+    setInvoiceId(invoiceId);
     var body = {
         clientId,
         organizationId,
@@ -54,7 +56,7 @@ export default function AcknowledgedClient(props) {
             {response === true ?  "Acknowledged !" : response === false ? "Oops !":""}
           </Typography>
           <Typography variant="h6" component="h4">
-          {response === true ? "Invoice has been Acknowledged ." : response === false ? "Sorry, There is Some issue in Acknowledge Invoice . ":""}
+          {response === true ? `Thank you for acknowledging the Invoice Number  ${invoiceId} .` : response === false ? "Sorry, There is Some issue in Acknowledge Invoice . ":""}
           </Typography>
           <Typography variant="span" component="body2">
             For More Information Contact at : info@matesol.net

@@ -131,7 +131,7 @@ export const invoiceApRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/export",
+        path: "/export/ap",
         name: "Export Invoices",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -149,7 +149,7 @@ export const invoiceApRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/supplierledger",
+        path: "/supplierledger/ap",
         name: "Supplier 360",
         rtlName: "لوحة القيادة",
         icon: ReceiptIcon,
@@ -267,7 +267,7 @@ export const invoiceArRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/send_invoices",
+        path: "/send_invoices/ar",
         name: "Send Invoices",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -285,7 +285,7 @@ export const invoiceArRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/clientledger",
+        path: "/clientledger/ar",
         name: "Client 360",
         rtlName: "لوحة القيادة",
         icon: ReceiptIcon,

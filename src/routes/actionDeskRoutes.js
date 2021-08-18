@@ -63,7 +63,7 @@ export const actionApRoutes = [
     state: "FinanceDeskCollapse",
     views: [
       {
-        path: "/financeDashboard",
+        path: "/financeDashboard/ap",
         name: "AP ANALYTICS",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -72,7 +72,7 @@ export const actionApRoutes = [
         layout: "/action",
       },
       {
-        path: "/export",
+        path: "/export/ap",
         name: "Export Invoices",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",

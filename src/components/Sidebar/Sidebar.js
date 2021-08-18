@@ -32,6 +32,7 @@ import AdminNavbarLinks from "components/Navbars/AdminNavbarLinks.js";
 import sidebarStyle from "assets/jss/material-dashboard-pro-react/components/sidebarStyle.js";
 import avatar from "assets/img/avatar-2.png";
 import jwt from "jsonwebtoken";
+import { _IsAr } from "views/LDocs/Functions/Functions";
 
 var ps;
 
@@ -69,7 +70,7 @@ class SidebarWrapper extends React.Component {
     
   
   render() {
-    const { className, user, headerLinks, links, userData, tabValue, handleTabChange, isTabs, isAr } = this.props;
+    const { className, user, headerLinks, links, userData, tabValue,handleTabChange, isTabs, } = this.props;
     const a11yProps = (index) => {
       return {
         id: `simple-tab-${index}`,
@@ -150,13 +151,14 @@ class Sidebar extends React.Component {
       level1: "",
       isAr:props?.isAr,
       LogoutCheck: false,
-      tabValue:0,
+      tabValue: _IsAr() ? 1 :0,
       ...this.getCollapseStates(props.routes ? props.routes: []),
       ...this.getCollapseStates(props.aproutes ? props.aproutes: []),
       ...this.getCollapseStates(props.arroutes ? props.arroutes: []),
     };
   }
   handleTabChange = (event, newValue) => {
+    // this.props.handleTabVal(newValue);
     this.setState({ tabValue: newValue });
     let routes = this.props.aproutes;
     // this.createLinks(this.props.routes ? this.props.routes : newValue === 0 ? this.props.aproutes : routes)
@@ -648,7 +650,7 @@ class Sidebar extends React.Component {
               links={links}
               isAr={this.state.isAr}
               isTabs={arroutes && aproutes ? true : false}
-              tabValue={this.state.tabValue}
+              tabValue={this.props.tabVal}
               handleTabChange={this.handleTabChange}
             />
             {image !== undefined ? (
@@ -728,7 +730,8 @@ SidebarWrapper.propTypes = {
 function mapStateToProps(state) {
   return {
     userData: state.userReducer.userListData,
-    isAr : state.userReducer.isAr
+    isAr : state.userReducer.isAr,
+    tabVal : state.userReducer.tabVal
   };
 }
 export default connect(
