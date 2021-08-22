@@ -265,7 +265,7 @@ export default function FileAdvanceView(props) {
     setBlockChainData([]);
     setIsLoading(true);
     await getQrCode();
-    if (isAr) {
+    if (!isAr) {
       await getFileVersions();
     }
     await getPaymentData();
