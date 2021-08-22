@@ -94,7 +94,9 @@ export default function FileAdvanceView(props) {
   const getBlockChainData = async () => {
     await axios({
       method: "get", //you can set what request you want to be
-      url: isAr ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.clientId}-${fileData.invoiceId}-${fileData.version}` : `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.vendorId}-${fileData.invoiceId}-${fileData.version}`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.clientId}-${fileData.invoiceId}-${fileData.version}`
+        : `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.vendorId}-${fileData.invoiceId}-${fileData.version}`,
     })
       .then((response) => {
         if (response.data.InvoiceWorkflowHistory.length !== 0) {
@@ -118,7 +120,9 @@ export default function FileAdvanceView(props) {
   const getPaymentData = async () => {
     await axios({
       method: "get", //you can set what request you want to be
-      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/payment/getPaymentsByInvoiceAR/${fileData.organizationId}/${fileData.invoiceId}/${fileData.version}` :  `${process.env.REACT_APP_LDOCS_API_URL}/payment/getPaymentsByInvoice/${fileData.organizationId}/${fileData.invoiceId}/${fileData.version}`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/payment/getPaymentsByInvoiceAR/${fileData.organizationId}/${fileData.invoiceId}/${fileData.version}`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/payment/getPaymentsByInvoice/${fileData.organizationId}/${fileData.invoiceId}/${fileData.version}`,
     })
       .then((response) => {
         if (response.data.length !== 0) {
@@ -233,12 +237,14 @@ export default function FileAdvanceView(props) {
     setMarkModal(false);
     axios({
       method: "post", //you can set what request you want to be
-      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: row.invoiceId,
         version: row.version,
-        vendorId:  isAr ?  null : row.vendorId,
-        clientId:  isAr ? row.clientId: null,
+        vendorId: isAr ? null : row.vendorId,
+        clientId: isAr ? row.clientId : null,
       },
       headers: {
         cooljwt: Token,
@@ -339,11 +345,21 @@ export default function FileAdvanceView(props) {
                       ? "pointer"
                       : "",
                   background:
-                  step.EventStatus == "Ready To Send"
-                      ? "blue":
-                    step.EventStatus == "pending" || "Sent"
+                    step.EventStatus.toUpperCase() == "READY TO SEND"
+                      ? "blue"
+                      : step.EventStatus.toUpperCase() == "PENDING"
                       ? "#c1a12f"
-                      : step.EventStatus == "reviewed" || "approved" || "Acknowledged"
+                      : step.EventStatus.toUpperCase() == "PAID"
+                      ? "green"
+                      : step.EventStatus.toUpperCase() == "PARTIALLY PAID"
+                      ? "#c1a12f"
+                      : step.EventStatus.toUpperCase() == "SENT"
+                      ? "#c1a12f"
+                      : step.EventStatus.toUpperCase() == "REVIEWED"
+                      ? "green"
+                      : step.EventStatus.toUpperCase() == "APPROVED"
+                      ? "green"
+                      : step.EventStatus.toUpperCase() == "ACKNOWLEDGED"
                       ? "green"
                       : "red",
                 }}
@@ -530,12 +546,12 @@ export default function FileAdvanceView(props) {
               <GridItem xs={12} sm={12} md={4} lg={4}>
                 <List className={classesList.list}>
                   <ListItemText
-                    primary={isAr ? "Client ID":"Supplier ID"}
+                    primary={isAr ? "Client ID" : "Supplier ID"}
                     secondary={isAr ? fileData.clientId : fileData.vendorId}
                   />
                   <ListItemText
-                    primary={isAr ? "Client Name"  : "Supplier Name"}
-                    secondary={isAr ? fileData.clientName :  fileData.vendorName}
+                    primary={isAr ? "Client Name" : "Supplier Name"}
+                    secondary={isAr ? fileData.clientName : fileData.vendorName}
                   />
                   <ListItemText
                     onClick={() => console.log("SHOW PO")}
@@ -568,33 +584,36 @@ export default function FileAdvanceView(props) {
                 style={{ textAlign: "center" }}
               >
                 <GridContainer>
-                  {!isAr ? 
-                  <GridItem xs={12} sm={12} md={12} lg={12}>
-                    <FormControl
-                      variant="outlined"
-                      className={classes.formControl}
-                    >
-                      <InputLabel id="demo-simple-select-outlined-label">
-                        Invoice Version
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-outlined"
-                        value={version}
-                        style={{ width: 150 }}
-                        onChange={Changehandler}
-                        label="Version"
+                  {!isAr ? (
+                    <GridItem xs={12} sm={12} md={12} lg={12}>
+                      <FormControl
+                        variant="outlined"
+                        className={classes.formControl}
                       >
-                        {versions.map((vrsn) => {
-                          return (
-                            <MenuItem key={vrsn.version} value={vrsn.version}>
-                              Version {vrsn.version}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </FormControl>
-                  </GridItem>:""}
+                        <InputLabel id="demo-simple-select-outlined-label">
+                          Invoice Version
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={version}
+                          style={{ width: 150 }}
+                          onChange={Changehandler}
+                          label="Version"
+                        >
+                          {versions.map((vrsn) => {
+                            return (
+                              <MenuItem key={vrsn.version} value={vrsn.version}>
+                                Version {vrsn.version}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                  ) : (
+                    ""
+                  )}
                   <GridItem xs={12} sm={12} md={12} lg={12}>
                     <CopyToClipboard
                       text={`${process.env.REACT_APP_LDOCS_API_SELF_URL}/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`}
