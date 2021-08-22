@@ -242,10 +242,10 @@ export default function Register(props) {
           props.setFilters(formState.values.organizationName);
           setFormState((formState) => ({
             ...formState,
-            message: "Company has been successfully registered!",
+            message: "Location has been successfully Added!",
             isRegistering: false,
           }));
-          msg = "Company Registered Successfully!";
+          msg = "Location Added Successfully!";
           successAlert(msg);
         })
         .catch((error) => {
@@ -304,7 +304,7 @@ export default function Register(props) {
         <Card>
           <CardHeader color="info" icon>
             <CardIcon color="info">
-              <h4 className={classes.cardTitle}>Add Company</h4>
+              <h4 className={classes.cardTitle}>Add Location</h4>
             </CardIcon>
           </CardHeader>
           <CardBody>
@@ -322,10 +322,10 @@ export default function Register(props) {
                     error={formState.errors.companyName === "error"}
                     helperText={
                       formState.errors.companyName === "error"
-                        ? "Valid company name is required"
+                        ? "Valid location name is required"
                         : null
                     }
-                    label="Company Name"
+                    label="Location Name"
                     id="companyName"
                     name="companyName"
                     onChange={(event) => {

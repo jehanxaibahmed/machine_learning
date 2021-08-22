@@ -441,7 +441,7 @@ export default function Department() {
                           accessor: "organizationName",
                         },
                         {
-                          Header: "Company Name",
+                          Header: "Location Name",
                           accessor: "companyName",
                         },
                         {

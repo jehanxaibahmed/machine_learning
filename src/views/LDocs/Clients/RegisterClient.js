@@ -664,7 +664,7 @@ export default function RegisterClient(props) {
                 type="button"
                 onClick={handleRegister}
               >
-                Register Client
+                Register
               </Button>
               {formState.isRegistering ? (
                 <CircularProgress disableShrink />

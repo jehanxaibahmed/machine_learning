@@ -56,7 +56,7 @@ export default function AuthNavbar(props) {
         >
           <Fingerprint className={classes.listItemIcon} />
           <ListItemText
-            primary={"Supplier Zone"}
+            primary={"S-ZONE"}
             disableTypography={true}
             className={classes.listItemText}
           />
@@ -72,7 +72,7 @@ export default function AuthNavbar(props) {
         >
           <Fingerprint className={classes.listItemIcon} />
           <ListItemText
-            primary={"AP Zone"}
+            primary={"O-ZONE"}
             disableTypography={true}
             className={classes.listItemText}
           />
@@ -88,7 +88,7 @@ export default function AuthNavbar(props) {
         >
           <Fingerprint className={classes.listItemIcon} />
           <ListItemText
-            primary={"Register Client"}
+            primary={"Register"}
             disableTypography={true}
             className={classes.listItemText}
           />

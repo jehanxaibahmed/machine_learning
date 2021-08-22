@@ -386,7 +386,7 @@ export default function Title() {
                           accessor: "organizationName",
                         },
                         {
-                          Header: "Company Name",
+                          Header: "Location Name",
                           accessor: "companyName",
                         },
                         {

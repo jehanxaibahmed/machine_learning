@@ -1248,10 +1248,10 @@ const createWorkflow = () => {
                         fullWidth={true}
                         helperText={
                           formState.errors.companyName === "error"
-                            ? "Company name is required"
+                            ? "Location Name is required"
                             : null
                         }
-                        label="Company Name"
+                        label="Location Name"
                         name="companyName"
                         onChange={(event) => {
                           handleChange(event);
@@ -1475,7 +1475,7 @@ const createWorkflow = () => {
                         fullWidth={true}
                         helperText={
                           formState.errors.outsideCompanyName === "error"
-                            ? "Company Name is required"
+                            ? "Location Name is required"
                             : null
                         }
                         label="Compnay Name"

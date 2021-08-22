@@ -90,7 +90,7 @@ export default function LoginPage(props) {
                 className={`${classes.cardHeader} ${classes.textCenter}`}
                 color="info"
               >
-                <h4 className={classes.cardTitle}>AP Zone</h4>
+                <h4 className={classes.cardTitle}>O-ZONE</h4>
               </CardHeader>
               <CardBody>
                 <CustomInput

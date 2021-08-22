@@ -49,7 +49,7 @@ export default function BuildNetwork() {
     {}
     ,
     {
-      stepName: "Level 2 - Company",
+      stepName: "Level 2 - Locations",
       stepComponent: Step2,
       stepId: "account",
     },
