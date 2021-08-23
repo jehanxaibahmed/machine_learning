@@ -664,7 +664,7 @@ export default function FinanceDashboard() {
                 <CardHeader color="info" icon>
                   <CardText color="info">
                     <h4 className={classes.cardTitleWhite}>
-                      {isAr ?"Top 5 Clients By Sales" : "Top 5 Vendors By Purchases !"}
+                      {isAr ?"Top 5 Customers By Sales" : "Top 5 Vendors By Purchases !"}
                     </h4>
                   </CardText>
                 </CardHeader>
@@ -681,7 +681,7 @@ export default function FinanceDashboard() {
                 <CardHeader color="danger" icon>
                   <CardText color="danger">
                     <h4 className={classes.cardTitleWhite}>
-                      {isAr ?"Top 5 Clients By Amount Due !" :"Top 5 Vendors By Amount Due !"}
+                      {isAr ?"Top 5 Customers By Amount Due !" :"Top 5 Vendors By Amount Due !"}
                     </h4>
                   </CardText>
                 </CardHeader>

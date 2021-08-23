@@ -143,7 +143,7 @@ export default function Step2({ invoices, loading, openAdvanceView }) {
                   variant="outlined"
                   size="small"
                   // avatar={<Avatar>M</Avatar>}
-                  label="SENT TO CLIENT"
+                  label="SENT TO CUSTOMER"
                   clickable
                   style={{ border: "orange 1px solid", color: "orange" }}
                 />

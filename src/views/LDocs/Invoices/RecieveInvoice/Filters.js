@@ -62,7 +62,7 @@ export default function Filter(props) {
         { value: "Reviewed", id: 3 },
         { value: "Pending For Approval", id: 4 },
         { value: "Approved", id: 5 },
-        { value: "Sent To Client", id: 6 },
+        { value: "Sent To Customer", id: 6 },
         { value: "Acknowledged", id: 7 },
         { value: "Correction Required", id: 8 },
         { value: "Rejected ", id: 9 },

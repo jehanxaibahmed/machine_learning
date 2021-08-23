@@ -107,7 +107,7 @@ export default function Client() {
       headers: { cooljwt:Token},
     })
       .then((response) => {
-        let msg = "Client Status Changed Successfully!";
+        let msg = "Customer Status Changed Successfully!";
         successAlert(msg);
         getVendors(status.organizationId, true);
       }).catch((err)=>{
@@ -251,7 +251,7 @@ export default function Client() {
                    </Button>
                  </Tooltip> */}
                   <Tooltip
-                    title="View Client"
+                    title="View Customer"
                     aria-label="viewvendor"
                   >
                     <Button
@@ -374,7 +374,7 @@ export default function Client() {
                 <TextField
                   className={classes.textField}
                   fullWidth={true}
-                  label="Select Organization To See Clients"
+                  label="Select Organization To See Customers"
                   name="organizationFilter"
                   onChange={(event) => {
                     handleOrgFilter(event);
@@ -410,7 +410,7 @@ export default function Client() {
             <Card>
               <CardHeader color="info" icon>
                 <CardIcon color="info">
-                  <h4 className={classes.cardTitleText}>Client List</h4>
+                  <h4 className={classes.cardTitleText}>Customer List</h4>
                 </CardIcon>
                 <Button
                   color="danger"
@@ -419,7 +419,7 @@ export default function Client() {
                   style={{ float: "right" }}
                   onClick={() => setClassicModal(true)}
                 >
-                  Add New Client
+                  Add New Customer
                 </Button>
               </CardHeader>
               <CardBody>
@@ -431,11 +431,11 @@ export default function Client() {
                     sortable={false}
                     columns={[
                       {
-                        Header: "Client ID",
+                        Header: "Customer ID",
                         accessor: "id",
                       },
                       {
-                        Header: "Client Name",
+                        Header: "Customer Name",
                         accessor: "vendorName",
                       },
                       {

@@ -286,7 +286,7 @@ export const invoiceArRoutes = [
       },
       {
         path: "/clientledger/ar",
-        name: "Client 360",
+        name: "Customer 360",
         rtlName: "لوحة القيادة",
         icon: ReceiptIcon,
         component: Receivable,

@@ -277,10 +277,10 @@ export default function RegisterClient(props) {
           props.setFilters(formState.orgs.find(org=>org.organizationName == formState.values.organizationName))
           setFormState((formState) => ({
             ...formState,
-            message: "Client has been successfully registered! Check Mail and Activate Client Account.",
+            message: "Customer has been successfully registered! Check Mail and Activate Customer Account.",
             isRegistering: false,
           }));
-          msg = "Client Registered Successfully!  Check Mail and Activate Client Account.";
+          msg = "Customer Registered Successfully!  Check Mail and Activate Customer Account.";
           successAlert(msg);
         })
         .catch((error) => {
@@ -408,10 +408,10 @@ export default function RegisterClient(props) {
                     error={formState.errors.vendorName === "error"}
                     helperText={
                       formState.errors.vendorName === "error"
-                        ? "Valid Client name is required"
+                        ? "Valid Customer name is required"
                         : null
                     }
-                    label="Client Name"
+                    label="Customer Name"
                     id="vendorName"
                     name="vendorName"
                     onChange={(event) => {
@@ -576,10 +576,10 @@ export default function RegisterClient(props) {
                     error={formState.errors.supplierSite === "error"}
                     helperText={
                       formState.errors.supplierSite === "error"
-                        ? "Valid Client Site is required"
+                        ? "Valid Customer Site is required"
                         : null
                     }
-                    label="Client Site"
+                    label="Customer Site"
                     id="supplierSite"
                     name="supplierSite"
                     onChange={(event) => {

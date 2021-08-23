@@ -120,7 +120,7 @@ const filters = [
   { value: "Reviewed", id: 3 },
   { value: "Pending For Approval", id: 4 },
   { value: "Approved", id: 5 },
-  { value: "Sent To Client", id: 6 },
+  { value: "Sent To Customer", id: 6 },
   { value: "Acknowledged", id: 7 },
   { value: "Correction Required", id: 8 },
   { value: "Rejected ", id: 9 },
@@ -394,7 +394,7 @@ export default function FilesListAr(props) {
                     variant="outlined"
                     size="small"
                     // avatar={<Avatar>M</Avatar>}
-                    label="SENT TO CLIENT"
+                    label="SENT TO CUSTOMER"
                     clickable
                     style={{ border: "orange 1px solid", color: "orange" }}
                   />
@@ -1539,7 +1539,7 @@ export default function FilesListAr(props) {
                                 accessor: "createdDate",
                               },
                               {
-                                Header: "Client Name",
+                                Header: "Customer Name",
                                 accessor: "vendorName",
                               },
                               {

@@ -134,7 +134,7 @@ export default function Filter(props) {
                 <TextField
                     className={classes.textField}
                     fullWidth={true}
-                    label={isAr ?"Client Name" : "Supplier Name"}
+                    label={isAr ?"Customer Name" : "Supplier Name"}
                     name="supplierId"
                     defaultValue={0}
                     select

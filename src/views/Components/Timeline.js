@@ -63,7 +63,7 @@ export default function Validator(props) {
           <TimelineOppositeContent>
             <Paper elevation={3} className={classes.paper}>
               <Typography variant="h6" component="h2">
-                {isAr && key == "Vendor ID" ? "Client ID" : key}
+                {isAr && key == "Vendor ID" ? "Customer ID" : key}
               </Typography>
               {value.onChainName ? (
                 <Tooltip title={value.onChain}>
@@ -87,7 +87,7 @@ export default function Validator(props) {
           <TimelineContent>
             <Paper elevation={3} className={classes.paper}>
               <Typography variant="h6" component="h2">
-              {isAr && key == "Vendor ID" ? "Client ID" : key}
+              {isAr && key == "Vendor ID" ? "Customer ID" : key}
               </Typography>
               {value.offChainName ? (
                 <Tooltip title={value.offChain}>

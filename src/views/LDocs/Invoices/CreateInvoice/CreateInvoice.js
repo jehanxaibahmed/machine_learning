@@ -409,7 +409,7 @@ export default function CreateInvoice(props) {
     const Check = require("is-null-empty-or-undefined").Check;
     if (Check(formState.selectedVendor) || Check(formState.values.poNumber)) {
       errorAlert(
-        `Please Select Valid ${isAr ? "Client" : "Vendor"} and PO Number`
+        `Please Select Valid ${isAr ? "Customer" : "Vendor"} and PO Number`
       );
     } else {
       const userDetails = jwt.decode(Token);
@@ -449,7 +449,7 @@ export default function CreateInvoice(props) {
     const Check = require("is-null-empty-or-undefined").Check;
     if (Check(formState.selectedVendor) || Check(formState.values.poNumber)) {
       errorAlert(
-        `Please Select Valid ${isAr ? "Client" : "Vendor"} and PO Number`
+        `Please Select Valid ${isAr ? "Customer" : "Vendor"} and PO Number`
       );
     } else {
       const userDetails = jwt.decode(Token);
@@ -2346,7 +2346,7 @@ export default function CreateInvoice(props) {
                           {isVendor
                             ? "Select Customer"
                             : isAr
-                            ? "Select Client"
+                            ? "Select Customer"
                             : "Select Supplier"}
                         </h4>
                       </CardIcon>
@@ -2372,14 +2372,14 @@ export default function CreateInvoice(props) {
                                 helperText={
                                   formState.errors.selectedVendor === "error"
                                     ? isAr
-                                      ? "Valid Client Name is required"
+                                      ? "Valid Customer Name is required"
                                       : "Valid Supplier Name is required"
                                     : null
                                 }
                                 className={classes.textField}
                                 fullWidth={true}
                                 label={
-                                  isAr ? "Select Client" : "Select Supplier"
+                                  isAr ? "Select Customer" : "Select Supplier"
                                 }
                                 name="selectedVendor"
                                 onChange={(event) => {
@@ -2394,7 +2394,7 @@ export default function CreateInvoice(props) {
                                     root: classes.selectMenuItem,
                                   }}
                                 >
-                                  {isAr ? "Choose Client" : "Choose Supplier"}
+                                  {isAr ? "Choose Customer" : "Choose Supplier"}
                                 </MenuItem>
                                 {formState.vendors
                                   ? formState.vendors.map((vendor, index) => {
@@ -2460,7 +2460,7 @@ export default function CreateInvoice(props) {
                                     helperText={
                                       formState.errors.site === "error"
                                         ? isAr
-                                          ? "Valid Client Site is required"
+                                          ? "Valid Customer Site is required"
                                           : "Valid Supplier Site is required"
                                         : null
                                     }
@@ -2468,7 +2468,7 @@ export default function CreateInvoice(props) {
                                     fullWidth={true}
                                     label={
                                       isAr
-                                        ? "Select Client Site"
+                                        ? "Select Customer Site"
                                         : "Select Supplier Site"
                                     }
                                     name="site"
@@ -2485,7 +2485,7 @@ export default function CreateInvoice(props) {
                                       }}
                                     >
                                       {isAr
-                                        ? "Choose Client Site"
+                                        ? "Choose Customer Site"
                                         : "Choose Supplier Site"}
                                     </MenuItem>
                                     {VendorSites.map((site, index) => {
@@ -2637,7 +2637,7 @@ export default function CreateInvoice(props) {
                             {isVendor
                               ? "Select Customer"
                               : isAr
-                              ? "Select Client"
+                              ? "Select Customer"
                               : "Select Supplier"}
                           </Button>
                         </GridItem>
@@ -2794,10 +2794,10 @@ export default function CreateInvoice(props) {
                               ) : (
                                 <div>
                                   <Typography variant="h6" component="h2">
-                                    {isAr ? "Client Name" : "Supplier Name"}
+                                    {isAr ? "Customer Name" : "Supplier Name"}
                                   </Typography>
                                   <Typography variant="body2" component="h2">
-                                    {isAr ? "Client Site" : "Supplier Site"}
+                                    {isAr ? "Customer Site" : "Supplier Site"}
                                   </Typography>
                                 </div>
                               )}

@@ -220,7 +220,7 @@ export default function HorizentalteppersAr(props) {
       comments: props.fileData.trackingStatus.underApprove.comment || null,
     },
     {
-      label: "Client Status",
+      label: "Customer Status",
       remarks: props.fileData.trackingStatus.sentToClient
         ? props.fileData.trackingStatus.sentToClient.status == "readyToSend"
           ? "Ready To Send"

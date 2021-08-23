@@ -194,7 +194,7 @@ export default function Invoice({ data, viewInvoice }) {
                   variant="outlined"
                   size="small"
                   // avatar={<Avatar>M</Avatar>}
-                  label="SENT TO CLIENT"
+                  label="SENT TO CUSTOMER"
                   clickable
                   style={{ border: "orange 1px solid", color: "orange" }}
                 />

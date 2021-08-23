@@ -403,7 +403,7 @@ export default function AgingReport() {
                       >
                         <TableHead>
                           <TableRow>
-                            <StyledTableCell>{isAr ? "Client":"Supplier"}</StyledTableCell>
+                            <StyledTableCell>{isAr ? "Customer":"Supplier"}</StyledTableCell>
                             <StyledTableCell></StyledTableCell>
                             <StyledTableCell align="right">
                               Outstanding
