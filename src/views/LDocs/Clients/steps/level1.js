@@ -39,7 +39,7 @@ export default function Step1(props) {
                 >
                   <TextField
                     fullWidth={true}
-                    label="Client Name"
+                    label="Customer Name"
                     id="name"
                     name="name"
                     type="text"
@@ -142,7 +142,7 @@ export default function Step1(props) {
                 >
                   <TextField
                     fullWidth={true}
-                    label="Client Site"
+                    label="Customer Site"
                     id="supplierSite"
                     name="supplierSite"
                    

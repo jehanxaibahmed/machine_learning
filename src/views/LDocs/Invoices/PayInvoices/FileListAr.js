@@ -1449,7 +1449,7 @@ export default function PaymentListAr(props) {
                           accessor: "dueDate",
                         },
                         {
-                          Header: "Client Name",
+                          Header: "Customer Name",
                           accessor: "vendorName",
                         },
                         {

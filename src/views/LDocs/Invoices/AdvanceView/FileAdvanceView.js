@@ -549,11 +549,11 @@ export default function FileAdvanceView(props) {
               <GridItem xs={12} sm={12} md={4} lg={4}>
                 <List className={classesList.list}>
                   <ListItemText
-                    primary={isAr ? "Client ID" : "Supplier ID"}
+                    primary={isAr ? "Customer ID" : "Supplier ID"}
                     secondary={isAr ? fileData.clientId : fileData.vendorId}
                   />
                   <ListItemText
-                    primary={isAr ? "Client Name" : "Supplier Name"}
+                    primary={isAr ? "Customer Name" : "Supplier Name"}
                     secondary={isAr ? fileData.clientName : fileData.vendorName}
                   />
                   <ListItemText

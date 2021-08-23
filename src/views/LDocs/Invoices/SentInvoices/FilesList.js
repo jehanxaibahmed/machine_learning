@@ -616,7 +616,7 @@ export default function SentInvoices(props) {
               {formState.filter == "acknowledgedCount" ? (
                 <React.Fragment>
                   <Tooltip
-                    title="Notify Client"
+                    title="Notify Customer"
                     aria-label="advanceDocumentView"
                   >
                     <Button
@@ -950,7 +950,7 @@ export default function SentInvoices(props) {
                 <ExportToFusion
                   closeModal={() => setExportToFusionModel(false)}
                   fileData={row}
-                  title="SENT TO CLIENT"
+                  title="SENT TO CUSTOMER"
                   export={formState.export || 1}
                   loadFiles={getMyFiles}
                 />
@@ -1054,7 +1054,7 @@ export default function SentInvoices(props) {
                   <CardIcon color="danger">
                     <CenterFocusWeakIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Sent To Client</p>
+                  <p className={classes.cardCategory}>Sent To Customer</p>
                   <h3 className={classes.cardTitle}>{formState.sentCount}</h3>
                 </CardHeader>
                 <CardFooter stats>
@@ -1187,7 +1187,7 @@ export default function SentInvoices(props) {
                             : msgAlert("Please Select a Invoice.")
                         }
                       >
-                        Sent to Client ({selected.length})
+                        Sent to Customer ({selected.length})
                       </Button>
                     </React.Fragment>
                   ) : (
@@ -1234,7 +1234,7 @@ export default function SentInvoices(props) {
                           accessor: "dueDate",
                         },
                         {
-                          Header: "Client Name",
+                          Header: "Customer Name",
                           accessor: "vendorName",
                         },
                         {

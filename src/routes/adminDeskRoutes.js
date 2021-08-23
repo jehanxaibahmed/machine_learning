@@ -70,7 +70,7 @@ var adminRoutes = [
       },
       {
         path: "/client",
-        name: "Client",
+        name: "Customer",
         icon: PeopleIcon,
         component: Client,
         layout: "/admin",
