@@ -181,10 +181,12 @@ export default function FileAdvanceView(props) {
 
   //Get Validator
   const getValidator = async () => {
+    if(fileData.approveStatus == "approved"){
     await validateInvoice(fileData, Token, isAr).then((res) => {
       console.log(res);
       setValidation(res);
     });
+  }
   };
 
   //Get File version
@@ -270,7 +272,7 @@ export default function FileAdvanceView(props) {
       await getFileVersions();
     }
     await getPaymentData();
-    if (!isVendor) {
+    if (!isVendor ) {
       await getValidator();
     }
 

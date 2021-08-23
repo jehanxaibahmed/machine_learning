@@ -273,7 +273,7 @@ export default function Receivable(props) {
                           className={classes.cardCategory}
                           style={{ color: "grey" }}
                         >
-                          {isVendor ? "CUSTOMER" : "VENDOR / CUSTOMER"}
+                           {isVendor ? "CUSTOMER" : "CLIENT"}
                         </h4>
                         <Divider style={{ background: "grey" }} />
                         <TextField
@@ -282,7 +282,7 @@ export default function Receivable(props) {
                           label={
                             isVendor
                               ? "Select Customer"
-                              : "Select Vendor / Customer"
+                              : "Select Client"
                           }
                           className={classes.root}
                           name="cusven"
@@ -299,7 +299,7 @@ export default function Receivable(props) {
                               root: classes.selectMenuItem,
                             }}
                           >
-                            {isVendor ? "Select Customer" : "Select Vendor"}
+                            {isVendor ? "Select Customer" : "Select Client"}
                           </MenuItem>
                          {componentState.vendors.map((ven, index) => {
                                 return (

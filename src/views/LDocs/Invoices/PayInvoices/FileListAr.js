@@ -515,16 +515,11 @@ export default function PaymentListAr(props) {
               {prop.createdByVendor ? "Supplier" : prop.createdBy.split("@")[0]}
             </MenuProvider>
           ),
-          poNumber: (
+          poNumber: 
             // <MenuProvider  data={prop} id="menu_id">
-            <div
-              style={{ color: "blue", cursor: "pointer" }}
-              onClick={() => viewPO(prop.po)}
-            >
-              {prop.po}
-            </div>
+              prop.po
             // </MenuProvider>
-          ),
+          ,
           customerName: (
             <MenuProvider data={prop} id="menu_id">
               {prop.organizationName}

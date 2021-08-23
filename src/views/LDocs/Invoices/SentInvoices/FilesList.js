@@ -220,7 +220,7 @@ export default function SentInvoices(props) {
       },
     })
       .then(async (response) => {
-        notify("SENT Successfully");
+        successAlert("SENT Successfully");
       })
       .catch((error) => {
         if (error.response) {

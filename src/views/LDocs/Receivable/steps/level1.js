@@ -42,6 +42,7 @@ export default function Step1({ transactions, loading, isVendor, openAdvanceView
           invoiceId : prop.invoiceId,
           version : prop.version,
           vendorId : prop.vendorId,
+          clientId:prop.clientId
         };
         return {
           paymentID: prop.paymentID,
