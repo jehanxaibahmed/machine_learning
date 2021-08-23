@@ -808,14 +808,16 @@ export default function SentInvoices(props) {
         }));
         let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
         await getMyFiles(userDetail, false);
-
         setExportToFusionModel(false);
+        successAlert(n == 1 ? "SENT Successfully" : "Sent For Payment");
         notify(n == 1 ? "SENT Successfully" : "Sent For Payment");
       })
       .catch((error) => {
         if (error.response) {
           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
+        setExportToFusionModel(false);
+        errorAlert("Issue in sending invoice .");
         console.log(error);
       });
   };

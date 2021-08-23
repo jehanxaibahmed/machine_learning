@@ -205,11 +205,20 @@ export const invoiceArRoutes = [
       },
       {
         path: "/invoices/ar",
-        name: "Sent Invoice",
+        name: "Invoices",
         rtlName: "عالتسعير",
         icon: SystemUpdateIcon,
         rtlMini: "ع",
         component: FilesListAr,
+        layout: "/invoice",
+      },
+      {
+        path: "/send_invoices/ar",
+        name: "Send Invoices",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: SystemUpdateIcon,
+        component: SentList,
         layout: "/invoice",
       },
       // {
@@ -264,15 +273,6 @@ export const invoiceArRoutes = [
         rtlMini: "ر",
         icon: EqualizerIcon,
         component: FinanceDashboard,
-        layout: "/invoice",
-      },
-      {
-        path: "/send_invoices/ar",
-        name: "Send Invoices",
-        rtlName: "انهيار متعدد المستويات",
-        rtlMini: "ر",
-        icon: SystemUpdateIcon,
-        component: SentList,
         layout: "/invoice",
       },
       {
