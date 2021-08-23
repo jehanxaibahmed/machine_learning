@@ -449,13 +449,13 @@ export default function AgingReport() {
                                 </StyledTableCell>
                                 <StyledTableCell align="right">
                                   {formState.agingData[0].orgCurrency.Code}{" "}
-                                  {addZeroes(formState.sum.outstanding_sum)}
+                                  {addZeroes(formState.sum.outstanding_sum).toFixed(2)}
                                 </StyledTableCell>
                                 <StyledTableCell align="right">
                                   {formState.agingData[0].orgCurrency.Code}{" "}
                                   {addZeroes(
                                     formState.sum.total_due_Amount_sum
-                                  )}
+                                  ).toFixed(2)}
                                 </StyledTableCell>
                                 <StyledTableCell align="right">
                                   {formState.agingData[0].orgCurrency.Code}{" "}

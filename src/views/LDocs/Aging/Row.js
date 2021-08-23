@@ -86,31 +86,31 @@ export default function Row({ data, intervals, viewVendor, viewInvoice }) {
 
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {`${data.outstanding ? addZeroes(data.outstanding) : 0}`}
+          {`${data.outstanding ? addZeroes(data.outstanding).toFixed(2) : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {`${data.totalamtdue ? addZeroes(data.totalamtdue) : 0}`}
+          {`${data.totalamtdue ? addZeroes(data.totalamtdue).toFixed(2) : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {`${data["col_1"] ? addZeroes(data["col_1"]) : 0}`}
+          {`${data["col_1"] ? addZeroes(data["col_1"]).toFixed(2) : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {`${data["col_2"] ? addZeroes(data["col_2"]) : 0}`}
+          {`${data["col_2"] ? addZeroes(data["col_2"]).toFixed(2) : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>
-          {` ${data["col_3"] ? addZeroes(data["col_3"]) : 0}`}
+          {` ${data["col_3"] ? addZeroes(data["col_3"]).toFixed(2) : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {` ${data["col_4"] ? addZeroes(data["col_4"]) : 0}`}
+          {` ${data["col_4"] ? addZeroes(data["col_4"]).toFixed(2) : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {`${data["col_5"] ? addZeroes(data["col_5"]) : 0}`}
+          {`${data["col_5"] ? addZeroes(data["col_5"]).toFixed(2) : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <Tooltip title="360&#176; View" aria-label="advanceDocumentView">
