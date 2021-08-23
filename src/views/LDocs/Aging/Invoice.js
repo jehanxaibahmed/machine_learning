@@ -41,7 +41,7 @@ import DescriptionIcon from "@material-ui/icons/Description";
 import Row from "./Row";
 import { useHistory } from "react-router-dom";
 import Graph from "./Graph";
-import { addZeroes, currentTracking } from "../Functions/Functions";
+import { addZeroes, currentTracking, currentTrackingAr } from "../Functions/Functions";
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -103,7 +103,7 @@ export default function Invoice({ data, viewInvoice }) {
   const Check = require("is-null-empty-or-undefined").Check;
 
   const classes = useStyles();
-  var currentStatus = currentTracking(data.trackingStatus);
+  var currentStatus = currentTrackingAr(data.trackingStatus);
   let isCorrectionRequiredInWorkflow =
     data.workFlowStatus == "correctionRequired";
   return (
