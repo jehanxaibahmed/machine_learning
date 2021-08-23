@@ -504,6 +504,7 @@ export default function Invoice({ data, viewInvoice }) {
                 invoiceId: data.invoiceId,
                 version: data.version,
                 vendorId: data.vendorId,
+                clientId:data.clientId
               });
             }}
             color="info"

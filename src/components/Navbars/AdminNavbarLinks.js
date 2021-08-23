@@ -40,7 +40,7 @@ import styles from "assets/jss/material-dashboard-pro-react/components/adminNavb
 import DeleteRecord from "../../views/LDocs/DeleteRecords/DeleteRecord";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import DeviceUUID,{ formatDateTime } from "../../views/LDocs/Functions/Functions";
+import DeviceUUID,{ formatDateTime, _IsAr } from "../../views/LDocs/Functions/Functions";
 import jwt from "jsonwebtoken";
 import { setToken } from "actions";
 let uuid = new DeviceUUID().get();
@@ -294,7 +294,7 @@ export default function HeaderLinks(props) {
       </Tooltip> */}
       {!userData.isVendor ?
       <Tooltip   title="Verifier" aria-label="verify">
-        <Link to="verifier" style={{color: props.isDarkmode?'#fff':"#555555"}}>
+        <Link to={_IsAr() == true ? "../verifier/ar" : _IsAr() == false ? "../verifier/ap": "verifier"} style={{color: props.isDarkmode?'#fff':"#555555"}}>
           <Button
             color="transparent"
             simple
@@ -316,7 +316,7 @@ export default function HeaderLinks(props) {
         </Link>
       </Tooltip>:''}
       <Tooltip title="Dashboard" aria-label="dashboard">
-      <Link to="dashboard" style={{color: props.isDarkmode?'#fff':"#555555"}}>
+      <Link to={_IsAr() == true ? "../dashboard/ar" : _IsAr() == false ? "../dashboard/ap" : "dashboard"} style={{color: props.isDarkmode?'#fff':"#555555"}}>
       <Button
         color="transparent"
         simple
