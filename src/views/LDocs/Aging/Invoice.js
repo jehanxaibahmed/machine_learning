@@ -103,7 +103,7 @@ export default function Invoice({ data, viewInvoice }) {
   const Check = require("is-null-empty-or-undefined").Check;
 
   const classes = useStyles();
-  var currentStatus = currentTrackingAr(data.trackingStatus);
+  var currentStatus = isAr ? currentTrackingAr(data.trackingStatus) :  currentTracking(data.trackingStatus);
   let isCorrectionRequiredInWorkflow =
     data.workFlowStatus == "correctionRequired";
   return (
