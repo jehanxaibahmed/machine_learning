@@ -1523,7 +1523,7 @@ export default function CreateInvoice(props) {
       setIsSavingInvoice(false);
       return false;
     } else {
-      if (edit && !isVendor) {
+      if (edit && !isVendor && !isAr) {
         setMarkAsReceivedModel(true);
       } else {
         createInvoice();
@@ -1681,12 +1681,12 @@ export default function CreateInvoice(props) {
     //Axios Call
     axios({
       method: "post",
-      // method: edit ? "put" : "post",
-      // url: edit
-      //   ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
-      //   : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
       url: isEdit
-        ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
+        ? 
+         isAr? 
+          `${process.env.REACT_APP_LDOCS_API_URL}/AR/updateInvoiceAR`
+          :
+          `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
         : isAr
         ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/submitInvoiceAR`
         : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,

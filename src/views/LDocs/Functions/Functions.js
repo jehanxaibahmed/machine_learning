@@ -412,8 +412,8 @@ export const validateInvoice = async (row, Token, isAr) => {
                   isSame: isInvoiceDateSame,
                 },
                 "Vendor ID": {
-                  onChain: blockchain.VendorID,
-                  offChain: invoice.vendorId,
+                  onChain: isAr ? blockchain.clientID : blockchain.VendorID,
+                  offChain: isAr ?  invoice.clientId : invoice.vendorId ,
                   isSame: isVendorIDSame,
                   onChainName: BlockchainNames.vendorName || null,
                   offChainName: InvoiceNames.vendorName || null,
@@ -438,7 +438,7 @@ export const validateInvoice = async (row, Token, isAr) => {
                   offChainName: InvoiceNames.organizationName || null,
                 },
                 "Discount Percentage": {
-                  onChain: `${blockchain.discountPercentage}%`,
+                  onChain: `${ isAr ? blockchain.discountPercent :  blockchain.discountPercentage}%`,
                   offChain: `${invoice.discountPercent}%`,
                   isSame: isDiscountPercentageSame,
                 },
