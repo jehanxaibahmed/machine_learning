@@ -222,7 +222,7 @@ export default function InitiatePayment(props) {
             parseFloat(formState.values.paidAmount),
       paymentMethod: "manual",
       transactionFee: "1",
-      referenceInfo:formState.values.referenceInfo
+      referenceInfo:formState.values.refernce
     };
     axios({
       method: "post",
