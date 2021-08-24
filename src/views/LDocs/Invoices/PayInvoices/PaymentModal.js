@@ -72,12 +72,14 @@ export default function InitiatePayment(props) {
       paymentBy: "",
       paymentType: "full",
       currencyType: 1,
+      refernce:""
     },
     errors: {
       paidAmount: "",
       paymentBy: "",
       paymentType: "",
       currencyType: "",
+      refernce:""
     },
   });
 
@@ -209,17 +211,18 @@ export default function InitiatePayment(props) {
       paymentID: "",
       payerID: "",
       paymentType: formState.values.paymentType,
-      currencyType: formState.values.currencyType,
+      currencyType: 1,
       orderId: "",
-      paymentGateway: formState.values.paymentBy,
+      paymentGateway: "manual",
       currencyCode: props.fileData.LC_currency.Code,
       balanceDue:
         formState.values.paymentType == "full"
           ? 0
           : parseFloat(props.fileData.balanceDue) -
             parseFloat(formState.values.paidAmount),
-      paymentMethod: formState.values.paymentBy,
+      paymentMethod: "manual",
       transactionFee: "1",
+      referenceInfo:formState.values.referenceInfo
     };
     axios({
       method: "post",
@@ -238,7 +241,7 @@ export default function InitiatePayment(props) {
       .catch((err) => {
         errorAlert("Error in Payment ");
       });
-  }
+  };
 
   const getPaymentMethods = () => {
     axios({
@@ -657,42 +660,47 @@ export default function InitiatePayment(props) {
                   ) : (
                     ""
                   )}
-                  <GridItem
-                    xs={12}
-                    sm={12}
-                    md={12}
-                    lg={12}
-                    style={{
-                      marginTop: "10px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <TextField
-                      className={classes.textField}
-                      fullWidth={true}
-                      label="Payment In"
-                      name="currencyType"
-                      select
-                      onChange={(event) => {
-                        handleChange(event);
+                  {!isAr ? (
+                    <GridItem
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      style={{
+                        marginTop: "10px",
+                        marginBottom: "10px",
                       }}
-                      value={formState.values.currencyType || ""}
                     >
-                      <MenuItem
-                        disabled
-                        classes={{
-                          root: classes.selectMenuItem,
+                      <TextField
+                        className={classes.textField}
+                        fullWidth={true}
+                        label="Payment In"
+                        name="currencyType"
+                        select
+                        onChange={(event) => {
+                          handleChange(event);
                         }}
+                        value={formState.values.currencyType || ""}
                       >
-                        Choose Currency Type
-                      </MenuItem>
-                      <MenuItem value={1}>Fiat Payment</MenuItem>
-                      <MenuItem disabled={isAr} value={2}>
-                        Crypto Payment
-                      </MenuItem>
-                    </TextField>
-                  </GridItem>
-
+                        <MenuItem
+                          disabled
+                          classes={{
+                            root: classes.selectMenuItem,
+                          }}
+                        >
+                          Choose Currency Type
+                        </MenuItem>
+                        <MenuItem value={1}>Fiat Payment</MenuItem>
+                        <MenuItem disabled={isAr} value={2}>
+                          Crypto Payment
+                        </MenuItem>
+                      </TextField>
+                    </GridItem>
+                  ) : (
+                    ""
+                  )}
+                  {!isAr ? (
+                    <React.Fragment>
                   <GridItem
                     xs={9}
                     sm={9}
@@ -733,7 +741,7 @@ export default function InitiatePayment(props) {
                           parseInt(formState.values.currencyType)
                         )
                       ).map((p) => (
-                        <MenuItem disabled={isAr} value={p.serviceName}>
+                        <MenuItem  value={p.serviceName}>
                           <div className="fileinput text-right">
                             <div className="" style={{ marginTop: 20 }}>
                               {`${p.serviceName.toUpperCase()} ${
@@ -741,28 +749,11 @@ export default function InitiatePayment(props) {
                               }`}
                             </div>
                           </div>
-                          {/* <div className="fileinput text-right">
-                            <div className="" style={{ marginTop: 20 }}>
-                              <img
-                                height="26px"
-                                width="120px"
-                                src=
-                                {`${process.env.REACT_APP_LDOCS_API_URL}/${p.serviceName.toUpperCase()}`}
-                                alt={p.serviceName}
-                              />
-                            </div>
-                          </div> */}
                         </MenuItem>
                       ))}
-                      <MenuItem disabled={!isAr} value="manual">
-                        <div className="fileinput text-right">
-                          <div className="" style={{ marginTop: 20 }}>
-                            Manual Input
-                          </div>
-                        </div>
-                      </MenuItem>
                     </TextField>
                   </GridItem>
+                 
                   <GridItem
                     xs={3}
                     sm={3}
@@ -794,6 +785,30 @@ export default function InitiatePayment(props) {
                       </div>
                     </div>
                   </GridItem>
+                  </React.Fragment>
+                   ):
+                   <GridItem
+                   xs={12}
+                   sm={12}
+                   md={12}
+                   lg={12}
+                   style={{
+                     marginTop: "10px",
+                     marginBottom: "10px",
+                   }}
+                 >
+                   <TextField
+                     className={classes.textField}
+                     type="text"
+                     fullWidth={true}
+                     label="Reference"
+                     name="refernce"
+                     multiline
+                     value={formState.values.refernce}
+                     onChange={handleChange}
+                   ></TextField>
+                 </GridItem>
+                   }
                 </React.Fragment>
               )}
             </GridContainer>
@@ -839,25 +854,25 @@ export default function InitiatePayment(props) {
                 ) : (
                   ""
                 )}
-                {formState.values.paymentBy == "manual" ? (
+                {isAr ? (
                   <React.Fragment>
-                  <Button
-                    round
-                    onClick={payNow}
-                    color="danger"
-                    className="Edit"
-                  >
-                    Pay Now
-                  </Button>
-                   <Button
-                   round
-                   onClick={()=>props.closeModal()}
-                   color="info"
-                   className="Edit"
-                 >
-                   Close
-                 </Button>
-                 </React.Fragment>
+                    <Button
+                      round
+                      onClick={payNow}
+                      color="danger"
+                      className="Edit"
+                    >
+                      Pay Now
+                    </Button>
+                    <Button
+                      round
+                      onClick={() => props.closeModal()}
+                      color="info"
+                      className="Edit"
+                    >
+                      Close
+                    </Button>
+                  </React.Fragment>
                 ) : (
                   ""
                 )}
@@ -866,9 +881,7 @@ export default function InitiatePayment(props) {
             ) : (
               ""
             )}
-            {paymentInProcess? 
-            <CircularProgress />:""  
-            }
+            {paymentInProcess ? <CircularProgress /> : ""}
           </CardBody>
         </Card>
       </GridItem>
