@@ -15,6 +15,7 @@ import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
 import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
 import ReceiptIcon from "@material-ui/icons/Receipt";
+import PieChartIcon from '@material-ui/icons/PieChart';
 //Components
 
 import FilesList from "views/LDocs/Invoices/RecieveInvoice/FilesList";
@@ -38,6 +39,8 @@ import Payable from "views/LDocs/Payable/Payable";
 import AgingReport from "views/LDocs/Aging/AgingReport";
 import TimerIcon from "@material-ui/icons/Timer";
 import Receivable from "views/LDocs/Receivable/Receivable";
+import Reports from "views/LDocs/Reports/Reports";
+import Cashflow from "views/LDocs/Cashflow/Cashflow";
 
 const Token = localStorage.getItem("cooljwt");
 let decoded = jwt.decode(Token);
@@ -316,7 +319,22 @@ export const invoiceArRoutes = [
 
 
 export const invoiceDefaultRoutes = [
- 
+  //Removed Name just to not show in Sidebar
+  {
+    path: "/cashflow",
+    rtlName: "لوحة القيادة",
+    icon: PieChartIcon,
+    component: Cashflow,
+    layout: "/invoice",
+  },
+  {
+    path: "/reports",
+    name: "Reports",
+    rtlName: "لوحة القيادة",
+    icon: PieChartIcon,
+    component: Reports,
+    layout: "/invoice",
+  },
   {
     path: "/notifications",
     name: "Notifications",
