@@ -67,6 +67,7 @@ const styles = {
     ...cardTitle,
     marginTop: "15px",
     marginBottom: "0px",
+    color: "black",
   },
   cardTitleText: {
     color: "white",
@@ -94,15 +95,30 @@ export default function Cashflow() {
   const [isLoading, setisLoading] = React.useState(true);
   const classes = useStyles();
   const [statistics, setStatistics] = React.useState({
-    data:null,
+    data: null,
     cashflow: {
       options: {
-        colors:['#5A2C66', '#9E2654'],
+        colors: ["#5A2C66", "#9E2654"],
         chart: {
           id: "basic-bar",
         },
         xaxis: {
-          categories: ["Jan 2021", "Feb 2021", "March 2021", "April 2021", "May 2021", "Jun 2021", "Junly 2021", "Aug 2021", "Sep 2021", "Oct 2021", "Nov 2021", "Dec 2021"],
+          categories: [
+            "Jan",
+            "Feb",
+            "March",
+            "April",
+            "May",
+            "Jun",
+            "July",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ].map((m) => {
+            return m.concat(" " + new Date().getFullYear());
+          }),
         },
       },
       series: [
@@ -111,40 +127,37 @@ export default function Cashflow() {
           data: [30, 43344, 45, 50, 49, 4360, 70, 9341, 103, 300, 5443, 5342],
         },
         {
-            name: "Expense",
-            data: [30, 40, 45, 3450, 449, 60, 70, 91, 3232, 6676, 443543, 345435],
-          },
+          name: "Expense",
+          data: [30, 40, 45, 3450, 449, 60, 70, 91, 3232, 6676, 443543, 345435],
+        },
       ],
     },
   });
   const dispatch = useDispatch();
 
-
-  
-
-  React.useEffect(async ()=>{
+  React.useEffect(async () => {
     setisLoading(true);
     await axios({
       method: "post",
       url: `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/cashFlowDashBoard`,
-      data:{
-        organizationId : decoded.orgDetail.organizationId
+      data: {
+        organizationId: decoded.orgDetail.organizationId,
       },
       headers: { cooljwt: Token },
     })
       .then((response) => {
-    setisLoading(false);
+        setisLoading(false);
         console.log(response);
         setGraphData(response ? response.data : []);
       })
       .catch((error) => {
-    setisLoading(false);
+        setisLoading(false);
         console.log(error);
         // if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
         setGraphData([]);
         console.log(error);
       });
-  },[])
+  }, []);
 
   // {arPaidAmount: Array(0), apPaidAmount: Array(0), APvsAR: '', arMonthlyPaid: Array(0), apMonthlyPaid: Array(0), …}
   return (
@@ -168,8 +181,8 @@ export default function Cashflow() {
                 {isLoading ? (
                   <LinearProgress />
                 ) : (
-                  <h3 className={classes.cardTitle}>
-                    {graphData?.arPaidAmount[0] || 0}
+                  <h3 className={classes.cardTitle} style={{ color: "black" }}>
+                    {graphData?.arPaidAmount?.[0] || 0}
                   </h3>
                 )}
               </CardHeader>
@@ -192,8 +205,8 @@ export default function Cashflow() {
                 {isLoading ? (
                   <LinearProgress />
                 ) : (
-                  <h3 className={classes.cardTitle}>
-                    {graphData?.apPaidAmount[0] || 0}
+                  <h3 className={classes.cardTitle} style={{ color: "black" }}>
+                    {graphData?.apPaidAmount?.[0] || 0}
                   </h3>
                 )}
               </CardHeader>
@@ -218,7 +231,7 @@ export default function Cashflow() {
                 {isLoading ? (
                   <LinearProgress />
                 ) : (
-                  <h3 className={classes.cardTitle}>
+                  <h3 className={classes.cardTitle} style={{ color: "black" }}>
                     {graphData?.APvsAR || 0}
                   </h3>
                 )}
@@ -240,8 +253,63 @@ export default function Cashflow() {
               </CardHeader>
               <CardBody>
                 <Chart
-                  options={statistics.cashflow.options}
-                  series={statistics.cashflow.series}
+                  options={{
+                    colors: ["#5A2C66", "#9E2654"],
+                    xaxis: {
+                      categories: [
+                        "Jan",
+                        "Feb",
+                        "March",
+                        "April",
+                        "May",
+                        "Jun",
+                        "July",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ].map((m) => {
+                        return m.concat(" " + new Date().getFullYear());
+                      }),
+                    },
+                  }}
+                  series={[
+                    {
+                      name: "Income",
+                      data: [
+                        30,
+                        43344,
+                        45,
+                        50,
+                        49,
+                        4360,
+                        70,
+                        9341,
+                        103,
+                        300,
+                        5443,
+                        5342,
+                      ],
+                    },
+                    {
+                      name: "Expense",
+                      data: [
+                        30,
+                        40,
+                        45,
+                        3450,
+                        449,
+                        60,
+                        70,
+                        91,
+                        3232,
+                        6676,
+                        443543,
+                        345435,
+                      ],
+                    },
+                  ]}
                   type="line"
                   width="100%"
                   height="500px"
@@ -253,13 +321,70 @@ export default function Cashflow() {
             <Card>
               <CardHeader color="info" icon>
                 <CardIcon color="info">
-                  <h4 className={classes.cardTitleText}>Payments (Received Vs Paid)</h4>
+                  <h4 className={classes.cardTitleText}>
+                    Payments (Received Vs Paid)
+                  </h4>
                 </CardIcon>
               </CardHeader>
               <CardBody>
                 <ReactApexChart
-                  options={statistics.cashflow.options}
-                  series={statistics.cashflow.series}
+                  options={{
+                    colors: ["#9E2654","#5A2C66"],
+                    xaxis: {
+                      categories: [
+                        "Jan",
+                        "Feb",
+                        "March",
+                        "April",
+                        "May",
+                        "Jun",
+                        "July",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ].map((m) => {
+                        return m.concat(" " + new Date().getFullYear());
+                      }),
+                    },
+                  }}
+                  series={[
+                    {
+                      name: "Income",
+                      data: [
+                        30,
+                        43344,
+                        45,
+                        50,
+                        49,
+                        4360,
+                        70,
+                        9341,
+                        103,
+                        300,
+                        5443,
+                        5342,
+                      ],
+                    },
+                    {
+                      name: "Expense",
+                      data: [
+                        30,
+                        40,
+                        45,
+                        3450,
+                        449,
+                        60,
+                        70,
+                        91,
+                        3232,
+                        6676,
+                        443543,
+                        345435,
+                      ],
+                    },
+                  ]}
                   type="bar"
                   width="100%"
                   height="500px"
@@ -275,14 +400,16 @@ export default function Cashflow() {
                 </CardIcon>
               </CardHeader>
               <CardBody>
-              {1 + 1 == 3 ? <LinearProgress  /> : 
-              <Table
-                hover
-                tableHeaderColor="info"
-                tableHead={["DATE","CUSTOMER","AMOUNT"]}
-                tableData={[]}
-              />
-              }
+                {1 + 1 == 3 ? (
+                  <LinearProgress />
+                ) : (
+                  <Table
+                    hover
+                    tableHeaderColor="info"
+                    tableHead={["DATE", "CUSTOMER", "AMOUNT"]}
+                    tableData={[]}
+                  />
+                )}
               </CardBody>
             </Card>
           </GridItem>
@@ -294,14 +421,16 @@ export default function Cashflow() {
                 </CardIcon>
               </CardHeader>
               <CardBody>
-              {1 + 1 == 3 ? <LinearProgress  /> : 
-              <Table
-                hover
-                tableHeaderColor="info"
-                tableHead={["DATE","VENDOR","AMOUNT"]}
-                tableData={[]}
-              />
-              }
+                {1 + 1 == 3 ? (
+                  <LinearProgress />
+                ) : (
+                  <Table
+                    hover
+                    tableHeaderColor="info"
+                    tableHead={["DATE", "VENDOR", "AMOUNT"]}
+                    tableData={[]}
+                  />
+                )}
               </CardBody>
             </Card>
           </GridItem>
