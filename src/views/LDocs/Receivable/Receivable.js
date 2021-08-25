@@ -43,6 +43,7 @@ import MoneyIcon from "@material-ui/icons/Money";
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 import TimerOffIcon from '@material-ui/icons/TimerOff';
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView.js";
+import { addZeroes } from "../Functions/Functions.js";
 
 const useStyles = makeStyles((theme) => ({
   cardIconTitle: {
@@ -504,7 +505,7 @@ export default function Receivable(props) {
                           style={{ color: "grey" }}
                         >
                           {componentState.currencyCode}{" "}
-                          {componentState.fullPaid.toFixed(2)}
+                          {addZeroes(componentState.fullPaid)}
                         </h4>
                       </CardHeader>
                       <CardFooter stats></CardFooter>
@@ -534,7 +535,7 @@ export default function Receivable(props) {
                           style={{ color: "grey" }}
                         >
                           {componentState.currencyCode}{" "}
-                        {componentState.toBePaid.toFixed(2)}
+                        {addZeroes(componentState.toBePaid)}
                         </h4>
                       </CardHeader>
                       <CardFooter stats></CardFooter>
@@ -563,7 +564,7 @@ export default function Receivable(props) {
                           style={{ color: "grey" }}
                         >
                           {componentState.currencyCode}{" "}
-                        {componentState.overDueInvoices.toFixed(2)}
+                        {addZeroes(componentState.overDueInvoices)}
                         </h4>
                       </CardHeader>
                       <CardFooter stats></CardFooter>

@@ -461,14 +461,14 @@ export default function AgingReport() {
                                   <StyledTableCell align="right">
                                     {formState.agingData[0].orgCurrency.Code}{" "}
                                     {addZeroes(
-                                      formState.sum.outstanding_sum
-                                    ).toFixed(2)}
+                                      formState.sum.outstanding_sum?formState.sum.outstanding_sum:0
+                                    )}
                                   </StyledTableCell>
                                   <StyledTableCell align="right">
                                     {formState.agingData[0].orgCurrency.Code}{" "}
                                     {addZeroes(
-                                      formState.sum.total_due_Amount_sum
-                                    ).toFixed(2)}
+                                      formState.sum.total_due_Amount_sum?formState.sum.total_due_Amount_sum:0
+                                    )}
                                   </StyledTableCell>
                                   <StyledTableCell align="right">
                                     {formState.agingData[0].orgCurrency.Code}{" "}
@@ -476,20 +476,20 @@ export default function AgingReport() {
                                   </StyledTableCell>
                                   <StyledTableCell align="right">
                                     {formState.agingData[0].orgCurrency.Code}{" "}
-                                    {addZeroes(formState.sum.col_2_sum)}
+                                    {addZeroes(formState.sum.col_2_sum?formState.sum.col_2_sum :0)}
                                   </StyledTableCell>
                                   <StyledTableCell align="right">
                                     {formState.agingData[0].orgCurrency.Code}{" "}
-                                    {addZeroes(formState.sum.col_3_sum)}
+                                    {addZeroes(formState.sum.col_3_sum?formState.sum.col_3_sum:0)}
                                   </StyledTableCell>
                                   <StyledTableCell align="right">
                                     {formState.agingData[0].orgCurrency.Code}{" "}
-                                    {addZeroes(formState.sum.col_4_sum)}
+                                    {addZeroes(formState.sum.col_4_sum?formState.sum.col_4_sum:0)}
                                   </StyledTableCell>
 
                                   <StyledTableCell align="right">
                                     {formState.agingData[0].orgCurrency.Code}{" "}
-                                    {addZeroes(formState.sum.col_5_sum)}
+                                    {addZeroes(formState.sum.col_5_sum?formState.sum.col_5_sum:0)}
                                   </StyledTableCell>
                                   <StyledTableCell align="right"></StyledTableCell>
                                 </TableRow>

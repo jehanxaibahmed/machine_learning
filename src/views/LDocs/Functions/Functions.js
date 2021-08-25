@@ -62,13 +62,17 @@ export const getToken = () => {
 };
 
 export function addZeroes(num) {
-  num = typeof num == "string" ? num : num.toString();
+  if(typeof num == "number" || "string"){
+  num = typeof num == "string" ? num : parseFloat(num).toString();
   var value = Number(num);
   var res = num.toString().split(".");
   if (res.length == 1 || res[1].length < 1) {
     value = value.toFixed(2);
   }
   return value;
+}else{
+  return 0.00;
+}
 }
 
 export const formatDateTime = (date) => {

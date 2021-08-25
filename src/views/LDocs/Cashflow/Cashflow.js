@@ -47,6 +47,7 @@ import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertSty
 import Iframe from "react-iframe";
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import jwt from "jsonwebtoken";
 import {
   validateInvoice,
   formatDateTime,
@@ -86,9 +87,14 @@ export default function Cashflow() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+  const decoded = jwt.decode(Token);
+
   const isAr = useSelector((state) => state.userReducer.isAr);
+  const [graphData, setGraphData] = React.useState([]);
+  const [isLoading, setisLoading] = React.useState(true);
   const classes = useStyles();
   const [statistics, setStatistics] = React.useState({
+    data:null,
     cashflow: {
       options: {
         colors:['#5A2C66', '#9E2654'],
@@ -113,6 +119,34 @@ export default function Cashflow() {
   });
   const dispatch = useDispatch();
 
+
+  
+
+  React.useEffect(async ()=>{
+    setisLoading(true);
+    await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/cashFlowDashBoard`,
+      data:{
+        organizationId : decoded.orgDetail.organizationId
+      },
+      headers: { cooljwt: Token },
+    })
+      .then((response) => {
+    setisLoading(false);
+        console.log(response);
+        setGraphData(response ? response.data : []);
+      })
+      .catch((error) => {
+    setisLoading(false);
+        console.log(error);
+        // if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        setGraphData([]);
+        console.log(error);
+      });
+  },[])
+
+  // {arPaidAmount: Array(0), apPaidAmount: Array(0), APvsAR: '', arMonthlyPaid: Array(0), apMonthlyPaid: Array(0), …}
   return (
     <div>
       <Animated
@@ -131,11 +165,11 @@ export default function Cashflow() {
                   <InsertDriveFileIcon />
                 </CardIcon>
                 <p className={classes.cardCategory}>Income Summary</p>
-                {1 + 1 == 2 ? (
+                {isLoading ? (
                   <LinearProgress />
                 ) : (
                   <h3 className={classes.cardTitle}>
-                    {statistics?.totalInvoice}
+                    {graphData?.arPaidAmount[0] || 0}
                   </h3>
                 )}
               </CardHeader>
@@ -155,11 +189,11 @@ export default function Cashflow() {
                   <InsertDriveFileIcon />
                 </CardIcon>
                 <p className={classes.cardCategory}>Expense Summary</p>
-                {1 + 1 == 2 ? (
+                {isLoading ? (
                   <LinearProgress />
                 ) : (
                   <h3 className={classes.cardTitle}>
-                    {statistics?.totalInvoice}
+                    {graphData?.apPaidAmount[0] || 0}
                   </h3>
                 )}
               </CardHeader>
@@ -181,11 +215,11 @@ export default function Cashflow() {
                 <p className={classes.cardCategory}>
                   Income VS Expense Summary
                 </p>
-                {1 + 1 == 2 ? (
+                {isLoading ? (
                   <LinearProgress />
                 ) : (
                   <h3 className={classes.cardTitle}>
-                    {statistics?.totalInvoice}
+                    {graphData?.APvsAR || 0}
                   </h3>
                 )}
               </CardHeader>
