@@ -167,14 +167,6 @@ export const invoiceApRoutes = [
         component: AgingReport,
         layout: "/invoice",
       },
-      {
-        path: "/cashflow",
-        rtlName: "لوحة القيادة",
-        name:"Cashflow",
-        icon: PieChartIcon,
-        component: Cashflow,
-        layout: "/invoice",
-      },
     ],
   },
   {
@@ -311,14 +303,6 @@ export const invoiceArRoutes = [
         component: AgingReport,
         layout: "/invoice",
       },
-      {
-        path: "/cashflow",
-        rtlName: "لوحة القيادة",
-        name:"Cashflow",
-        icon: PieChartIcon,
-        component: Cashflow,
-        layout: "/invoice",
-      },
     ],
   },
   {
@@ -336,6 +320,14 @@ export const invoiceArRoutes = [
 
 export const invoiceDefaultRoutes = [
   //Removed Name just to not show in Sidebar
+  {
+    path: "/cashflow",
+    rtlName: "لوحة القيادة",
+    // name:"Cashflow"
+    icon: PieChartIcon,
+    component: Cashflow,
+    layout: "/invoice",
+  },  
   {
     path: "/reports",
     name: "Reports",

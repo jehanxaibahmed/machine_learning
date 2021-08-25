@@ -135,9 +135,9 @@ export default function Cashflow() {
   });
   const dispatch = useDispatch();
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     setisLoading(true);
-    await axios({
+    axios({
       method: "post",
       url: `${process.env.REACT_APP_LDOCS_API_URL}/dashboard/cashFlowDashBoard`,
       data: {
