@@ -146,9 +146,9 @@ export default function Cashflow() {
       headers: { cooljwt: Token },
     })
       .then((response) => {
-        setisLoading(false);
         console.log(response);
         setGraphData(response ? response.data : []);
+        setisLoading(false);
       })
       .catch((error) => {
         setisLoading(false);
@@ -159,7 +159,6 @@ export default function Cashflow() {
       });
   }, []);
 
-  // {arPaidAmount: Array(0), apPaidAmount: Array(0), APvsAR: '', arMonthlyPaid: Array(0), apMonthlyPaid: Array(0), …}
   return (
     <div>
       <Animated
@@ -182,7 +181,9 @@ export default function Cashflow() {
                   <LinearProgress />
                 ) : (
                   <h3 className={classes.cardTitle} style={{ color: "black" }}>
-                    {graphData?.arPaidAmount?.[0] || 0}
+                    {graphData?.arPaidAmount
+                      ? graphData?.arPaidAmount[0]?.netAmt_bc || 0
+                      : 0}
                   </h3>
                 )}
               </CardHeader>
@@ -206,7 +207,9 @@ export default function Cashflow() {
                   <LinearProgress />
                 ) : (
                   <h3 className={classes.cardTitle} style={{ color: "black" }}>
-                    {graphData?.apPaidAmount?.[0] || 0}
+                    {graphData?.apPaidAmount
+                      ? graphData?.apPaidAmount[0]?.netAmt_bc || 0
+                      : 0}
                   </h3>
                 )}
               </CardHeader>
@@ -256,58 +259,23 @@ export default function Cashflow() {
                   options={{
                     colors: ["#5A2C66", "#9E2654"],
                     xaxis: {
-                      categories: [
-                        "Jan",
-                        "Feb",
-                        "March",
-                        "April",
-                        "May",
-                        "Jun",
-                        "July",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec",
-                      ].map((m) => {
-                        return m.concat(" " + new Date().getFullYear());
-                      }),
+                      categories: graphData.arMonthlyPaid
+                        ? Object.keys(graphData?.arMonthlyPaid[0]?.data || [])
+                        : [],
                     },
                   }}
                   series={[
                     {
                       name: "Income",
-                      data: [
-                        30,
-                        43344,
-                        45,
-                        50,
-                        49,
-                        4360,
-                        70,
-                        9341,
-                        103,
-                        300,
-                        5443,
-                        5342,
-                      ],
+                      data:graphData.arMonthlyPaid
+                      ? Object.values(graphData?.arMonthlyPaid[0]?.data || [])
+                      : [],
                     },
                     {
                       name: "Expense",
-                      data: [
-                        30,
-                        40,
-                        45,
-                        3450,
-                        449,
-                        60,
-                        70,
-                        91,
-                        3232,
-                        6676,
-                        443543,
-                        345435,
-                      ],
+                      data:graphData.apMonthlyPaid
+                      ? Object.values(graphData?.apMonthlyPaid[0]?.data || [])
+                      : [],
                     },
                   ]}
                   type="line"
@@ -329,60 +297,25 @@ export default function Cashflow() {
               <CardBody>
                 <ReactApexChart
                   options={{
-                    colors: ["#9E2654","#5A2C66"],
+                    colors: ["#9E2654", "#5A2C66"],
                     xaxis: {
-                      categories: [
-                        "Jan",
-                        "Feb",
-                        "March",
-                        "April",
-                        "May",
-                        "Jun",
-                        "July",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec",
-                      ].map((m) => {
-                        return m.concat(" " + new Date().getFullYear());
-                      }),
+                      categories: graphData.apMonthlyPaid
+                        ? Object.keys(graphData?.arInvoicePaid[0]?.data || [])
+                        : [],
                     },
                   }}
                   series={[
                     {
                       name: "Income",
-                      data: [
-                        30,
-                        43344,
-                        45,
-                        50,
-                        49,
-                        4360,
-                        70,
-                        9341,
-                        103,
-                        300,
-                        5443,
-                        5342,
-                      ],
+                      data: graphData.apMonthlyPaid
+                      ? Object.values(graphData?.arInvoicePaid[0]?.data || [])
+                      : [],
                     },
                     {
                       name: "Expense",
-                      data: [
-                        30,
-                        40,
-                        45,
-                        3450,
-                        449,
-                        60,
-                        70,
-                        91,
-                        3232,
-                        6676,
-                        443543,
-                        345435,
-                      ],
+                      data:graphData.apMonthlyPaid
+                      ? Object.values(graphData?.apInvoicePaid[0]?.data || [])
+                      : [],
                     },
                   ]}
                   type="bar"
@@ -400,14 +333,22 @@ export default function Cashflow() {
                 </CardIcon>
               </CardHeader>
               <CardBody>
-                {1 + 1 == 3 ? (
+                {isLoading ? (
                   <LinearProgress />
                 ) : (
                   <Table
                     hover
                     tableHeaderColor="info"
                     tableHead={["DATE", "CUSTOMER", "AMOUNT"]}
-                    tableData={[]}
+                    tableData={
+                      graphData?.arLatestInvoices.map((inv) => {
+                        return [
+                          formatDateTime(inv.createdDate),
+                          inv.clientName,
+                          inv.netAmt_bc,
+                        ];
+                      }) || []
+                    }
                   />
                 )}
               </CardBody>
@@ -421,14 +362,22 @@ export default function Cashflow() {
                 </CardIcon>
               </CardHeader>
               <CardBody>
-                {1 + 1 == 3 ? (
+                {isLoading ? (
                   <LinearProgress />
                 ) : (
                   <Table
                     hover
                     tableHeaderColor="info"
                     tableHead={["DATE", "VENDOR", "AMOUNT"]}
-                    tableData={[]}
+                    tableData={
+                      graphData?.apLatestInvoices.map((inv) => {
+                        return [
+                          formatDateTime(inv.createdDate),
+                          inv.vendorName,
+                          inv.netAmt_bc,
+                        ];
+                      }) || []
+                    }
                   />
                 )}
               </CardBody>
