@@ -132,13 +132,6 @@ export default function Requested() {
                         <Typography gutterBottom variant="body2" style={{fontWeight:"bolder"}} component="h2">
                           {report.title}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="p"
-                        >
-                          {report.details}
-                        </Typography>
                       </GridItem>
                     </GridContainer>
                   </CardContent>
@@ -189,13 +182,7 @@ export default function Requested() {
                         <Typography gutterBottom variant="body2" style={{fontWeight:"bolder"}} component="h2">
                           {report.title}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="p"
-                        >
-                          {report.details}
-                        </Typography>
+    
                       </GridItem>
                     </GridContainer>
                   </CardContent>
@@ -246,13 +233,7 @@ export default function Requested() {
                         <Typography gutterBottom variant="body2" style={{fontWeight:"bolder"}} component="h2">
                           {report.title}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="p"
-                        >
-                          {report.details}
-                        </Typography>
+                        
                       </GridItem>
                     </GridContainer>
                   </CardContent>

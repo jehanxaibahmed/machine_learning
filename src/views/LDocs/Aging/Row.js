@@ -69,8 +69,8 @@ export default function Row({ data, intervals, viewVendor, viewInvoice }) {
 
   return (
     <React.Fragment>
-      <StyledTableRow key={0}>
-        <StyledTableCell colSpan={2} component="th" scope="row">
+      <StyledTableRow key={0} >
+        <StyledTableCell style={{fontWeight:"bolder"}} colSpan={2} component="th" scope="row">
           <IconButton
             className={clsx(classes.expand, {
               [classes.expandOpen]: expanded,
@@ -84,11 +84,11 @@ export default function Row({ data, intervals, viewVendor, viewInvoice }) {
           {data.vendors}
         </StyledTableCell>
 
-        <StyledTableCell align="right">
+        <StyledTableCell align="right" style={{background:'#808080a1'}}>
           <small>{currencyCode}</small>{" "}
           {`${data.outstanding ? addZeroes(data.outstanding)  : 0}`}
         </StyledTableCell>
-        <StyledTableCell align="right">
+        <StyledTableCell align="right" style={{background:'#80808073'}}>
           <small>{currencyCode}</small>{" "}
           {`${data.totalamtdue ? addZeroes(data.totalamtdue)  : 0}`}
         </StyledTableCell>

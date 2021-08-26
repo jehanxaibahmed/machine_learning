@@ -110,7 +110,7 @@ export default function Invoice({ data, viewInvoice }) {
     <StyledTableRow key={0} style={{ width: "100%" }}>
       <StyledTableCell
         colSpan="2"
-        style={{ minWidth: "20%" }}
+        style={{ minWidth: "20%", fontWeight:"bolder" }}
         component="th"
         scope="row"
       >
@@ -404,7 +404,7 @@ export default function Invoice({ data, viewInvoice }) {
         </span>
       </StyledTableCell>
 
-      <StyledTableCell align="right">
+      <StyledTableCell align="right" style={{background:'#808080a1'}}>
         <small>{data.LC_currency.Code}</small>
         {data["outstanding_bc"] ? +addZeroes(data["outstanding_bc"]) : 0} <br />
         {data.FC_currency.Code !== data.LC_currency.Code ? (
@@ -416,7 +416,7 @@ export default function Invoice({ data, viewInvoice }) {
           ""
         )}
       </StyledTableCell>
-      <StyledTableCell align="right">
+      <StyledTableCell align="right" style={{background:'#80808073'}} >
         <small>{data.LC_currency.Code}</small>{" "}
         {data.totalAmtDue ? addZeroes(data.totalAmtDue) : 0} <br />
         {data.FC_currency.Code !== data.LC_currency.Code ? (
@@ -428,7 +428,7 @@ export default function Invoice({ data, viewInvoice }) {
           ""
         )}
       </StyledTableCell>
-      <StyledTableCell align="right">
+      <StyledTableCell align="right" >
         <small>{data.LC_currency.Code}</small>{" "}
         {data["col-1-bc"] ? +addZeroes(data["col-1-bc"]) : 0} <br />
         {data.FC_currency.Code !== data.LC_currency.Code ? (

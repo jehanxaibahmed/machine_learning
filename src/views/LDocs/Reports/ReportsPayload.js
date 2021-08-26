@@ -8,7 +8,6 @@ export const ArReports = [
     "name": "AR ANALYTICS",
     "title":"Account Receivable Report",
     "link": "./financeDashboard/ar",
-    "details": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     "icon":ArImage,
     "isImg":true
   },
@@ -17,7 +16,6 @@ export const ArReports = [
     "name": "AR AGING",
     "title":"Account Receviable Aging Report",
     "link": "./invoice-aging/ar",
-    "details": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     "icon":ArImage,
     "isImg":true,
   },
@@ -31,7 +29,6 @@ export const ApReports = [
     "name": "AP ANALYTICS",
     "title":"Account Payable Report",
     "link": "./financeDashboard/ap",
-    "details": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     "icon":ApImage,
     "isImg":true,
   },
@@ -41,7 +38,6 @@ export const ApReports = [
     "name": "AP AGING",
     "title":"Account Payable Aging Report",
     "link": "./invoice-aging/ap",
-    "details": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. ",
     "icon":ApImage,
     "isImg":true,
   },
@@ -55,7 +51,6 @@ const Reports = [
     "name": "CASHFLOW",
     "title":"Receivables | Payable (Cash Flows)",
     "link": "./cashflow",
-    "details": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     "icon":ArImage,
     "isImg":true
   }

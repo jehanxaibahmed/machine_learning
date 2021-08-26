@@ -182,7 +182,8 @@ export default function Cashflow() {
                 ) : (
                   <h3 className={classes.cardTitle} style={{ color: "black" }}>
                     {graphData?.arPaidAmount
-                      ? graphData?.arPaidAmount[0]?.netAmt_bc || 0
+                      ? `${graphData.currency.Code}  ${graphData
+                          ?.arPaidAmount[0]?.netAmt_bc || 0}`
                       : 0}
                   </h3>
                 )}
@@ -208,7 +209,8 @@ export default function Cashflow() {
                 ) : (
                   <h3 className={classes.cardTitle} style={{ color: "black" }}>
                     {graphData?.apPaidAmount
-                      ? graphData?.apPaidAmount[0]?.netAmt_bc || 0
+                      ? `${graphData.currency.Code}  ${graphData
+                          ?.apPaidAmount[0]?.netAmt_bc || 0}`
                       : 0}
                   </h3>
                 )}
@@ -235,7 +237,7 @@ export default function Cashflow() {
                   <LinearProgress />
                 ) : (
                   <h3 className={classes.cardTitle} style={{ color: "black" }}>
-                    {graphData?.APvsAR || 0}
+                    {`${graphData.currency.Code}  ${graphData?.APvsAR || 0}`}
                   </h3>
                 )}
               </CardHeader>
@@ -267,15 +269,15 @@ export default function Cashflow() {
                   series={[
                     {
                       name: "Income",
-                      data:graphData.arMonthlyPaid
-                      ? Object.values(graphData?.arMonthlyPaid[0]?.data || [])
-                      : [],
+                      data: graphData.arMonthlyPaid
+                        ? Object.values(graphData?.arMonthlyPaid[0]?.data || [])
+                        : [],
                     },
                     {
                       name: "Expense",
-                      data:graphData.apMonthlyPaid
-                      ? Object.values(graphData?.apMonthlyPaid[0]?.data || [])
-                      : [],
+                      data: graphData.apMonthlyPaid
+                        ? Object.values(graphData?.apMonthlyPaid[0]?.data || [])
+                        : [],
                     },
                   ]}
                   type="line"
@@ -308,14 +310,14 @@ export default function Cashflow() {
                     {
                       name: "Income",
                       data: graphData.apMonthlyPaid
-                      ? Object.values(graphData?.arInvoicePaid[0]?.data || [])
-                      : [],
+                        ? Object.values(graphData?.arInvoicePaid[0]?.data || [])
+                        : [],
                     },
                     {
                       name: "Expense",
-                      data:graphData.apMonthlyPaid
-                      ? Object.values(graphData?.apInvoicePaid[0]?.data || [])
-                      : [],
+                      data: graphData.apMonthlyPaid
+                        ? Object.values(graphData?.apInvoicePaid[0]?.data || [])
+                        : [],
                     },
                   ]}
                   type="bar"
@@ -345,7 +347,7 @@ export default function Cashflow() {
                         return [
                           formatDateTime(inv.createdDate),
                           inv.clientName,
-                          inv.netAmt_bc,
+                          `${inv.LC_currency.Code} ${inv.netAmt_bc}`,
                         ];
                       }) || []
                     }
@@ -374,7 +376,7 @@ export default function Cashflow() {
                         return [
                           formatDateTime(inv.createdDate),
                           inv.vendorName,
-                          inv.netAmt_bc,
+                          `${inv.LC_currency.Code} ${inv.netAmt_bc}`,
                         ];
                       }) || []
                     }

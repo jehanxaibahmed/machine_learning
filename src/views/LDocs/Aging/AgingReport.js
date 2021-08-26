@@ -412,15 +412,15 @@ export default function AgingReport() {
                         >
                           <TableHead>
                             <TableRow>
-                              <StyledTableCell>
+                              <StyledTableCell style={{fontWeight:"bolder"}}>
                                 {isAr ? "Customer" : "Supplier"}
                               </StyledTableCell>
                               <StyledTableCell></StyledTableCell>
-                              <StyledTableCell align="right">
-                                Outstanding
+                              <StyledTableCell style={{background:'#808080a1'}} align="right">
+                                Outstanding <Tooltip title="Invoice amount whish is not due yet."><span>?</span></Tooltip>
                               </StyledTableCell>
-                              <StyledTableCell align="right">
-                                Total Amt Due
+                              <StyledTableCell style={{background:'#80808073'}} align="right">
+                                Total Amt Due <Tooltip title="Invoice amount which is due for payment."><span>?</span></Tooltip>
                               </StyledTableCell>
                               <StyledTableCell align="right">
                                 {formState.intervals[0]}
@@ -458,13 +458,13 @@ export default function AgingReport() {
                                   <StyledTableCell colspan="2">
                                     <b>Total</b>
                                   </StyledTableCell>
-                                  <StyledTableCell align="right">
+                                  <StyledTableCell style={{background:'#808080a1'}} align="right">
                                     {formState.agingData[0].orgCurrency.Code}{" "}
                                     {addZeroes(
                                       formState.sum.outstanding_sum?formState.sum.outstanding_sum:0
                                     )}
                                   </StyledTableCell>
-                                  <StyledTableCell align="right">
+                                  <StyledTableCell style={{background:'#80808073'}} align="right">
                                     {formState.agingData[0].orgCurrency.Code}{" "}
                                     {addZeroes(
                                       formState.sum.total_due_Amount_sum?formState.sum.total_due_Amount_sum:0
