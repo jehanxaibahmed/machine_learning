@@ -422,7 +422,7 @@ export default function Invoice({ data, viewInvoice }) {
         {data.FC_currency.Code !== data.LC_currency.Code ? (
           <small>
             ({data.FC_currency.Code}{" "}
-            {data.totalAmtDue ? addZeroes(data.totalAmtDue) : 0})
+            {data.totalAmtDue_fc ? addZeroes(data.totalAmtDue_fc) : 0})
           </small>
         ) : (
           ""
