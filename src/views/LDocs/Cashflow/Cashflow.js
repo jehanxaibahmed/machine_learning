@@ -59,7 +59,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Alert from "@material-ui/lab/Alert";
 import { CallReceived, DoneAll } from "@material-ui/icons";
 import { setIsTokenExpired } from "actions";
-import { _IsAr } from "../Functions/Functions";
+import { addZeroes, _IsAr } from "../Functions/Functions";
 import { Link } from "react-router-dom";
 
 const styles = {
@@ -176,7 +176,7 @@ export default function Cashflow() {
                   {/* <Store /> */}
                   <InsertDriveFileIcon />
                 </CardIcon>
-                <p className={classes.cardCategory}>Income Summary</p>
+                <p className={classes.cardCategory}>Receivable Summary</p>
                 {isLoading ? (
                   <LinearProgress />
                 ) : (
@@ -203,7 +203,7 @@ export default function Cashflow() {
                   {/* <Store /> */}
                   <InsertDriveFileIcon />
                 </CardIcon>
-                <p className={classes.cardCategory}>Expense Summary</p>
+                <p className={classes.cardCategory}>Payable Summary</p>
                 {isLoading ? (
                   <LinearProgress />
                 ) : (
@@ -231,20 +231,19 @@ export default function Cashflow() {
                   <InsertDriveFileIcon />
                 </CardIcon>
                 <p className={classes.cardCategory}>
-                  Income VS Expense Summary
+                  Payable VS Receivable 
                 </p>
                 {isLoading ? (
                   <LinearProgress />
                 ) : (
                   <h3 className={classes.cardTitle} style={{ color: "black" }}>
-                    {`${graphData.currency.Code}  ${graphData?.APvsAR || 0}`}
+                    {`${graphData.currency.Code}  ${addZeroes(graphData?.APvsAR).toFixed(2) || 0}`}
                   </h3>
                 )}
               </CardHeader>
               <CardFooter stats>
                 <div className={classes.stats}>
-                  <InsertDriveFileIcon />
-                  <Link to="/admin/invoices">Show</Link>
+                  
                 </div>
               </CardFooter>
             </Card>
@@ -268,13 +267,13 @@ export default function Cashflow() {
                   }}
                   series={[
                     {
-                      name: "Income",
+                      name: "Receivable",
                       data: graphData.arMonthlyPaid
                         ? Object.values(graphData?.arMonthlyPaid[0]?.data || [])
                         : [],
                     },
                     {
-                      name: "Expense",
+                      name: "Payable",
                       data: graphData.apMonthlyPaid
                         ? Object.values(graphData?.apMonthlyPaid[0]?.data || [])
                         : [],
@@ -299,7 +298,7 @@ export default function Cashflow() {
               <CardBody>
                 <ReactApexChart
                   options={{
-                    colors: ["#9E2654", "#5A2C66"],
+                    colors: ["#5A2C66", "#9E2654"],
                     xaxis: {
                       categories: graphData.apMonthlyPaid
                         ? Object.keys(graphData?.arInvoicePaid[0]?.data || [])
@@ -308,13 +307,13 @@ export default function Cashflow() {
                   }}
                   series={[
                     {
-                      name: "Income",
+                      name: "Received",
                       data: graphData.apMonthlyPaid
                         ? Object.values(graphData?.arInvoicePaid[0]?.data || [])
                         : [],
                     },
                     {
-                      name: "Expense",
+                      name: "Paid",
                       data: graphData.apMonthlyPaid
                         ? Object.values(graphData?.apInvoicePaid[0]?.data || [])
                         : [],
@@ -331,7 +330,7 @@ export default function Cashflow() {
             <Card>
               <CardHeader color="danger" icon>
                 <CardIcon color="danger">
-                  <h4 className={classes.cardTitleText}>Latest Income</h4>
+                  <h4 className={classes.cardTitleText}>Latest Receivables</h4>
                 </CardIcon>
               </CardHeader>
               <CardBody>
@@ -360,7 +359,7 @@ export default function Cashflow() {
             <Card>
               <CardHeader color="info" icon>
                 <CardIcon color="info">
-                  <h4 className={classes.cardTitleText}>Latest Expense</h4>
+                  <h4 className={classes.cardTitleText}>Latest Payables</h4>
                 </CardIcon>
               </CardHeader>
               <CardBody>
