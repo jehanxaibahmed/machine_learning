@@ -1,0 +1,20 @@
+item { 
+	name:'CompanyDetails'
+	id:1
+}
+item { 
+	name:'column'
+	id:2
+}
+item { 
+	name:'total'
+	id:3
+}
+item { 
+	name:'InvoiceDetails'
+	id:4
+}
+item { 
+	name:'BuyerDetails'
+	id:5
+}
