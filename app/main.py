@@ -62,7 +62,7 @@ async def create_upload_file(file: UploadFile = File(...)):
     with open(file_location, "wb+") as file_object:
         file_object.write(file.file.read())
     if file.filename.endswith('.pdf'):
-        pages = convert_from_path(file_location, poppler_path=r'poppler-0.68.0/bin')
+        pages = convert_from_path(file_location)
         for page in pages:
             page.save('files/out.jpg', 'JPEG')
         image = cv2.imread('files/out.jpg') 
@@ -281,3 +281,5 @@ async def create_upload_file(file: UploadFile = File(...)):
     'Discount':discount_amount,
     'file_name':str(file.filename),
     'Tables':Tables}
+
+
