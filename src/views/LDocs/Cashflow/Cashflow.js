@@ -61,6 +61,10 @@ import { CallReceived, DoneAll } from "@material-ui/icons";
 import { setIsTokenExpired } from "actions";
 import { addZeroes, _IsAr } from "../Functions/Functions";
 import { Link } from "react-router-dom";
+import APVSAR_IMAGE from "assets/img/cashflow/ravspa.png";
+import AR_IMAGE from "assets/img/cashflow/ra.png";
+import AP_IMAGE from "assets/img/cashflow/pa.png";
+
 
 const styles = {
   cardIconTitle: {
@@ -174,7 +178,7 @@ export default function Cashflow() {
               <CardHeader color="info" stats icon>
                 <CardIcon color="info">
                   {/* <Store /> */}
-                  <InsertDriveFileIcon />
+                  <img src={AR_IMAGE} style={{maxWidth:50}} />
                 </CardIcon>
                 <p className={classes.cardCategory}>Receivable Summary</p>
                 {isLoading ? (
@@ -191,7 +195,7 @@ export default function Cashflow() {
               <CardFooter stats>
                 <div className={classes.stats}>
                   <InsertDriveFileIcon />
-                  <Link to="/admin/invoices">Show Receivables</Link>
+                  <Link to="./financeDashboard/ar">Show Receivables</Link>
                 </div>
               </CardFooter>
             </Card>
@@ -201,7 +205,7 @@ export default function Cashflow() {
               <CardHeader color="danger" stats icon>
                 <CardIcon color="danger">
                   {/* <Store /> */}
-                  <InsertDriveFileIcon />
+                  <img src={AP_IMAGE} style={{maxWidth:50}} />
                 </CardIcon>
                 <p className={classes.cardCategory}>Payable Summary</p>
                 {isLoading ? (
@@ -218,7 +222,7 @@ export default function Cashflow() {
               <CardFooter stats>
                 <div className={classes.stats}>
                   <InsertDriveFileIcon />
-                  <Link to="/admin/invoices">Show Payables</Link>
+                  <Link to="./financeDashboard/ap">Show Payables</Link>
                 </div>
               </CardFooter>
             </Card>
@@ -228,7 +232,7 @@ export default function Cashflow() {
               <CardHeader color="info" stats icon>
                 <CardIcon color="info">
                   {/* <Store /> */}
-                  <InsertDriveFileIcon />
+                  <img src={APVSAR_IMAGE} style={{maxWidth:50}} />
                 </CardIcon>
                 <p className={classes.cardCategory}>
                   Payable VS Receivable 
@@ -242,8 +246,9 @@ export default function Cashflow() {
                 )}
               </CardHeader>
               <CardFooter stats>
-                <div className={classes.stats}>
-                  
+              <div className={classes.stats}>
+                  <InsertDriveFileIcon style={{color:'white'}} />
+                  <Link to="#"></Link>
                 </div>
               </CardFooter>
             </Card>
