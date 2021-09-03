@@ -153,7 +153,7 @@ function getStepContentTable(step, ind) {
                 {/* <TableCell align="left">Block Hash</TableCell> */}
                 <TableCell align="left">Workflow ID</TableCell>
                 <TableCell align="left">Organization Name</TableCell>
-                <TableCell align="left">Company Name</TableCell>
+                <TableCell align="left">Location Name</TableCell>
                 <TableCell align="left">Review Steps Count</TableCell>
                 <TableCell align="left">Approve Steps Count</TableCell>
                 <TableCell align="left">Transaction By</TableCell>

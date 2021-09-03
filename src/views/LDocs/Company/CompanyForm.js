@@ -104,7 +104,7 @@ export default function Company() {
               referenceTicket: prop.referenceTicket,
               actions: (
                 <div className="actions-right">
-                  <Tooltip title="Update Company" aria-label="updateCompany">
+                  <Tooltip title="Update Location" aria-label="updateLocation">
                     <Button
                       justIcon
                       round
@@ -118,8 +118,8 @@ export default function Company() {
                     </Button>
                   </Tooltip>
                   <Tooltip
-                    title="View Company"
-                    aria-label="viewcompany"
+                    title="View Location"
+                    aria-label="viewlocation"
                   >
                     <Button
                       justIcon
@@ -302,7 +302,7 @@ export default function Company() {
             <Card>
               <CardHeader color="info" icon>
                 <CardIcon color="info">
-                  <h4 className={classes.cardTitleText}>Company List</h4>
+                  <h4 className={classes.cardTitleText}>Locations List</h4>
                 </CardIcon>
                 <Button
                   color="danger"
@@ -334,7 +334,7 @@ export default function Company() {
                       sortable={false}
                       columns={[
                         {
-                          Header: "Company Name",
+                          Header: "Location Name",
                           accessor: "companyName",
                         },
                         {

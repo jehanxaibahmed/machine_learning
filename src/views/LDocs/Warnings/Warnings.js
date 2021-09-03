@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import MaterialTable from "material-table";
 // @material-ui/core components
-import { makeStyles } from "@material-ui/core";
 import GridContainer from "components/Grid/GridContainer.js";
+
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -14,11 +14,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { getEvents } from "actions";
 import { Animated } from "react-animated-css";
 
-const useStyles = makeStyles();
 export default function Warnings() {
   const dispatch = useDispatch();
 
-  const classes = useStyles();
   const events = useSelector((state) => state.userReducer.events);
 
   // const handleMarkeventRead = (event_id, status) =>{

@@ -296,7 +296,7 @@ export default function ViewComp(props) {
             ...formState,
             isRegistering: false,
           }));
-          msg = "Company Updated Successfully!";
+          msg = "Location Updated Successfully!";
           successAlert(msg);
         })
         .catch((error) => {
@@ -363,7 +363,7 @@ export default function ViewComp(props) {
             <CardHeader color="info" icon>
               <CardIcon color="info">
                 <h4 className={classes.cardTitle}>
-                  Company Details
+                  Location Details
                 </h4>
               </CardIcon>
             </CardHeader>
@@ -381,7 +381,7 @@ export default function ViewComp(props) {
                 >
                   <TextField
                     fullWidth={true}
-                    label="Company Name"
+                    label="Location Name"
                     id="name"
                     name="name"
                     type="text"

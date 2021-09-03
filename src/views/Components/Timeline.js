@@ -13,8 +13,9 @@ import Typography from "@material-ui/core/Typography";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
 import dateFormat from "dateformat";
-import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import CompareArrowsIcon from "@material-ui/icons/CompareArrows";
 import { Tooltip } from "@material-ui/core";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -27,6 +28,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Validator(props) {
   const validations = props.validation;
+  const isAr = useSelector((state) => state.userReducer.isAr);
+
   const classes = useStyles();
   return (
     <Timeline>
@@ -40,9 +43,10 @@ export default function Validator(props) {
         </TimelineOppositeContent>
         <TimelineSeparator>
           <TimelineDot>
-            <CompareArrowsIcon 
-            // style={{ color: validations.Validate.isSame ? "green" : 'red' }}
-               fontSize="large" />
+            <CompareArrowsIcon
+              // style={{ color: validations.Validate.isSame ? "green" : 'red' }}
+              fontSize="large"
+            />
           </TimelineDot>
           <TimelineConnector />
         </TimelineSeparator>
@@ -59,15 +63,15 @@ export default function Validator(props) {
           <TimelineOppositeContent>
             <Paper elevation={3} className={classes.paper}>
               <Typography variant="h6" component="h2">
-                {key}
+                {isAr && key == "Vendor ID" ? "Customer ID" : key}
               </Typography>
-              {value.onChainName ? 
+              {value.onChainName ? (
                 <Tooltip title={value.onChain}>
                   <Typography>{value.onChainName}</Typography>
                 </Tooltip>
-              :
-              <Typography>{value.onChain}</Typography>
-              }
+              ) : (
+                <Typography>{value.onChain}</Typography>
+              )}
             </Paper>
           </TimelineOppositeContent>
           <TimelineSeparator>
@@ -83,15 +87,15 @@ export default function Validator(props) {
           <TimelineContent>
             <Paper elevation={3} className={classes.paper}>
               <Typography variant="h6" component="h2">
-                {key}
+              {isAr && key == "Vendor ID" ? "Customer ID" : key}
               </Typography>
-              {value.offChainName ? 
+              {value.offChainName ? (
                 <Tooltip title={value.offChain}>
                   <Typography>{value.offChainName}</Typography>
                 </Tooltip>
-              :
-              <Typography>{value.offChain}</Typography>
-              }
+              ) : (
+                <Typography>{value.offChain}</Typography>
+              )}
             </Paper>
           </TimelineContent>
         </TimelineItem>

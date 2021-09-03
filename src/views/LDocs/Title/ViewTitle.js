@@ -136,7 +136,7 @@ export default function ViewTeam(props) {
                 >
                   <TextField
                     fullWidth={true}
-                    label="Company Name"
+                    label="Location Name"
                     id="companyName"
                     name="companyName"
                     type="text"

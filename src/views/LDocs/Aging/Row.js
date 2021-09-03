@@ -69,8 +69,8 @@ export default function Row({ data, intervals, viewVendor, viewInvoice }) {
 
   return (
     <React.Fragment>
-      <StyledTableRow key={0}>
-        <StyledTableCell colSpan={2} component="th" scope="row">
+      <StyledTableRow key={0} >
+        <StyledTableCell style={{fontWeight:"bolder"}} colSpan={2} component="th" scope="row">
           <IconButton
             className={clsx(classes.expand, {
               [classes.expandOpen]: expanded,
@@ -84,33 +84,33 @@ export default function Row({ data, intervals, viewVendor, viewInvoice }) {
           {data.vendors}
         </StyledTableCell>
 
-        <StyledTableCell align="right">
+        <StyledTableCell align="right" style={{background:'#808080a1'}}>
           <small>{currencyCode}</small>{" "}
-          {`${data.outstanding ? addZeroes(data.outstanding) : 0}`}
+          {`${data.outstanding ? addZeroes(data.outstanding)  : 0}`}
+        </StyledTableCell>
+        <StyledTableCell align="right" style={{background:'#80808073'}}>
+          <small>{currencyCode}</small>{" "}
+          {`${data.totalamtdue ? addZeroes(data.totalamtdue)  : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {`${data.totalamtdue ? addZeroes(data.totalamtdue) : 0}`}
+          {`${data["col_1"] ? addZeroes(data["col_1"])  : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {`${data["col_1"] ? addZeroes(data["col_1"]) : 0}`}
-        </StyledTableCell>
-        <StyledTableCell align="right">
-          <small>{currencyCode}</small>{" "}
-          {`${data["col_2"] ? addZeroes(data["col_2"]) : 0}`}
+          {`${data["col_2"] ? addZeroes(data["col_2"])  : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>
-          {` ${data["col_3"] ? addZeroes(data["col_3"]) : 0}`}
+          {` ${data["col_3"] ? addZeroes(data["col_3"])  : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {` ${data["col_4"] ? addZeroes(data["col_4"]) : 0}`}
+          {` ${data["col_4"] ? addZeroes(data["col_4"])  : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <small>{currencyCode}</small>{" "}
-          {`${data["col_5"] ? addZeroes(data["col_5"]) : 0}`}
+          {`${data["col_5"] ? addZeroes(data["col_5"])  : 0}`}
         </StyledTableCell>
         <StyledTableCell align="right">
           <Tooltip title="360&#176; View" aria-label="advanceDocumentView">
@@ -172,11 +172,11 @@ export default function Row({ data, intervals, viewVendor, viewInvoice }) {
               <Graph
                 intervals={intervals}
                 values={[
-                  data["col_1"] ? data["col_1"].toFixed(2) : 0,
-                  data["col_2"] ? data["col_2"].toFixed(2) : 0,
-                  data["col_3"] ? data["col_3"].toFixed(2) : 0,
-                  data["col_4"] ? data["col_4"].toFixed(2) : 0,
-                  data["col_5"] ? data["col_5"].toFixed(2) : 0,
+                  data["col_1"] ? data["col_1"]  : 0,
+                  data["col_2"] ? data["col_2"]  : 0,
+                  data["col_3"] ? data["col_3"]  : 0,
+                  data["col_4"] ? data["col_4"]  : 0,
+                  data["col_5"] ? data["col_5"]  : 0,
                 ]}
               />
             </StyledTableCell>

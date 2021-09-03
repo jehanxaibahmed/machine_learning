@@ -43,6 +43,7 @@ import MoneyIcon from "@material-ui/icons/Money";
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 import TimerOffIcon from '@material-ui/icons/TimerOff';
 import FileAdvanceView from "../Invoices/AdvanceView/FileAdvanceView.js";
+import { addZeroes } from "../Functions/Functions.js";
 
 const useStyles = makeStyles((theme) => ({
   cardIconTitle: {
@@ -273,7 +274,7 @@ export default function Receivable(props) {
                           className={classes.cardCategory}
                           style={{ color: "grey" }}
                         >
-                          {isVendor ? "CUSTOMER" : "VENDOR / CUSTOMER"}
+                           {isVendor ? "CUSTOMER" : "CUSTOMER"}
                         </h4>
                         <Divider style={{ background: "grey" }} />
                         <TextField
@@ -282,7 +283,7 @@ export default function Receivable(props) {
                           label={
                             isVendor
                               ? "Select Customer"
-                              : "Select Vendor / Customer"
+                              : "Select Customer"
                           }
                           className={classes.root}
                           name="cusven"
@@ -299,7 +300,7 @@ export default function Receivable(props) {
                               root: classes.selectMenuItem,
                             }}
                           >
-                            {isVendor ? "Select Customer" : "Select Vendor"}
+                            {isVendor ? "Select Customer" : "Select Customer"}
                           </MenuItem>
                          {componentState.vendors.map((ven, index) => {
                                 return (
@@ -504,7 +505,7 @@ export default function Receivable(props) {
                           style={{ color: "grey" }}
                         >
                           {componentState.currencyCode}{" "}
-                          {componentState.fullPaid.toFixed(2)}
+                          {addZeroes(componentState.fullPaid)}
                         </h4>
                       </CardHeader>
                       <CardFooter stats></CardFooter>
@@ -534,7 +535,7 @@ export default function Receivable(props) {
                           style={{ color: "grey" }}
                         >
                           {componentState.currencyCode}{" "}
-                        {componentState.toBePaid.toFixed(2)}
+                        {addZeroes(componentState.toBePaid)}
                         </h4>
                       </CardHeader>
                       <CardFooter stats></CardFooter>
@@ -563,7 +564,7 @@ export default function Receivable(props) {
                           style={{ color: "grey" }}
                         >
                           {componentState.currencyCode}{" "}
-                        {componentState.overDueInvoices.toFixed(2)}
+                        {addZeroes(componentState.overDueInvoices)}
                         </h4>
                       </CardHeader>
                       <CardFooter stats></CardFooter>

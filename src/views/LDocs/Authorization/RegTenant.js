@@ -83,7 +83,7 @@ export default function RegTenant(props) {
                 className={`${classes.cardHeader} ${classes.textCenter}`}
                 color="info"
               >
-                <h4 className={classes.cardTitle}>Register Client</h4>
+                <h4 className={classes.cardTitle}>Register</h4>
               </CardHeader>
               <CardBody>
               <CustomInput

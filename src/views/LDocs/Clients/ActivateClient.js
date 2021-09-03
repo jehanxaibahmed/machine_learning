@@ -7,6 +7,7 @@ import axios from "axios";
 export default function ActivateClient(props) {
   const logo = require("assets/img/logo_color.png");
     const [response, setResponse] = useState(null);
+    const [orgName, setOrgName] = useState("");
     //Get URl Params
     function getParameterByName(name, url) {
         if (!url) url = window.location.href;
@@ -20,6 +21,7 @@ export default function ActivateClient(props) {
   useEffect(()=>{
     let clientId = getParameterByName('clientId');
     let organizationId = getParameterByName('organizationId');
+    setOrgName(getParameterByName('organizationName'));
     var body = {
         clientId,
         organizationId
@@ -45,10 +47,10 @@ export default function ActivateClient(props) {
         {response !== null || 'null' ? 
         <GridItem sm={12} style={{marginBottom:20}}>
         <Typography variant="h2" component="h6">
-            {response === true ?  "Congratulations !" : response === false ? "Oops !":""}
+            {response === true ?  `Welcome to ${orgName}` : response === false ? "Oops !":""}
           </Typography>
           <Typography variant="h6" component="h4">
-          {response === true ? "Your Account Has Been Registered with Invoicemate SuccessFully .": response === false ? "Sorry, There is Some issue in Activating Account . ":""}
+          {response === true ? "Thanks for verifying your email address.": response === false ? "Sorry, There is Some issue in Activating Account . ":""}
           </Typography>
           <Typography variant="span" component="body2">
             For More Information Contact at : info@matesol.net

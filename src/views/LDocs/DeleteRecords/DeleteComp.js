@@ -243,10 +243,10 @@ export default function DeleteComp(props) {
                     fullWidth={true}
                     helperText={
                       formState.errors.companyName === "error"
-                        ? "Company name is required"
+                        ? "Location Name is required"
                         : null
                     }
-                    label="Company Name"
+                    label="Location Name"
                     name="companyName"
                     onChange={(event) => {
                       handleChange(event);

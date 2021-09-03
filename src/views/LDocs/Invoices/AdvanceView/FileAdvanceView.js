@@ -92,17 +92,47 @@ export default function FileAdvanceView(props) {
   const [validation, setValidation] = React.useState({});
   //Get BlockChain View
   const getBlockChainData = async () => {
+    let offchainData = [];
+    if (isAr) {
+      await axios({
+        method: "post", //you can set what request you want to be
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/get-invoice-workflow-history-offchain`,
+        data: {
+          clientId: fileData.clientId,
+          invoiceId: fileData.invoiceId,
+          isAR: true,
+        },
+        headers: { cooljwt: Token },
+      })
+        .then((response) => {
+          if (response.data.length !== 0) {
+            let blockChain = response.data;
+            offchainData = blockChain;
+          } else {
+            offchainData = [];
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
+          console.log(error);
+          offchainData = [];
+        });
+    }
     await axios({
       method: "get", //you can set what request you want to be
-      url: isAr ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.clientId}-${fileData.invoiceId}-${fileData.version}` : `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.vendorId}-${fileData.invoiceId}-${fileData.version}`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.clientId}-${fileData.invoiceId}-${fileData.version}`
+        : `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.vendorId}-${fileData.invoiceId}-${fileData.version}`,
     })
       .then((response) => {
         if (response.data.InvoiceWorkflowHistory.length !== 0) {
-          let blockChainData = response.data.InvoiceWorkflowHistory;
-          console.log(blockChainData);
-          setBlockChainData(blockChainData);
+          let blockChain = response.data.InvoiceWorkflowHistory;
+          offchainData.concat(blockChain);
+          setBlockChainData(offchainData.concat(blockChain));
         } else {
-          setBlockChainData([]);
+          setBlockChainData(offchainData);
         }
       })
       .catch((error) => {
@@ -110,7 +140,7 @@ export default function FileAdvanceView(props) {
           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
         console.log(error);
-        setBlockChainData([]);
+        setBlockChainData(offchainData);
       });
   };
 
@@ -118,7 +148,9 @@ export default function FileAdvanceView(props) {
   const getPaymentData = async () => {
     await axios({
       method: "get", //you can set what request you want to be
-      url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/payment/getPaymentsByInvoiceAR/${fileData.organizationId}/${fileData.invoiceId}/${fileData.version}` :  `${process.env.REACT_APP_LDOCS_API_URL}/payment/getPaymentsByInvoice/${fileData.organizationId}/${fileData.invoiceId}/${fileData.version}`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/payment/getPaymentsByInvoiceAR/${fileData.organizationId}/${fileData.invoiceId}/${fileData.version}`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/payment/getPaymentsByInvoice/${fileData.organizationId}/${fileData.invoiceId}/${fileData.version}`,
     })
       .then((response) => {
         if (response.data.length !== 0) {
@@ -177,9 +209,12 @@ export default function FileAdvanceView(props) {
 
   //Get Validator
   const getValidator = async () => {
-    await validateInvoice(fileData, Token).then((res) => {
-      setValidation(res);
-    });
+    if (fileData.approveStatus == "approved") {
+      await validateInvoice(fileData, Token, isAr).then((res) => {
+        console.log(res);
+        setValidation(res);
+      });
+    }
   };
 
   //Get File version
@@ -233,12 +268,14 @@ export default function FileAdvanceView(props) {
     setMarkModal(false);
     axios({
       method: "post", //you can set what request you want to be
-      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: row.invoiceId,
         version: row.version,
-        vendorId:  isAr ?  null : row.vendorId,
-        clientId:  isAr ? row.clientId: null,
+        vendorId: isAr ? null : row.vendorId,
+        clientId: isAr ? row.clientId : null,
       },
       headers: {
         cooljwt: Token,
@@ -259,11 +296,11 @@ export default function FileAdvanceView(props) {
     setBlockChainData([]);
     setIsLoading(true);
     await getQrCode();
-    if (isAr) {
+    if (!isAr) {
       await getFileVersions();
     }
     await getPaymentData();
-    if (!isVendor && !isAr) {
+    if (!isVendor) {
       await getValidator();
     }
 
@@ -297,11 +334,11 @@ export default function FileAdvanceView(props) {
       <Card variant="outlined" style={{ padding: "10px", marginTop: -5 }}>
         <CardHeader>
           <Typography variant="subtitle2" component="h2">
-            {step.Event.toUpperCase()} STEP (
-            {formatDateTime(step.EventInitDate)})
+            {step?.Event.toUpperCase()} STEP (
+            {formatDateTime(step?.EventInitDate)})
             <Tooltip title="Transaction ID">
               <a
-                href={`https://test.whatsonchain.com/tx/${step.TxnID}`}
+                href={`https://test.whatsonchain.com/tx/${step?.TxnID}`}
                 target="_blank"
                 style={{ float: "right" }}
               >
@@ -314,9 +351,9 @@ export default function FileAdvanceView(props) {
         <CardBody>
           <GridContainer style={{ padding: "10px" }}>
             <GridItem xs={12} sm={12} md={6} lg={6}>
-              <Tooltip title={step.EventFor.toUpperCase()}>
+              <Tooltip title={step?.EventFor.toUpperCase()}>
                 <Typography variant="subtitle2" component="h2">
-                  {step.EventFor.split("@")[0].toUpperCase()}
+                  {step?.EventFor.split("@")[0].toUpperCase()}
                 </Typography>
               </Tooltip>
             </GridItem>
@@ -324,9 +361,9 @@ export default function FileAdvanceView(props) {
               <Chip
                 size="small"
                 clickable={
-                  step.EventStatus == "pending" &&
+                  step?.EventStatus == "pending" &&
                   ind + 1 == blockChainData.length &&
-                  step.EventFor == decoded.email
+                  step?.EventFor == decoded.email
                     ? true
                     : false
                 }
@@ -334,29 +371,41 @@ export default function FileAdvanceView(props) {
                   float: "right",
                   color: "white",
                   cursor:
-                    step.EventStatus == "pending" &&
+                    step?.EventStatus == "pending" &&
                     ind + 1 == blockChainData.length
                       ? "pointer"
                       : "",
                   background:
-                    step.EventStatus == "pending"
+                    step?.EventStatus.toUpperCase() == "READY TO SEND"
+                      ? "blue"
+                      : step?.EventStatus.toUpperCase() == "PENDING"
                       ? "#c1a12f"
-                      : step.EventStatus == "reviewed" || "approved"
+                      : step?.EventStatus.toUpperCase() == "PAID"
+                      ? "green"
+                      : step?.EventStatus.toUpperCase() == "PARTIALLY PAID"
+                      ? "#c1a12f"
+                      : step?.EventStatus.toUpperCase() == "SENT"
+                      ? "#c1a12f"
+                      : step?.EventStatus.toUpperCase() == "REVIEWED"
+                      ? "green"
+                      : step?.EventStatus.toUpperCase() == "APPROVED"
+                      ? "green"
+                      : step?.EventStatus.toUpperCase() == "ACKNOWLEDGED"
                       ? "green"
                       : "red",
                 }}
                 onClick={() =>
-                  step.EventStatus == "pending" &&
+                  step?.EventStatus == "pending" &&
                   ind + 1 == blockChainData.length
-                    ? markIt(step.Event)
+                    ? markIt(step?.Event)
                     : console.log("Completed")
                 }
                 label={
-                  step.EventStatus == "pending"
-                    ? `SENT FOR ${step.Event.toUpperCase()}`
-                    : step.EventStatus == "correctionRequired"
+                  step?.EventStatus == "pending"
+                    ? `SENT FOR ${step?.Event.toUpperCase()}`
+                    : step?.EventStatus == "correctionRequired"
                     ? "CORRECTION REQUIRED"
-                    : step.EventStatus.toUpperCase()
+                    : step?.EventStatus.toUpperCase()
                 }
               />
             </GridItem>
@@ -378,7 +427,7 @@ export default function FileAdvanceView(props) {
           <AccordionDetails>
             <div>
               <Typography variant="body2" component="h2">
-                {step.EventComments}
+                {step?.EventComments}
               </Typography>
             </div>
           </AccordionDetails>
@@ -528,12 +577,12 @@ export default function FileAdvanceView(props) {
               <GridItem xs={12} sm={12} md={4} lg={4}>
                 <List className={classesList.list}>
                   <ListItemText
-                    primary={isAr ? "Client ID":"Supplier ID"}
+                    primary={isAr ? "Customer ID" : "Supplier ID"}
                     secondary={isAr ? fileData.clientId : fileData.vendorId}
                   />
                   <ListItemText
-                    primary={isAr ? "Client Name"  : "Supplier Name"}
-                    secondary={isAr ? fileData.clientName :  fileData.vendorName}
+                    primary={isAr ? "Customer Name" : "Supplier Name"}
+                    secondary={isAr ? fileData.clientName : fileData.vendorName}
                   />
                   <ListItemText
                     onClick={() => console.log("SHOW PO")}
@@ -566,33 +615,36 @@ export default function FileAdvanceView(props) {
                 style={{ textAlign: "center" }}
               >
                 <GridContainer>
-                  {!isAr ? 
-                  <GridItem xs={12} sm={12} md={12} lg={12}>
-                    <FormControl
-                      variant="outlined"
-                      className={classes.formControl}
-                    >
-                      <InputLabel id="demo-simple-select-outlined-label">
-                        Invoice Version
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-outlined"
-                        value={version}
-                        style={{ width: 150 }}
-                        onChange={Changehandler}
-                        label="Version"
+                  {!isAr ? (
+                    <GridItem xs={12} sm={12} md={12} lg={12}>
+                      <FormControl
+                        variant="outlined"
+                        className={classes.formControl}
                       >
-                        {versions.map((vrsn) => {
-                          return (
-                            <MenuItem key={vrsn.version} value={vrsn.version}>
-                              Version {vrsn.version}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </FormControl>
-                  </GridItem>:""}
+                        <InputLabel id="demo-simple-select-outlined-label">
+                          Invoice Version
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={version}
+                          style={{ width: 150 }}
+                          onChange={Changehandler}
+                          label="Version"
+                        >
+                          {versions.map((vrsn) => {
+                            return (
+                              <MenuItem key={vrsn.version} value={vrsn.version}>
+                                Version {vrsn.version}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                  ) : (
+                    ""
+                  )}
                   <GridItem xs={12} sm={12} md={12} lg={12}>
                     <CopyToClipboard
                       text={`${process.env.REACT_APP_LDOCS_API_SELF_URL}/invoiceDetail?invoiceId=${fileData.invoiceId}&&version=${fileData.version}&&vendorId=${fileData.vendorId}`}

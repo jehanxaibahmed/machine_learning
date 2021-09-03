@@ -7,7 +7,8 @@ import {
   getTasks,
   setDarkMode,
   setIsTokenExpired,
-  setIsAr
+  setIsAr,
+  setTabVal
 } from "../actions";
 import { Switch, Route, Redirect } from "react-router-dom";
 import addNotification from "react-push-notification";
@@ -70,6 +71,7 @@ const checkTimeCompare = (dat) => {
 export default function Dashboard(props) {
   const history = useHistory();
   const notifications = useSelector((state) => state.userReducer.notifications);
+  const tabVal = useSelector(state => state.userReducer.tabVal);
   const isTokenExpired = useSelector(
     (state) => state.userReducer.isTokenExpired
   );
@@ -155,8 +157,14 @@ export default function Dashboard(props) {
     let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : url.substring(url.lastIndexOf("/") + 1) == "ap"  ? false : null;
     if(is_Ar !== null){
     dispatch(setIsAr(is_Ar));
+    dispatch(setTabVal(is_Ar ? 1: 0));
     }
   }
+
+  const changeTabHandler = (val) => {
+    dispatch(setTabVal(val));
+  }
+
 
   useEffect(() => {
     if (isTokenExpired) {
@@ -357,6 +365,7 @@ export default function Dashboard(props) {
               handleDrawerToggle={handleDrawerToggle}
               open={mobileOpen}
               color={color}
+              handleTabVal={changeTabHandler}
               bgColor={bgColor}
               miniActive={miniActive}
               {...rest}

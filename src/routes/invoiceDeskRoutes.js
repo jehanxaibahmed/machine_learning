@@ -15,6 +15,7 @@ import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 import ApprovalRequested from "views/LDocs/Approvals/Requested";
 import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
 import ReceiptIcon from "@material-ui/icons/Receipt";
+import PieChartIcon from '@material-ui/icons/PieChart';
 //Components
 
 import FilesList from "views/LDocs/Invoices/RecieveInvoice/FilesList";
@@ -38,6 +39,8 @@ import Payable from "views/LDocs/Payable/Payable";
 import AgingReport from "views/LDocs/Aging/AgingReport";
 import TimerIcon from "@material-ui/icons/Timer";
 import Receivable from "views/LDocs/Receivable/Receivable";
+import Reports from "views/LDocs/Reports/Reports";
+import Cashflow from "views/LDocs/Cashflow/Cashflow";
 
 const Token = localStorage.getItem("cooljwt");
 let decoded = jwt.decode(Token);
@@ -131,7 +134,7 @@ export const invoiceApRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/export",
+        path: "/export/ap",
         name: "Export Invoices",
         rtlName: "انهيار متعدد المستويات",
         rtlMini: "ر",
@@ -149,7 +152,7 @@ export const invoiceApRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/supplierledger",
+        path: "/supplierledger/ap",
         name: "Supplier 360",
         rtlName: "لوحة القيادة",
         icon: ReceiptIcon,
@@ -205,11 +208,20 @@ export const invoiceArRoutes = [
       },
       {
         path: "/invoices/ar",
-        name: "Sent Invoice",
+        name: "Invoices",
         rtlName: "عالتسعير",
         icon: SystemUpdateIcon,
         rtlMini: "ع",
         component: FilesListAr,
+        layout: "/invoice",
+      },
+      {
+        path: "/send_invoices/ar",
+        name: "Send Invoices",
+        rtlName: "انهيار متعدد المستويات",
+        rtlMini: "ر",
+        icon: SystemUpdateIcon,
+        component: SentList,
         layout: "/invoice",
       },
       // {
@@ -267,15 +279,6 @@ export const invoiceArRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/send_invoices",
-        name: "Send Invoices",
-        rtlName: "انهيار متعدد المستويات",
-        rtlMini: "ر",
-        icon: SystemUpdateIcon,
-        component: SentList,
-        layout: "/invoice",
-      },
-      {
         path: "/payment/ar",
         name: "Invoice Payments",
         rtlName: "انهيار متعدد المستويات",
@@ -285,8 +288,8 @@ export const invoiceArRoutes = [
         layout: "/invoice",
       },
       {
-        path: "/clientledger",
-        name: "Client 360",
+        path: "/clientledger/ar",
+        name: "Customer 360",
         rtlName: "لوحة القيادة",
         icon: ReceiptIcon,
         component: Receivable,
@@ -316,7 +319,23 @@ export const invoiceArRoutes = [
 
 
 export const invoiceDefaultRoutes = [
- 
+  //Removed Name just to not show in Sidebar
+  {
+    path: "/cashflow",
+    rtlName: "لوحة القيادة",
+    // name:"Cashflow"
+    icon: PieChartIcon,
+    component: Cashflow,
+    layout: "/invoice",
+  },  
+  {
+    path: "/reports",
+    name: "Reports",
+    rtlName: "لوحة القيادة",
+    icon: PieChartIcon,
+    component: Reports,
+    layout: "/invoice",
+  },
   {
     path: "/notifications",
     name: "Notifications",

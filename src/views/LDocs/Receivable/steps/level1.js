@@ -15,6 +15,7 @@ import AttachmentIcon from "@material-ui/icons/Attachment";
 import ReactTable from "react-table";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
 import { GetApp, PinDropSharp } from "@material-ui/icons";
+import { addZeroes } from "views/LDocs/Functions/Functions";
 const sweetAlertStyle = makeStyles(styles2);
 let Token = localStorage.getItem("cooljwt");
 const styles = {
@@ -42,12 +43,13 @@ export default function Step1({ transactions, loading, isVendor, openAdvanceView
           invoiceId : prop.invoiceId,
           version : prop.version,
           vendorId : prop.vendorId,
+          clientId:prop.clientId
         };
         return {
           paymentID: prop.paymentID,
-          transactionAmount: `${prop.currencyCode}  ${parseFloat(
+          transactionAmount: `${prop.currencyCode}  ${addZeroes(parseFloat(
             prop.paidAmount
-          ).toFixed(2)}`,
+          ))}`,
           invoiceID: <span style={{cursor:'pointer', color:'blue'}} onClick={()=>openAdvanceView(payload)}>{prop.invoiceId}</span>,
           payerID: isVendor
             ? `${prop.currencyCode}  ${parseFloat(prop.transactionFee).toFixed(

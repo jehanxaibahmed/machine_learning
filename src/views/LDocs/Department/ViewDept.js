@@ -426,7 +426,7 @@ const setOtpValue = (value) => {
                 >
                   <TextField
                     fullWidth={true}
-                    label="Company Name"
+                    label="Location Name"
                     id="companyName"
                     name="companyName"
                     type="text"

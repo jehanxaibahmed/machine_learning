@@ -462,10 +462,10 @@ const handleChange = (event) => {
             fullWidth={true}
             helperText={
               formState.errors.companyName === "error"
-                ? "Company Name is required"
+                ? "Location Name is required"
                 : null
             }
-            label="Company Name"
+            label="Location Name"
             name="companyName"
             onChange={(event) => {
               handleChange(event);

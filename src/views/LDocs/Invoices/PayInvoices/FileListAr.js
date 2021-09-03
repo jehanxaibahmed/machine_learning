@@ -409,7 +409,7 @@ export default function PaymentListAr(props) {
     setIsViewingBlockChainView(false);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${row.vendorId}-${row.invoiceId}-${row.version}`,
+      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${row.clientId}-${row.invoiceId}-${row.version}`,
     }).then((response) => {
       if (response.data.InvoiceWorkflowHistory.length !== 0) {
         setBlockChainData(response.data.InvoiceWorkflowHistory);
@@ -515,16 +515,11 @@ export default function PaymentListAr(props) {
               {prop.createdByVendor ? "Supplier" : prop.createdBy.split("@")[0]}
             </MenuProvider>
           ),
-          poNumber: (
+          poNumber: 
             // <MenuProvider  data={prop} id="menu_id">
-            <div
-              style={{ color: "blue", cursor: "pointer" }}
-              onClick={() => viewPO(prop.po)}
-            >
-              {prop.po}
-            </div>
+              prop.po
             // </MenuProvider>
-          ),
+          ,
           customerName: (
             <MenuProvider data={prop} id="menu_id">
               {prop.organizationName}
@@ -1454,7 +1449,7 @@ export default function PaymentListAr(props) {
                           accessor: "dueDate",
                         },
                         {
-                          Header: "Client Name",
+                          Header: "Customer Name",
                           accessor: "vendorName",
                         },
                         {

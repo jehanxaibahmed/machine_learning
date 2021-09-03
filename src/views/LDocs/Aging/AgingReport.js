@@ -12,6 +12,7 @@ import {
   Input,
   FormControlLabel,
   Checkbox,
+  CircularProgress,
 } from "@material-ui/core";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -90,16 +91,19 @@ export default function AgingReport() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
-    const history = useHistory();
-    const isAr =
-      history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
-        ? true
-        : false;
+  const history = useHistory();
+  const isAr =
+    history.location.pathname.substring(
+      history.location.pathname.lastIndexOf("/") + 1
+    ) == "ar"
+      ? true
+      : false;
   const decoded = jwt.decode(Token);
   const dispatch = useDispatch();
   const Check = require("is-null-empty-or-undefined").Check;
   const [viewVendor, setViewVendor] = useState(false);
   const [viewInvoice, setViewInvoice] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [viewAging, setViewAging] = useState(true);
   const [formState, setFormState] = useState({
     range: 3,
@@ -144,17 +148,17 @@ export default function AgingReport() {
     setViewVendor(true);
   };
 
-
-
   const openInvoice = (payload) => {
     axios({
       method: "post", //you can set what request you want to be
-      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: payload.invoiceId,
         version: payload.version,
-        vendorId:  isAr ?  null : payload.vendorId,
-        clientId:  isAr ? payload.clientId: null,
+        vendorId: isAr ? null : payload.vendorId,
+        clientId: isAr ? payload.vendorId : null,
       },
       headers: {
         cooljwt: Token,
@@ -191,11 +195,13 @@ export default function AgingReport() {
         setTimeout(() => {
           axios({
             method: "post", //you can set what request you want to be
-            url: isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsxAR` :  `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsx`,
+            url: isAr
+              ? `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsxAR`
+              : `${process.env.REACT_APP_LDOCS_API_URL}/report/invoiceAgingToXlsx`,
             data: {
               organizationId: decoded.orgDetail.organizationId,
               type: null,
-              header:[...intervals, `Days ${x}+`],
+              header: [...intervals, `Days ${x}+`],
               interval: interval,
               addPrevious: formState.addPrevious,
             },
@@ -217,12 +223,11 @@ export default function AgingReport() {
               console.log(error);
             });
         }, 2000);
-        
-
       }
     }
   };
   const getReport = async () => {
+    setIsLoading(true);
     let intervals = [];
     let x = 0;
     let interval =
@@ -250,12 +255,15 @@ export default function AgingReport() {
     };
     await axios({
       method: "post",
-      url:isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/invoiceAgingAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceAging`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/invoiceAgingAR`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/invoiceAging`,
       data: data,
       headers: { cooljwt: Token },
     })
       .then((response) => {
         if (typeof response.data == "object") {
+          setIsLoading(false);
           setFormState((formState) => ({
             ...formState,
             agingData: response.data.vendorInvoices,
@@ -269,7 +277,7 @@ export default function AgingReport() {
   };
 
   useEffect(() => {
-      getReport();      
+    getReport();
   }, [isAr]);
 
   return (
@@ -396,97 +404,105 @@ export default function AgingReport() {
                     </GridItem>
                   </GridContainer>
                   <GridContainer style={{ marginTop: 10 }}>
-                    <GridItem xs={12} sm={12} md={12} lg={12}>
-                      <Table
-                        className={classes.table}
-                        aria-label="customized table"
-                      >
-                        <TableHead>
-                          <TableRow>
-                            <StyledTableCell>{isAr ? "Client":"Supplier"}</StyledTableCell>
-                            <StyledTableCell></StyledTableCell>
-                            <StyledTableCell align="right">
-                              Outstanding
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              Total Amt Due
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              {formState.intervals[0]}
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              {formState.intervals[1]}
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              {formState.intervals[2]}
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              {formState.intervals[3]}{" "}
-                            </StyledTableCell>
+                    {!isLoading ? (
+                      <GridItem xs={12} sm={12} md={12} lg={12}>
+                        <Table
+                          className={classes.table}
+                          aria-label="customized table"
+                        >
+                          <TableHead>
+                            <TableRow>
+                              <StyledTableCell style={{fontWeight:"bolder"}}>
+                                {isAr ? "Customer" : "Supplier"}
+                              </StyledTableCell>
+                              <StyledTableCell></StyledTableCell>
+                              <StyledTableCell style={{background:'#808080a1'}} align="right">
+                                Outstanding <Tooltip title="Invoice amount whish is not due yet."><span>?</span></Tooltip>
+                              </StyledTableCell>
+                              <StyledTableCell style={{background:'#80808073'}} align="right">
+                                Total Amt Due <Tooltip title="Invoice amount which is due for payment."><span>?</span></Tooltip>
+                              </StyledTableCell>
+                              <StyledTableCell align="right">
+                                {formState.intervals[0]}
+                              </StyledTableCell>
+                              <StyledTableCell align="right">
+                                {formState.intervals[1]}
+                              </StyledTableCell>
+                              <StyledTableCell align="right">
+                                {formState.intervals[2]}
+                              </StyledTableCell>
+                              <StyledTableCell align="right">
+                                {formState.intervals[3]}{" "}
+                              </StyledTableCell>
 
-                            <StyledTableCell align="right">
-                              {formState.intervals[4]}
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              Actions{" "}
-                            </StyledTableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          <React.Fragment>
-                            {formState.agingData.map((age) => (
-                              <Row
-                                data={age}
-                                intervals={formState.intervals}
-                                viewVendor={openVendor}
-                                viewInvoice={openInvoice}
-                              />
-                            ))}
-                            {formState.sum ? (
-                              <TableRow>
-                                <StyledTableCell colspan="2">
-                                  <b>Total</b>
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                  {formState.agingData[0].orgCurrency.Code}{" "}
-                                  {addZeroes(formState.sum.outstanding_sum)}
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                  {formState.agingData[0].orgCurrency.Code}{" "}
-                                  {addZeroes(
-                                    formState.sum.total_due_Amount_sum
-                                  )}
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                  {formState.agingData[0].orgCurrency.Code}{" "}
-                                  {addZeroes(formState.sum.col_1_sum)}
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                  {formState.agingData[0].orgCurrency.Code}{" "}
-                                  {addZeroes(formState.sum.col_2_sum)}
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                  {formState.agingData[0].orgCurrency.Code}{" "}
-                                  {addZeroes(formState.sum.col_3_sum)}
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                  {formState.agingData[0].orgCurrency.Code}{" "}
-                                  {addZeroes(formState.sum.col_4_sum)}
-                                </StyledTableCell>
+                              <StyledTableCell align="right">
+                                {formState.intervals[4]}
+                              </StyledTableCell>
+                              <StyledTableCell align="right">
+                                Actions{" "}
+                              </StyledTableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <React.Fragment>
+                              {formState.agingData.map((age) => (
+                                <Row
+                                  data={age}
+                                  intervals={formState.intervals}
+                                  viewVendor={openVendor}
+                                  viewInvoice={openInvoice}
+                                />
+                              ))}
+                              {formState.sum ? (
+                                <TableRow>
+                                  <StyledTableCell colspan="2">
+                                    <b>Total</b>
+                                  </StyledTableCell>
+                                  <StyledTableCell style={{background:'#808080a1'}} align="right">
+                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {addZeroes(
+                                      formState.sum.outstanding_sum?formState.sum.outstanding_sum:0
+                                    )}
+                                  </StyledTableCell>
+                                  <StyledTableCell style={{background:'#80808073'}} align="right">
+                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {addZeroes(
+                                      formState.sum.total_due_Amount_sum?formState.sum.total_due_Amount_sum:0
+                                    )}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="right">
+                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {addZeroes(formState.sum.col_1_sum)}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="right">
+                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {addZeroes(formState.sum.col_2_sum?formState.sum.col_2_sum :0)}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="right">
+                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {addZeroes(formState.sum.col_3_sum?formState.sum.col_3_sum:0)}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="right">
+                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {addZeroes(formState.sum.col_4_sum?formState.sum.col_4_sum:0)}
+                                  </StyledTableCell>
 
-                                <StyledTableCell align="right">
-                                  {formState.agingData[0].orgCurrency.Code}{" "}
-                                  {addZeroes(formState.sum.col_5_sum)}
-                                </StyledTableCell>
-                                <StyledTableCell align="right"></StyledTableCell>
-                              </TableRow>
-                            ) : (
-                              ""
-                            )}
-                          </React.Fragment>
-                        </TableBody>
-                      </Table>
-                    </GridItem>
+                                  <StyledTableCell align="right">
+                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {addZeroes(formState.sum.col_5_sum?formState.sum.col_5_sum:0)}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="right"></StyledTableCell>
+                                </TableRow>
+                              ) : (
+                                ""
+                              )}
+                            </React.Fragment>
+                          </TableBody>
+                        </Table>
+                      </GridItem>
+                    ) : (
+                      <CircularProgress/>
+                    )}
                   </GridContainer>
                 </CardBody>
               </Card>
@@ -514,17 +530,19 @@ export default function AgingReport() {
             >
               Go Back
             </Button>
-            {isAr ? 
-            <Receivable 
-              goBack={goBack}
-              vendor={formState.vendorDetails._id}
-              org={decoded.orgDetail.organizationId}
-            />:
-            <Payable
-              goBack={goBack}
-              vendor={formState.vendorDetails._id}
-              org={decoded.orgDetail.organizationId}
-            />}
+            {isAr ? (
+              <Receivable
+                goBack={goBack}
+                vendor={formState.vendorDetails._id}
+                org={decoded.orgDetail.organizationId}
+              />
+            ) : (
+              <Payable
+                goBack={goBack}
+                vendor={formState.vendorDetails._id}
+                org={decoded.orgDetail.organizationId}
+              />
+            )}
           </React.Fragment>
         </Animated>
       ) : (

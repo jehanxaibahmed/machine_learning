@@ -41,6 +41,8 @@ import { useSelector, useDispatch } from "react-redux";
 import Alert from '@material-ui/lab/Alert';
 import { CallReceived, DoneAll } from "@material-ui/icons";
 import { setIsTokenExpired } from "actions";
+import { _IsAr } from "../Functions/Functions";
+
 
 const styles = {
   cardIconTitle: {
@@ -90,12 +92,12 @@ export default function Requested() {
   const getInvoiceDetails = (row) => {
     axios({
       method: "post", //you can set what request you want to be
-      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
+      url:  _IsAr() ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: row.invoiceId,
         version: row.version,
-        vendorId:  isAr ?  null : row.vendorId,
-        clientId:  isAr ? row.clientId: null,
+        vendorId:  _IsAr() ?  null : row.vendorId,
+        clientId:  _IsAr() ? row.clientId: null,
       },
       headers: {
         cooljwt: Token,
@@ -130,14 +132,14 @@ export default function Requested() {
     };
     const reviewFile = async (row) => {
       setInvoiceData(row);
-      // validateInvoice(row, Token, isAr).then(res=>{
-        // setValidation(res);
+      // validateInvoice(row, Token, _IsAr()).then(res=>{
+      // setValidation(res);
         setReviewModal(true);   
       // });
     }
     const ValidateFile = async (row) => {
         setInvoiceData(row);
-        validateInvoice(row, Token, isAr).then(res=>{
+        validateInvoice(row, Token, _IsAr()).then(res=>{
         setAnimateTable(false);
         setValidation(res);
         setValidateModal(true);   
@@ -148,8 +150,8 @@ export default function Requested() {
     setIsLoading(true);
     axios({
       method: "get",
-      url: show ? isAr ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending/ar` : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending/ap` 
-      : isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews/ar` :  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews/ap` ,
+      url: show ? _IsAr() ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending/ar` : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewMyPending/ap` 
+      : _IsAr() ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews/ar` :  `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/myReviews/ap` ,
       headers: { cooljwt: Token },
     })
       .then((response) => {
@@ -330,7 +332,7 @@ const goBack = () => {
             };
             axios({
                 method: "post",
-                url: isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdateAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdate`,
+                url: _IsAr() ? `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdateAR` : `${process.env.REACT_APP_LDOCS_API_URL}/invoiceReview/reviewUpdate`,
                 data: data,
                 headers: {
                     cooljwt: Token,

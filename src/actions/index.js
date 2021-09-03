@@ -28,6 +28,12 @@ export const setToken = (tk) => {
   }
 };
 
+export const setTabVal = (val) => {
+  return (dispatch) => { 
+    dispatch({ type: "SET_TAB_VAL", response: val });
+  }
+}
+
 
 export const setIsAr = (isAR) => {
   return (dispatch) => { 

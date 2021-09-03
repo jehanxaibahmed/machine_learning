@@ -220,7 +220,7 @@ export default function SentInvoices(props) {
       },
     })
       .then(async (response) => {
-        notify("SENT Successfully");
+        successAlert("Notified Successfully");
       })
       .catch((error) => {
         if (error.response) {
@@ -364,7 +364,7 @@ export default function SentInvoices(props) {
     setIsViewingBlockChainView(false);
     axios({
       method: "get", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${row.vendorId}-${row.invoiceId}-${row.version}`,
+      url: `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${row.clientId}-${row.invoiceId}-${row.version}`,
     }).then((response) => {
       if (response.data.InvoiceWorkflowHistory.length !== 0) {
         setBlockChainData(response.data.InvoiceWorkflowHistory);
@@ -616,7 +616,7 @@ export default function SentInvoices(props) {
               {formState.filter == "acknowledgedCount" ? (
                 <React.Fragment>
                   <Tooltip
-                    title="Notify Client"
+                    title="Notify Customer"
                     aria-label="advanceDocumentView"
                   >
                     <Button
@@ -808,14 +808,16 @@ export default function SentInvoices(props) {
         }));
         let userDetail = jwt.decode(localStorage.getItem("cooljwt"));
         await getMyFiles(userDetail, false);
-
         setExportToFusionModel(false);
+        successAlert(n == 1 ? "SENT Successfully" : "Sent For Payment");
         notify(n == 1 ? "SENT Successfully" : "Sent For Payment");
       })
       .catch((error) => {
         if (error.response) {
           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
+        setExportToFusionModel(false);
+        errorAlert("Issue in sending invoice .");
         console.log(error);
       });
   };
@@ -950,7 +952,7 @@ export default function SentInvoices(props) {
                 <ExportToFusion
                   closeModal={() => setExportToFusionModel(false)}
                   fileData={row}
-                  title="SENT TO CLIENT"
+                  title="SENT TO CUSTOMER"
                   export={formState.export || 1}
                   loadFiles={getMyFiles}
                 />
@@ -1054,7 +1056,7 @@ export default function SentInvoices(props) {
                   <CardIcon color="danger">
                     <CenterFocusWeakIcon />
                   </CardIcon>
-                  <p className={classes.cardCategory}>Sent To Client</p>
+                  <p className={classes.cardCategory}>Sent To Customer</p>
                   <h3 className={classes.cardTitle}>{formState.sentCount}</h3>
                 </CardHeader>
                 <CardFooter stats>
@@ -1187,7 +1189,7 @@ export default function SentInvoices(props) {
                             : msgAlert("Please Select a Invoice.")
                         }
                       >
-                        Sent to Client ({selected.length})
+                        Sent to Customer ({selected.length})
                       </Button>
                     </React.Fragment>
                   ) : (
@@ -1234,7 +1236,7 @@ export default function SentInvoices(props) {
                           accessor: "dueDate",
                         },
                         {
-                          Header: "Client Name",
+                          Header: "Customer Name",
                           accessor: "vendorName",
                         },
                         {

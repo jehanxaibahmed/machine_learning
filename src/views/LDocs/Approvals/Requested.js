@@ -107,12 +107,12 @@ export default function ApprovalRequested() {
   const getInvoiceDetails = (row) => {
     axios({
       method: "post", //you can set what request you want to be
-      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
+      url:  _IsAr() ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: row.invoiceId,
         version: row.version,
-        vendorId:  isAr ?  null : row.vendorId,
-        clientId:  isAr ? row.clientId: null,
+        vendorId:  _IsAr() ?  null : row.vendorId,
+        clientId:  _IsAr() ? row.clientId: null,
       },
       headers: {
         cooljwt: Token,
@@ -142,15 +142,15 @@ export default function ApprovalRequested() {
 
   const reviewFile = (row) => {
     setFileData(row);
-    // validateInvoice(row, Token, isAr).then((res) => {
+    // validateInvoice(row, Token, _IsAr()).then((res) => {
       // setValidation(res);
       setApproverModal(true);
-    // });
+    //  });
   };
 
   const ValidateFile = async (row) => {
     setInvoiceData(row);
-    validateInvoice(row, Token, isAr).then((res) => {
+    validateInvoice(row, Token, _IsAr()).then((res) => {
       setAnimateTable(false);
       setValidation(res);
       setValidateModal(true);

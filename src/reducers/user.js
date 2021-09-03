@@ -14,6 +14,7 @@ const initialState = {
   events:[],
   darkmode:false,
   isAr:false,
+  tabVal:0,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -21,6 +22,9 @@ const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case "SET_IS_AR": {
       return { ...state, isAr: action.response};
+    }
+    case "SET_TAB_VAL": {
+      return { ...state, tabVal: action.response};
     }
     case "SET_TOKEN": {
       return { ...state, Token: action.response.token , userData : action.response.userData};

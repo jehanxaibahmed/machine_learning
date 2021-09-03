@@ -228,14 +228,14 @@ export default function Organization() {
                 <CardIcon color="info">
                   <h4 className={classes.cardTitleText}>Organization List</h4>
                 </CardIcon>
-                <Button
+                {/* <Button
                   color="danger"
                   round
                   style={{ float: "right" }}
                   onClick={() => setClassicModal(true)}
                 >
                   Add New
-                </Button>
+                </Button> */}
                 <Tooltip
                   id="tooltip-top"
                   title="Refresh"

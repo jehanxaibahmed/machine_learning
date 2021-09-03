@@ -47,6 +47,7 @@ export default function Step2({ invoices, loading, openAdvanceView }) {
           invoiceId: prop.invoiceId,
           version: prop.version,
           vendorId: prop.vendorId,
+          clientId: prop.clientId,
         };
         return {
           invoiceId: (
@@ -125,15 +126,37 @@ export default function Step2({ invoices, loading, openAdvanceView }) {
                   style={{ border: "green 1px solid", color: "green" }}
                 />
               </Tooltip>
-            ) : currentStatus.status == "readyToPay" ? (
-              <Tooltip title="READY TO PAY">
+            ) : currentStatus.status == "readyToSend" ? (
+              <Tooltip title="Ready to Sent">
                 <Chip
                   variant="outlined"
                   size="small"
                   // avatar={<Avatar>M</Avatar>}
-                  label="READY TO PAY"
+                  label="READY TO SENT"
+                  clickable
+                  style={{ border: "blue 1px solid", color: "blue" }}
+                />
+              </Tooltip>
+            ) : currentStatus.status == "sent" ? (
+              <Tooltip title="Sent">
+                <Chip
+                  variant="outlined"
+                  size="small"
+                  // avatar={<Avatar>M</Avatar>}
+                  label="SENT TO CUSTOMER"
                   clickable
                   style={{ border: "orange 1px solid", color: "orange" }}
+                />
+              </Tooltip>
+            ) : currentStatus.status == "acknowledged" ? (
+              <Tooltip title="Sent & Acknowledged">
+                <Chip
+                  variant="outlined"
+                  size="small"
+                  // avatar={<Avatar>M</Avatar>}
+                  label="ACKNOWLEDGED"
+                  clickable
+                  style={{ border: "green 1px solid", color: "green" }}
                 />
               </Tooltip>
             ) : currentStatus.val == 0 ? (
