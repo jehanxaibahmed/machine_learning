@@ -216,9 +216,9 @@ export default function Cashflow() {
                             ?.arUnPaidAmountCount[0]?.TotalUnPaidAmount || 0}`
                         : 0}
                       {" / "}
-                      {graphData?.arPaidAmount
+                      {graphData?.arPaidAmountCount
                         ? `${graphData.currency.Code}  ${graphData
-                            ?.arPaidAmount[0]?.netAmt_bc || 0}`
+                            ?.arPaidAmountCount[0]?.TotalPaidAmount || 0}`
                         : 0}
                     </Link>
                   </div>
@@ -319,17 +319,16 @@ export default function Cashflow() {
                   </div>
                   <div>
                     <Link to="#">
-                      {graphData?.apUnPaidAmountCount
-                        ? `${
-                            graphData.currency.Code
-                          }  ${graphData?.APvsAR_paid || 0}`
-                        : 0}
-                      {" / "}
-
                       {graphData?.apPaidAmount
                         ? `${
                             graphData.currency.Code
                           }  ${graphData?.APvsAR_unPaid || 0}`
+                        : 0}
+                      {" / "}
+                      {graphData?.apUnPaidAmountCount
+                        ? `${
+                            graphData.currency.Code
+                          }  ${graphData?.APvsAR_paid || 0}`
                         : 0}
                     </Link>
                   </div>
