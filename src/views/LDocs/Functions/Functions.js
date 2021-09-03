@@ -5,7 +5,7 @@ import dateFormat from "dateformat";
 import { firebaseConfig } from "../../../config/Firebase";
 import jwt from "jsonwebtoken";
 import { useHistory } from "react-router-dom";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import moment from "moment";
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
@@ -62,13 +62,17 @@ export const getToken = () => {
 };
 
 export function addZeroes(num) {
-  num = typeof num == "string" ? num : num.toString();
-  var value = Number(num);
-  var res = num.toString().split(".");
-  if (res.length == 1 || res[1].length < 1) {
-    value = value.toFixed(2);
+  if (typeof num == "string" || typeof num == "number") {
+    num = typeof num == "string" ? num : num.toString();
+    var value = Number(num);
+    var res = num.toString().split(".");
+    if (res.length == 1 || res[1].length < 1) {
+      value = value.toFixed(2);
+    }
+    return value;
+  } else {
+    return 0;
   }
-  return value;
 }
 
 export const formatDateTime = (date) => {
@@ -159,7 +163,6 @@ export const currentTracking = (trackingStatus) => {
   return activeStep;
 };
 
-
 export const currentTrackingAr = (trackingStatus) => {
   let currentStatus;
   let activeStep;
@@ -206,7 +209,6 @@ export const currentTrackingAr = (trackingStatus) => {
   return activeStep;
 };
 
-
 export const successAlert = (msg) => {
   Swal.fire({
     title: "Success",
@@ -231,7 +233,6 @@ export const errorAlert = (msg) => {
   });
 };
 
-
 export const msgAlert = (msg) => {
   Swal.fire({
     title: "INFO",
@@ -248,12 +249,14 @@ export const validateInvoice = async (row, Token, isAr) => {
   return new Promise((res, rej) => {
     axios({
       method: "post", //you can set what request you want to be
-      url:  isAr ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
+      url: isAr
+        ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`
+        : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: row.invoiceId,
         version: row.version,
-        vendorId:  isAr ?  null : row.vendorId,
-        clientId:  isAr ? row.clientId: null,
+        vendorId: isAr ? null : row.vendorId,
+        clientId: isAr ? row.clientId : null,
       },
       headers: {
         cooljwt: Token,
@@ -261,10 +264,12 @@ export const validateInvoice = async (row, Token, isAr) => {
     })
       .then(async (invoiceRes) => {
         const invoice = invoiceRes.data;
-        const  isAR = invoice.isAR;
+        const isAR = invoice.isAR;
         axios({
           method: "get",
-          url: isAR ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.clientId}-${row.invoiceId}-${row.version}` : `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
+          url: isAR
+            ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.clientId}-${row.invoiceId}-${row.version}`
+            : `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoice/validate-invoice/${invoice.vendorId}-${row.invoiceId}-${row.version}`,
         })
           .then(async (blockchainRes) => {
             const blockchain = blockchainRes.data.InvoiceData;
@@ -492,14 +497,18 @@ export const validateInvoice = async (row, Token, isAr) => {
   });
 };
 
-
 export const _IsAr = () => {
   let url = window.location.href;
   console.log(url);
-  let is_Ar = url.substring(url.lastIndexOf("/") + 1) == "ar" ? true : url.substring(url.lastIndexOf("/") + 1) == "ar"  ? false : null;
+  let is_Ar =
+    url.substring(url.lastIndexOf("/") + 1) == "ar"
+      ? true
+      : url.substring(url.lastIndexOf("/") + 1) == "ar"
+      ? false
+      : null;
   console.log(is_Ar);
   return is_Ar;
-}
+};
 
 export const conversionRate = (
   fc,
