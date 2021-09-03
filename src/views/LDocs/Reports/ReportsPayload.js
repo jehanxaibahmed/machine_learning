@@ -1,5 +1,10 @@
-import ArImage from "assets/img/icons/ar.png";
-import ApImage from "assets/img/icons/ap.png";
+import ReceivableAnalyticsImage from "assets/img/aging/chart-2-512 (1).png";
+import ReceivableAgingImage from "assets/img/aging/AR_Aging-512.png";
+import PayableAnalyticsImage from "assets/img/aging/chart-512 (2).png";
+import PayableAgingImage from "assets/img/aging/AP_Aging-2-512.png";
+
+import CashflowImage from "assets/img/aging/cash-2-512.png";
+
 
 
 export const ArReports = [
@@ -8,7 +13,7 @@ export const ArReports = [
     "name": "Receivable Analytics",
     "title":"Analytical Summary of Accounts Receivable ",
     "link": "./financeDashboard/ar",
-    "icon":ArImage,
+    "icon":ReceivableAnalyticsImage,
     "isImg":true
   },
   {
@@ -16,7 +21,7 @@ export const ArReports = [
     "name": "Receivable Aging",
     "title":"Aging Report of Accounts Receivable",
     "link": "./invoice-aging/ar",
-    "icon":ArImage,
+    "icon":ReceivableAgingImage,
     "isImg":true,
   },
   
@@ -29,7 +34,7 @@ export const ApReports = [
     "name": "Payable Analytics",
     "title":"Analytical Summary of Accounts Payable ",
     "link": "./financeDashboard/ap",
-    "icon":ApImage,
+    "icon":PayableAnalyticsImage,
     "isImg":true,
   },
   
@@ -38,7 +43,7 @@ export const ApReports = [
     "name": "Payable Aging",
     "title":"Aging Report of Accounts Payable",
     "link": "./invoice-aging/ap",
-    "icon":ApImage,
+    "icon":PayableAgingImage,
     "isImg":true,
   },
   ];
@@ -51,7 +56,7 @@ const Reports = [
     "name": "Cashflow",
     "title":"An overview of the Receivable and Payable Cash Flows",
     "link": "./cashflow",
-    "icon":ArImage,
+    "icon":CashflowImage,
     "isImg":true
   }
 ]

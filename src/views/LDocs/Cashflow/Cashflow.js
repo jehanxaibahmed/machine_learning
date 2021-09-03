@@ -241,7 +241,7 @@ export default function Cashflow() {
                   <LinearProgress />
                 ) : (
                   <h3 className={classes.cardTitle} style={{ color: "black" }}>
-                    {`${graphData.currency.Code}  ${addZeroes(graphData?.APvsAR).toFixed(2) || 0}`}
+                    {`${graphData.currency.Code}  ${addZeroes(graphData?.APvsAR) || 0}`}
                   </h3>
                 )}
               </CardHeader>
