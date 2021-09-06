@@ -173,6 +173,7 @@ export default function Workflow() {
     setOTP("");
     setUpdating(true);
     getCompanies(row.organizationId);
+    console.log(row.isAR);
   setFormState((formState) => ({
     ...formState,
     values: {
@@ -186,7 +187,8 @@ export default function Workflow() {
       comments: row.comments,
       createdBy: row.createdBy,
       role:true,
-      workflowDescription:''
+      workflowDescription:'',
+      type:row.isAR ? false : true
     },
   }));
   setSteps(row.steps);
