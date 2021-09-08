@@ -336,6 +336,7 @@ export default function FileAdvanceView(props) {
           <Typography variant="subtitle2" component="h2">
             {step?.Event.toUpperCase()} STEP (
             {formatDateTime(step?.EventInitDate)})
+            {step?.TxnID ? 
             <Tooltip title="Transaction ID">
               <a
                 href={`https://test.whatsonchain.com/tx/${step?.TxnID}`}
@@ -345,6 +346,7 @@ export default function FileAdvanceView(props) {
                 <VerifiedUserIcon />
               </a>
             </Tooltip>
+            :""}
           </Typography>
         </CardHeader>
         <Divider />
