@@ -114,7 +114,9 @@ export default function CreateInvoice(props) {
     localStorage.getItem("cooljwt");
   const history = useHistory();
   const isAr =
-    history.location.pathname.substring(history.location.pathname.lastIndexOf("/") + 1) == "ar"
+    history.location.pathname.substring(
+      history.location.pathname.lastIndexOf("/") + 1
+    ) == "ar"
       ? true
       : false;
   const dispatch = useDispatch();
@@ -483,10 +485,10 @@ export default function CreateInvoice(props) {
   };
 
   const closeMarkAsReceivedModel = async () => {
+    setIsSavingInvoice(false);
     const userData = jwt.decode(Token);
     await setMarkAsReceivedModel(false);
     await props.loadFiles(userData, false);
-    successAlert("Status Changed Successfully.");
     // setIsMarked(true);
   };
   const removeAttachment = (fileIndex) => {
@@ -1532,6 +1534,7 @@ export default function CreateInvoice(props) {
   };
 
   const createInvoice = () => {
+    return new Promise((res, rej)=>{
     //Creating Invoice
     setIsSavingInvoice(true);
     const isEdit = props.editHandler == 1 ? true : false;
@@ -1682,11 +1685,9 @@ export default function CreateInvoice(props) {
     axios({
       method: "post",
       url: isEdit
-        ? 
-         isAr? 
-          `${process.env.REACT_APP_LDOCS_API_URL}/AR/updateInvoiceAR`
-          :
-          `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
+        ? isAr
+          ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/updateInvoiceAR`
+          : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
         : isAr
         ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/submitInvoiceAR`
         : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
@@ -1697,10 +1698,10 @@ export default function CreateInvoice(props) {
       },
     })
       .then((response) => {
-        setIsSavingInvoice(false);
-        if (edit && !isVendor) {
-          closeMarkAsReceivedModel();
+        if (edit && !isVendor && !isAr) {
+          setIsSavingInvoice(true);
         } else {
+          setIsSavingInvoice(false);
           successAlert("Invoice Submited SuccessFully.");
         }
         if (!edit) {
@@ -1760,11 +1761,14 @@ export default function CreateInvoice(props) {
         } else {
           props.loadFiles(userData, false);
         }
+        res("success");
       })
-      .catch((error) => {
+      .catch(async (error) => {
+        rej("error");
         if (error.response) {
           error.response.status == 401 && dispatch(setIsTokenExpired(true));
         }
+        await closeMarkAsReceivedModel();
         setIsSavingInvoice(false);
         errorAlert(
           error.message
@@ -1772,6 +1776,7 @@ export default function CreateInvoice(props) {
             : "There is some Issue In Create Invoice"
         );
       });
+    });
   };
   return (
     <div>
