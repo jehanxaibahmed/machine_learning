@@ -23,7 +23,7 @@ class PieChartView extends Component {
       if(typeof this.props.chartData.ByCountStatus !== "undefined"){
         if(this.props.chartData.ByCountStatus.length > 0){
           let row = this.props.chartData.ByCountStatus;
-          chart.data = row.map(itm=>{return {color:itm.color, status: itm._id, count: itm.count, fileName: itm.data.length > 0 ? itm.data.map(file=>{return "\n"+file; }):""}})
+          chart.data = row.map(itm=>{return {color:itm.color, status: itm._id, count: itm.count, fileName: itm.data.length > 0 ? itm.data.map(file=>{return "\n"+file.invoiceId; }):""}})
         }else {
           chart.data = [{status: "No Data To Display",count:1}];
           }
