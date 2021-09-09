@@ -141,8 +141,44 @@ export default function FileReceived(props) {
               );
               props.closeFileReceivedModal();
             });
-        }
-       });
+          }
+          });
+        }else{
+          let data = {
+            tenantId: props.fileData.tenantId,
+            organizationId: props.fileData.organizationId,
+            invoiceId: props.fileData.invoiceId,
+            version: props.fileData.version,
+            markedAs: formState.values.status,
+            reviewComments: formState.values.reviewComments,
+          };
+          console.log(data);
+          await axios({
+            method: "put",
+            url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/markedAs`,
+            data: data,
+            headers: {
+              cooljwt: Token,
+            },
+          })
+            .then(async (response) => {
+              setIsLoading(false);
+             
+              successAlert("Marked As Successful");
+              props.closeFileReceivedModal();
+              // props.loadFiles ? await props.loadFiles(decoded, false) : '';
+            })
+            .catch((error) => {
+              if (error.response) {
+                error.response.status == 401 && dispatch(setIsTokenExpired(true));
+              }
+              errorAlert(
+                typeof error.response != "undefined"
+                  ? error.response.data
+                  : error.message
+              );
+              props.closeFileReceivedModal();
+            });      
       }
     }
   };
