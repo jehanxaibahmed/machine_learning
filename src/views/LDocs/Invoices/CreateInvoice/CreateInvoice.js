@@ -1590,7 +1590,7 @@ export default function CreateInvoice(props) {
       contactPerson: isVendor
         ? null
         : formState.values.selectedVendor.level1.contactPerson,
-      createdBy: userData.email,
+      createdBy: edit ? fileData.createdBy  : userData.email,
       balanceDue: conversionRate(
         formState.values.currency,
         baseCurrency,
