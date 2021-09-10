@@ -1629,7 +1629,7 @@ export default function CreateInvoice(props) {
         (l) => l._id == formState.values.currency
       ).conversionRate,
       description: formState.values.notes,
-      createdByVendor: isVendor ? true : false,
+      createdByVendor: edit ? fileData.createdByVendor :  isVendor ? true : false,
       po: formState.values.poNumber,
       // receiptNumber: formState.values.receiptNumber,
       paymentTerms: formState.values.paymentTerms.split("-")[1],
