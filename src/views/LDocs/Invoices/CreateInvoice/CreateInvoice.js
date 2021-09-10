@@ -488,7 +488,7 @@ export default function CreateInvoice(props) {
     setIsSavingInvoice(false);
     const userData = jwt.decode(Token);
     await setMarkAsReceivedModel(false);
-    await props.loadFiles(userData, false);
+    if(props.loadFiles){ await props.loadFiles(userData, false);}
     // setIsMarked(true);
   };
   const removeAttachment = (fileIndex) => {
@@ -1759,7 +1759,7 @@ export default function CreateInvoice(props) {
             },
           });
         } else {
-          // props.loadFiles(userData, false);
+          if(props.loadFiles){props.loadFiles(userData, false)};
         }
         res("success");
       })

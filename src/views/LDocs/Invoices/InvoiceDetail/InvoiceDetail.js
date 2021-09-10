@@ -49,12 +49,13 @@ export default function InvoiceDetail() {
 
     axios({
       method: "post", //you can set what request you want to be
-      url: invoice.isAR ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      url: invoice.isAR == "true" ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
       data: {
         invoiceId: invoice.id,
         version: invoice.version,
-        vendorId:  invoice.isAR ?  null : invoice.vendorId,
-        clientId: invoice.isAR ? invoice.clientId: null,
+        vendorId:  invoice.isAR  == "true" ?  null : invoice.vendorId,
+        clientId: invoice.isAR  == "true" ? invoice.clientId: null,
+        isAR: invoice.isAR  == "true" ? true : false
       },
       headers: {
         cooljwt: Token,
