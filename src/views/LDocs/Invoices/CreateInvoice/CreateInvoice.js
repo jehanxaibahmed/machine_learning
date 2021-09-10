@@ -1759,7 +1759,7 @@ export default function CreateInvoice(props) {
             },
           });
         } else {
-          props.loadFiles(userData, false);
+          // props.loadFiles(userData, false);
         }
         res("success");
       })
