@@ -49,7 +49,7 @@ export default function InvoiceDetail() {
 
     axios({
       method: "post", //you can set what request you want to be
-      url: invoice.isAR == "true" ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      url: invoice.isAR == "true" ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: invoice.id,
         version: invoice.version,
