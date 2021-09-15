@@ -29,6 +29,7 @@ import Currency from "views/LDocs/Currency/Currency";
 import GeneralConfigrations from "views/LDocs/Configrations/GeneralConfigrations";
 import DescriptionIcon from '@material-ui/icons/Description';
 import InvoiceConfigrations from "views/LDocs/Configrations/InvoiceConfigration";
+import Permissions from "views/LDocs/Permissions/Permissions";
 
 
 var adminRoutes = [
@@ -135,6 +136,13 @@ var adminRoutes = [
         icon: MonetizationOnIcon,
         component: Currency,
         layout: "/admin",
+      },
+      {
+        path: "/permissions",
+        name:"Permissions",
+        icon:SettingsIcon,
+        component:Permissions,
+        layout:"/admin"
       }
     ]
   }
