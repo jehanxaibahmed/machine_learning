@@ -94,7 +94,7 @@ export default function FileAdvanceView(props) {
   const getBlockChainData = async () => {
     let offchainData = [];
     if (isAr) {
-      await axios({
+     axios({
         method: "post", //you can set what request you want to be
         url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/get-invoice-workflow-history-offchain`,
         data: {
@@ -120,7 +120,7 @@ export default function FileAdvanceView(props) {
           offchainData = [];
         });
     }
-    await axios({
+   axios({
       method: "get", //you can set what request you want to be
       url: isAr
         ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.clientId}-${fileData.invoiceId}-${fileData.version}`
@@ -142,6 +142,11 @@ export default function FileAdvanceView(props) {
         console.log(error);
         setBlockChainData(offchainData);
       });
+
+      setTimeout(() => {
+        setBlockChainData([]);
+      }, 1000);
+    
   };
 
   //Get BlockChain View
@@ -300,17 +305,17 @@ export default function FileAdvanceView(props) {
       await getFileVersions();
     }
     await getPaymentData();
+    setIsLoading(false);
     if (!isVendor) {
-      await getValidator();
+       getValidator();
     }
 
     if (fileData.initWorkFlow && !isVendor) {
       console.log("WORKFLOW INITED");
-      await getBlockChainData();
       await getWorkflowSteps();
       setIsLoading(false);
+      getBlockChainData();
     }
-    setIsLoading(false);
   };
 
   //BLockChain Stepper
