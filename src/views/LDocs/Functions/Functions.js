@@ -166,7 +166,6 @@ export const currentTracking = (trackingStatus) => {
 export const currentTrackingAr = (trackingStatus) => {
   let currentStatus;
   let activeStep;
-  console.log(trackingStatus);
   switch (trackingStatus.current_status) {
     case "invoiceDraft":
       currentStatus = trackingStatus.invoiceDraft.status;
@@ -205,7 +204,6 @@ export const currentTrackingAr = (trackingStatus) => {
       }
       break;
   }
-  console.log(activeStep);
   return activeStep;
 };
 
@@ -499,14 +497,12 @@ export const validateInvoice = async (row, Token, isAr) => {
 
 export const _IsAr = () => {
   let url = window.location.href;
-  console.log(url);
   let is_Ar =
     url.substring(url.lastIndexOf("/") + 1) == "ar"
       ? true
       : url.substring(url.lastIndexOf("/") + 1) == "ar"
       ? false
       : null;
-  console.log(is_Ar);
   return is_Ar;
 };
 

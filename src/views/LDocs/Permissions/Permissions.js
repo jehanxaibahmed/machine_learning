@@ -158,37 +158,11 @@ export default function Permissions() {
   }
 
 
-  const handleSelectAll = (x, key1, key2) => {
-    if (x == 1) {
-      Object.keys(state.permissions_role).map((key1) => {
-        Object.keys(state.permissions_role[key1]).map((key2) => {
-          Object.keys(state.permissions_role[key1][key2]).map((key3) => {
-            if (key3 != "name" && key3 != "enable" && key3.length > 1) {
-              console.log(key3)
-              setState((state) => ({
-                ...state,
-                permissions_role: {
-                  ...state.permissions_role,
-                  [key1]: {
-                    ...state.permissions_role[key1],
-                    [key2]: {
-                      ...state.permissions_role[key1][key2],
-                      [key3]: {
-                        ...state.permissions_role[key1][key2][key3],
-                        enable: true
-                      }
-                    }
-                  }
-                }
-              }))
-            }
-          })
-        })
-      })
-    }
-
-    if (x == 2) {
+  const handleSelectAll = (key_1, key_2) => {
+    Object.keys(state.permissions_role).map((key1) => {
+      if (key_1) { key1 = key_1 }
       Object.keys(state.permissions_role[key1]).map((key2) => {
+        if (key_2) { key2 = key_2 }
         Object.keys(state.permissions_role[key1][key2]).map((key3) => {
           if (key3 != "name" && key3 != "enable" && key3.length > 1) {
             console.log(key3)
@@ -211,33 +185,7 @@ export default function Permissions() {
           }
         })
       })
-    }
-
-
-    if (x == 3) {
-      Object.keys(state.permissions_role[key1][key2]).map((key3) => {
-        if (key3 != "name" && key3 != "enable" && key3.length > 1) {
-          console.log(key3)
-          setState((state) => ({
-            ...state,
-            permissions_role: {
-              ...state.permissions_role,
-              [key1]: {
-                ...state.permissions_role[key1],
-                [key2]: {
-                  ...state.permissions_role[key1][key2],
-                  [key3]: {
-                    ...state.permissions_role[key1][key2][key3],
-                    enable: true
-                  }
-                }
-              }
-            }
-          }))
-        }
-      })
-    }
-
+    })
 
   }
 

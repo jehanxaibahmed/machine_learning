@@ -28,6 +28,14 @@ export const setToken = (tk) => {
   }
 };
 
+
+export const setPermissions = (permissions) => {
+  return (dispatch) => { 
+    dispatch({ type: "SET_PERMISSIONS", response: permissions });
+  }
+};
+
+
 export const setTabVal = (val) => {
   return (dispatch) => { 
     dispatch({ type: "SET_TAB_VAL", response: val });

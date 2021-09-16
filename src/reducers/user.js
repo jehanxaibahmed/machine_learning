@@ -15,17 +15,26 @@ const initialState = {
   darkmode:false,
   isAr:false,
   tabVal:0,
+  permissions:null,
 };
 
 const userReducer = (state = initialState, action) => {
   // eslint-disable-next-line default-case
   switch (action.type) {
+
+    case "SET_PERMISSIONS": {
+     
+      return { ...state, permissions: action.response};
+    }
+
     case "SET_IS_AR": {
       return { ...state, isAr: action.response};
     }
+
     case "SET_TAB_VAL": {
       return { ...state, tabVal: action.response};
     }
+   
     case "SET_TOKEN": {
       return { ...state, Token: action.response.token , userData : action.response.userData};
     }

@@ -123,6 +123,7 @@ export default function Title() {
           getTitle(companies[0]._id);
         }else{
           setCompanies([]);
+          setIsLoading(false);
         }
       })
       .catch((error) => {
@@ -249,7 +250,7 @@ export default function Title() {
                   <TextField
                     className={classes.textField}
                     fullWidth={true}
-                    label="Select Company To See Designations"
+                    label="Select Locations To See Designations"
                     name="compFilter"
                     onChange={(event) => {
                       handleFilter(event);

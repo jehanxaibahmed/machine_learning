@@ -86,6 +86,27 @@ export default function PermissionsTreeView({ permissions, handleCheckboxChange,
   const classes = useStyles();
   let permissions_array = Object.entries(permissions);
 
+  const checkSelectAll = (key1, key2) => {
+    let AllSelectedModule = [];
+    Object.keys(permissions).map((key) => {
+      if(key1){key = key1};
+      Object.keys(permissions[key]).map((sub_key) => {
+        if(key2){sub_key = key2};
+        Object.keys(permissions[key][sub_key])
+          .map(item => {
+            if (item != "name" && item != "enable" && typeof permissions[key][sub_key][item] == "object") {
+              AllSelectedModule.push(permissions[key][sub_key][item]?.enable ? true : false);
+            }
+          });
+      });
+    });
+    let isAllSelectedModule = AllSelectedModule
+      .every(item => item === true);
+    return isAllSelectedModule;
+  }
+
+
+
   return (
     <TreeView
 
@@ -103,42 +124,51 @@ export default function PermissionsTreeView({ permissions, handleCheckboxChange,
     >
       {permissions ?
         <FormControlLabel
-        
+
           style={{ alignSelf: 'end', float: 'right' }}
           control={<Checkbox
-          size="large"
-            onChange={() => handleSelectAll(1, null, null)}
+            size="large"
+            checked={checkSelectAll()}
+            onChange={() => handleSelectAll()}
             name="Select All" />}
           label="Select All Modules"
         /> : ""}
       {
-        Object.keys(permissions).map((key) => (
-          typeof permissions[key] == "object" &&
-          <StyledTreeItem nodeId={key} label={permissions[key]?.name}>
-            <FormControlLabel
-              style={{ alignSelf: 'end', float: 'right' }}
-              control={<Checkbox
-              size="medium"
-                onChange={() => handleSelectAll(2, key, null)}
-                name="Select All" />}
-              label={`Select All`}
-            />
-            {Object.keys(permissions[key]).map((sub_key) => (
-              typeof permissions[key][sub_key] == "object" && Object.keys(permissions[key][sub_key]).length > 0 &&
-              <StyledTreeItem nodeId={key + sub_key} label={permissions[key][sub_key]?.name}>
+        Object.keys(permissions).map((key) => {
+          if (typeof permissions[key] == "object") {
+            return (
+              <StyledTreeItem nodeId={key} label={permissions[key]?.name}>
                 <FormControlLabel
                   style={{ alignSelf: 'end', float: 'right' }}
                   control={<Checkbox
-                    size="small"
-                    onChange={() => handleSelectAll(3, key, sub_key)}
+                    size="medium"
+                    checked={checkSelectAll(key)}
+                    onChange={() => handleSelectAll(key)}
                     name="Select All" />}
-                    label={`Select All`}
-                    />
-                <PermissionsGrid key1={key} key2={sub_key} permissions={permissions} handleChange={handleCheckboxChange} />
+                  label={`Select All`}
+                />
+                {Object.keys(permissions[key]).map((sub_key) => {
+                  if (typeof permissions[key][sub_key] == "object" && Object.keys(permissions[key][sub_key]).length > 0) {
+                    return (
+                      <StyledTreeItem nodeId={key + sub_key} label={permissions[key][sub_key]?.name}>
+                        <FormControlLabel
+                          style={{ alignSelf: 'end', float: 'right' }}
+                          control={<Checkbox
+                            size="small"
+                            onChange={() => handleSelectAll(key, sub_key)}
+                            checked={checkSelectAll(key, sub_key)}
+                            name="Select All" />}
+                          label={`Select All`}
+                        />
+                        <PermissionsGrid key1={key} key2={sub_key} permissions={permissions} handleChange={handleCheckboxChange} />
+                      </StyledTreeItem>
+                    )
+                  }
+                })}
               </StyledTreeItem>
-            ))}
-          </StyledTreeItem>
-        ))
+            )
+          }
+        })
       }
     </TreeView>
   );

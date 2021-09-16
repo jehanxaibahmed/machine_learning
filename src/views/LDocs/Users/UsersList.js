@@ -96,6 +96,7 @@ export default function UsersList() {
           }
         } else {
           setOrganizations([]);
+          setIsLoading(false);
         }
       }, 500);
   }
@@ -114,6 +115,7 @@ export default function UsersList() {
           getUsers(companies[0]._id);
         }else{
           setCompanies([]);
+          setIsLoading(false);
         }
       })
       .catch((error) => {
@@ -270,7 +272,7 @@ export default function UsersList() {
                   <TextField
                     className={classes.textField}
                     fullWidth={true}
-                    label="Select Organization To See Companies"
+                    label="Select Organization To See Locations"
                     name="organizationFilter"
                     onChange={(event) => {
                       handleFilter(event);
@@ -305,7 +307,7 @@ export default function UsersList() {
                   <TextField
                     className={classes.textField}
                     fullWidth={true}
-                    label="Select Company To See Departments"
+                    label="Select Locations To See Users"
                     name="compFilter"
                     onChange={(event) => {
                       handleFilter(event);

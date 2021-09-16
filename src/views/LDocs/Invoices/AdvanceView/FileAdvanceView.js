@@ -272,10 +272,10 @@ export default function FileAdvanceView(props) {
         ? `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar`
         : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
-        invoiceId: row.invoiceId,
-        version: row.version,
-        vendorId: isAr ? null : row.vendorId,
-        clientId: isAr ? row.clientId : null,
+        invoiceId: fileData?.invoiceId,
+        version: fileData?.version,
+        vendorId: isAr ? null : fileData?.vendorId,
+        clientId: isAr ? fileData?.clientId : null,
       },
       headers: {
         cooljwt: Token,

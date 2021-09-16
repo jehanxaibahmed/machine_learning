@@ -260,7 +260,7 @@ export default function Paypal(props) {
                       email: formState.values.paypalEmail,
                     },
                   ],
-                  website: `${process.env.process.env.REACT_APP_LDOCS_API_SELF_URL}`,
+                  website: `${process.env.REACT_APP_LDOCS_API_SELF_URL}`,
                   addresses: [
                     {
                       address_line_1: "One Washington Square",
@@ -351,7 +351,7 @@ export default function Paypal(props) {
           partner_config_override: {
             partner_logo_url:
               "https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg",
-            return_url: `${process.env.process.env.REACT_APP_LDOCS_API_SELF_URL}/vendor/user-profile`,
+            return_url: `${process.env.REACT_APP_LDOCS_API_SELF_URL}/vendor/user-profile`,
             return_url_description:
               "the url to return the merchant after the paypal onboarding process.",
             action_renewal_url:

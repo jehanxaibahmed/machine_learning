@@ -683,7 +683,7 @@ export default function FilesListAr(props) {
                 </Button>
               </Tooltip>
 
-              {prop.approveStatus !== "approved" || prop.workFlowStatus !== "rejected" ? (
+              {prop.approveStatus !== "approved" && prop.workFlowStatus !== "rejected" ? (
                 <Tooltip title={"Edit Invoice"} aria-label="received">
                   <Button
                     justIcon
