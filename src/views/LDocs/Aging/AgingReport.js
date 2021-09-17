@@ -247,8 +247,9 @@ export default function AgingReport() {
         }));
       }
     }
+    let userDetail = jwt.decode(Token);
     let data = {
-      organizationId: "602241c47a18fc82a41cd973",
+      organizationId: userDetail.orgDetail.organizationId,
       type: null,
       interval: interval,
       addPrevious: formState.isAddPrevios,
