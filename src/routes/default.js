@@ -221,7 +221,6 @@ export const apRoutes = (permissions) => {
             component: Reports,
             layout: "/default",
         },
-        others?.notifications?.enable &&
         {
             path: "/notifications/ap",
             name: "Notifications",
@@ -420,7 +419,6 @@ export const arRoutes = (permissions) => {
             component: Reports,
             layout: "/default",
         },
-        others?.notifications?.enable &&
         {
             path: "/notifications/ar",
             name: "Notifications",
