@@ -67,6 +67,7 @@ export default function LoginSecret(props) {
         let token = response.headers.cooljwt;
         dispatch(setPermissions(response?.data));
         let decoded = jwt.decode(token);
+        console.log('user_details', decoded);
         if (!decoded.isTenant) {
           await axios({
             method: "post", //you can set what request you want to be
@@ -107,9 +108,9 @@ export default function LoginSecret(props) {
   return (
     <div className={classes.container}>
       {loggedIn && userData !== null ? (
-        userData.role === "Admin Desk" ?
+        userData?.role?.isAdmin ?
           (
-            <Redirect to="/admin/dashboard" />
+            <Redirect to="/admin/dashboard/ad" />
           ) : (
             <Redirect to="/default/dashboard/ap" />
           )

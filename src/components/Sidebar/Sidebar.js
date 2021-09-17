@@ -74,6 +74,8 @@ class SidebarWrapper extends React.Component {
 
   render() {
     const { className, user, headerLinks, links, userData, tabValue, handleTabChange, isTabs, permissions } = this.props;
+    
+    console.log(userData);
     if (permissions) {
       const { ap, ar } = permissions || {};
       console.log('isApDisable', this.state.ap);
@@ -483,7 +485,7 @@ class Sidebar extends React.Component {
       <div className={userWrapperClass}>
         <div className={photo}>
           <img
-            src={this.state.level1.profileImg}
+            src={`${process.env.REACT_APP_LDOCS_API_URL}/${this.state?.level1?.profileImgPath}`}
             className={classes.avatarImg}
             alt="..."
           />
@@ -649,7 +651,7 @@ class Sidebar extends React.Component {
             <SidebarWrapper
               className={sidebarWrapper}
               user={user}
-              userData={this.state.level1}
+              userData={this.props.userData}
               headerLinks={<AdminNavbarLinks rtlActive={rtlActive} />}
               links={links}
               isAr={this.state.isAr}
@@ -681,7 +683,7 @@ class Sidebar extends React.Component {
             <SidebarWrapper
               className={sidebarWrapper}
               user={user}
-              userData={this.state.level1}
+              userData={this.state.level1 || this.props.userData}
               links={links}
               isTabs={arroutes && aproutes ? true : false}
               tabValue={this.state.tabValue}

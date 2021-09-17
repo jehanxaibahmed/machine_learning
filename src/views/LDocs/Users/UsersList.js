@@ -188,7 +188,7 @@ export default function UsersList() {
                    title: prop.level2.title,
                    email: prop.level3.email,
                    name: prop.level1.displayName,
-                   role: prop.level3.role,
+                   role: prop.level3.roleName,
                    department: prop.level2.department,
                    actions: (
                      <div className="actions-right">

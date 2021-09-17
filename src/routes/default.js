@@ -54,7 +54,6 @@ export const apRoutes = (permissions) => {
         Object.keys(rts)
             .map(item => {
                 if (item != "name" && item != "enable" && typeof rts[item] == "object") {
-                    console.log('isEnable', rts[item]);
                     all.push(rts[item]?.enable ? true : false);
                 }
             });
@@ -67,7 +66,6 @@ export const apRoutes = (permissions) => {
     let isfinanceDeskDisable = isAllRouteDisabled(financeDesk);
 
 
-    console.log("isInvoiceDeskDisable",isInvoiceDeskDisable);
 
     return [
         {
@@ -207,7 +205,7 @@ export const apRoutes = (permissions) => {
         },
         //Removed Name just to not show in Sidebar
         {
-            path: "/cashflow",
+            path: "/cashflow/ap",
             rtlName: "لوحة القيادة",
             // name:"Cashflow"
             icon: PieChartIcon,
@@ -216,7 +214,7 @@ export const apRoutes = (permissions) => {
         },
         others?.reports?.enable &&
         {
-            path: "/reports",
+            path: "/reports/ap",
             name: "Reports",
             rtlName: "لوحة القيادة",
             icon: PieChartIcon,
@@ -225,7 +223,7 @@ export const apRoutes = (permissions) => {
         },
         others?.notifications?.enable &&
         {
-            path: "/notifications",
+            path: "/notifications/ap",
             name: "Notifications",
             rtlName: "لوحة القيادة",
             icon: NotificationsActiveIcon,
@@ -234,7 +232,7 @@ export const apRoutes = (permissions) => {
         },
         others?.signatureStamp?.enable &&
         {
-            path: "/signature-stamp",
+            path: "/signature-stamp/ap",
             name: "Signature / Stamp",
             rtlName: "أشكال عادية",
             rtlMini: "صو",
@@ -254,7 +252,6 @@ export const arRoutes = (permissions) => {
         Object.keys(rts)
             .map(item => {
                 if (item != "name" && item != "enable" && typeof rts[item] == "object") {
-                    console.log('isEnable', rts[item]);
                     all.push(rts[item]?.enable ? true : false);
                 }
             });
@@ -407,7 +404,7 @@ export const arRoutes = (permissions) => {
         },
         //Removed Name just to not show in Sidebar
         {
-            path: "/cashflow",
+            path: "/cashflow/ar",
             rtlName: "لوحة القيادة",
             // name:"Cashflow"
             icon: PieChartIcon,
@@ -416,7 +413,7 @@ export const arRoutes = (permissions) => {
         },
         others?.reports?.enable &&
         {
-            path: "/reports",
+            path: "/reports/ar",
             name: "Reports",
             rtlName: "لوحة القيادة",
             icon: PieChartIcon,
@@ -425,7 +422,7 @@ export const arRoutes = (permissions) => {
         },
         others?.notifications?.enable &&
         {
-            path: "/notifications",
+            path: "/notifications/ar",
             name: "Notifications",
             rtlName: "لوحة القيادة",
             icon: NotificationsActiveIcon,
@@ -434,7 +431,7 @@ export const arRoutes = (permissions) => {
         },
         others?.signatureStamp?.enable &&
         {
-            path: "/signature-stamp",
+            path: "/signature-stamp/ar",
             name: "Signature / Stamp",
             rtlName: "أشكال عادية",
             rtlMini: "صو",

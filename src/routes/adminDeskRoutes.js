@@ -34,7 +34,7 @@ import Permissions from "views/LDocs/Permissions/Permissions";
 
 var adminRoutes = [
   {
-    path: "/dashboard",
+    path: "/dashboard/ad",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
     icon: DashboardIcon,
@@ -49,35 +49,35 @@ var adminRoutes = [
     state: "adminCollapse",
     views: [
       {
-        path: "/buildNetwork",
+        path: "/buildNetwork/ad",
         name: "Build Network",
         icon: QueueIcon,
         component: BuildNetwork,
         layout: "/admin",
       },
       {
-        path: "/invoiceWorkflows",
+        path: "/invoiceWorkflows/ad",
         name: "Invoice Workflows",
         icon: DeviceHubIcon,
         component: Workflow,
         layout: "/admin",
       },
       {
-        path: "/supplier",
+        path: "/supplier/ad",
         name: "Supplier",
         icon: PeopleIcon,
         component: Vendor,
         layout: "/admin",
       },
       {
-        path: "/client",
+        path: "/client/ad",
         name: "Customer",
         icon: PeopleIcon,
         component: Client,
         layout: "/admin",
       },
       {
-        path: "/users",
+        path: "/users/ad",
         name: "Users",
         icon: SupervisedUserCircleIcon,
         component: UsersList,
@@ -86,7 +86,7 @@ var adminRoutes = [
     ],
   },
     {
-    path: "/verifier",
+    path: "/verifier/ad",
     name: "Tracking & Validate",
     rtlName: "أشكال عادية",
     rtlMini: "صو",
@@ -95,7 +95,7 @@ var adminRoutes = [
     layout: "/admin",
   },
   {
-    path: "/notifications",
+    path: "/notifications/ad",
     name: "Notifications",
     rtlName: "لوحة القيادة",
     icon: NotificationsActiveIcon,
@@ -117,28 +117,28 @@ var adminRoutes = [
     state: "configCollapse",
     views: [
       {
-        path: "/generalconfigration",
+        path: "/generalconfigration/ad",
         name: "General Configrations",
         icon: PhonelinkSetupSharpIcon,
         component: GeneralConfigrations,
         layout: "/admin",
       },
       {
-        path: "/invoiceconfigration",
+        path: "/invoiceconfigration/ad",
         name: "Invoice Configrations",
         icon: DescriptionIcon,
         component: InvoiceConfigrations,
         layout: "/admin",
       },
       {
-        path: "/currency",
+        path: "/currency/ad",
         name: "Currency",
         icon: MonetizationOnIcon,
         component: Currency,
         layout: "/admin",
       },
       {
-        path: "/permissions",
+        path: "/permissions/ad",
         name:"Permissions",
         icon:SettingsIcon,
         component:Permissions,

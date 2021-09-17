@@ -104,7 +104,7 @@ export default function Dashboard(props) {
     setInterval(() => {
         fetchData();     
     }, 60000); 
-    if (checkIsInvoiceDesk()) { dispatch(getUserDataAction()); }
+     dispatch(getUserDataAction());
     },[]);
 
   useEffect(()=>{
