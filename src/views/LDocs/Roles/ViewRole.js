@@ -301,7 +301,7 @@ const [OTP, setOTP] = React.useState("");
                     value={formState.values.name || ""}
                   />
                 </GridItem>
-                <GridItem
+                {/* <GridItem
                   xs={12}
                   sm={12}
                   md={12}
@@ -318,7 +318,7 @@ const [OTP, setOTP] = React.useState("");
                       name="isAdmin" />}
                     label="Admin"
                   />
-                </GridItem>
+                </GridItem> */}
                   {/* {formState.isLoading ? (
                     <React.Fragment>
                       Loading Images...&nbsp;&nbsp;

@@ -222,7 +222,7 @@ export default function AddRole(props) {
                     value={formState.values.name || ""}
                   />
                 </GridItem>
-                <GridItem
+                {/* <GridItem
                   xs={12}
                   sm={12}
                   md={12}
@@ -238,7 +238,7 @@ export default function AddRole(props) {
                       name="isAdmin" />}
                     label="Admin"
                   />
-                </GridItem>
+                </GridItem> */}
               </GridContainer>
               <Button
                 color="info"
