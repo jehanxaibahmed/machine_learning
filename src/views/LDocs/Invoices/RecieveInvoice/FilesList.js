@@ -1602,6 +1602,7 @@ export default function FilesList(props) {
                   >
                     Filters
                   </Button>
+                  {filesData.length > 0 ? 
                   <Button
                     color='danger'
                     round
@@ -1610,7 +1611,7 @@ export default function FilesList(props) {
                     onClick={() => exportToCSV()}
                   >
                     Export
-                  </Button>
+                  </Button>:""}
                   <Tooltip
                   id="tooltip-top"
                   title="Refresh"
