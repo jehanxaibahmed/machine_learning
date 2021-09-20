@@ -833,7 +833,7 @@ export default function FilesList(props) {
           : `${process.env.REACT_APP_LDOCS_API_URL}/report/InvoiceToXlsx`,
       data:
         file == undefined
-          ? { organizationId: userDetail.orgDetail.organizationId }
+          ? { organizationId: userDetail?.orgDetail?.organizationId }
           : {
               tenantId: file.tenantId,
               organizationId: file.organizationId,
