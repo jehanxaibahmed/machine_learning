@@ -205,7 +205,7 @@ export const apRoutes = (permissions) => {
         },
         //Removed Name just to not show in Sidebar
         {
-            path: "/cashflow/ap",
+            path: "/cashflow",
             rtlName: "لوحة القيادة",
             // name:"Cashflow"
             icon: PieChartIcon,
@@ -214,7 +214,7 @@ export const apRoutes = (permissions) => {
         },
         others?.reports?.enable &&
         {
-            path: "/reports/ap",
+            path: "/reports",
             name: "Reports",
             rtlName: "لوحة القيادة",
             icon: PieChartIcon,
@@ -403,7 +403,7 @@ export const arRoutes = (permissions) => {
         },
         //Removed Name just to not show in Sidebar
         {
-            path: "/cashflow/ar",
+            path: "/cashflow",
             rtlName: "لوحة القيادة",
             // name:"Cashflow"
             icon: PieChartIcon,
@@ -412,7 +412,7 @@ export const arRoutes = (permissions) => {
         },
         others?.reports?.enable &&
         {
-            path: "/reports/ar",
+            path: "/reports",
             name: "Reports",
             rtlName: "لوحة القيادة",
             icon: PieChartIcon,

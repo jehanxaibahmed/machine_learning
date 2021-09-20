@@ -111,7 +111,7 @@ export default function PermissionsTreeView({ permissions, handleCheckboxChange,
     <TreeView
 
       className={classes.root}
-      defaultExpanded={['1']}
+      defaultExpanded={['2']}
       defaultCollapseIcon={<MinusSquare />}
       defaultExpandIcon={<PlusSquare />}
       defaultEndIcon={<CloseSquare />}

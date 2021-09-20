@@ -30,6 +30,7 @@ import GeneralConfigrations from "views/LDocs/Configrations/GeneralConfigrations
 import DescriptionIcon from '@material-ui/icons/Description';
 import InvoiceConfigrations from "views/LDocs/Configrations/InvoiceConfigration";
 import Permissions from "views/LDocs/Permissions/Permissions";
+import Roles from "views/LDocs/Roles/RolesForm";
 
 
 var adminRoutes = [
@@ -142,6 +143,13 @@ var adminRoutes = [
         name:"Permissions",
         icon:SettingsIcon,
         component:Permissions,
+        layout:"/admin"
+      },
+      {
+        path: "/roles/ad",
+        name:"Roles",
+        icon:SettingsIcon,
+        component:Roles,
         layout:"/admin"
       }
     ]

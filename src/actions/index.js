@@ -82,7 +82,6 @@ export const getUserDataAction = () => {
         headers: { cooljwt: Token },
       })
         .then((response) => {
-          console.log("user_detail_request", response);
            if (typeof response.data.userDetail !== "undefined" || undefined || null) {
              //If User
             if(response.data.userDetail.level1){
@@ -94,7 +93,7 @@ export const getUserDataAction = () => {
               response.data.userDetail.level1.profileImg = defaultAvatar;
               dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
             } else {
-              let profileImage = response.data.userDetail.level1.profileImgPath;
+              let profileImage = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.userDetail.level1.profileImgPath}`;
               response.data.userDetail.level1.profileImg = profileImage;
               dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
             }
@@ -109,7 +108,7 @@ export const getUserDataAction = () => {
               dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
             } else {
               response.data.userDetail.level1 = response.data.userDetail;
-              let profileImage = response.data.userDetail.profileImgPath;
+              let profileImage = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.userDetail.profileImgPath}`;
               response.data.userDetail.level1.profileImg = profileImage;
               dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
             }
@@ -123,8 +122,7 @@ export const getUserDataAction = () => {
               response.data.isVendor.level1.profileImg = defaultAvatar;
               dispatch({ type: "GET_USER_DATA", response: response.data.isVendor });
             } else {
-              var base64Flag = `data:${response.data.userDetail.isVendor.profileImgT};base64,`;
-              let profileImage = base64Flag + response.data.isVendor.level1.profileImg;
+              let profileImage = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.isVendor.level1.profileImgT}`;
               response.data.level1.isVendor.profileImg = profileImage;
               dispatch({ type: "GET_USER_DATA", response: response.data.isVendor });
             }
@@ -273,7 +271,6 @@ export const getNotification = () => {
         let msg = typeof error.response != "undefined"
         ? error.response.data
         : error.message;
-        console.log(msg);
         dispatch({ type: "GET_USER_NOTIFICATIONS", response: [] });
       });
     }

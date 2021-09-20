@@ -7,57 +7,65 @@ import CashflowImage from "assets/img/aging/cash-2-512.png";
 
 
 
-export const ArReports = [
-  {
-    "id": 1,
-    "name": "Receivable Analytics",
-    "title":"Analytical Summary of Accounts Receivable ",
-    "link": "./financeDashboard/ar",
-    "icon":ReceivableAnalyticsImage,
-    "isImg":true
-  },
-  {
-    "id": 2,
-    "name": "Receivable Aging",
-    "title":"Aging Report of Accounts Receivable",
-    "link": "./invoice-aging/ar",
-    "icon":ReceivableAgingImage,
-    "isImg":true,
-  },
-  
-];
+export const ArReports = (permissions) => {
+  console.log("AR", permissions);
+  return [
+    permissions?.arAnalytics?.enable ?
+    {
+      "id": 1,
+      "name": "Receivable Analytics",
+      "title": "Analytical Summary of Accounts Receivable ",
+      "link": "../default/financeDashboard/ar",
+      "icon": ReceivableAnalyticsImage,
+      "isImg": true
+    }:{},
+    permissions?.invoiceAging?.enable ?
+    {
+      "id": 2,
+      "name": "Receivable Aging",
+      "title": "Aging Report of Accounts Receivable",
+      "link": "../default/invoice-aging/ar",
+      "icon": ReceivableAgingImage,
+      "isImg": true,
+    }:{},
 
+  ];
+}
 
-export const ApReports = [
-  {
-    "id": 3,
-    "name": "Payable Analytics",
-    "title":"Analytical Summary of Accounts Payable ",
-    "link": "./financeDashboard/ap",
-    "icon":PayableAnalyticsImage,
-    "isImg":true,
-  },
-  
-  {
-    "id": 4,
-    "name": "Payable Aging",
-    "title":"Aging Report of Accounts Payable",
-    "link": "./invoice-aging/ap",
-    "icon":PayableAgingImage,
-    "isImg":true,
-  },
+export const ApReports = (permissions) => {
+  console.log("AP", permissions);
+
+  return [
+    permissions?.apAnalytics?.enable ?
+    {
+      "id": 3,
+      "name": "Payable Analytics",
+      "title": "Analytical Summary of Accounts Payable ",
+      "link": "../default/financeDashboard/ap",
+      "icon": PayableAnalyticsImage,
+      "isImg": true,
+    }:{},
+    permissions?.invoiceAging?.enable ?
+    {
+      "id": 4,
+      "name": "Payable Aging",
+      "title": "Aging Report of Accounts Payable",
+      "link": "../default/invoice-aging/ap",
+      "icon": PayableAgingImage,
+      "isImg": true,
+    }:{},
   ];
 
-  
+}
 const Reports = [
-  
+
   {
     "id": 5,
     "name": "Cashflow",
-    "title":"An overview of the Receivable and Payable Cash Flows",
-    "link": "./cashflow",
-    "icon":CashflowImage,
-    "isImg":true
+    "title": "An overview of the Receivable and Payable Cash Flows",
+    "link": "../default/cashflow",
+    "icon": CashflowImage,
+    "isImg": true
   }
 ]
 

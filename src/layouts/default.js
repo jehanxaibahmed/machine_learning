@@ -13,10 +13,9 @@ import { makeStyles , ThemeProvider} from "@material-ui/core/styles";
 import SweetAlert from "react-bootstrap-sweetalert";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import {
-  createMuiTheme,
   CssBaseline,
 } from "@material-ui/core";
-
+import { createTheme } from '@material-ui/core/styles'
 import { useHistory } from "react-router-dom";
 
 // core components
@@ -143,7 +142,7 @@ export default function Dashboard(props) {
   }
 
 
-  const theme = createMuiTheme({
+  const theme = createTheme({
     palette: {
       type: darkmood ? "dark": "light"
     }
@@ -164,14 +163,12 @@ export default function Dashboard(props) {
   const mainPanel = React.createRef();
   // effect instead of componentDidMount, componentDidUpdate and componentWillUnmount
   React.useEffect(() => {
-    if(checkIsInvoiceDesk()){
-      if (navigator.platform.indexOf("Win") > -1) {
         ps = new PerfectScrollbar(mainPanel.current, {
           suppressScrollX: true,
           suppressScrollY: false,
         });
         document.body.style.overflow = "hidden";
-      }
+      
       window.addEventListener("resize", resizeFunction);
 
       // Specify how to clean up after this effect:
@@ -181,7 +178,6 @@ export default function Dashboard(props) {
         }
         window.removeEventListener("resize", resizeFunction);
       };
-    }
   },[]);
   // functions for changeing the states from components
   const handleImageClick = (image) => {

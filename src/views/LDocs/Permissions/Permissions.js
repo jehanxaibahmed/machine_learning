@@ -101,7 +101,7 @@ export default function Permissions() {
         setIsLoading(false);
         setState((state) => ({
           ...state,
-          roles: response?.data
+          roles: response?.data.filter(role => !role.isAdmin)
         }));
       }).catch((error) => {
         setIsLoading(false);

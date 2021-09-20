@@ -58,27 +58,21 @@ class SidebarWrapper extends React.Component {
     // }
   }
   componentDidMount() {
-    if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.sidebarWrapper.current, {
         suppressScrollX: true,
         suppressScrollY: false,
       });
-    }
   }
   componentWillUnmount() {
-    if (navigator.platform.indexOf("Win") > -1) {
       ps.destroy();
-    }
   }
 
 
   render() {
     const { className, user, headerLinks, links, userData, tabValue, handleTabChange, isTabs, permissions } = this.props;
     
-    console.log(userData);
     if (permissions) {
       const { ap, ar } = permissions || {};
-      console.log('isApDisable', this.state.ap);
 
     }
     const a11yProps = (index) => {
@@ -485,7 +479,7 @@ class Sidebar extends React.Component {
       <div className={userWrapperClass}>
         <div className={photo}>
           <img
-            src={`${process.env.REACT_APP_LDOCS_API_URL}/${this.state?.level1?.profileImgPath}`}
+            src={`${this.state?.level1?.profileImg}`}
             className={classes.avatarImg}
             alt="..."
           />
@@ -625,7 +619,7 @@ class Sidebar extends React.Component {
         [classes.drawerPaperMini]:
           this.props.miniActive && this.state.miniActive,
         [classes.sidebarWrapperWithPerfectScrollbar]:
-          navigator.platform.indexOf("Win") > -1,
+          true,
       });
     return (
       <div ref={this.mainPanel}>
