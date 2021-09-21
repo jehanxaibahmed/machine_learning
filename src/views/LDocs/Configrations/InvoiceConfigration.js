@@ -16,6 +16,7 @@ import {
   ListItemSecondaryAction,
   Divider,
 } from "@material-ui/core";
+import ImageUpload from "./ImageUpload";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
@@ -92,10 +93,24 @@ export default function InvoiceConfigrations() {
     initWorkflow: false,
     values: {
       paymentTerms: "",
-      selectedTemplate:null
+      selectedTemplate: null,
+      isHeader:false,
+      isLogo:false
     },
     templates: [],
   });
+
+  const [displayLogo, setDisplayLogo] = React.useState(null);
+
+  const handleImageChange = (file, status, imageName) => {
+
+    if (status == 1) {
+  
+        setDisplayLogo(file);
+    } else {
+        setDisplayLogo(null);
+    }
+    };
 
   React.useEffect(() => {
     let userDetail = jwt.decode(Token);
@@ -114,13 +129,13 @@ export default function InvoiceConfigrations() {
             paymentTerms: invoiceConfig.paymentTermsInvoiceDate
               ? "invoiceDate"
               : invoiceConfig.paymentTermsDueDate
-              ? "dueDate"
-              : invoiceConfig.paymentTermsApprovalDate
-              ? "approvalDate"
-              : invoiceConfig.paymentTermsPaymentProcessDate
-              ? "processDate"
-              : "",
-              selectedTemplate:invoiceConfig.templateId
+                ? "dueDate"
+                : invoiceConfig.paymentTermsApprovalDate
+                  ? "approvalDate"
+                  : invoiceConfig.paymentTermsPaymentProcessDate
+                    ? "processDate"
+                    : "",
+            selectedTemplate: invoiceConfig.templateId
           },
         }));
       })
@@ -156,8 +171,8 @@ export default function InvoiceConfigrations() {
           state.values.paymentTerms == "approvalDate" ? true : false,
         paymentTermsPaymentProcessDate:
           state.values.paymentTerms == "processDate" ? true : false,
-        templateId:state.values.selectedTemplate,
-        Default_template:"Default_template"
+        templateId: state.values.selectedTemplate,
+        Default_template: "Default_template"
       },
     };
     axios({
@@ -198,6 +213,15 @@ export default function InvoiceConfigrations() {
       },
     }));
   };
+  const onChangeBool = (event) => {
+    setState((state) => ({
+      ...state,
+      values: {
+        ...state.values,
+        [event.target.name]: !state.values[event.target.name],
+      },
+    }));
+  }
 
 
   return (
@@ -222,8 +246,8 @@ export default function InvoiceConfigrations() {
                 </CardHeader>
                 <CardBody>
                   {/* "autoInitWorkFlow":true,
-        "enableEmailNotify":false,
-        "enablePayments":true, */}
+                    "enableEmailNotify":false,
+                    "enablePayments":true, */}
                   <List>
                     {/* Auto Init Workflow */}
                     <ListItem>
@@ -313,36 +337,115 @@ export default function InvoiceConfigrations() {
                 </CardHeader>
                 <CardBody>
                   <GridContainer>
-                  {state.templates.map((template, index) => (
-                    <GridItem xs={2}>
-                      <Card className={classes.root}>
-                        <a
-                          href={`${process.env.REACT_APP_LDOCS_API_URL}/${template.templateUrl}`}
-                          target="_blank"
-                        >
-                          <img
-                            style={{ width: "100%", height: 200 }}
-                            src={`${process.env.REACT_APP_LDOCS_API_URL}/${template.templateUrl}`}
-                          />
-                        </a>
-                        <CardActions>
-                          <Checkbox
-                            style={{ align: "right", marginTop: 10 }}
-                            color="primary"
-                            value={template._id}
-                            checked={
-                              state.values.selectedTemplate == template._id
-                                ? true
-                                : false
-                            }
-                            name={template._id}
-                            onChange={onChangeTemplate}
-                          />
-                        </CardActions>
-                      </Card>
-                    </GridItem>
-                  ))}
+                    {state.templates.map((template, index) => (
+                      <GridItem xs={2}>
+                        <Card className={classes.root}>
+                          <a
+                            href={`${process.env.REACT_APP_LDOCS_API_URL}/${template.templateUrl}`}
+                            target="_blank"
+                          >
+                            <img
+                              style={{ width: "100%", height: 200 }}
+                              src={`${process.env.REACT_APP_LDOCS_API_URL}/${template.templateUrl}`}
+                            />
+                          </a>
+                          <CardActions>
+                            <Checkbox
+                              style={{ align: "right", marginTop: 10 }}
+                              color="primary"
+                              value={template._id}
+                              checked={
+                                state.values.selectedTemplate == template._id
+                                  ? true
+                                  : false
+                              }
+                              name={template._id}
+                              onChange={onChangeTemplate}
+                            />
+                          </CardActions>
+                        </Card>
+                      </GridItem>
+                    ))}
                   </GridContainer>
+                </CardBody>
+              </Card>
+            </GridItem>
+            <GridItem xs={12}>
+              <Card>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
+                    <h4 className={classes.cardTitleText}>
+                      Invoice Logo
+                    </h4>
+                  </CardIcon>
+                </CardHeader>
+                <CardBody>
+                  {/* "autoInitWorkFlow":true,
+                    "enableEmailNotify":false,
+                    "enablePayments":true, */}
+                  <List>
+                    {/* Auto Init Workflow */}
+                    <ListItem>
+                      <ListItemText
+                        style={{ color: "black" }}
+                        primary="Header"
+                        secondary={
+                          "Show header on invoice top"
+                        }
+                      />
+                      <ListItemSecondaryAction>
+                        <Checkbox
+                          color="primary"
+                          checked={
+                            state.values.isHeader
+                          }
+                          name="isHeader"
+                          onChange={onChangeBool}
+                        />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <Divider />
+                    <ListItem>
+                      <ListItemText
+                        style={{ color: "black" }}
+                        primary="Logo"
+                        secondary={
+                          "Show Organization Logo on invoice"
+                        }
+                      />
+                      <ListItemSecondaryAction>
+                        <Checkbox
+                          color="primary"
+                          checked={
+                            state.values.isLogo
+                          }
+                          name="isLogo"
+                          onChange={onChangeBool}
+                        />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <Divider />
+                  </List>
+                  <GridItem xs={12} sm={12} md={6} lg={6}>
+                    <legend>Selected Logo</legend>
+                    <ImageUpload
+                      addButtonProps={{
+                        color: "info",
+                        round: true,
+                      }}
+                      changeButtonProps={{
+                        color: "info",
+                        round: true,
+                      }}
+                      removeButtonProps={{
+                        color: "danger",
+                        round: true,
+                      }}
+                      name="displayLogo"
+                      buttonId="removeDisplayLogo"
+                      handleImageChange={handleImageChange}
+                    />
+                  </GridItem>
                 </CardBody>
               </Card>
             </GridItem>

@@ -154,9 +154,9 @@ const [OTP, setOTP] = React.useState("");
   // };
  
   const handleUpdate = () => {
-
+    const Check = require("is-null-empty-or-undefined").Check;
+    var error = false;
     let name;
-   
       if (!Check(formState.values.name)) {
         name = "success";
       } else {
