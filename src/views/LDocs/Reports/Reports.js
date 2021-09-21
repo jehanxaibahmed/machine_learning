@@ -54,7 +54,7 @@ import Alert from "@material-ui/lab/Alert";
 import { CallReceived, DoneAll } from "@material-ui/icons";
 import { setIsTokenExpired } from "actions";
 import { _IsAr } from "../Functions/Functions";
-import Reports, {ArReports, ApReports} from "./ReportsPayload.js";
+import Reports, { ArReports, ApReports } from "./ReportsPayload.js";
 import { Link } from "react-router-dom";
 
 const styles = {
@@ -79,7 +79,12 @@ export default function Requested() {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
+  const permissions = useSelector(state => state.userReducer.permissions);
+  let ArReportList = ArReports(permissions?.ar?.financeDesk) || [];
+  console.log("ARROuteList", ArReportList);
+  let ApReportList = ApReports(permissions?.ap?.financeDesk) || [];
   const isAr = useSelector((state) => state.userReducer.isAr);
+  console.log("APROuteList", ApReportList);
   const classes = useStyles();
   const [data, setData] = React.useState(Reports);
   const dispatch = useDispatch();
@@ -104,38 +109,38 @@ export default function Requested() {
               className={classes.center}
             >
               <Card className={classes.root}>
-                <CardHeader color={report.id % 2 == 0 ? 'danger':'info'} style={{ textAlign: "center" }}>
+                <CardHeader color={report.id % 2 == 0 ? 'danger' : 'info'} style={{ textAlign: "center" }}>
                   <h5 className={classes.cardTitleText}>{report.name}</h5>
                 </CardHeader>
                 <Link to={report.link}>
-                <CardActionArea>
-                  <CardContent>
-                    <GridContainer>
-                      <GridItem
-                        xs={4}
-                        sm={4}
-                        md={4}
-                        className={classes.center}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: " center",
-                        }}
-                      >
-                        {report.isImg ? (
-                          <img style={{ width: "50px" }} src={report.icon} />
-                        ) : (
-                          report.icon
-                        )}
-                      </GridItem>
-                      <GridItem xs={8} sm={8} md={8} className={classes.center}>
-                        <Typography gutterBottom variant="body2" style={{fontWeight:"bolder"}} component="h2">
-                          {report.title}
-                        </Typography>
-                      </GridItem>
-                    </GridContainer>
-                  </CardContent>
-                </CardActionArea>
+                  <CardActionArea>
+                    <CardContent>
+                      <GridContainer>
+                        <GridItem
+                          xs={4}
+                          sm={4}
+                          md={4}
+                          className={classes.center}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: " center",
+                          }}
+                        >
+                          {report.isImg ? (
+                            <img style={{ width: "50px" }} src={report.icon} />
+                          ) : (
+                            report.icon
+                          )}
+                        </GridItem>
+                        <GridItem xs={8} sm={8} md={8} className={classes.center}>
+                          <Typography gutterBottom variant="body2" style={{ fontWeight: "bolder" }} component="h2">
+                            {report.title}
+                          </Typography>
+                        </GridItem>
+                      </GridContainer>
+                    </CardContent>
+                  </CardActionArea>
                 </Link>
                 <CardActions></CardActions>
               </Card>
@@ -143,9 +148,9 @@ export default function Requested() {
           ))}
         </GridContainer>
         <Divider />
-        <h3>AP Reports</h3>
+        {ArReportList.filter(l=> l.id).length > 1 ? <h3>AR Reports</h3>:""}
         <GridContainer>
-          {ApReports.map((report, index) => (
+          {ArReportList.filter(l=> l.id).map((report, index) => (
             <GridItem
               xs={12}
               sm={3}
@@ -154,39 +159,39 @@ export default function Requested() {
               className={classes.center}
             >
               <Card className={classes.root}>
-                <CardHeader color={report.id % 2 == 0 ? 'danger':'info'} style={{ textAlign: "center" }}>
+                <CardHeader color={report.id % 2 == 0 ? 'danger' : 'info'} style={{ textAlign: "center" }}>
                   <h5 className={classes.cardTitleText}>{report.name}</h5>
                 </CardHeader>
                 <Link to={report.link}>
-                <CardActionArea>
-                  <CardContent>
-                    <GridContainer>
-                      <GridItem
-                        xs={4}
-                        sm={4}
-                        md={4}
-                        className={classes.center}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: " center",
-                        }}
-                      >
-                        {report.isImg ? (
-                          <img style={{ width: "50px" }} src={report.icon} />
-                        ) : (
-                          report.icon
-                        )}
-                      </GridItem>
-                      <GridItem xs={8} sm={8} md={8} className={classes.center}>
-                        <Typography gutterBottom variant="body2" style={{fontWeight:"bolder"}} component="h2">
-                          {report.title}
-                        </Typography>
-    
-                      </GridItem>
-                    </GridContainer>
-                  </CardContent>
-                </CardActionArea>
+                  <CardActionArea>
+                    <CardContent>
+                      <GridContainer>
+                        <GridItem
+                          xs={4}
+                          sm={4}
+                          md={4}
+                          className={classes.center}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: " center",
+                          }}
+                        >
+                          {report.isImg ? (
+                            <img style={{ width: "50px" }} src={report.icon} />
+                          ) : (
+                            report.icon
+                          )}
+                        </GridItem>
+                        <GridItem xs={8} sm={8} md={8} className={classes.center}>
+                          <Typography gutterBottom variant="body2" style={{ fontWeight: "bolder" }} component="h2">
+                            {report.title}
+                          </Typography>
+
+                        </GridItem>
+                      </GridContainer>
+                    </CardContent>
+                  </CardActionArea>
                 </Link>
                 <CardActions></CardActions>
               </Card>
@@ -194,9 +199,9 @@ export default function Requested() {
           ))}
         </GridContainer>
         <Divider />
-        <h3>AR Reports</h3>
+        {ApReportList.filter(l=> l.id).length > 1 ? <h3>AP Reports</h3>:""}
         <GridContainer>
-          {ArReports.map((report, index) => (
+          {ApReportList.filter(l=> l.id).map((report, index) => (
             <GridItem
               xs={12}
               sm={3}
@@ -205,39 +210,39 @@ export default function Requested() {
               className={classes.center}
             >
               <Card className={classes.root}>
-                <CardHeader color={report.id % 2 == 0 ? 'danger':'info'} style={{ textAlign: "center" }}>
+                <CardHeader color={report.id % 2 == 0 ? 'danger' : 'info'} style={{ textAlign: "center" }}>
                   <h5 className={classes.cardTitleText}>{report.name}</h5>
                 </CardHeader>
                 <Link to={report.link}>
-                <CardActionArea>
-                  <CardContent>
-                    <GridContainer>
-                      <GridItem
-                        xs={4}
-                        sm={4}
-                        md={4}
-                        className={classes.center}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: " center",
-                        }}
-                      >
-                        {report.isImg ? (
-                          <img style={{ width: "50px" }} src={report.icon} />
-                        ) : (
-                          report.icon
-                        )}
-                      </GridItem>
-                      <GridItem xs={8} sm={8} md={8} className={classes.center}>
-                        <Typography gutterBottom variant="body2" style={{fontWeight:"bolder"}} component="h2">
-                          {report.title}
-                        </Typography>
-                        
-                      </GridItem>
-                    </GridContainer>
-                  </CardContent>
-                </CardActionArea>
+                  <CardActionArea>
+                    <CardContent>
+                      <GridContainer>
+                        <GridItem
+                          xs={4}
+                          sm={4}
+                          md={4}
+                          className={classes.center}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: " center",
+                          }}
+                        >
+                          {report.isImg ? (
+                            <img style={{ width: "50px" }} src={report.icon} />
+                          ) : (
+                            report.icon
+                          )}
+                        </GridItem>
+                        <GridItem xs={8} sm={8} md={8} className={classes.center}>
+                          <Typography gutterBottom variant="body2" style={{ fontWeight: "bolder" }} component="h2">
+                            {report.title}
+                          </Typography>
+
+                        </GridItem>
+                      </GridContainer>
+                    </CardContent>
+                  </CardActionArea>
                 </Link>
                 <CardActions></CardActions>
               </Card>

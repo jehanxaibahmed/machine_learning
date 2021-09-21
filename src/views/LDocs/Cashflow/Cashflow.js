@@ -65,7 +65,6 @@ import APVSAR_IMAGE from "assets/img/cashflow/ravspa.png";
 import AR_IMAGE from "assets/img/cashflow/ra.png";
 import AP_IMAGE from "assets/img/cashflow/pa.png";
 
-
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -178,7 +177,7 @@ export default function Cashflow() {
               <CardHeader color="info" stats icon>
                 <CardIcon color="info">
                   {/* <Store /> */}
-                  <img src={AR_IMAGE} style={{maxWidth:50}} />
+                  <img src={AR_IMAGE} style={{ maxWidth: 50 }} />
                 </CardIcon>
                 <p className={classes.cardCategory}>Receivable Summary</p>
                 {isLoading ? (
@@ -193,9 +192,36 @@ export default function Cashflow() {
                 )}
               </CardHeader>
               <CardFooter stats>
-                <div className={classes.stats}>
-                  <InsertDriveFileIcon />
-                  <Link to="./financeDashboard/ar">Show Receivables</Link>
+                <div
+                  className={classes.stats}
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: 400,
+                    color: "black",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    width: "100%",
+                  }}
+                >
+                  <div style={{ float: "left" }}>
+                    <Link style={{ color: "black" }} to="./financeDashboard/ar">
+                      Due / Paid{" "}
+                    </Link>
+                  </div>
+                  <div style={{ float: "right" }}>
+                    <Link to="./financeDashboard/ar">
+                      {graphData?.arUnPaidAmountCount
+                        ? `${graphData.currency.Code}  ${graphData
+                            ?.arUnPaidAmountCount[0]?.TotalUnPaidAmount || 0}`
+                        : 0}
+                      {" / "}
+                      {graphData?.arPaidAmountCount
+                        ? `${graphData.currency.Code}  ${graphData
+                            ?.arPaidAmountCount[0]?.TotalPaidAmount || 0}`
+                        : 0}
+                    </Link>
+                  </div>
                 </div>
               </CardFooter>
             </Card>
@@ -205,7 +231,7 @@ export default function Cashflow() {
               <CardHeader color="danger" stats icon>
                 <CardIcon color="danger">
                   {/* <Store /> */}
-                  <img src={AP_IMAGE} style={{maxWidth:50}} />
+                  <img src={AP_IMAGE} style={{ maxWidth: 50 }} />
                 </CardIcon>
                 <p className={classes.cardCategory}>Payable Summary</p>
                 {isLoading ? (
@@ -220,9 +246,37 @@ export default function Cashflow() {
                 )}
               </CardHeader>
               <CardFooter stats>
-                <div className={classes.stats}>
-                  <InsertDriveFileIcon />
-                  <Link to="./financeDashboard/ap">Show Payables</Link>
+                <div
+                  className={classes.stats}
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: 400,
+                    color: "black",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    width: "100%",
+                  }}
+                >
+                  <div>
+                    <Link style={{ color: "black" }} to="./financeDashboard/ap">
+                      Due / Paid
+                    </Link>
+                  </div>
+                  <div>
+                    <Link to="./financeDashboard/ap">
+                      {graphData?.apUnPaidAmountCount
+                        ? `${graphData.currency.Code}  ${graphData
+                            ?.apUnPaidAmountCount[0]?.TotalUnPaidAmount || 0}`
+                        : 0}
+                      {" / "}
+
+                      {graphData?.apPaidAmountCount
+                        ? `${graphData.currency.Code}  ${graphData
+                            ?.apPaidAmountCount[0]?.netAmt_bc || 0}`
+                        : 0}
+                    </Link>
+                  </div>
                 </div>
               </CardFooter>
             </Card>
@@ -232,23 +286,52 @@ export default function Cashflow() {
               <CardHeader color="info" stats icon>
                 <CardIcon color="info">
                   {/* <Store /> */}
-                  <img src={APVSAR_IMAGE} style={{maxWidth:50}} />
+                  <img src={APVSAR_IMAGE} style={{ maxWidth: 50 }} />
                 </CardIcon>
-                <p className={classes.cardCategory}>
-                  Payable VS Receivable 
-                </p>
+                <p className={classes.cardCategory}>Payable VS Receivable</p>
                 {isLoading ? (
                   <LinearProgress />
                 ) : (
                   <h3 className={classes.cardTitle} style={{ color: "black" }}>
-                    {`${graphData.currency.Code}  ${addZeroes(graphData?.APvsAR).toFixed(2) || 0}`}
+                    {`${graphData.currency.Code}  ${addZeroes(
+                      graphData?.APvsAR
+                    ) || 0}`}
                   </h3>
                 )}
               </CardHeader>
               <CardFooter stats>
-              <div className={classes.stats}>
-                  <InsertDriveFileIcon style={{color:'white'}} />
-                  <Link to="#"></Link>
+                <div
+                  className={classes.stats}
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: 400,
+                    color: "black",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    width: "100%",
+                  }}
+                >
+                  <div>
+                    <Link style={{ color: "black" }} to="#">
+                      Due / Paid
+                    </Link>
+                  </div>
+                  <div>
+                    <Link to="#">
+                      {graphData?.apPaidAmount
+                        ? `${
+                            graphData.currency.Code
+                          }  ${graphData?.APvsAR_unPaid || 0}`
+                        : 0}
+                      {" / "}
+                      {graphData?.apUnPaidAmountCount
+                        ? `${
+                            graphData.currency.Code
+                          }  ${graphData?.APvsAR_paid || 0}`
+                        : 0}
+                    </Link>
+                  </div>
                 </div>
               </CardFooter>
             </Card>

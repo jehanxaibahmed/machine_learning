@@ -173,6 +173,7 @@ export default function Workflow() {
     setOTP("");
     setUpdating(true);
     getCompanies(row.organizationId);
+    console.log(row.isAR);
   setFormState((formState) => ({
     ...formState,
     values: {
@@ -186,7 +187,8 @@ export default function Workflow() {
       comments: row.comments,
       createdBy: row.createdBy,
       role:true,
-      workflowDescription:''
+      workflowDescription:'',
+      type:row.isAR ? false : true
     },
   }));
   setSteps(row.steps);
@@ -641,13 +643,13 @@ const createWorkflow = () => {
     let decoded = jwt.decode(Token);
     const userEmail = decoded.email;
     let data = {
-      tenantId:formState.orgs.find(org=>org.organizationName = formState.values.organizationName).tenantId,
+      tenantId:formState.orgs.find(org=>org.organizationName == formState.values.organizationName).tenantId,
       workflowName:formState.values.workflowName,
       referenceTicket:formState.values.workflowId,
       organizationName:formState.values.organizationName,
-      organizationId: formState.orgs.find(org=>org.organizationName = formState.values.organizationName)._id,
+      organizationId: formState.orgs.find(org=>org.organizationName == formState.values.organizationName)._id,
       companyName:formState.values.companyName,
-      companyId:formState.comp.find(comp=>comp.companyName = formState.values.companyName)._id,
+      companyId:formState.comp.find(comp=>comp.companyName == formState.values.companyName)._id,
       comments:formState.values.comments,
       created:new Date(Date.now()),
       createdBy:userEmail,
@@ -678,7 +680,7 @@ const createWorkflow = () => {
             msg = "Invoice Workflow Updated Successfully!";
           }
           successAlert(msg); 
-          getMyWorkflows(formState.orgs.find(org=>org.organizationName = formState.values.organizationName)._id);
+          getMyWorkflows(formState.orgs.find(org=>org.organizationName == formState.values.organizationName)._id);
           goBack();
       })
       .catch((error) => {

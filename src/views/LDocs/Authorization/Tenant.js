@@ -44,7 +44,7 @@ export default function Tenant() {
             >
               <div>
                 <h1>Hello , </h1>
-                <p>Thanks for Registeration . Please check you E-mail and activate you account</p>
+                <p>Thanks for Registration . Please check you E-mail and activate you account</p>
               </div>
             </Animated>
             :''}

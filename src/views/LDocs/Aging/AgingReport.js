@@ -247,8 +247,9 @@ export default function AgingReport() {
         }));
       }
     }
+    let userDetail = jwt.decode(Token);
     let data = {
-      organizationId: "602241c47a18fc82a41cd973",
+      organizationId: userDetail.orgDetail.organizationId,
       type: null,
       interval: interval,
       addPrevious: formState.isAddPrevios,
@@ -459,36 +460,36 @@ export default function AgingReport() {
                                     <b>Total</b>
                                   </StyledTableCell>
                                   <StyledTableCell style={{background:'#808080a1'}} align="right">
-                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {formState.agingData[0]?.orgCurrency?.Code}{" "}
                                     {addZeroes(
                                       formState.sum.outstanding_sum?formState.sum.outstanding_sum:0
                                     )}
                                   </StyledTableCell>
                                   <StyledTableCell style={{background:'#80808073'}} align="right">
-                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {formState.agingData[0]?.orgCurrency?.Code}{" "}
                                     {addZeroes(
                                       formState.sum.total_due_Amount_sum?formState.sum.total_due_Amount_sum:0
                                     )}
                                   </StyledTableCell>
                                   <StyledTableCell align="right">
-                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {formState.agingData[0]?.orgCurrency?.Code}{" "}
                                     {addZeroes(formState.sum.col_1_sum)}
                                   </StyledTableCell>
                                   <StyledTableCell align="right">
-                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {formState.agingData[0]?.orgCurrency?.Code}{" "}
                                     {addZeroes(formState.sum.col_2_sum?formState.sum.col_2_sum :0)}
                                   </StyledTableCell>
                                   <StyledTableCell align="right">
-                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {formState.agingData[0]?.orgCurrency?.Code}{" "}
                                     {addZeroes(formState.sum.col_3_sum?formState.sum.col_3_sum:0)}
                                   </StyledTableCell>
                                   <StyledTableCell align="right">
-                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {formState.agingData[0]?.orgCurrency?.Code}{" "}
                                     {addZeroes(formState.sum.col_4_sum?formState.sum.col_4_sum:0)}
                                   </StyledTableCell>
 
                                   <StyledTableCell align="right">
-                                    {formState.agingData[0].orgCurrency.Code}{" "}
+                                    {formState.agingData[0]?.orgCurrency?.Code}{" "}
                                     {addZeroes(formState.sum.col_5_sum?formState.sum.col_5_sum:0)}
                                   </StyledTableCell>
                                   <StyledTableCell align="right"></StyledTableCell>

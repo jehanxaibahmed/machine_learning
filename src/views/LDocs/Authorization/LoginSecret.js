@@ -17,8 +17,8 @@ import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter.js";
-import { useDispatch } from "react-redux";
-import { getNotification } from "../../../actions";
+import { useDispatch, useSelector } from "react-redux";
+import { getNotification, setPermissions } from "../../../actions";
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
@@ -35,6 +35,8 @@ getToken().then((res) => {
 const useStyles = makeStyles(styles);
 export default function LoginSecret(props) {
   const [twofa, setTwofa] = useState("");
+  let token = useSelector((state) => state.userReducer.Token) ||
+  localStorage.getItem("cooljwt");
   const [loggedIn, setloggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -48,7 +50,7 @@ export default function LoginSecret(props) {
   function handleClick(e) {
     e.preventDefault();
     setLoading(true);
-    let token = localStorage.getItem("cooljwt");
+
     var isTenant = jwt.decode(token).isTenant;
     const url = isTenant
       ? `${process.env.REACT_APP_LDOCS_API_URL}/tenant/avotp`
@@ -63,20 +65,22 @@ export default function LoginSecret(props) {
     })
       .then(async (response) => {
         let token = response.headers.cooljwt;
+        dispatch(setPermissions(response?.data));
         let decoded = jwt.decode(token);
-        if(!decoded.isTenant){
-        await axios({
-          method: "post", //you can set what request you want to be
-          url: `${process.env.REACT_APP_LDOCS_API_URL}/user/updateUserFcm`,
-          data: {
-            osType: os,
-            fcmToken: firebase_token,
-            deviceId: uuid,
-          },
-          headers: {
-            cooljwt: response.headers.cooljwt,
-          },
-        });
+        console.log('user_details', decoded);
+        if (!decoded.isTenant) {
+          await axios({
+            method: "post", //you can set what request you want to be
+            url: `${process.env.REACT_APP_LDOCS_API_URL}/user/updateUserFcm`,
+            data: {
+              osType: os,
+              fcmToken: firebase_token,
+              deviceId: uuid,
+            },
+            headers: {
+              cooljwt: response.headers.cooljwt,
+            },
+          });
         }
         setLoading(false);
         setUserData(decoded);
@@ -104,18 +108,13 @@ export default function LoginSecret(props) {
   return (
     <div className={classes.container}>
       {loggedIn && userData !== null ? (
-        userData.role === "Action Desk" ? (
-          <Redirect to="/action/dashboard/ap" />
-        ) : userData.role === "Invoice Desk" ? (
-          <Redirect to="/invoice/dashboard/ap" />
-        ) : userData.role === "Finance Desk" ? (
-          <Redirect to="/finance/dashboard" />
-        ) : (
-          <Redirect to="/admin/dashboard" />
-        )
-      ) : (
-        ""
-      )}
+        userData?.role?.isAdmin ?
+          (
+            <Redirect to="/admin/dashboard/ad" />
+          ) : (
+            <Redirect to="/default/dashboard/ap" />
+          )
+      ) : ""}
       <GridContainer justify="center">
         <GridItem xs={12} sm={6} md={4}>
           <form onSubmit={handleClick}>

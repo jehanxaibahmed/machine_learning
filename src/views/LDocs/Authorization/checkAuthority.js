@@ -55,7 +55,7 @@ export const checkIsAdminDesk = () => {
         if (typeof decoded.otp !== "undefined") {
             if (decoded.otp) {
               if (decoded.role !== undefined || 'undefined' || null) {
-                if (decoded.role == 'Admin Desk') {
+                if (decoded.role.isAdmin) {
                     return true;
                 }
                 else

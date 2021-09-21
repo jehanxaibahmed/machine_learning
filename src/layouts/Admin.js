@@ -14,6 +14,7 @@ import {
   createMuiTheme,
   CssBaseline,
 } from "@material-ui/core";
+import { createTheme } from '@material-ui/core/styles'
 import SweetAlert from "react-bootstrap-sweetalert";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 // core components
@@ -123,7 +124,7 @@ export default function Dashboard(props) {
     }
   },[isTokenExpired])
  
-  const theme = createMuiTheme({
+  const theme = createTheme({
     palette: {
       type: darkmood ? "dark": "light"
     }

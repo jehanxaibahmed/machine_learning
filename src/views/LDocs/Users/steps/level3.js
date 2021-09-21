@@ -16,7 +16,7 @@ import GridItem from "components/Grid/GridItem.js";
 import { Animated } from "react-animated-css";
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import Swal from 'sweetalert2'
-import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
+import { successAlert, errorAlert, msgAlert } from "views/LDocs/Functions/Functions";
 import axios from "axios";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import SignatureUpload from "./signatureUpload.js";
@@ -43,6 +43,7 @@ export default function Step3(props) {
       role: typeof row.role != "undefined" ? row.role : "",
     },
     errors: {},
+    roles: []
   });
   const handleChange = (event) => {
     event.persist();
@@ -55,7 +56,7 @@ export default function Step3(props) {
       },
     }));
   };
-  
+
   const verifyEmail = (value) => {
     var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (emailRex.test(value)) {
@@ -123,7 +124,7 @@ export default function Step3(props) {
           successAlert(msg);
         })
         .catch((error) => {
-          if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+          if (error.response) { error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
           setFormState((formState) => ({
             ...formState,
             isLoading: false,
@@ -136,7 +137,27 @@ export default function Step3(props) {
         });
     }
   };
-  useEffect(() => {}, []);
+
+  const getRoles = async () => {
+    axios({
+      method: "get",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/user/getRoles`,
+      headers: { cooljwt: Token },
+    })
+      .then((response) => {
+        setFormState((state) => ({
+          ...state,
+          roles: response?.data
+        }));
+      }).catch((error) => {
+        if (error.response) { error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        errorAlert('Error in Fetching Roles');
+      })
+  }
+
+  useEffect(() => {
+    getRoles();
+  }, []);
 
   const handleToggle = (name) => {
     setFormState((formState) => ({
@@ -155,7 +176,7 @@ export default function Step3(props) {
       animationOutDuration={1000}
       isVisible={true}
     >
-       
+
       <GridContainer justify="center" md={12} xs={12} sm={12}>
         <GridItem
           xs={12}
@@ -240,11 +261,13 @@ export default function Step3(props) {
             >
               Choose User Role
             </MenuItem>
-            <MenuItem value={"Admin Desk"}>Admin Desk</MenuItem>
-            <MenuItem value={"Invoice Desk"}>Invoice Desk</MenuItem>
-            {/* <MenuItem value={"Finance Desk"}>Finance Desk</MenuItem> */}
-            <MenuItem value={"Action Desk"}>Action Desk</MenuItem>
-            <MenuItem value={"AVP Desk"}>AVP Desk</MenuItem>
+            {formState.roles.map((role, index) => {
+              return (
+                <MenuItem key={index} value={role._id}>
+                  {role.roleName}
+                </MenuItem>
+              );
+            })}
           </TextField>
         </GridItem>
         <GridItem

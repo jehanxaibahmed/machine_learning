@@ -43,15 +43,19 @@ export default function InvoiceDetail() {
       id: getParameterByName("invoiceId"),
       version: getParameterByName("version"),
       vendorId: getParameterByName("vendorId"),
+      clientId: getParameterByName("clientId"),
+      isAR: getParameterByName("isAR"),
     };
 
     axios({
       method: "post", //you can set what request you want to be
-      url: `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion`,
+      url: invoice.isAR == "true" ?  `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ar` : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/getSingleInvoiceByVersion/ap`,
       data: {
         invoiceId: invoice.id,
         version: invoice.version,
-        vendorId: invoice.vendorId,
+        vendorId:  invoice.isAR  == "true" ?  null : invoice.vendorId,
+        clientId: invoice.isAR  == "true" ? invoice.clientId: null,
+        isAR: invoice.isAR  == "true" ? true : false
       },
       headers: {
         cooljwt: Token,

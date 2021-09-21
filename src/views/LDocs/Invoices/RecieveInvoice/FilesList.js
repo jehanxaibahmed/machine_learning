@@ -833,7 +833,7 @@ export default function FilesList(props) {
           : `${process.env.REACT_APP_LDOCS_API_URL}/report/InvoiceToXlsx`,
       data:
         file == undefined
-          ? { organizationId: userDetail.orgDetail.organizationId }
+          ? { organizationId: userDetail?.orgDetail?.organizationId }
           : {
               tenantId: file.tenantId,
               organizationId: file.organizationId,
@@ -1602,6 +1602,7 @@ export default function FilesList(props) {
                   >
                     Filters
                   </Button>
+                  {filesData.length > 0 ? 
                   <Button
                     color='danger'
                     round
@@ -1610,7 +1611,7 @@ export default function FilesList(props) {
                     onClick={() => exportToCSV()}
                   >
                     Export
-                  </Button>
+                  </Button>:""}
                   <Tooltip
                   id="tooltip-top"
                   title="Refresh"

@@ -2,5 +2,7 @@
 node_modules
 invoicemate-backend
 nginx
-# .env
+.env
 build
+.env
+.env

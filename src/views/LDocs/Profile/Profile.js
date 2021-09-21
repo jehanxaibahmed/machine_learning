@@ -34,7 +34,7 @@ export default function UserProfile() {
 
   const updateUserData = (userObject) => {
     dispatch(setUserDataAction(userObject));
-    setAvatar(userObject.level1.profileImg);
+    setAvatar(`${userObject.level1.profileImg}`);
     setUserData(userObject);
   };
 
@@ -43,7 +43,7 @@ export default function UserProfile() {
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
   useEffect(() => {
-    let image = typeof user.level1 != "undefined" ? user.level1.profileImg : "";
+    let image = typeof user.level1 != "undefined" ? `${user.level1.profileImg}` : "";
     setUserData(user);
     setAvatar(image);
 

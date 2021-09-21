@@ -292,7 +292,7 @@ export default function HeaderLinks(props) {
             />
           </Button>
       </Tooltip> */}
-      {!userData.isVendor ?
+      {/* {!userData.isVendor ?
       <Tooltip   title="Verifier" aria-label="verify">
         <Link to={_IsAr() == true ? "../verifier/ar" : _IsAr() == false ? "../verifier/ap": "verifier"} style={{color: props.isDarkmode?'#fff':"#555555"}}>
           <Button
@@ -314,9 +314,9 @@ export default function HeaderLinks(props) {
             />
           </Button>
         </Link>
-      </Tooltip>:''}
-      <Tooltip title="Dashboard" aria-label="dashboard">
-      <Link to={_IsAr() == true ? "../dashboard/ar" : _IsAr() == false ? "../dashboard/ap" : "dashboard"} style={{color: props.isDarkmode?'#fff':"#555555"}}>
+      </Tooltip>:''} */}
+      {/* <Tooltip title="Dashboard" aria-label="dashboard">
+      <Link to={_IsAr() == true ? "./../dashboard/ar" : _IsAr() == false ? "./../dashboard/ap" : "./../dashboard/ad"} style={{color: props.isDarkmode?'#fff':"#555555"}}>
       <Button
         color="transparent"
         simple
@@ -342,7 +342,7 @@ export default function HeaderLinks(props) {
         </Hidden>
       </Button>
       </Link>
-      </Tooltip>
+      </Tooltip> */}
       <Tooltip title="Notifications" aria-label="notifications">
       <div className={managerClasses}>
         <Button
@@ -647,7 +647,7 @@ export default function HeaderLinks(props) {
               <Paper className={classes.dropdown}>
                 <ClickAwayListener onClickAway={handleCloseProfile}>
                   <MenuList role="menu">
-                    <Link to="user-profile" activeClassName="active">
+                    <Link to="../user-profile" activeClassName="active">
                       <MenuItem
                         onClick={handleCloseProfile}
                         className={dropdownItem}

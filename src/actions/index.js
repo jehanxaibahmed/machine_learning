@@ -28,6 +28,14 @@ export const setToken = (tk) => {
   }
 };
 
+
+export const setPermissions = (permissions) => {
+  return (dispatch) => { 
+    dispatch({ type: "SET_PERMISSIONS", response: permissions });
+  }
+};
+
+
 export const setTabVal = (val) => {
   return (dispatch) => { 
     dispatch({ type: "SET_TAB_VAL", response: val });
@@ -64,7 +72,6 @@ export const logoutUserAction = () => {
   }
 };
 export const getUserDataAction = () => {
-  console.log("IN");
     return (dispatch) => {
       let Token = localStorage.getItem("cooljwt");
       let decoded = jwt.decode(Token);
@@ -75,21 +82,38 @@ export const getUserDataAction = () => {
         headers: { cooljwt: Token },
       })
         .then((response) => {
-          console.log(response);
            if (typeof response.data.userDetail !== "undefined" || undefined || null) {
+             //If User
+            if(response.data.userDetail.level1){
+              //If Image Path is Null
             if (
-              response.data.userDetail.level1.profileImg == "" ||
-              typeof response.data.userDetail.level1.profileImg == "undefined"
+              response.data.userDetail.level1.profileImgPath == "" ||
+              typeof response.data.userDetail.level1.profileImgPath == "undefined"
             ) {
               response.data.userDetail.level1.profileImg = defaultAvatar;
               dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
             } else {
-              var base64Flag = `data:${response.data.userDetail.level1.profileImgT};base64,`;
-              let profileImage = base64Flag + response.data.userDetail.level1.profileImg;
-              response.data.level1.profileImg = profileImage;
+              let profileImage = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.userDetail.level1.profileImgPath}`;
+              response.data.userDetail.level1.profileImg = profileImage;
+              dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
+            }
+          }else{
+            //If Admin
+            if (
+              response.data.userDetail.profileImgPath == "" ||
+              typeof response.data.userDetail.profileImgPath == "undefined"
+            ) {
+              response.data.userDetail.level1 = response.data.userDetail;
+              response.data.userDetail.level1.profileImg = defaultAvatar;
+              dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
+            } else {
+              response.data.userDetail.level1 = response.data.userDetail;
+              let profileImage = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.userDetail.profileImgPath}`;
+              response.data.userDetail.level1.profileImg = profileImage;
               dispatch({ type: "GET_USER_DATA", response: response.data.userDetail });
             }
           } 
+        }
           else if (typeof response.data.isVendor !== "undefined" || undefined || null) {
             if (
               response.data.isVendor.level1.profileImg == "" ||
@@ -98,8 +122,7 @@ export const getUserDataAction = () => {
               response.data.isVendor.level1.profileImg = defaultAvatar;
               dispatch({ type: "GET_USER_DATA", response: response.data.isVendor });
             } else {
-              var base64Flag = `data:${response.data.userDetail.isVendor.profileImgT};base64,`;
-              let profileImage = base64Flag + response.data.isVendor.level1.profileImg;
+              let profileImage = `${process.env.REACT_APP_LDOCS_API_URL}/${response.data.isVendor.level1.profileImgT}`;
               response.data.level1.isVendor.profileImg = profileImage;
               dispatch({ type: "GET_USER_DATA", response: response.data.isVendor });
             }
@@ -248,7 +271,6 @@ export const getNotification = () => {
         let msg = typeof error.response != "undefined"
         ? error.response.data
         : error.message;
-        console.log(msg);
         dispatch({ type: "GET_USER_NOTIFICATIONS", response: [] });
       });
     }
