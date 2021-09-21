@@ -230,16 +230,16 @@ export default function CreateInvoice(props) {
     !isVendor
       ? userDetails.currency.Currency_Base
       : formState.selectedOrg
-      ? formState.selectedOrg.currency
-      : ""
+        ? formState.selectedOrg.currency
+        : ""
   );
 
   const getLookUp = () => {
     const organizationId = edit
       ? fileData.organizationId
       : !isVendor
-      ? userDetails.orgDetail.organizationId
-      : formState.values.organizationId;
+        ? userDetails.orgDetail.organizationId
+        : formState.values.organizationId;
     //Get Currencies
     if (organizationId) {
       axios({
@@ -488,7 +488,7 @@ export default function CreateInvoice(props) {
     setIsSavingInvoice(false);
     const userData = jwt.decode(Token);
     await setMarkAsReceivedModel(false);
-    if(props.loadFiles){ await props.loadFiles(userData, false);}
+    if (props.loadFiles) { await props.loadFiles(userData, false); }
     // setIsMarked(true);
   };
   const removeAttachment = (fileIndex) => {
@@ -712,8 +712,8 @@ export default function CreateInvoice(props) {
           invoice_customeraddress2 = invoice_customercity
             ? invoice_customercity
             : "" + ", " + invoice_customercountry
-            ? invoice_customercountry
-            : "";
+              ? invoice_customercountry
+              : "";
 
           //Getting Line Items
           result.data.line_items &&
@@ -789,8 +789,8 @@ export default function CreateInvoice(props) {
             };
             let vendor = formState.vendors
               ? formState.vendors.find(
-                  (v) => v.level1.vendorName == invoice_companyowner
-                )
+                (v) => v.level1.vendorName == invoice_companyowner
+              )
               : null;
             let vendorId = !isVendor
               ? vendor
@@ -905,12 +905,12 @@ export default function CreateInvoice(props) {
   };
 
   const updateTotal = () => {
-    let grossAmt = items.reduce(function(sum, current) {
+    let grossAmt = items.reduce(function (sum, current) {
       return sum + parseFloat(current.amount);
     }, 0);
     let totalAmt =
       parseFloat(
-        items.reduce(function(sum, current) {
+        items.reduce(function (sum, current) {
           return sum + parseFloat(current.amount);
         }, 0)
       ) +
@@ -1377,11 +1377,11 @@ export default function CreateInvoice(props) {
     } else {
       const amount =
         parseFloat(formState.values.unitCost) *
-          parseFloat(formState.values.quantity) -
+        parseFloat(formState.values.quantity) -
         parseFloat(
           (formState.values.unitCost * formState.values.discount) / 100
         ) *
-          formState.values.quantity;
+        formState.values.quantity;
       const item = {
         itemName: formState.values.itemName,
         unitCost: formState.values.unitCost,
@@ -1534,248 +1534,248 @@ export default function CreateInvoice(props) {
   };
 
   const createInvoice = () => {
-    return new Promise((res, rej)=>{
-    //Creating Invoice
-    setIsSavingInvoice(true);
-    const isEdit = props.editHandler == 1 ? true : false;
-    const userData = jwt.decode(Token);
-    let userCurrency;
-    if (isVendor && formState.selectedOrg) {
-      userCurrency = currencyLookups.find(
-        (l) => l._id == formState.selectedOrg.currency
-      );
-    } else if (userData.currency && !isVendor) {
-      userCurrency = currencyLookups.find(
-        (l) => l._id == userData.currency.Currency_Base
-      );
-    } else {
-      userCurrency = defaultCurrency;
-    }
-    let po = pos.find((po) => po.poNumber == formState.values.poNumber);
-    let taxPercent =
-      formState.values.taxType === 1
-        ? (formState.values.overallTax * 100) / formState.values.subtotal
-        : formState.values.overallTax;
-    let discountPercent =
-      formState.values.discountType === 1
-        ? (formState.values.overallDiscount * 100) / formState.values.subtotal
-        : formState.values.overallDiscount;
-    let taxAmt =
-      formState.values.taxType === 2
-        ? (formState.values.subtotal * formState.values.overallTax) / 100
-        : formState.values.overallTax;
-    let discountAmt =
-      formState.values.discountType === 2
-        ? (formState.values.subtotal * formState.values.overallDiscount) / 100
-        : formState.values.overallDiscount;
-    let formData = {
-      invoiceId: formState.values.InvoiceNumber,
-      invoiceDate: formState.values.invoiceDate,
-      dueDate: formState.values.dueDate,
-      grossAmt: formState.values.subtotal,
-      discountPercent: discountPercent,
-      discountAmt: discountAmt,
-      taxAmt: taxAmt,
-      taxPercent: taxPercent,
-      invoice_details: formState.values.notes,
-      netAmt: formState.values.total,
-      ref: formState.values.poNumber,
-      tenantId: isVendor ? formState.selectedOrg.tenantId : userData.tenantId,
-      organizationId: isVendor
-        ? formState.selectedOrg.organizationId
-        : userData.orgDetail.organizationId,
-      organizationName: isVendor
-        ? formState.selectedOrg.organizationName
-        : userData.orgDetail.organization,
-      contactPerson: isVendor
-        ? null
-        : formState.values.selectedVendor.level1.contactPerson,
-      createdBy: edit ? fileData.createdBy  : userData.email,
-      balanceDue: conversionRate(
-        formState.values.currency,
-        baseCurrency,
-        currencyLookups,
-        parseFloat(formState.values.total),
-        true,
-        edit,
-        formState.conversionRate
-      ),
-      items: items,
-      attachments: formState.attachments,
-      vendorName: isAr
-        ? null
-        : isVendor
-        ? userData.name
-        : formState.values.selectedVendor.level1.vendorName,
-      vendorId: isAr
-        ? null
-        : isVendor
-        ? userData.id
-        : formState.values.selectedVendor._id,
-      vendorSite: isAr ? null : isVendor ? "" : formState.values.site,
-      clientName: isAr
-        ? formState.values.selectedVendor.level1.clientName
-        : null,
-      clientId: isAr ? formState.values.selectedVendor._id : null,
-      clientSite: formState.values.site,
-      version: fileData ? fileData.version : "",
-      isAR: isAr,
-      invoicePath: fileData ? fileData.invoicePath : "",
-      FC_currency: currencyLookups.find(
-        (l) => l._id == formState.values.currency
-      ),
-      LC_currency: userCurrency,
-      conversionRate: currencyLookups.find(
-        (l) => l._id == formState.values.currency
-      ).conversionRate,
-      description: formState.values.notes,
-      createdByVendor: edit ? fileData.createdByVendor :  isVendor ? true : false,
-      po: formState.values.poNumber,
-      // receiptNumber: formState.values.receiptNumber,
-      paymentTerms: formState.values.paymentTerms.split("-")[1],
-      isPo: isAr ? formState.isPo : po ? formState.isPo : false,
-      isReceipt: formState.isPo ? formState.isReceipt : false,
-      requesterId: isVendor ? (po ? po.requesterId : null) : userData.email,
-      expenseType: formState.values.expenseType,
-      isPettyCash: formState.isPeetyCash,
-      isPrePayment: formState.isPrePayment,
-      isExpense: formState.isExpense,
-      createdDate: new Date()
-        .toLocaleString()
-        .replace(/t/, " ")
-        .replace(/\..+/, ""),
-      grossAmt_bc: conversionRate(
-        formState.values.currency,
-        baseCurrency,
-        currencyLookups,
-        parseFloat(formState.values.subtotal),
-        true,
-        edit,
-        formState.conversionRate
-      ),
-      discountAmt_bc: conversionRate(
-        formState.values.currency,
-        baseCurrency,
-        currencyLookups,
-        parseFloat(discountAmt),
-        true,
-        edit,
-        formState.conversionRate
-      ),
-      taxAmt_bc: conversionRate(
-        formState.values.currency,
-        baseCurrency,
-        currencyLookups,
-        parseFloat(taxAmt),
-        true,
-        edit,
-        formState.conversionRate
-      ),
-      netAmt_bc: conversionRate(
-        formState.values.currency,
-        baseCurrency,
-        currencyLookups,
-        parseFloat(formState.values.total),
-        true,
-        edit,
-        formState.conversionRate
-      ),
-    };
-    //Axios Call
-    axios({
-      method: "post",
-      url: isEdit
-        ? isAr
-          ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/updateInvoiceAR`
-          : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
-        : isAr
-        ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/submitInvoiceAR`
-        : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
-      data: formData,
-      headers: {
-        //"Content-Type": "multipart/form-data",
-        cooljwt: Token,
-      },
-    })
-      .then((response) => {
-        if (edit && !isVendor && !isAr) {
-          setIsSavingInvoice(true);
-        } else {
-          setIsSavingInvoice(false);
-          successAlert("Invoice Submited SuccessFully.");
-        }
-        if (!edit) {
-          getData(isAr);
-          setItems([]);
-          setFormState({
-            selectedVendor: null,
-            selectedOrg: null,
-            isReceipt: false,
-            isPo: true,
-            values: {
-              invoiceDate: getDateFormet(today),
-              InvoiceNumber: "INV-",
-              dueDate: getDateFormet(duedate),
-              poNumber: "",
-              itemName: "",
-              unitCost: 0,
-              receiptNumber: "",
-              paymentTerms: "NET-",
-              quantity: 0,
-              discount: 0,
-              amount: 0,
-              additionalDetails: "",
-              overallDiscount: 0,
-              overallTax: 0,
-              notes: "",
-              selectedVendor: "",
-              subtotal: 0,
-              total: 0,
-              fileTitle: "",
-              fileDescription: "",
-              currency: "",
-              organizationId: "",
-            },
-            attachments: [],
-            errors: {
-              invoiceDate: "",
-              InvoiceNumber: "",
-              dueDate: "",
-              poNumber: "",
-              itemName: "",
-              unitCost: "",
-              quantity: "",
-              discount: "",
-              amount: "",
-              additionalDetails: "",
-              notes: "",
-              selectedVendor: "",
-              vendor: "",
-              currency: "",
-              items: "",
-              fileTitle: "",
-              fileDescription: "",
-              organizationId: "",
-            },
-          });
-        } else {
-          if(props.loadFiles){props.loadFiles(userData, false)};
-        }
-        res("success");
-      })
-      .catch(async (error) => {
-        rej("error");
-        if (error.response) {
-          error.response.status == 401 && dispatch(setIsTokenExpired(true));
-        }
-        await closeMarkAsReceivedModel();
-        setIsSavingInvoice(false);
-        errorAlert(
-          error.message
-            ? error.message
-            : "There is some Issue In Create Invoice"
+    return new Promise((res, rej) => {
+      //Creating Invoice
+      setIsSavingInvoice(true);
+      const isEdit = props.editHandler == 1 ? true : false;
+      const userData = jwt.decode(Token);
+      let userCurrency;
+      if (isVendor && formState.selectedOrg) {
+        userCurrency = currencyLookups.find(
+          (l) => l._id == formState.selectedOrg.currency
         );
-      });
+      } else if (userData.currency && !isVendor) {
+        userCurrency = currencyLookups.find(
+          (l) => l._id == userData.currency.Currency_Base
+        );
+      } else {
+        userCurrency = defaultCurrency;
+      }
+      let po = pos.find((po) => po.poNumber == formState.values.poNumber);
+      let taxPercent =
+        formState.values.taxType === 1
+          ? (formState.values.overallTax * 100) / formState.values.subtotal
+          : formState.values.overallTax;
+      let discountPercent =
+        formState.values.discountType === 1
+          ? (formState.values.overallDiscount * 100) / formState.values.subtotal
+          : formState.values.overallDiscount;
+      let taxAmt =
+        formState.values.taxType === 2
+          ? (formState.values.subtotal * formState.values.overallTax) / 100
+          : formState.values.overallTax;
+      let discountAmt =
+        formState.values.discountType === 2
+          ? (formState.values.subtotal * formState.values.overallDiscount) / 100
+          : formState.values.overallDiscount;
+      let formData = {
+        invoiceId: formState.values.InvoiceNumber,
+        invoiceDate: formState.values.invoiceDate,
+        dueDate: formState.values.dueDate,
+        grossAmt: formState.values.subtotal,
+        discountPercent: discountPercent,
+        discountAmt: discountAmt,
+        taxAmt: taxAmt,
+        taxPercent: taxPercent,
+        invoice_details: formState.values.notes,
+        netAmt: formState.values.total,
+        ref: formState.values.poNumber,
+        tenantId: isVendor ? formState.selectedOrg.tenantId : userData.tenantId,
+        organizationId: isVendor
+          ? formState.selectedOrg.organizationId
+          : userData.orgDetail.organizationId,
+        organizationName: isVendor
+          ? formState.selectedOrg.organizationName
+          : userData.orgDetail.organization,
+        contactPerson: isVendor
+          ? null
+          : formState.values.selectedVendor.level1.contactPerson,
+        createdBy: edit && isVendor ? userData.email : edit ? fileData.createdBy : userData.email,
+        balanceDue: conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          parseFloat(formState.values.total),
+          true,
+          edit,
+          formState.conversionRate
+        ),
+        items: items,
+        attachments: formState.attachments,
+        vendorName: isAr
+          ? null
+          : isVendor
+            ? userData.name
+            : formState.values.selectedVendor.level1.vendorName,
+        vendorId: isAr
+          ? null
+          : isVendor
+            ? userData.id
+            : formState.values.selectedVendor._id,
+        vendorSite: isAr ? null : isVendor ? "" : formState.values.site,
+        clientName: isAr
+          ? formState.values.selectedVendor.level1.clientName
+          : null,
+        clientId: isAr ? formState.values.selectedVendor._id : null,
+        clientSite: formState.values.site,
+        version: fileData ? fileData.version : "",
+        isAR: isAr,
+        invoicePath: fileData ? fileData.invoicePath : "",
+        FC_currency: currencyLookups.find(
+          (l) => l._id == formState.values.currency
+        ),
+        LC_currency: userCurrency,
+        conversionRate: currencyLookups.find(
+          (l) => l._id == formState.values.currency
+        ).conversionRate,
+        description: formState.values.notes,
+        createdByVendor: edit ? fileData.createdByVendor : isVendor ? true : false,
+        po: formState.values.poNumber,
+        // receiptNumber: formState.values.receiptNumber,
+        paymentTerms: formState.values.paymentTerms.split("-")[1],
+        isPo: isAr ? formState.isPo : po ? formState.isPo : false,
+        isReceipt: formState.isPo ? formState.isReceipt : false,
+        requesterId: isVendor ? (po ? po.requesterId : null) : userData.email,
+        expenseType: formState.values.expenseType,
+        isPettyCash: formState.isPeetyCash,
+        isPrePayment: formState.isPrePayment,
+        isExpense: formState.isExpense,
+        createdDate: new Date()
+          .toLocaleString()
+          .replace(/t/, " ")
+          .replace(/\..+/, ""),
+        grossAmt_bc: conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          parseFloat(formState.values.subtotal),
+          true,
+          edit,
+          formState.conversionRate
+        ),
+        discountAmt_bc: conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          parseFloat(discountAmt),
+          true,
+          edit,
+          formState.conversionRate
+        ),
+        taxAmt_bc: conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          parseFloat(taxAmt),
+          true,
+          edit,
+          formState.conversionRate
+        ),
+        netAmt_bc: conversionRate(
+          formState.values.currency,
+          baseCurrency,
+          currencyLookups,
+          parseFloat(formState.values.total),
+          true,
+          edit,
+          formState.conversionRate
+        ),
+      };
+      //Axios Call
+      axios({
+        method: "post",
+        url: isEdit
+          ? isAr
+            ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/updateInvoiceAR`
+            : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/updateInvoice`
+          : isAr
+            ? `${process.env.REACT_APP_LDOCS_API_URL}/AR/submitInvoiceAR`
+            : `${process.env.REACT_APP_LDOCS_API_URL}/invoice/submitInvoice`,
+        data: formData,
+        headers: {
+          //"Content-Type": "multipart/form-data",
+          cooljwt: Token,
+        },
+      })
+        .then((response) => {
+          if (edit && !isVendor && !isAr) {
+            setIsSavingInvoice(true);
+          } else {
+            setIsSavingInvoice(false);
+            successAlert("Invoice Submited SuccessFully.");
+          }
+          if (!edit) {
+            getData(isAr);
+            setItems([]);
+            setFormState({
+              selectedVendor: null,
+              selectedOrg: null,
+              isReceipt: false,
+              isPo: true,
+              values: {
+                invoiceDate: getDateFormet(today),
+                InvoiceNumber: "INV-",
+                dueDate: getDateFormet(duedate),
+                poNumber: "",
+                itemName: "",
+                unitCost: 0,
+                receiptNumber: "",
+                paymentTerms: "NET-",
+                quantity: 0,
+                discount: 0,
+                amount: 0,
+                additionalDetails: "",
+                overallDiscount: 0,
+                overallTax: 0,
+                notes: "",
+                selectedVendor: "",
+                subtotal: 0,
+                total: 0,
+                fileTitle: "",
+                fileDescription: "",
+                currency: "",
+                organizationId: "",
+              },
+              attachments: [],
+              errors: {
+                invoiceDate: "",
+                InvoiceNumber: "",
+                dueDate: "",
+                poNumber: "",
+                itemName: "",
+                unitCost: "",
+                quantity: "",
+                discount: "",
+                amount: "",
+                additionalDetails: "",
+                notes: "",
+                selectedVendor: "",
+                vendor: "",
+                currency: "",
+                items: "",
+                fileTitle: "",
+                fileDescription: "",
+                organizationId: "",
+              },
+            });
+          } else {
+            if (props.loadFiles) { props.loadFiles(userData, false) };
+          }
+          res("success");
+        })
+        .catch(async (error) => {
+          rej("error");
+          if (error.response) {
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
+          }
+          await closeMarkAsReceivedModel();
+          setIsSavingInvoice(false);
+          errorAlert(
+            error.message
+              ? error.message
+              : "There is some Issue In Create Invoice"
+          );
+        });
     });
   };
   return (
@@ -2351,8 +2351,8 @@ export default function CreateInvoice(props) {
                           {isVendor
                             ? "Select Customer"
                             : isAr
-                            ? "Select Customer"
-                            : "Select Supplier"}
+                              ? "Select Customer"
+                              : "Select Supplier"}
                         </h4>
                       </CardIcon>
                     </CardHeader>
@@ -2403,17 +2403,17 @@ export default function CreateInvoice(props) {
                                 </MenuItem>
                                 {formState.vendors
                                   ? formState.vendors.map((vendor, index) => {
-                                      return (
-                                        <MenuItem
-                                          key={index}
-                                          value={vendor._id}
-                                        >
-                                          {isAr
-                                            ? vendor.level1.clientName
-                                            : vendor.level1.vendorName}
-                                        </MenuItem>
-                                      );
-                                    })
+                                    return (
+                                      <MenuItem
+                                        key={index}
+                                        value={vendor._id}
+                                      >
+                                        {isAr
+                                          ? vendor.level1.clientName
+                                          : vendor.level1.vendorName}
+                                      </MenuItem>
+                                    );
+                                  })
                                   : ""}
                               </TextField>
                             </GridItem>
@@ -2430,8 +2430,8 @@ export default function CreateInvoice(props) {
                               <IconButton
                                 disabled={
                                   formState.values.selectedVendor == null ||
-                                  undefined ||
-                                  ""
+                                    undefined ||
+                                    ""
                                     ? true
                                     : false
                                 }
@@ -2548,17 +2548,17 @@ export default function CreateInvoice(props) {
                                 </MenuItem>
                                 {formState.organizations
                                   ? formState.organizations.map(
-                                      (org, index) => {
-                                        return (
-                                          <MenuItem
-                                            key={index}
-                                            value={org.organizationId}
-                                          >
-                                            {org.organizationName}
-                                          </MenuItem>
-                                        );
-                                      }
-                                    )
+                                    (org, index) => {
+                                      return (
+                                        <MenuItem
+                                          key={index}
+                                          value={org.organizationId}
+                                        >
+                                          {org.organizationName}
+                                        </MenuItem>
+                                      );
+                                    }
+                                  )
                                   : ""}
                               </TextField>
                             </GridItem>
@@ -2575,12 +2575,12 @@ export default function CreateInvoice(props) {
                               <IconButton
                                 disabled={
                                   formState.values.organization == null ||
-                                  undefined ||
-                                  ""
+                                    undefined ||
+                                    ""
                                     ? true
                                     : false
                                 }
-                                //onClick={() => setShowVendor(!showVendor)}
+                              //onClick={() => setShowVendor(!showVendor)}
                               >
                                 {!showVendor ? (
                                   <Visibility fontSize="small" />
@@ -2642,8 +2642,8 @@ export default function CreateInvoice(props) {
                             {isVendor
                               ? "Select Customer"
                               : isAr
-                              ? "Select Customer"
-                              : "Select Supplier"}
+                                ? "Select Customer"
+                                : "Select Supplier"}
                           </Button>
                         </GridItem>
                       </GridContainer>
@@ -2729,8 +2729,8 @@ export default function CreateInvoice(props) {
                               }}
                             >
                               {formState.values.organizationId != "" ||
-                              null ||
-                              undefined ? (
+                                null ||
+                                undefined ? (
                                 <div>
                                   <Typography variant="h6" component="h2">
                                     {formState.selectedOrg.organizationName ||
@@ -2760,7 +2760,7 @@ export default function CreateInvoice(props) {
                               }}
                             >
                               {formState.values.selectedVendor &&
-                              formState.values.selectedVendor.level1.logoUrl ? (
+                                formState.values.selectedVendor.level1.logoUrl ? (
                                 <img
                                   src={
                                     formState.values.selectedVendor.level1
@@ -3073,31 +3073,29 @@ export default function CreateInvoice(props) {
                             // variant="outlined"
                             value={
                               formState.values.currency
-                                ? `${currency.Code ? currency.Code : ""} 1 ≈ ${
-                                    currencyLookups.find(
-                                      (c) => c._id == baseCurrency
-                                    )
-                                      ? currencyLookups.find(
-                                          (c) => c._id == baseCurrency
-                                        ).Code
-                                      : ""
-                                  } ${
-                                    currency.conversionRate
-                                      ? parseFloat(
-                                          !edit
-                                            ? currency.conversionRate
-                                            : formState.conversionRate
-                                        ).toFixed(4)
-                                      : "?"
-                                  }`
+                                ? `${currency.Code ? currency.Code : ""} 1 ≈ ${currencyLookups.find(
+                                  (c) => c._id == baseCurrency
+                                )
+                                  ? currencyLookups.find(
+                                    (c) => c._id == baseCurrency
+                                  ).Code
+                                  : ""
+                                } ${currency.conversionRate
+                                  ? parseFloat(
+                                    !edit
+                                      ? currency.conversionRate
+                                      : formState.conversionRate
+                                  ).toFixed(4)
+                                  : "?"
+                                }`
                                 : "" || ""
                             }
                             className={classes.textField}
                           />
                         </GridItem>
                         {!formState.isPeetyCash &&
-                        !formState.isExpense &&
-                        formState.isPo ? (
+                          !formState.isExpense &&
+                          formState.isPo ? (
                           !isAr ? (
                             <React.Fragment>
                               <GridItem
@@ -3209,8 +3207,8 @@ export default function CreateInvoice(props) {
                           ""
                         )}
                         {formState.isExpense &&
-                        !formState.isPeetyCash &&
-                        !formState.isPo ? (
+                          !formState.isPeetyCash &&
+                          !formState.isPo ? (
                           <GridItem
                             xs={12}
                             sm={12}
@@ -3241,10 +3239,10 @@ export default function CreateInvoice(props) {
                             >
                               {formState.expenseTypes
                                 ? formState.expenseTypes.map((exp, index) => (
-                                    <MenuItem key={index} value={exp._id}>
-                                      {exp.Name}
-                                    </MenuItem>
-                                  ))
+                                  <MenuItem key={index} value={exp._id}>
+                                    {exp.Name}
+                                  </MenuItem>
+                                ))
                                 : ""}
                             </TextField>
                           </GridItem>
@@ -3527,8 +3525,8 @@ export default function CreateInvoice(props) {
                                     formState.values.discountType == 1
                                       ? formState.values.overallDiscount
                                       : (formState.values.subtotal *
-                                          formState.values.overallDiscount) /
-                                          100
+                                        formState.values.overallDiscount) /
+                                      100
                                   ),
                                   false,
                                   edit,
@@ -3551,8 +3549,8 @@ export default function CreateInvoice(props) {
                                       formState.values.discountType == 1
                                         ? formState.values.overallDiscount
                                         : (formState.values.subtotal *
-                                            formState.values.overallDiscount) /
-                                            100
+                                          formState.values.overallDiscount) /
+                                        100
                                     ) || ""
                                   }
                                   className={classes.textField}
@@ -3574,8 +3572,8 @@ export default function CreateInvoice(props) {
                                     formState.values.taxType == 1
                                       ? formState.values.overallTax
                                       : (formState.values.subtotal *
-                                          formState.values.overallTax) /
-                                          100
+                                        formState.values.overallTax) /
+                                      100
                                   ),
                                   false,
                                   edit,
@@ -3598,8 +3596,8 @@ export default function CreateInvoice(props) {
                                       formState.values.taxType == 1
                                         ? formState.values.overallTax
                                         : (formState.values.subtotal *
-                                            formState.values.overallTax) /
-                                            100
+                                          formState.values.overallTax) /
+                                        100
                                     ) || ""
                                   }
                                   className={classes.textField}

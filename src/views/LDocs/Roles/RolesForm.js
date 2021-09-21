@@ -28,6 +28,7 @@ import { Animated } from "react-animated-css";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsTokenExpired } from "actions";
 import Refresh from "@material-ui/icons/Refresh";
+import { Checkbox } from "@material-ui/core";
 
 
 const styles = {
@@ -85,7 +86,7 @@ export default function Roles() {
            return {
              id: prop._id,
              name: prop.roleName,
-             isAdmin: prop.isAdmin ? "True" : "False",
+             isAdmin: (<Checkbox checked={prop.isAdmin} disabled={true} />),
              createdBy: prop.createdBy,
              actions: (
                <div className="actions-right">
@@ -244,7 +245,7 @@ export default function Roles() {
                         accessor: "isAdmin",
                       },
                       {
-                        Header: "Created",
+                        Header: "Created By",
                         accessor: "createdBy",
                       },
                       {
