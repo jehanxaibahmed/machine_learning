@@ -143,9 +143,6 @@ export default function FileAdvanceView(props) {
         setBlockChainData(offchainData);
       });
 
-      setTimeout(() => {
-        setBlockChainData([]);
-      }, 1000);
     
   };
 
