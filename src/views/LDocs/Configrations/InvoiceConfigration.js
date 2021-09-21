@@ -370,7 +370,7 @@ export default function InvoiceConfigrations() {
                 </CardBody>
               </Card>
             </GridItem>
-            <GridItem xs={12}>
+            {/* <GridItem xs={12}>
               <Card>
                 <CardHeader color="info" icon>
                   <CardIcon color="info">
@@ -380,11 +380,7 @@ export default function InvoiceConfigrations() {
                   </CardIcon>
                 </CardHeader>
                 <CardBody>
-                  {/* "autoInitWorkFlow":true,
-                    "enableEmailNotify":false,
-                    "enablePayments":true, */}
                   <List>
-                    {/* Auto Init Workflow */}
                     <ListItem>
                       <ListItemText
                         style={{ color: "black" }}
@@ -445,10 +441,10 @@ export default function InvoiceConfigrations() {
                       buttonId="removeDisplayLogo"
                       handleImageChange={handleImageChange}
                     />
-                  </GridItem>
-                </CardBody>
+                  </GridItem> 
+              </CardBody>
               </Card>
-            </GridItem>
+            </GridItem> */}
           </GridContainer>
           <Button
             color="info"
