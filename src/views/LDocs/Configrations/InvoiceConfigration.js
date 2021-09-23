@@ -117,6 +117,7 @@ export default function InvoiceConfigrations() {
         }));
       };
       reader.readAsDataURL(file);
+      console.log(file);
       setDisplayLogo(file);
     } else {
       setDisplayLogo(null);
@@ -185,7 +186,7 @@ export default function InvoiceConfigrations() {
         templateId: state.values.selectedTemplate,
         Default_template: "Default_template",
         EnableHeader:state.values.isHeader,
-        organizationLogo:state.values.logo
+        organizationLogo:{logo: state.values.logo, name : displayLogo.name}
       },
     };
     axios({
