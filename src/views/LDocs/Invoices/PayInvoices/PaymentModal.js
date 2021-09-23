@@ -12,6 +12,9 @@ import {
   DialogContent,
   IconButton,
   Tooltip,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
 } from "@material-ui/core";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -44,6 +47,7 @@ import Step3 from "views/LDocs/Vendor/steps/level3";
 import { formatDateTime } from "views/LDocs/Functions/Functions";
 import { PayPalButton } from "react-paypal-button-v2";
 import { addZeroes } from "views/LDocs/Functions/Functions";
+import { values } from "lodash";
 let MoneyButton = require("@moneybutton/react-money-button").default;
 
 const useStyles = makeStyles(styles);
@@ -72,14 +76,17 @@ export default function InitiatePayment(props) {
       paymentBy: "",
       paymentType: "full",
       currencyType: 1,
-      refernce:""
+      refernce: "",
+      isScheduled: false,
+      scheduleDate: "",
     },
     errors: {
       paidAmount: "",
       paymentBy: "",
       paymentType: "",
       currencyType: "",
-      refernce:""
+      refernce: "",
+      scheduleDate:""
     },
   });
 
@@ -164,36 +171,47 @@ export default function InitiatePayment(props) {
     event.persist();
     let paidAmount;
     var error = false;
-    if (event.target.name == "paidAmount") {
-      if (
-        event.target.value <= props.fileData.balanceDue &&
-        event.target.value > 0
-      ) {
-        paidAmount = "success";
-      } else {
-        paidAmount = "error";
-        error = true;
+
+    if (event.target.name == "isScheduled") {
+      setFormState((formState) => ({
+        ...formState,
+        values: {
+          ...values,
+          isScheduled: !formState.values.isScheduled,
+        },
+      }));
+    } else {
+      if (event.target.name == "paidAmount") {
+        if (
+          event.target.value <= props.fileData.balanceDue &&
+          event.target.value > 0
+        ) {
+          paidAmount = "success";
+        } else {
+          paidAmount = "error";
+          error = true;
+        }
+        setFormState((formState) => ({
+          ...formState,
+          values: {
+            paymentType: "partial",
+            paymentBy: "",
+            currencyType: 1,
+          },
+          errors: {
+            ...formState.errors,
+            paidAmount: paidAmount,
+          },
+        }));
       }
       setFormState((formState) => ({
         ...formState,
         values: {
-          paymentType: "partial",
-          paymentBy: "",
-          currencyType: 1,
-        },
-        errors: {
-          ...formState.errors,
-          paidAmount: paidAmount,
+          ...formState.values,
+          [event.target.name]: event.target.value,
         },
       }));
     }
-    setFormState((formState) => ({
-      ...formState,
-      values: {
-        ...formState.values,
-        [event.target.name]: event.target.value,
-      },
-    }));
   };
 
   const payNow = () => {
@@ -222,7 +240,9 @@ export default function InitiatePayment(props) {
             parseFloat(formState.values.paidAmount),
       paymentMethod: "manual",
       transactionFee: "1",
-      referenceInfo:formState.values.refernce
+      referenceInfo: formState.values.refernce,
+      isScheduled : formState.values.isScheduled,
+      scheduleDate: formState.values.scheduleDate
     };
     axios({
       method: "post",
@@ -701,114 +721,165 @@ export default function InitiatePayment(props) {
                   )}
                   {!isAr ? (
                     <React.Fragment>
-                  <GridItem
-                    xs={9}
-                    sm={9}
-                    md={9}
-                    lg={9}
-                    style={{
-                      marginTop: "10px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <TextField
-                      className={classes.textField}
-                      error={formState.errors.paymentBy === "error"}
-                      fullWidth={true}
-                      helperText={
-                        formState.errors.paymentBy === "error"
-                          ? "Payment Option is required"
-                          : null
-                      }
-                      label="Payment Options"
-                      name="paymentBy"
-                      select
-                      onChange={(event) => {
-                        handleChange(event);
-                      }}
-                      value={formState.values.paymentBy || ""}
-                    >
-                      <MenuItem
-                        disabled
-                        classes={{
-                          root: classes.selectMenuItem,
+                      <GridItem
+                        xs={9}
+                        sm={9}
+                        md={9}
+                        lg={9}
+                        style={{
+                          marginTop: "10px",
+                          marginBottom: "10px",
                         }}
                       >
-                        Choose Payment Option
-                      </MenuItem>
-                      {PaymentGateways.filter((pg) =>
-                        pg.currencyType.includes(
-                          parseInt(formState.values.currencyType)
-                        )
-                      ).map((p) => (
-                        <MenuItem  value={p.serviceName}>
-                          <div className="fileinput text-right">
-                            <div className="" style={{ marginTop: 20 }}>
-                              {`${p.serviceName.toUpperCase()} ${
-                                p.default ? "(Preferred)" : ""
-                              }`}
-                            </div>
+                        <TextField
+                          className={classes.textField}
+                          error={formState.errors.paymentBy === "error"}
+                          fullWidth={true}
+                          helperText={
+                            formState.errors.paymentBy === "error"
+                              ? "Payment Option is required"
+                              : null
+                          }
+                          label="Payment Options"
+                          name="paymentBy"
+                          select
+                          onChange={(event) => {
+                            handleChange(event);
+                          }}
+                          value={formState.values.paymentBy || ""}
+                        >
+                          <MenuItem
+                            disabled
+                            classes={{
+                              root: classes.selectMenuItem,
+                            }}
+                          >
+                            Choose Payment Option
+                          </MenuItem>
+                          {PaymentGateways.filter((pg) =>
+                            pg.currencyType.includes(
+                              parseInt(formState.values.currencyType)
+                            )
+                          ).map((p) => (
+                            <MenuItem value={p.serviceName}>
+                              <div className="fileinput text-right">
+                                <div className="" style={{ marginTop: 20 }}>
+                                  {`${p.serviceName.toUpperCase()} ${
+                                    p.default ? "(Preferred)" : ""
+                                  }`}
+                                </div>
+                              </div>
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </GridItem>
+
+                      <GridItem
+                        xs={3}
+                        sm={3}
+                        md={3}
+                        lg={3}
+                        style={{
+                          marginTop: "10px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <div className="fileinput text-right">
+                          <div className="" style={{ marginTop: 20 }}>
+                            {PaymentGateways.find(
+                              (pg) =>
+                                pg.serviceName == formState.values.paymentBy
+                            ) ? (
+                              <img
+                                height="60px"
+                                width="100%"
+                                src={`${process.env.REACT_APP_LDOCS_API_URL}/${
+                                  PaymentGateways.find(
+                                    (pg) =>
+                                      pg.serviceName ==
+                                      formState.values.paymentBy
+                                  ).imgUrl
+                                }`}
+                              />
+                            ) : (
+                              ""
+                            )}
                           </div>
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </GridItem>
-                 
-                  <GridItem
-                    xs={3}
-                    sm={3}
-                    md={3}
-                    lg={3}
-                    style={{
-                      marginTop: "10px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <div className="fileinput text-right">
-                      <div className="" style={{ marginTop: 20 }}>
-                        {PaymentGateways.find(
-                          (pg) => pg.serviceName == formState.values.paymentBy
-                        ) ? (
-                          <img
-                            height="60px"
-                            width="100%"
-                            src={`${process.env.REACT_APP_LDOCS_API_URL}/${
-                              PaymentGateways.find(
-                                (pg) =>
-                                  pg.serviceName == formState.values.paymentBy
-                              ).imgUrl
-                            }`}
+                        </div>
+                      </GridItem>
+                    </React.Fragment>
+                  ) : (
+                    <GridItem
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      style={{
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <TextField
+                        className={classes.textField}
+                        type="text"
+                        fullWidth={true}
+                        label="Reference"
+                        name="refernce"
+                        multiline
+                        value={formState.values.refernce}
+                        onChange={handleChange}
+                      ></TextField>
+                    </GridItem>
+                  )}
+                  {isAr ? (
+                    <>
+                      <GridItem
+                        xs={12}
+                        sm={12}
+                        md={12}
+                        lg={12}
+                        style={{
+                          marginTop: "10px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                value={formState.values.isScheduled}
+                                name="isScheduled"
+                                onChange={handleChange}
+                              />
+                            }
+                            label="Scheduled"
                           />
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    </div>
-                  </GridItem>
-                  </React.Fragment>
-                   ):
-                   <GridItem
-                   xs={12}
-                   sm={12}
-                   md={12}
-                   lg={12}
-                   style={{
-                     marginTop: "10px",
-                     marginBottom: "10px",
-                   }}
-                 >
-                   <TextField
-                     className={classes.textField}
-                     type="text"
-                     fullWidth={true}
-                     label="Reference"
-                     name="refernce"
-                     multiline
-                     value={formState.values.refernce}
-                     onChange={handleChange}
-                   ></TextField>
-                 </GridItem>
-                   }
+                        </FormGroup>
+                      </GridItem>
+                      <GridItem
+                        xs={12}
+                        sm={12}
+                        md={12}
+                        lg={12}
+                        style={{
+                          marginTop: "10px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <TextField
+                          className={classes.textField}
+                          type="datetime-local"
+                          name="scheduleDate"
+                          fullWidth={true}
+                          disabled={!formState.values.isScheduled}
+                          value={formState.values.scheduleDate}
+                          onChange={handleChange}
+                        />
+                      </GridItem>
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </React.Fragment>
               )}
             </GridContainer>

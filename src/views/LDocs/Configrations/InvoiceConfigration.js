@@ -427,7 +427,7 @@ export default function InvoiceConfigrations() {
                         color: "danger",
                         round: true,
                       }}
-                      oldImage={!displayLogo ? `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedLogo}` : undefined}
+                      oldImage={!displayLogo && state.values.selectedLogo !== undefined ?  `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedLogo}` : undefined}
                       name="displayLogo"
                       buttonId="removeDisplayLogo"
                       handleImageChange={handleImageChange}
