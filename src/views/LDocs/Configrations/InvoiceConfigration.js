@@ -52,6 +52,7 @@ import jwt from "jsonwebtoken";
 import { setIsTokenExpired } from "actions";
 import TimezoneSelect from "react-timezone-select";
 import { values } from "lodash";
+import { UndoRounded } from "@material-ui/icons";
 
 const styles = {
   cardIconTitle: {
@@ -98,6 +99,7 @@ export default function InvoiceConfigrations() {
       isHeader: false,
       isLogo: false,
       logo: "",
+      selectedLogo:""
     },
     templates: [],
   });
@@ -148,6 +150,7 @@ export default function InvoiceConfigrations() {
               ? "processDate"
               : "",
             selectedTemplate: invoiceConfig.templateId,
+            selectedLogo:invoiceConfig?.organizationLogo?.logo || undefined
           },
         }));
       })
@@ -408,25 +411,9 @@ export default function InvoiceConfigrations() {
                       </ListItemSecondaryAction>
                     </ListItem>
                     <Divider />
-                    <ListItem>
-                      <ListItemText
-                        style={{ color: "black" }}
-                        primary="Logo"
-                        secondary={"Show Organization Logo on invoice"}
-                      />
-                      <ListItemSecondaryAction>
-                        <Checkbox
-                          color="primary"
-                          checked={state.values.isLogo}
-                          name="isLogo"
-                          onChange={onChangeBool}
-                        />
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                    <Divider />
                   </List>
                   <GridItem xs={12} sm={12} md={6} lg={6}>
-                    <legend>Selected Logo</legend>
+                    {/* <legend>Selected Logo</legend> */}
                     <ImageUpload
                       addButtonProps={{
                         color: "info",
@@ -440,6 +427,7 @@ export default function InvoiceConfigrations() {
                         color: "danger",
                         round: true,
                       }}
+                      oldImage={!displayLogo ? `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedLogo}` : undefined}
                       name="displayLogo"
                       buttonId="removeDisplayLogo"
                       handleImageChange={handleImageChange}

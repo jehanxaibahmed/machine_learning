@@ -68,7 +68,7 @@ export default function ImageUpload(props) {
       <div>
         {file === null ? (
           <Button {...addButtonProps} onClick={() => handleClick()}>
-            {avatar ? "Add Photo" : "Select image"}
+            {avatar ? "Add Logo" : "Select Logo"}
           </Button>
         ) : (
           <span>
@@ -76,9 +76,9 @@ export default function ImageUpload(props) {
               Change
             </Button>
             {avatar ? <br /> : null}
-            <Button {...removeButtonProps} onClick={() => handleRemove()} id={buttonId}>
+            {/* <Button {...removeButtonProps} onClick={() => handleRemove()} id={buttonId}>
               <i className="fas fa-times" /> Remove
-            </Button>
+            </Button> */}
           </span>
         )}
       </div>
