@@ -51,6 +51,7 @@ import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import { setIsTokenExpired } from "actions";
 import TimezoneSelect from "react-timezone-select";
+import { values } from "lodash";
 
 const styles = {
   cardIconTitle: {
@@ -94,8 +95,9 @@ export default function InvoiceConfigrations() {
     values: {
       paymentTerms: "",
       selectedTemplate: null,
-      isHeader:false,
-      isLogo:false
+      isHeader: false,
+      isLogo: false,
+      logo: "",
     },
     templates: [],
   });
@@ -103,14 +105,23 @@ export default function InvoiceConfigrations() {
   const [displayLogo, setDisplayLogo] = React.useState(null);
 
   const handleImageChange = (file, status, imageName) => {
-
     if (status == 1) {
-  
-        setDisplayLogo(file);
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        setState((state) => ({
+          ...state,
+          values: {
+            ...state.values,
+            logo: reader?.result,
+          },
+        }));
+      };
+      reader.readAsDataURL(file);
+      setDisplayLogo(file);
     } else {
-        setDisplayLogo(null);
+      setDisplayLogo(null);
     }
-    };
+  };
 
   React.useEffect(() => {
     let userDetail = jwt.decode(Token);
@@ -121,7 +132,7 @@ export default function InvoiceConfigrations() {
     })
       .then((response) => {
         let invoiceConfig = response.data.invoiceConfig;
-        console.log('Invoice Config', invoiceConfig);
+        console.log("Invoice Config", invoiceConfig);
         setState((state) => ({
           ...state,
           values: {
@@ -129,13 +140,13 @@ export default function InvoiceConfigrations() {
             paymentTerms: invoiceConfig.paymentTermsInvoiceDate
               ? "invoiceDate"
               : invoiceConfig.paymentTermsDueDate
-                ? "dueDate"
-                : invoiceConfig.paymentTermsApprovalDate
-                  ? "approvalDate"
-                  : invoiceConfig.paymentTermsPaymentProcessDate
-                    ? "processDate"
-                    : "",
-            selectedTemplate: invoiceConfig.templateId
+              ? "dueDate"
+              : invoiceConfig.paymentTermsApprovalDate
+              ? "approvalDate"
+              : invoiceConfig.paymentTermsPaymentProcessDate
+              ? "processDate"
+              : "",
+            selectedTemplate: invoiceConfig.templateId,
           },
         }));
       })
@@ -172,7 +183,9 @@ export default function InvoiceConfigrations() {
         paymentTermsPaymentProcessDate:
           state.values.paymentTerms == "processDate" ? true : false,
         templateId: state.values.selectedTemplate,
-        Default_template: "Default_template"
+        Default_template: "Default_template",
+        EnableHeader:state.values.isHeader,
+        organizationLogo:state.values.logo
       },
     };
     axios({
@@ -221,8 +234,7 @@ export default function InvoiceConfigrations() {
         [event.target.name]: !state.values[event.target.name],
       },
     }));
-  }
-
+  };
 
   return (
     <div>
@@ -370,13 +382,11 @@ export default function InvoiceConfigrations() {
                 </CardBody>
               </Card>
             </GridItem>
-            {/* <GridItem xs={12}>
+            <GridItem xs={12}>
               <Card>
                 <CardHeader color="info" icon>
                   <CardIcon color="info">
-                    <h4 className={classes.cardTitleText}>
-                      Invoice Logo
-                    </h4>
+                    <h4 className={classes.cardTitleText}>Invoice Logo</h4>
                   </CardIcon>
                 </CardHeader>
                 <CardBody>
@@ -385,16 +395,12 @@ export default function InvoiceConfigrations() {
                       <ListItemText
                         style={{ color: "black" }}
                         primary="Header"
-                        secondary={
-                          "Show header on invoice top"
-                        }
+                        secondary={"Show header on invoice top"}
                       />
                       <ListItemSecondaryAction>
                         <Checkbox
                           color="primary"
-                          checked={
-                            state.values.isHeader
-                          }
+                          checked={state.values.isHeader}
                           name="isHeader"
                           onChange={onChangeBool}
                         />
@@ -405,16 +411,12 @@ export default function InvoiceConfigrations() {
                       <ListItemText
                         style={{ color: "black" }}
                         primary="Logo"
-                        secondary={
-                          "Show Organization Logo on invoice"
-                        }
+                        secondary={"Show Organization Logo on invoice"}
                       />
                       <ListItemSecondaryAction>
                         <Checkbox
                           color="primary"
-                          checked={
-                            state.values.isLogo
-                          }
+                          checked={state.values.isLogo}
                           name="isLogo"
                           onChange={onChangeBool}
                         />
@@ -441,10 +443,10 @@ export default function InvoiceConfigrations() {
                       buttonId="removeDisplayLogo"
                       handleImageChange={handleImageChange}
                     />
-                  </GridItem> 
-              </CardBody>
+                  </GridItem>
+                </CardBody>
               </Card>
-            </GridItem> */}
+            </GridItem>
           </GridContainer>
           <Button
             color="info"
