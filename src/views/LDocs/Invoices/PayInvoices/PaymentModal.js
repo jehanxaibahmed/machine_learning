@@ -119,6 +119,8 @@ export default function InitiatePayment(props) {
             parseFloat(formState.values.paidAmount),
       paymentMethod: formState.values.paymentBy,
       transactionFee: "1",
+      isScheduled : formState.values.isScheduled,
+      scheduleDate: formState.values.scheduleDate
     };
     axios({
       method: "post",
@@ -176,12 +178,12 @@ export default function InitiatePayment(props) {
       setFormState((formState) => ({
         ...formState,
         values: {
-          ...values,
+          ...formState.values,
           isScheduled: !formState.values.isScheduled,
         },
       }));
     } else {
-      if (event.target.name == "paidAmount") {
+      if (event.target.name === "paidAmount") {
         if (
           event.target.value <= props.fileData.balanceDue &&
           event.target.value > 0
@@ -263,6 +265,57 @@ export default function InitiatePayment(props) {
       });
   };
 
+
+
+  const payNowAp = () => {
+    let data = {
+      tenantId: props.fileData.tenantId,
+      organizationId: props.fileData.organizationId,
+      invoiceId: props.fileData.invoiceId,
+      vendorId: props.fileData.vendorId,
+      version: props.fileData.version,
+      paidAmount:
+        formState.values.paymentType == "full"
+          ? parseFloat(props.fileData.balanceDue).toFixed(2)
+          : parseFloat(formState.values.paidAmount).toFixed(2),
+      updatedBy: decoded.email,
+      paymentID: "",
+      payerID: "",
+      paymentType: formState.values.paymentType,
+      currencyType: formState.values.currencyType,
+      orderId: "",
+      paymentGateway: formState.values.paymentBy,
+      currencyCode: props.fileData.LC_currency.Code,
+      balanceDue:
+        formState.values.paymentType == "full"
+          ? 0
+          : parseFloat(props.fileData.balanceDue) -
+            parseFloat(formState.values.paidAmount),
+      paymentMethod: formState.values.paymentBy,
+      transactionFee: "1",
+      isScheduled : formState.values.isScheduled,
+      scheduleDate: formState.values.scheduleDate
+    };
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/invoicePayment`,
+      data: data,
+      headers: {
+        cooljwt: Token,
+      },
+    })
+      .then(async (response) => {
+        console.log(response);
+        await props.loadFiles(decoded, false);
+        setPaymentInProcess(false);
+        // setButtonLoaded(true);
+        successAlert("Payment Successful...");
+        props.closeModal();
+      })
+      .catch((err) => {
+        errorAlert("Error in Payment ");
+      });
+  }
   const getPaymentMethods = () => {
     axios({
       method: "get",
@@ -441,6 +494,8 @@ export default function InitiatePayment(props) {
                             parseFloat(formState.values.paidAmount),
                       paymentMethod: formState.values.paymentBy,
                       transactionFee: "1",
+                      isScheduled : formState.values.isScheduled,
+                      scheduleDate: formState.values.scheduleDate
                     };
                     axios({
                       method: "post",
@@ -831,7 +886,7 @@ export default function InitiatePayment(props) {
                       ></TextField>
                     </GridItem>
                   )}
-                  {isAr ? (
+                  {!isAr ? (
                     <>
                       <GridItem
                         xs={12}
@@ -925,6 +980,30 @@ export default function InitiatePayment(props) {
                 ) : (
                   ""
                 )}
+                {formState.values.paymentBy == "VISA" ? (
+                  <React.Fragment>
+                    <Button
+                      round
+                      onClick={payNowAp}
+                      color="danger"
+                      className="Edit"
+                    >
+                      Pay Now
+                    </Button>
+                    <Button
+                      round
+                      onClick={() => props.closeModal()}
+                      color="info"
+                      className="Edit"
+                    >
+                      Close
+                    </Button>
+                  </React.Fragment>
+                ) : (
+                  ""
+                )}
+
+
                 {isAr ? (
                   <React.Fragment>
                     <Button
