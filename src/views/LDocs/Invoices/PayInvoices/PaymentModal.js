@@ -280,7 +280,7 @@ export default function InitiatePayment(props) {
           : parseFloat(formState.values.paidAmount).toFixed(2),
       updatedBy: decoded.email,
       paymentID: "",
-      payerID: "",
+      payerID: decoded.email,
       paymentType: formState.values.paymentType,
       currencyType: formState.values.currencyType,
       orderId: "",
@@ -886,7 +886,7 @@ export default function InitiatePayment(props) {
                       ></TextField>
                     </GridItem>
                   )}
-                  {!isAr ? (
+                  {!isAr && PaymentGateways.find((pg) =>pg.serviceName == formState.values.paymentBy)?.allowSchedule ? (
                     <>
                       <GridItem
                         xs={12}
@@ -923,7 +923,7 @@ export default function InitiatePayment(props) {
                       >
                         <TextField
                           className={classes.textField}
-                          type="datetime-local"
+                          type="date"
                           name="scheduleDate"
                           fullWidth={true}
                           disabled={!formState.values.isScheduled}

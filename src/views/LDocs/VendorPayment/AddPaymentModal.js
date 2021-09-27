@@ -89,12 +89,14 @@ export default function AddPaymentModal({type, closeModal, getPaymentgateways}) 
       if (error) {
         return false;
       }else{
+          let paymentGateway = PaymentGateways.find(p=> p.serviceName == formState.values.paymentGateway);
           var data= {
             vendorId:decoded.id,
             Enable:true,
             default:false,
-            channel_id:PaymentGateways.find(p=> p.serviceName == formState.values.paymentGateway)._id,
-            currencyType:type
+            channel_id:paymentGateway._id,
+            currencyType:type,
+            allowSchedule:paymentGateway.allowSchedule
           }
         axios({
             method: "post",
