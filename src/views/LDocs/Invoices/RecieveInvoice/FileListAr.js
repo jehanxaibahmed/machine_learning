@@ -979,9 +979,7 @@ export default function FilesListAr(props) {
   const [fileData, setFileData] = React.useState();
   const [type, setType] = React.useState("");
   const initWorkFLow = ({ event, props }) => {
-    if (props.markedAs == "unread") {
-      msgAlert("Review Invoice Before Initiate Workflow...");
-    } else if (props.initWorkFlow) {
+  if (props.initWorkFlow) {
       msgAlert("WorkFlow Already Initiated...");
     } else {
       setFileData(props);
