@@ -745,7 +745,6 @@ const createWorkflow = () => {
     rejectBehavior = "error";
     error = true;
   }
-  
   setFormState((formState) => ({
     ...formState,
     errors: {
@@ -762,10 +761,12 @@ const createWorkflow = () => {
     errorAlert("Invalid Details!");
     return false;
   } else {
+    let designationObj = formState.titles.find(tit=>tit.titleName.toUpperCase() == formState.values.designation);
     var step = {
       id:steps.length+1,
       sequenceId:steps.length+1,
       designation:formState.values.designation,
+      designationId: designationObj?._id,
       organizationId:outSideOrg ? formState.orgs.find(org=>org.organizationName == formState.values.outSideOrganizationName)._id : formState.orgs.find(org=>org.organizationName == formState.values.organizationName)._id,
       companyId:outSideOrg ? formState.comp.find(comp=>comp.companyName == formState.values.outsideCompanyName)._id : formState.comp.find(comp=>comp.companyName == formState.values.companyName)._id,
       event:formState.values.role?'reviewer':'approver',
