@@ -194,7 +194,8 @@ export default function InitWorkflow(props) {
       tenantId:props.fileData.tenantId,
       organizationId:props.fileData.organizationId,
       organizationName:props.fileData.organizationName,
-      requestedBy: decoded.email
+      requestedBy: decoded.email,
+      isAR:isAr
     };   
     const userDetails = jwt.decode(Token);
     axios({
