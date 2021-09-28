@@ -97,16 +97,19 @@ export default function InvoiceConfigrations() {
       paymentTerms: "",
       selectedTemplate: null,
       isHeader: false,
-      isLogo: false,
-      logo: "",
-      selectedLogo:""
+      isFooter: false,
+      header: "",
+      selectedHeader:"",
+      footer: "",
+      selectedFooter:""
     },
     templates: [],
   });
 
-  const [displayLogo, setDisplayLogo] = React.useState(null);
+  const [headerImage, setHeaderImage] = React.useState(null);
+  const [footerImage, setFooterImage] = React.useState(null);
 
-  const handleImageChange = (file, status, imageName) => {
+  const handleImageChange = (file, status, imageName, state_name) => {
     if (status == 1) {
       let reader = new FileReader();
       reader.onloadend = () => {
@@ -114,15 +117,15 @@ export default function InvoiceConfigrations() {
           ...state,
           values: {
             ...state.values,
-            logo: reader?.result,
+            [state_name]: reader?.result,
           },
         }));
       };
       reader.readAsDataURL(file);
-      console.log(file);
-      setDisplayLogo(file);
+      console.log(file, state_name)
+      state_name == "header" ? setHeaderImage(file) : setFooterImage(file);
     } else {
-      setDisplayLogo(null);
+      state_name == "header" ? setHeaderImage(null) : setFooterImage(null);
     }
   };
 
@@ -150,7 +153,8 @@ export default function InvoiceConfigrations() {
               ? "processDate"
               : "",
             selectedTemplate: invoiceConfig.templateId,
-            selectedLogo:invoiceConfig?.organizationLogo?.logo || undefined
+            selectedHeader:invoiceConfig?.organizationLogo?.logo || undefined,
+            selectedFooter:invoiceConfig?.organizationLogo?.footer || undefined
           },
         }));
       })
@@ -189,7 +193,7 @@ export default function InvoiceConfigrations() {
         templateId: state.values.selectedTemplate,
         Default_template: "Default_template",
         EnableHeader:state.values.isHeader,
-        organizationLogo:{logo: state.values.logo, name : displayLogo.name}
+        organizationLogo:{logo: state.values.header, name : headerImage.name}
       },
     };
     axios({
@@ -411,8 +415,25 @@ export default function InvoiceConfigrations() {
                       </ListItemSecondaryAction>
                     </ListItem>
                     <Divider />
+                    <ListItem>
+                      <ListItemText
+                        style={{ color: "black" }}
+                        primary="Footer"
+                        secondary={"Show Footer on invoice Bottom"}
+                      />
+                      <ListItemSecondaryAction>
+                        <Checkbox
+                          color="primary"
+                          checked={state.values.isFooter}
+                          name="isFooter"
+                          onChange={onChangeBool}
+                        />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <Divider />
                   </List>
-                  <GridItem xs={12} sm={12} md={6} lg={6}>
+                  <GridContainer style={{marginTop:20}}>
+                  <GridItem xs={6} sm={6} md={6} lg={6}>
                     {/* <legend>Selected Logo</legend> */}
                     <ImageUpload
                       addButtonProps={{
@@ -427,12 +448,37 @@ export default function InvoiceConfigrations() {
                         color: "danger",
                         round: true,
                       }}
-                      oldImage={!displayLogo && state.values.selectedLogo !== undefined ?  `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedLogo}` : undefined}
-                      name="displayLogo"
-                      buttonId="removeDisplayLogo"
+                      oldImage={!headerImage && state.values.selectedHeader !== undefined ?  `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedHeader}` : undefined}
+                      buttonId="header_image"
                       handleImageChange={handleImageChange}
+                      name="header"
+                      input_name="header"
                     />
                   </GridItem>
+                  <GridItem xs={6} sm={6} md={6} lg={6}>
+                    {/* <legend>Selected Logo</legend> */}
+                    <ImageUpload
+                      addButtonProps={{
+                        color: "info",
+                        round: true,
+                      }}
+                      changeButtonProps={{
+                        color: "info",
+                        round: true,
+                      }}
+                      removeButtonProps={{
+                        color: "danger",
+                        round: true,
+                      }}
+                      oldImage={!footerImage && state.values.selectedFooter !== undefined ?  `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedFooter}` : undefined}
+                      buttonId="footer_image"
+                      handleImageChange={handleImageChange}
+                      name="footer"
+                      input_name="footer"
+
+                    />
+                  </GridItem>
+                  </GridContainer>
                 </CardBody>
               </Card>
             </GridItem>
