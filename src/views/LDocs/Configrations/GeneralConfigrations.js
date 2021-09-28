@@ -193,11 +193,12 @@ export default function GeneralConfigrations() {
           authPassword: state.values.pass,
           port: state.values.port,
           secure: state.secure,
+          cc:state.values.cc,
+          bcc:state.values.bcc,
+          signature:state.values.signature
         },
         timeZone: selectedTimezone,
-        cc:state.values.cc,
-        bcc:state.values.bcc,
-        signature:state.values.signature
+       
       },
     };
     axios({
