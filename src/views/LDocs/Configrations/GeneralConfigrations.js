@@ -431,6 +431,7 @@ export default function GeneralConfigrations() {
                         fullWidth={true}
                         label="Auth Pass"
                         name="pass"
+                        id="auth_smtp_pass"
                         onChange={handleChange}
                         type="password"
                         value={state.values.pass || ""}
