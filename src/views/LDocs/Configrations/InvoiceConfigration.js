@@ -154,7 +154,8 @@ export default function InvoiceConfigrations() {
               : "",
             selectedTemplate: invoiceConfig.templateId,
             selectedHeader:invoiceConfig?.organizationLogo?.logo || undefined,
-            selectedFooter:invoiceConfig?.organizationLogo?.footer || undefined
+            selectedFooter:invoiceConfig?.organizationLogo?.logo || undefined,
+            isHeader:invoiceConfig?.EnableHeader
           },
         }));
       })
@@ -388,23 +389,12 @@ export default function InvoiceConfigrations() {
                       </GridItem>
                     ))}
                   </GridContainer>
-                </CardBody>
-              </Card>
-            </GridItem>
-            <GridItem xs={12}>
-              <Card>
-                <CardHeader color="info" icon>
-                  <CardIcon color="info">
-                    <h4 className={classes.cardTitleText}>Invoice Logo</h4>
-                  </CardIcon>
-                </CardHeader>
-                <CardBody>
                   <List>
                     <ListItem>
                       <ListItemText
                         style={{ color: "black" }}
-                        primary="Header"
-                        secondary={"Show header on invoice top"}
+                        primary={"Header & Footer"}
+                        secondary={"Show header & footer on invoice"}
                       />
                       <ListItemSecondaryAction>
                         <Checkbox
@@ -415,8 +405,8 @@ export default function InvoiceConfigrations() {
                         />
                       </ListItemSecondaryAction>
                     </ListItem>
-                    <Divider />
-                    <ListItem>
+                    {/* <Divider /> */}
+                    {/* <ListItem>
                       <ListItemText
                         style={{ color: "black" }}
                         primary="Footer"
@@ -430,7 +420,7 @@ export default function InvoiceConfigrations() {
                           onChange={onChangeBool}
                         />
                       </ListItemSecondaryAction>
-                    </ListItem>
+                    </ListItem> */}
                     <Divider />
                   </List>
                   <GridContainer style={{marginTop:20}}>
@@ -483,6 +473,7 @@ export default function InvoiceConfigrations() {
                 </CardBody>
               </Card>
             </GridItem>
+           
           </GridContainer>
           <Button
             color="info"

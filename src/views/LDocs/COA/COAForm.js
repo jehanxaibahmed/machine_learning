@@ -12,7 +12,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import Tooltip from "@material-ui/core/Tooltip";
 // @material-ui/icon
 import VisibilityIcon from "@material-ui/icons/Visibility";
-import EditIcon from '@material-ui/icons/Edit';
+import EditIcon from "@material-ui/icons/Edit";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -61,7 +61,9 @@ export default function COA() {
   const [AccDetail, setAccDetail] = React.useState();
   const [decoded, setDecoded] = React.useState(null);
   const [data, setData] = React.useState();
-  const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const Token =
+    useSelector((state) => state.userReducer.Token) ||
+    localStorage.getItem("cooljwt");
   let userDetail = jwt.decode(Token);
 
   const dispatch = useDispatch();
@@ -78,13 +80,11 @@ export default function COA() {
     setViewModal(true);
   };
 
-
   const updateAcc = (row) => {
     setAccDetail(row);
     setUpdating(true);
     setViewModal(true);
   };
-
 
   //Get Compaines
   const getCOA = () => {
@@ -101,9 +101,10 @@ export default function COA() {
               id: prop._id,
               Acc_NO: prop.Acc_NO,
               Acc_Opening_Balance: addZeroes(prop.Acc_Opening_Balance),
-              Status:  <Checkbox checked={prop.Status} />,
+              Status: <Checkbox checked={prop.Status} />,
               Acc_Type: prop.Acc_Type,
               Acc_Ref_Remarks: prop.Acc_Ref_Remarks,
+              Acc_Description:prop.Acc_Description,
               actions: (
                 <div className="actions-right">
                   <Tooltip title="Update Account" aria-label="updateAccount">
@@ -119,10 +120,7 @@ export default function COA() {
                       <EditIcon />
                     </Button>
                   </Tooltip>
-                  <Tooltip
-                    title="View Account"
-                    aria-label="viewlocation"
-                  >
+                  <Tooltip title="View Account" aria-label="viewlocation">
                     <Button
                       justIcon
                       round
@@ -143,7 +141,9 @@ export default function COA() {
         setIsLoading(false);
       })
       .catch((error) => {
-        if (error.response) {  error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+        if (error.response) {
+          error.response.status == 401 && dispatch(setIsTokenExpired(true));
+        }
         console.log(
           typeof error.response != "undefined"
             ? error.response.data
@@ -152,7 +152,6 @@ export default function COA() {
         setIsLoading(false);
       });
   };
-
 
   return (
     <div>
@@ -208,8 +207,8 @@ export default function COA() {
                   Updating={Updating}
                 />
               ) : (
-                  ""
-                )}
+                ""
+              )}
             </DialogContent>
           </Dialog>
         </GridItem>
@@ -253,37 +252,41 @@ export default function COA() {
                 {isLoading ? (
                   <CircularProgress disableShrink />
                 ) : (
-                    <ReactTable
-                      data={data}
-                      sortable={false}
-                      columns={[
-                        {
-                          Header: "Account Number",
-                          accessor: "Acc_NO",
-                        },
-                        {
-                          Header: "Account Type",
-                          accessor: "Acc_Type",
-                        },
-                        {
-                          Header: "Opening Balance",
-                          accessor: "Acc_Opening_Balance",
-                        },
-                        {
-                          Header: "Status",
-                          accessor: "Status",
-                        },
-                        {
-                          Header: "Actions",
-                          accessor: "actions",
-                        },
-                      ]}
-                      defaultPageSize={10}
-                      showPaginationTop
-                      showPaginationBottom={false}
-                      className="-striped -highlight"
-                    />
-                  )}
+                  <ReactTable
+                    data={data}
+                    sortable={false}
+                    columns={[
+                      {
+                        Header: "Account Description",
+                        accessor: "Acc_Description",
+                      },
+                      {
+                        Header: "Account Number",
+                        accessor: "Acc_NO",
+                      },
+                      {
+                        Header: "Account Type",
+                        accessor: "Acc_Type",
+                      },
+                      {
+                        Header: "Opening Balance",
+                        accessor: "Acc_Opening_Balance",
+                      },
+                      {
+                        Header: "Status",
+                        accessor: "Status",
+                      },
+                      {
+                        Header: "Actions",
+                        accessor: "actions",
+                      },
+                    ]}
+                    defaultPageSize={10}
+                    showPaginationTop
+                    showPaginationBottom={false}
+                    className="-striped -highlight"
+                  />
+                )}
               </CardBody>
             </Card>
           </GridItem>
