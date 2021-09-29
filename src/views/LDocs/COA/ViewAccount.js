@@ -275,6 +275,30 @@ export default function ViewComp(props) {
             </CardHeader>
             <CardBody>
               <GridContainer>
+              <GridItem
+                  xs={12}
+                  sm={12}
+                  md={12}
+                  lg={12}
+                  style={{ marginTop: "10px", marginBottom: "10px" }}
+                >
+                  <TextField
+                    fullWidth={true}
+                    error={formState.errors.Acc_Description === "error"}
+                    helperText={
+                      formState.errors.Acc_Description === "error"
+                        ? "Valid Account Description is required"
+                        : null
+                    }
+                    label="Account Description"
+                    id="Acc_Description"
+                    disabled={!props.Updating}
+                    name="Acc_Description"
+                    onChange={handleChange}
+                    type="text"
+                    value={formState.values.Acc_Description || ""}
+                  />
+                </GridItem>
                 <GridItem
                   xs={12}
                   sm={12}
@@ -395,32 +419,7 @@ export default function ViewComp(props) {
                   />
                 </GridItem>
 
-                <GridItem
-                  xs={12}
-                  sm={12}
-                  md={12}
-                  lg={12}
-                  style={{ marginTop: "10px", marginBottom: "10px" }}
-                >
-                  <TextField
-                    fullWidth={true}
-                    error={formState.errors.Acc_Description === "error"}
-                    helperText={
-                      formState.errors.Acc_Description === "error"
-                        ? "Valid Account Description is required"
-                        : null
-                    }
-                    label="Account Description"
-                    id="Acc_Description"
-                    disabled={!props.Updating}
-                    name="Acc_Description"
-                    multiline
-                    minRows="3"
-                    onChange={handleChange}
-                    type="text"
-                    value={formState.values.Acc_Description || ""}
-                  />
-                </GridItem>
+             
               </GridContainer>
               {props.Updating ? (
                 <>
