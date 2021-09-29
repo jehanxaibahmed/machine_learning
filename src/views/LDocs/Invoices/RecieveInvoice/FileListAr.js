@@ -629,26 +629,8 @@ export default function FilesListAr(props) {
                   <LocalOffer />
                 </Button>
               </Tooltip>
-              {prop.initWorkFlow && !isVendor ? (
-                <Tooltip title="BlockChain View" aria-label="blockChainView">
-                  <Button
-                    justIcon
-                    round
-                    simple
-                    icon={ClearAllIcon}
-                    onClick={() => {
-                      viewBlockChainView(prop);
-                    }}
-                    color="info"
-                    className="Edit"
-                  >
-                    <ClearAllIcon />
-                  </Button>
-                </Tooltip>
-              ) : (
-                ""
-              )}
               {!isVendor ? (
+                <>
                 <Tooltip title="XLRS FILE" aria-label="export">
                   <Button
                     justIcon
@@ -664,6 +646,22 @@ export default function FilesListAr(props) {
                     <GetApp />
                   </Button>
                 </Tooltip>
+                <Tooltip title="Init Workflow" aria-label="initWorkflow">
+                <Button
+                  justIcon
+                  round
+                  simple
+                  icon={<Send />}
+                  onClick={() => {
+                    initWorkFLow({props});
+                  }}
+                  color="info"
+                  className="Edit"
+                >
+                  <Send />
+                </Button>
+              </Tooltip>
+              </>
               ) : (
                 ""
               )}
