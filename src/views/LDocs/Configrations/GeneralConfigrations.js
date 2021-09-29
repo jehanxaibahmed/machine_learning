@@ -110,13 +110,13 @@ export default function GeneralConfigrations() {
     EditorState.createEmpty()
   );
 
-  // const htmlToDraftBlocks = (html) => {
-  //   const blocksFromHtml = htmlToDraft(html);
-  //   const { contentBlocks, entityMap } = blocksFromHtml;
-  //   const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
-  //   const editorState = EditorState.createWithContent(contentState);
-  //   return editorState;
-  //  }
+  const htmlToDraftBlocks = (html) => {
+    const blocksFromHtml = htmlToDraft(html);
+    const { contentBlocks, entityMap } = blocksFromHtml;
+    const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
+    const editorState = EditorState.createWithContent(contentState);
+    return editorState;
+   }
 
   // const handleEditor = (editorState) => {
   //   let content = draftToHtml(convertToRaw(editorState.getCurrentContent()));
@@ -175,6 +175,7 @@ export default function GeneralConfigrations() {
             bcc: tenantConfig.emailConfig?.bcc || "",
           },
         }));
+        setEditorState(htmlToDraftBlocks(tenantConfig?.emailConfig?.emailSignature));
         setSelectedTimezone(tenantConfig.timeZone ? tenantConfig.timeZone : "");
         console.log(tenantConfig);
       })
