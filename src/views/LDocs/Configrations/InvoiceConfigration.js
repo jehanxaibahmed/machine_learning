@@ -193,7 +193,8 @@ export default function InvoiceConfigrations() {
         templateId: state.values.selectedTemplate,
         Default_template: "Default_template",
         EnableHeader:state.values.isHeader,
-        organizationLogo:{logo: state.values.header, name : headerImage.name}
+        organizationLogo:{logo: state.values.header, name : headerImage.name},
+        footerLogo:{logo: state.values.footer, name : footerImage.name},
       },
     };
     axios({

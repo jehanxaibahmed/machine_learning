@@ -218,8 +218,17 @@ export default function GeneralConfigrations() {
 
   const uploadImage = (image) => {
     return new Promise((resolve, reject) => {
+      let reader = new FileReader();
+      http://localhost:8025/tenant/uploadImage
+      reader.onloadend = () => {
+        // console.log("Base 64",reader?.result);
+        resolve({ data: { link: reader?.result} });
+
+      };
+      reader.readAsDataURL(image);
+
       console.log("Uploaded Image", image);
-      resolve({ data: { link: "https://via.placeholder.com/150" } });
+      // resolve({ data: { link: "https://via.placeholder.com/150" } });
     });
   };
 
@@ -431,6 +440,7 @@ export default function GeneralConfigrations() {
                         fullWidth={true}
                         label="Auth Pass"
                         name="pass"
+                        autoComplete={false}
                         id="auth_smtp_pass"
                         onChange={handleChange}
                         type="password"

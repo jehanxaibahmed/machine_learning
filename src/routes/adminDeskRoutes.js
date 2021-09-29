@@ -31,6 +31,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import InvoiceConfigrations from "views/LDocs/Configrations/InvoiceConfigration";
 import Permissions from "views/LDocs/Permissions/Permissions";
 import Roles from "views/LDocs/Roles/RolesForm";
+import COA from "views/LDocs/COA/COAForm";
 
 
 var adminRoutes = [
@@ -129,6 +130,13 @@ var adminRoutes = [
         name: "Invoice Configrations",
         icon: DescriptionIcon,
         component: InvoiceConfigrations,
+        layout: "/admin",
+      },
+      {
+        path: "/coa/ad",
+        name: "Chart of Account",
+        icon: DescriptionIcon,
+        component: COA,
         layout: "/admin",
       },
       {

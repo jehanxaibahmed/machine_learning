@@ -104,7 +104,8 @@ export default function Items(props) {
     currencyLookups,
     baseCurrency,
     userData,
-    edit
+    edit,
+    isAr
   } = props;
   const classes = useStyles();
   const [lookups, setLookups] = useState([]);
@@ -492,9 +493,9 @@ export default function Items(props) {
                           </MenuItem>
                           {formState.expenseTypes
                             ? formState.expenseTypes.map((exp, index) => (
-                                <MenuItem key={index} value={exp.Name}>
-                                  {exp.Name}
-                                </MenuItem>
+                              <MenuItem key={index} value={exp.Acc_Description}>
+                              {exp.Acc_Description}
+                            </MenuItem>
                               ))
                             : ""}
                         </TextField>
@@ -928,7 +929,7 @@ export default function Items(props) {
                             ? "Valid Expense Type required"
                             : null
                         }
-                        label="ExpenseType"
+                        label={isAr ? "Revenue Type" : "Expense Type"}
                         id="inlineExpenseType"
                         name="inlineExpenseType"
                         onChange={(event) => {
@@ -940,13 +941,13 @@ export default function Items(props) {
                         select
                       >
                         <MenuItem disabled={true} key={"disabled"}>
-                          Expense Type
+                          {isAr ? "Revenue Type" : "Expense Type"}
                         </MenuItem>
                         {formState.expenseTypes
                           ? formState.expenseTypes.map((exp, index) => (
-                              <MenuItem key={index} value={exp.Name}>
-                                {exp.Name}
-                              </MenuItem>
+                            <MenuItem key={index} value={exp.Acc_Description}>
+                            {exp.Acc_Description}
+                          </MenuItem>
                             ))
                           : ""}
                       </TextField>
