@@ -668,21 +668,21 @@ export default function FilesList(props) {
                       <GetApp />
                     </Button>
                   </Tooltip>
-                  <Tooltip title="Init Workflow" aria-label="initWorkflow">
+                  {/* <Tooltip title="Init Workflow" aria-label="initWorkflow">
                     <Button
                       justIcon
                       round
                       simple
                       icon={<Send />}
                       onClick={() => {
-                        initWorkFLow({ props });
+                        initWorkFLow({event ,props });
                       }}
                       color="info"
                       className="Edit"
                     >
                       <Send />
                     </Button>
-                  </Tooltip>
+                  </Tooltip> */}
                 </>
               ) : (
                 ""
