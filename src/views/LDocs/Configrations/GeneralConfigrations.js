@@ -171,6 +171,8 @@ export default function GeneralConfigrations() {
               ? tenantConfig.emailConfig.authUser
               : "",
             port: tenantConfig.emailConfig ? tenantConfig.emailConfig.port : "",
+            cc: tenantConfig.emailConfig?.cc || "",
+            bcc: tenantConfig.emailConfig?.bcc || "",
           },
         }));
         setSelectedTimezone(tenantConfig.timeZone ? tenantConfig.timeZone : "");
@@ -195,7 +197,7 @@ export default function GeneralConfigrations() {
           secure: state.secure,
           cc:state.values.cc,
           bcc:state.values.bcc,
-          signature:state.values.signature
+          emailSignature:state.values.signature
         },
         timeZone: selectedTimezone,
        

@@ -154,7 +154,7 @@ export default function InvoiceConfigrations() {
               : "",
             selectedTemplate: invoiceConfig.templateId,
             selectedHeader:invoiceConfig?.organizationLogo?.logo || undefined,
-            selectedFooter:invoiceConfig?.organizationLogo?.logo || undefined,
+            selectedFooter:invoiceConfig?.footerLogo?.logo || undefined,
             isHeader:invoiceConfig?.EnableHeader
           },
         }));
