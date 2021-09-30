@@ -19,9 +19,11 @@ export default function ImageUpload(props) {
   let fileInput = React.createRef();
   const handleImageChange = (e) => {
     e.preventDefault();
+    let state_name = e.target.name;
+    console.log("name", state_name);
     let reader = new FileReader();
     let file = e.target.files[0];
-    props.handleImageChange(file, 1, props.name);
+    props.handleImageChange(file, 1, props.name, state_name);
     setIsLoading(true);
     reader.onloadend = () => {
       setFile(file);
@@ -53,10 +55,12 @@ export default function ImageUpload(props) {
     changeButtonProps,
     removeButtonProps,
     buttonId,
+    name,
+    input_name
   } = props;
   return (
     <div className="fileinput text-center">
-      <input type="file" onChange={handleImageChange} ref={fileInput} />
+      <input type="file" name={input_name} onChange={handleImageChange} ref={fileInput} />
       {isLoading ? (
         <CircularProgress disableShrink />
       ) : (
@@ -68,7 +72,7 @@ export default function ImageUpload(props) {
       <div>
         {file === null ? (
           <Button {...addButtonProps} onClick={() => handleClick()}>
-            {avatar ? "Add Photo" : "Select image"}
+            {avatar ? `Add ${name}` : `Select ${name}`}
           </Button>
         ) : (
           <span>
@@ -76,9 +80,9 @@ export default function ImageUpload(props) {
               Change
             </Button>
             {avatar ? <br /> : null}
-            <Button {...removeButtonProps} onClick={() => handleRemove()} id={buttonId}>
+            {/* <Button {...removeButtonProps} onClick={() => handleRemove()} id={buttonId}>
               <i className="fas fa-times" /> Remove
-            </Button>
+            </Button> */}
           </span>
         )}
       </div>

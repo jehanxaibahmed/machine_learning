@@ -51,6 +51,8 @@ import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import { setIsTokenExpired } from "actions";
 import TimezoneSelect from "react-timezone-select";
+import { values } from "lodash";
+import { UndoRounded } from "@material-ui/icons";
 
 const styles = {
   cardIconTitle: {
@@ -94,23 +96,38 @@ export default function InvoiceConfigrations() {
     values: {
       paymentTerms: "",
       selectedTemplate: null,
-      isHeader:false,
-      isLogo:false
+      isHeader: false,
+      isFooter: false,
+      header: "",
+      selectedHeader: "",
+      footer: "",
+      selectedFooter: "",
     },
     templates: [],
   });
 
-  const [displayLogo, setDisplayLogo] = React.useState(null);
+  const [headerImage, setHeaderImage] = React.useState(null);
+  const [footerImage, setFooterImage] = React.useState(null);
 
-  const handleImageChange = (file, status, imageName) => {
-
+  const handleImageChange = (file, status, imageName, state_name) => {
     if (status == 1) {
-  
-        setDisplayLogo(file);
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        setState((state) => ({
+          ...state,
+          values: {
+            ...state.values,
+            [state_name]: reader?.result,
+          },
+        }));
+      };
+      reader.readAsDataURL(file);
+      console.log(file, state_name);
+      state_name == "header" ? setHeaderImage(file) : setFooterImage(file);
     } else {
-        setDisplayLogo(null);
+      state_name == "header" ? setHeaderImage(null) : setFooterImage(null);
     }
-    };
+  };
 
   React.useEffect(() => {
     let userDetail = jwt.decode(Token);
@@ -121,7 +138,7 @@ export default function InvoiceConfigrations() {
     })
       .then((response) => {
         let invoiceConfig = response.data.invoiceConfig;
-        console.log('Invoice Config', invoiceConfig);
+        console.log("Invoice Config", invoiceConfig);
         setState((state) => ({
           ...state,
           values: {
@@ -129,13 +146,16 @@ export default function InvoiceConfigrations() {
             paymentTerms: invoiceConfig.paymentTermsInvoiceDate
               ? "invoiceDate"
               : invoiceConfig.paymentTermsDueDate
-                ? "dueDate"
-                : invoiceConfig.paymentTermsApprovalDate
-                  ? "approvalDate"
-                  : invoiceConfig.paymentTermsPaymentProcessDate
-                    ? "processDate"
-                    : "",
-            selectedTemplate: invoiceConfig.templateId
+              ? "dueDate"
+              : invoiceConfig.paymentTermsApprovalDate
+              ? "approvalDate"
+              : invoiceConfig.paymentTermsPaymentProcessDate
+              ? "processDate"
+              : "",
+            selectedTemplate: invoiceConfig.templateId,
+            selectedHeader: invoiceConfig?.organizationLogo?.logo || undefined,
+            selectedFooter: invoiceConfig?.footerLogo?.logo || undefined,
+            isHeader: invoiceConfig?.EnableHeader,
           },
         }));
       })
@@ -172,7 +192,20 @@ export default function InvoiceConfigrations() {
         paymentTermsPaymentProcessDate:
           state.values.paymentTerms == "processDate" ? true : false,
         templateId: state.values.selectedTemplate,
-        Default_template: "Default_template"
+        Default_template: "Default_template",
+        EnableHeader: state.values.isHeader,
+        organizationLogo: {
+          logo: headerImage
+            ? state?.values?.header
+            : state.values.selectedHeader,
+          name: headerImage?.name,
+        },
+        footerLogo: {
+          logo: footerImage
+            ? state.values.footer
+            : state?.values?.selectedFooter,
+          name: footerImage?.name,
+        },
       },
     };
     axios({
@@ -221,8 +254,7 @@ export default function InvoiceConfigrations() {
         [event.target.name]: !state.values[event.target.name],
       },
     }));
-  }
-
+  };
 
   return (
     <div>
@@ -367,84 +399,99 @@ export default function InvoiceConfigrations() {
                       </GridItem>
                     ))}
                   </GridContainer>
-                </CardBody>
-              </Card>
-            </GridItem>
-            {/* <GridItem xs={12}>
-              <Card>
-                <CardHeader color="info" icon>
-                  <CardIcon color="info">
-                    <h4 className={classes.cardTitleText}>
-                      Invoice Logo
-                    </h4>
-                  </CardIcon>
-                </CardHeader>
-                <CardBody>
                   <List>
                     <ListItem>
                       <ListItemText
                         style={{ color: "black" }}
-                        primary="Header"
-                        secondary={
-                          "Show header on invoice top"
-                        }
+                        primary={"Header & Footer"}
+                        secondary={"Show header & footer on invoice"}
                       />
                       <ListItemSecondaryAction>
                         <Checkbox
                           color="primary"
-                          checked={
-                            state.values.isHeader
-                          }
+                          checked={state.values.isHeader}
                           name="isHeader"
                           onChange={onChangeBool}
                         />
                       </ListItemSecondaryAction>
                     </ListItem>
-                    <Divider />
-                    <ListItem>
+                    {/* <Divider /> */}
+                    {/* <ListItem>
                       <ListItemText
                         style={{ color: "black" }}
-                        primary="Logo"
-                        secondary={
-                          "Show Organization Logo on invoice"
-                        }
+                        primary="Footer"
+                        secondary={"Show Footer on invoice Bottom"}
                       />
                       <ListItemSecondaryAction>
                         <Checkbox
                           color="primary"
-                          checked={
-                            state.values.isLogo
-                          }
-                          name="isLogo"
+                          checked={state.values.isFooter}
+                          name="isFooter"
                           onChange={onChangeBool}
                         />
                       </ListItemSecondaryAction>
-                    </ListItem>
+                    </ListItem> */}
                     <Divider />
                   </List>
-                  <GridItem xs={12} sm={12} md={6} lg={6}>
-                    <legend>Selected Logo</legend>
-                    <ImageUpload
-                      addButtonProps={{
-                        color: "info",
-                        round: true,
-                      }}
-                      changeButtonProps={{
-                        color: "info",
-                        round: true,
-                      }}
-                      removeButtonProps={{
-                        color: "danger",
-                        round: true,
-                      }}
-                      name="displayLogo"
-                      buttonId="removeDisplayLogo"
-                      handleImageChange={handleImageChange}
-                    />
-                  </GridItem> 
-              </CardBody>
+                  <GridContainer style={{ marginTop: 20 }}>
+                    <GridItem xs={6} sm={6} md={6} lg={6}>
+                      {/* <legend>Selected Logo</legend> */}
+                      <ImageUpload
+                        addButtonProps={{
+                          color: "info",
+                          round: true,
+                        }}
+                        changeButtonProps={{
+                          color: "info",
+                          round: true,
+                        }}
+                        removeButtonProps={{
+                          color: "danger",
+                          round: true,
+                        }}
+                        oldImage={
+                          !headerImage &&
+                          state.values.selectedHeader !== undefined
+                            ? `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedHeader}`
+                            : undefined
+                        }
+                        buttonId="header_image"
+                        handleImageChange={handleImageChange}
+                        name="header"
+                        input_name="header"
+                      />
+                    </GridItem>
+                    <GridItem xs={6} sm={6} md={6} lg={6}>
+                      {/* <legend>Selected Logo</legend> */}
+                      <ImageUpload
+                        addButtonProps={{
+                          color: "info",
+                          round: true,
+                        }}
+                        changeButtonProps={{
+                          color: "info",
+                          round: true,
+                        }}
+                        removeButtonProps={{
+                          color: "danger",
+                          round: true,
+                        }}
+                        oldImage={
+                          !footerImage &&
+                          state.values.selectedFooter !== undefined
+                            ? `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedFooter}`
+                            : undefined
+                        }
+                        buttonId="footer_image"
+                        handleImageChange={handleImageChange}
+                        name="footer"
+                        input_name="footer"
+                      />
+                    </GridItem>
+                  </GridContainer>
+                </CardBody>
               </Card>
-            </GridItem> */}
+            </GridItem>
           </GridContainer>
           <Button
             color="info"

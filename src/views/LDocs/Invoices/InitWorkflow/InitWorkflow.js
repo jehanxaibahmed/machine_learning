@@ -48,6 +48,7 @@ const Check = require("is-null-empty-or-undefined").Check;
 
 export default function InitWorkflow(props) {
   const Token = useSelector(state => state.userReducer.Token) || localStorage.getItem('cooljwt');
+  const isAr = useSelector((state) => state.userReducer.isAr);
   const decoded = jwt.decode(Token);
   const classes = useStyles();
   const sweetClass = sweetAlertStyle();
@@ -193,7 +194,8 @@ export default function InitWorkflow(props) {
       tenantId:props.fileData.tenantId,
       organizationId:props.fileData.organizationId,
       organizationName:props.fileData.organizationName,
-      requestedBy: decoded.email
+      requestedBy: decoded.email,
+      isAR:isAr
     };   
     const userDetails = jwt.decode(Token);
     axios({
@@ -266,7 +268,7 @@ export default function InitWorkflow(props) {
                     >
                       Choose Workflow
                         </MenuItem>
-                    {formState.workFlows.map((workflow, index) => {
+                    {formState.workFlows.filter(w=>w.isAR == isAr).map((workflow, index) => {
                       return (
                         <MenuItem key={index} value={workflow.workflowName}>
                           {workflow.workflowName}

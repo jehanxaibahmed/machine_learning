@@ -66,7 +66,7 @@ export default function Step1(props) {
                     <TableRow className={classesList.TableRow}>
                     <TableCell className={classesList.TableID}>ID</TableCell>
                     <TableCell >Name</TableCell>
-                    <TableCell className={classesList.TableCell}>Receipt / Expense Type</TableCell>
+                    <TableCell className={classesList.TableCell}>Receipt / Expense / Revenue</TableCell>
                     <TableCell className={classesList.TableCell}>Quantity</TableCell>
                     <TableCell className={classesList.TableCell}>Unit Cost </TableCell>
                     <TableCell className={classesList.TableCell}>Discount (%)</TableCell>

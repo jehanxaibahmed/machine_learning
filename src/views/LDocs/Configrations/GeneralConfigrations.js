@@ -15,7 +15,14 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Divider,
+  Typography,
 } from "@material-ui/core";
+import { Editor } from "react-draft-wysiwyg";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
+import htmlToDraft from "html-to-draftjs";
+import draftToHtml from "draftjs-to-html";
+import ChipInput from "material-ui-chip-input";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
@@ -35,8 +42,12 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import styles2 from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
-import Swal from 'sweetalert2'
-import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
+import Swal from "sweetalert2";
+import {
+  successAlert,
+  errorAlert,
+  msgAlert,
+} from "views/LDocs/Functions/Functions";
 import { Animated } from "react-animated-css";
 import jwt from "jsonwebtoken";
 import { setIsTokenExpired } from "actions";
@@ -89,8 +100,45 @@ export default function GeneralConfigrations() {
       user: "",
       pass: "",
       port: "",
+      cc: [],
+      bcc: [],
+      signature: "",
     },
   });
+
+  const [editorState, setEditorState] = React.useState(() =>
+    EditorState.createEmpty()
+  );
+
+  const htmlToDraftBlocks = (html) => {
+    const blocksFromHtml = htmlToDraft(html);
+    const { contentBlocks, entityMap } = blocksFromHtml;
+    const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
+    const editorState = EditorState.createWithContent(contentState);
+    return editorState;
+   }
+
+  // const handleEditor = (editorState) => {
+  //   let content = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+  //   setState((state) => ({
+  //     ...state,
+  //     values: {
+  //       ...state.values,
+  //       signature: content,
+  //     },
+  //   }));
+  // }
+
+  React.useEffect(() => {
+    let content = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+    setState((state) => ({
+      ...state,
+      values: {
+        ...state.values,
+        signature: content,
+      },
+    }));
+  }, [editorState]);
 
   React.useEffect(() => {
     let userDetail = jwt.decode(Token);
@@ -105,17 +153,30 @@ export default function GeneralConfigrations() {
           ...state,
           initWorkflow: tenantConfig ? tenantConfig.autoInitWorkFlow : false,
           payments: tenantConfig ? tenantConfig.enablePayments : false,
-          emailNotification: tenantConfig ? tenantConfig.enableEmailNotify: false,
-          secure: tenantConfig.emailConfig ? tenantConfig.emailConfig.secure:false,
+          emailNotification: tenantConfig
+            ? tenantConfig.enableEmailNotify
+            : false,
+          secure: tenantConfig.emailConfig
+            ? tenantConfig.emailConfig.secure
+            : false,
           values: {
             ...state.values,
-            smtp: tenantConfig.emailConfig ? tenantConfig.emailConfig.SMTPHost : "",
-            pass: tenantConfig.emailConfig ? tenantConfig.emailConfig.authPassword : "",
-            user: tenantConfig.emailConfig ? tenantConfig.emailConfig.authUser : "",
+            smtp: tenantConfig.emailConfig
+              ? tenantConfig.emailConfig.SMTPHost
+              : "",
+            pass: tenantConfig.emailConfig
+              ? tenantConfig.emailConfig.authPassword
+              : "",
+            user: tenantConfig.emailConfig
+              ? tenantConfig.emailConfig.authUser
+              : "",
             port: tenantConfig.emailConfig ? tenantConfig.emailConfig.port : "",
+            cc: tenantConfig.emailConfig?.cc || "",
+            bcc: tenantConfig.emailConfig?.bcc || "",
           },
         }));
-        setSelectedTimezone(tenantConfig.timeZone ? tenantConfig.timeZone: "");
+        setEditorState(htmlToDraftBlocks(tenantConfig?.emailConfig?.emailSignature));
+        setSelectedTimezone(tenantConfig.timeZone ? tenantConfig.timeZone : "");
         console.log(tenantConfig);
       })
       .catch((err) => {
@@ -135,8 +196,12 @@ export default function GeneralConfigrations() {
           authPassword: state.values.pass,
           port: state.values.port,
           secure: state.secure,
+          cc:state.values.cc,
+          bcc:state.values.bcc,
+          emailSignature:state.values.signature
         },
-        timeZone:selectedTimezone
+        timeZone: selectedTimezone,
+       
       },
     };
     axios({
@@ -154,7 +219,21 @@ export default function GeneralConfigrations() {
       });
   };
 
- 
+  const uploadImage = (image) => {
+    return new Promise((resolve, reject) => {
+      let reader = new FileReader();
+      http://localhost:8025/tenant/uploadImage
+      reader.onloadend = () => {
+        // console.log("Base 64",reader?.result);
+        resolve({ data: { link: reader?.result} });
+
+      };
+      reader.readAsDataURL(image);
+
+      console.log("Uploaded Image", image);
+      // resolve({ data: { link: "https://via.placeholder.com/150" } });
+    });
+  };
 
   const onChange = (event) => {
     event.persist();
@@ -179,6 +258,34 @@ export default function GeneralConfigrations() {
     }));
   };
 
+  const handleChips = (chip, type) => {
+    let chips = type == 1 ? state.values.cc : state.values.bcc;
+    let index = chip.length - 1;
+    chips.push(chip[index]);
+    let name = type === 1 ? "cc" : "bcc";
+
+    console.log(chips, index, name);
+    setState((state) => ({
+      ...state,
+      values: {
+        ...state.values,
+        [name]: chips,
+      },
+    }));
+  };
+  const handleDeleteChip = (chip, index, type) => {
+    let chips = type == 1 ? state.values.cc : state.values.bcc;
+    chips.splice(index, 1);
+    let name = type === 1 ? "cc" : "bcc";
+    setState((state) => ({
+      ...state,
+      values: {
+        ...state.values,
+        [name]: chips,
+      },
+    }));
+  };
+
   const handleChange = (event) => {
     event.persist();
     setState((state) => ({
@@ -192,7 +299,6 @@ export default function GeneralConfigrations() {
 
   return (
     <div>
-       
       {animateTableView ? (
         <Animated
           animationIn="bounceInRight"
@@ -337,9 +443,11 @@ export default function GeneralConfigrations() {
                         fullWidth={true}
                         label="Auth Pass"
                         name="pass"
+                        autoComplete={false}
+                        id="auth_smtp_pass"
                         onChange={handleChange}
-                        type="password"
-                        value={state.values.pass || ""}
+                        type="text"
+                        value={"*".repeat(state.values.pass.length)  || ""}
                       />
                     </GridItem>
                     <GridItem
@@ -388,14 +496,108 @@ export default function GeneralConfigrations() {
                       <Divider />
                     </GridItem>
                   </GridContainer>
-                 
+                </CardBody>
+              </Card>
+            </GridItem>
+            <GridItem
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+              style={{ marginTop: "10px", marginBottom: "10px" }}
+            >
+              <Card>
+                <CardHeader color="info" icon>
+                  <CardIcon color="info">
+                    <h4 className={classes.cardTitleText}>
+                      Email Configrations
+                    </h4>
+                  </CardIcon>
+                </CardHeader>
+                <CardBody>
+                  <GridContainer>
+                    <GridItem
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      style={{ marginTop: "10px", marginBottom: "10px" }}
+                    >
+                      <ChipInput
+                        label="Email CC"
+                        id="tagElementInput"
+                        value={state.values.cc}
+                        style={{ width: "100%" }}
+                        onChange={(chips) => handleChips(chips, 1)}
+                        onDelete={(chip, index) =>
+                          handleDeleteChip(chip, index, 1)
+                        }
+                      />
+                    </GridItem>
+                    <GridItem
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      style={{ marginTop: "10px", marginBottom: "10px" }}
+                    >
+                      <ChipInput
+                        label="Email BCC"
+                        id="tagElementInput"
+                        value={state.values.bcc}
+                        style={{ width: "100%" }}
+                        onChange={(chips) => handleChips(chips, 2)}
+                        onDelete={(chip, index) =>
+                          handleDeleteChip(chip, index, 2)
+                        }
+                      />
+                    </GridItem>
+                    <GridItem
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      style={{ marginTop: "10px", marginBottom: "10px" }}
+                    >
+                      <>
+                        <Typography>Email Signature</Typography>
+                        <Card
+                          style={{padding:5}}
+                        >
+                          <Editor
+                            editorState={editorState}
+                            onEditorStateChange={setEditorState}
+                            toolbar={{
+                              image: {
+                                className: undefined,
+                                component: undefined,
+                                popupClassName: undefined,
+                                urlEnabled: true,
+                                uploadEnabled: true,
+                                alignmentEnabled: true,
+                                uploadCallback: uploadImage,
+                                previewImage: true,
+                                inputAccept:
+                                  "image/gif,image/jpeg,image/jpg,image/png,image/svg",
+                                alt: { present: false, mandatory: false },
+                                defaultSize: {
+                                  height: "auto",
+                                  width: "auto",
+                                },
+                              },
+                            }}
+                          />
+                        </Card>
+                      </>
+                    </GridItem>
+                  </GridContainer>
                 </CardBody>
               </Card>
             </GridItem>
             <GridItem xs={12}>
               <Card>
-                <CardHeader color="info" icon>
-                  <CardIcon color="info">
+                <CardHeader color="danger" icon>
+                  <CardIcon color="danger">
                     <h4 className={classes.cardTitleText}>
                       Timezone Configration
                     </h4>
@@ -416,22 +618,21 @@ export default function GeneralConfigrations() {
                       />
                     </GridItem>
                     {/* {JSON.stringify(selectedTimezone, null, 2)} */}
-
                   </GridContainer>
                 </CardBody>
               </Card>
             </GridItem>
           </GridContainer>
           <Button
-                    color="info"
-                    className={classes.registerButton}
-                    style={{ float: "right", marginTop: 20 }}
-                    round
-                    type="button"
-                    onClick={saveConfigration}
-                  >
-                    Save Configration
-                  </Button>
+            color="info"
+            className={classes.registerButton}
+            style={{ float: "right", marginTop: 20 }}
+            round
+            type="button"
+            onClick={saveConfigration}
+          >
+            Save Configration
+          </Button>
         </Animated>
       ) : (
         ""

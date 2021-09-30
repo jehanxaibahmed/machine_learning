@@ -21,8 +21,12 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import Swal from 'sweetalert2'
-import { successAlert, errorAlert, msgAlert }from "views/LDocs/Functions/Functions";
+import Swal from "sweetalert2";
+import {
+  successAlert,
+  errorAlert,
+  msgAlert,
+} from "views/LDocs/Functions/Functions";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import ChipInput from "material-ui-chip-input";
@@ -44,12 +48,16 @@ import { addZeroes } from "views/LDocs/Functions/Functions";
 const useStyles = makeStyles(styles);
 const sweetAlertStyle = makeStyles(styles2);
 
-export default function AddPaymentModal({type, closeModal, getPaymentgateways}) {
+export default function AddPaymentModal({
+  type,
+  closeModal,
+  getPaymentgateways,
+}) {
   const Token =
     useSelector((state) => state.userReducer.Token) ||
     localStorage.getItem("cooljwt");
   const decoded = jwt.decode(Token);
- 
+
   const classes = useStyles();
   const sweetClass = sweetAlertStyle();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -57,63 +65,65 @@ export default function AddPaymentModal({type, closeModal, getPaymentgateways}) 
   const [PaymentGateways, setPaymentGateways] = React.useState([]);
   const [formState, setFormState] = React.useState({
     values: {
-     paymentGateway:"" 
+      paymentGateway: "",
     },
     errors: {
-     paymentGateway:""
+      paymentGateway: "",
     },
   });
-  
+
   React.useEffect(() => {
     getPaymentMethods();
   }, []);
-
 
   const addPaymentGateway = () => {
     let paymentGateway;
     const Check = require("is-null-empty-or-undefined").Check;
     var error = false;
     if (!Check(formState.values.paymentGateway)) {
-        paymentGateway = "success";
+      paymentGateway = "success";
     } else {
-        paymentGateway = "error";
+      paymentGateway = "error";
       error = true;
     }
     setFormState((formState) => ({
-        ...formState,
-        errors: {
-          ...formState.errors,
-          paymentGateway: paymentGateway,
-        }
-      }));
-      if (error) {
-        return false;
-      }else{
-          var data= {
-            vendorId:decoded.id,
-            Enable:true,
-            default:false,
-            channel_id:PaymentGateways.find(p=> p.serviceName == formState.values.paymentGateway)._id,
-            currencyType:type
-          }
-        axios({
-            method: "post",
-            url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/saveGateway`,
-            data: data,
-            headers: { cooljwt: Token },
-          })
-            .then((response) => {
-                getPaymentgateways();
-                closeModal();
-                // successAlert('Added Successfully..');
-            }).catch((err)=>{
-                getPaymentgateways();
-                errorAlert('Already Exist');
-            })
-      }
-
-
-  }
+      ...formState,
+      errors: {
+        ...formState.errors,
+        paymentGateway: paymentGateway,
+      },
+    }));
+    if (error) {
+      return false;
+    } else {
+      let paymentGateway = PaymentGateways.find(
+        (p) => p.serviceName == formState.values.paymentGateway
+      );
+      var data = {
+        vendorId: decoded.id,
+        Enable: true,
+        default: false,
+        channel_id: paymentGateway._id,
+        currencyType: type,
+        allowSchedule: paymentGateway.allowSchedule,
+      };
+      axios({
+        method: "post",
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/payment/saveGateway`,
+        data: data,
+        headers: { cooljwt: Token },
+      })
+        .then((response) => {
+          getPaymentgateways();
+          closeModal();
+          // successAlert('Added Successfully..');
+        })
+        .catch((err) => {
+          getPaymentgateways();
+          errorAlert("Already Exist");
+        });
+    }
+  };
 
   const handleChange = (event) => {
     event.persist();
@@ -141,100 +151,103 @@ export default function AddPaymentModal({type, closeModal, getPaymentgateways}) 
       });
   };
 
-
-
-
   return (
-        <Card>
-         
-          <CardHeader color="info" icon>
-            <CardIcon color="info">
-              <h4 className={classes.cardTitle}>
-                Add Payment Method
-                </h4>
-            </CardIcon>
-          </CardHeader>
-          <CardBody>
-            <GridContainer>
-                <React.Fragment>
-                  <GridItem
-                    xs={9}
-                    sm={9}
-                    md={9}
-                    lg={9}
-                    style={{
-                      marginTop: "10px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <TextField
-                      className={classes.textField}
-                      error={formState.errors.paymentGateway === "error"}
-                      fullWidth={true}
-                      helperText={
-                        formState.errors.paymentGateway === "error"
-                          ? "Payment Type is required"
-                          : null
-                      }
-                      label="Payment Gateway"
-                      name="paymentGateway"
-                      onChange={(event) => {
-                        handleChange(event);
-                      }}
-                      select
-                      value={formState.values.paymentGateway || ""}
-                    >
-                      <MenuItem
-                        disabled
-                        classes={{
-                          root: classes.selectMenuItem,
-                        }}
-                      >
-                        Choose Payment Gateway
-                      </MenuItem>
-                      {PaymentGateways.filter(p=>p.currencyType.includes(type)).map(pay => (
-                         <MenuItem value={pay.serviceName} key={pay._id} >{pay.serviceName.toUpperCase()}</MenuItem>
-                      ))}
-                    </TextField>
-                  </GridItem>
-                  <GridItem
-                    xs={3}
-                    sm={3}
-                    md={3}
-                    lg={3}
-                    style={{
-                      marginTop: "10px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                       <div className="fileinput text-right">
-                            <div className="" style={{ marginTop: 20 }}>
-                            {PaymentGateways.find(
-                                  pg => pg.serviceName == formState.values.paymentGateway
-                                ) ? <img
-                                height="30px"
-                                width="100%"
-                                src={`${process.env.REACT_APP_LDOCS_API_URL}/${
-                                 PaymentGateways.find(
-                                  pg => pg.serviceName == formState.values.paymentGateway
-                                ).imgUrl}`}
-                              />
-                              :""}
-                            </div>
-                          </div>
-                  </GridItem>
-                </React.Fragment>
-            </GridContainer>
-            <Button
-              color="danger"
-              round
-              style={{ float: "right" }}
-              className={classes.marginRight}
-              onClick={addPaymentGateway}
+    <Card>
+      <CardHeader color="info" icon>
+        <CardIcon color="info">
+          <h4 className={classes.cardTitle}>Add Payment Method</h4>
+        </CardIcon>
+      </CardHeader>
+      <CardBody>
+        <GridContainer>
+          <React.Fragment>
+            <GridItem
+              xs={9}
+              sm={9}
+              md={9}
+              lg={9}
+              style={{
+                marginTop: "10px",
+                marginBottom: "10px",
+              }}
             >
-              Add Payment Gateway
-            </Button>
-          </CardBody>
-        </Card>
-       );
+              <TextField
+                className={classes.textField}
+                error={formState.errors.paymentGateway === "error"}
+                fullWidth={true}
+                helperText={
+                  formState.errors.paymentGateway === "error"
+                    ? "Payment Type is required"
+                    : null
+                }
+                label="Payment Gateway"
+                name="paymentGateway"
+                onChange={(event) => {
+                  handleChange(event);
+                }}
+                select
+                value={formState.values.paymentGateway || ""}
+              >
+                <MenuItem
+                  disabled
+                  classes={{
+                    root: classes.selectMenuItem,
+                  }}
+                >
+                  Choose Payment Gateway
+                </MenuItem>
+                {PaymentGateways.filter((p) =>
+                  p.currencyType.includes(type)
+                ).map((pay) => (
+                  <MenuItem value={pay.serviceName} key={pay._id}>
+                    {pay.serviceName.toUpperCase()}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </GridItem>
+            <GridItem
+              xs={3}
+              sm={3}
+              md={3}
+              lg={3}
+              style={{
+                marginTop: "10px",
+                marginBottom: "10px",
+              }}
+            >
+              <div className="fileinput text-right">
+                <div className="" style={{ marginTop: 20 }}>
+                  {PaymentGateways.find(
+                    (pg) => pg.serviceName == formState.values.paymentGateway
+                  ) ? (
+                    <img
+                      height="30px"
+                      width="100%"
+                      src={`${process.env.REACT_APP_LDOCS_API_URL}/${
+                        PaymentGateways.find(
+                          (pg) =>
+                            pg.serviceName == formState.values.paymentGateway
+                        ).imgUrl
+                      }`}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+            </GridItem>
+          </React.Fragment>
+        </GridContainer>
+        <Button
+          color="danger"
+          round
+          style={{ float: "right" }}
+          className={classes.marginRight}
+          onClick={addPaymentGateway}
+        >
+          Add Payment Gateway
+        </Button>
+      </CardBody>
+    </Card>
+  );
 }

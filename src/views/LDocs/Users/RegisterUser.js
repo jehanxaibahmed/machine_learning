@@ -36,6 +36,7 @@ export default function Register(props) {
     const [formState, setFormState] = useState({
       orgs: [],
       comp: [],
+      roles:[],
       depts: [],
       titles: [],
       isRegistered: false,
@@ -55,9 +56,29 @@ export default function Register(props) {
         direct: "0971",
         dataUrl: `${process.env.REACT_APP_LDOCS_API_URL}`,
         displayName: "",
+        role:""
       },
       errors: {},
     });
+
+
+    const getRoles = async () => {
+      axios({
+        method: "get",
+        url: `${process.env.REACT_APP_LDOCS_API_URL}/user/getRoles`,
+        headers: { cooljwt: Token },
+      })
+        .then((response) => {
+          setFormState((state) => ({
+            ...state,
+            roles: response?.data
+          }));
+        }).catch((error) => {
+          if (error.response) { error.response.status == 401 && dispatch(setIsTokenExpired(true)) };
+          errorAlert('Error in Fetching Roles');
+        })
+    }
+
   const getOrganizations = () => {
     axios({
       method: "get",
@@ -198,7 +219,17 @@ export default function Register(props) {
         [event.target.name]: event.target.value,
       },
     }));
-  } else {
+  }
+  else if (event.target.name == "role") {
+    setFormState((formState) => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        [event.target.name]: event.target.value,
+      },
+    }));
+  }
+  else {
       setFormState((formState) => ({
         ...formState,
         values: {
@@ -262,6 +293,7 @@ export default function Register(props) {
       getDepartments();
       getCompanies();
       getTitles();
+      getRoles();
     }
     
     setFormState((formState) => ({
@@ -420,7 +452,8 @@ export default function Register(props) {
         title: formState.values.titleNew,
         titleId: formState.titles.find(item=>item.titleName==formState.values.titleNew)._id,
         activation : "yes",
-        createdBy: decoded.email
+        createdBy: decoded.email,
+        role: formState.values.role,
       };
       axios({
         method: "post",
@@ -722,6 +755,48 @@ export default function Register(props) {
                   })}
                 </TextField>
               </GridItem>
+              <GridItem
+          xs={12}
+          sm={12}
+          md={6}
+          lg={6}
+          style={{ marginBottom: "10px", marginTop: "10px" }}
+        >
+          <TextField
+            className={classes.textField}
+            error={formState.errors.workflow === "error"}
+            fullWidth={true}
+            // helperText={
+            //   formState.errors.workflow === "error"
+            //     ? "Workflow is required"
+            //     : null
+            // }
+            label="Role"
+            name="role"
+            onChange={(event) => {
+              handleChange(event);
+            }}
+            select
+            value={formState.values.role || ""}
+            disabled={props.disabledCheck}
+          >
+            <MenuItem
+              disabled
+              classes={{
+                root: classes.selectMenuItem,
+              }}
+            >
+              Choose User Role
+            </MenuItem>
+            {formState.roles.map((role, index) => {
+              return (
+                <MenuItem key={index} value={role._id}>
+                  {role.roleName}
+                </MenuItem>
+              );
+            })}
+          </TextField>
+        </GridItem>
               {/* <GridItem
                 xs={12}
                 sm={12}
