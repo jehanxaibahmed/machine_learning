@@ -99,9 +99,9 @@ export default function InvoiceConfigrations() {
       isHeader: false,
       isFooter: false,
       header: "",
-      selectedHeader:"",
+      selectedHeader: "",
       footer: "",
-      selectedFooter:""
+      selectedFooter: "",
     },
     templates: [],
   });
@@ -122,7 +122,7 @@ export default function InvoiceConfigrations() {
         }));
       };
       reader.readAsDataURL(file);
-      console.log(file, state_name)
+      console.log(file, state_name);
       state_name == "header" ? setHeaderImage(file) : setFooterImage(file);
     } else {
       state_name == "header" ? setHeaderImage(null) : setFooterImage(null);
@@ -153,9 +153,9 @@ export default function InvoiceConfigrations() {
               ? "processDate"
               : "",
             selectedTemplate: invoiceConfig.templateId,
-            selectedHeader:invoiceConfig?.organizationLogo?.logo || undefined,
-            selectedFooter:invoiceConfig?.footerLogo?.logo || undefined,
-            isHeader:invoiceConfig?.EnableHeader
+            selectedHeader: invoiceConfig?.organizationLogo?.logo || undefined,
+            selectedFooter: invoiceConfig?.footerLogo?.logo || undefined,
+            isHeader: invoiceConfig?.EnableHeader,
           },
         }));
       })
@@ -193,9 +193,19 @@ export default function InvoiceConfigrations() {
           state.values.paymentTerms == "processDate" ? true : false,
         templateId: state.values.selectedTemplate,
         Default_template: "Default_template",
-        EnableHeader:state.values.isHeader,
-        organizationLogo:{logo: state.values.header, name : headerImage?.name},
-        footerLogo:{logo: state.values.footer, name : footerImage?.name},
+        EnableHeader: state.values.isHeader,
+        organizationLogo: {
+          logo: headerImage
+            ? state?.values?.header
+            : state.values.selectedHeader,
+          name: headerImage?.name,
+        },
+        footerLogo: {
+          logo: footerImage
+            ? state.values.footer
+            : state?.values?.selectedFooter,
+          name: footerImage?.name,
+        },
       },
     };
     axios({
@@ -423,57 +433,65 @@ export default function InvoiceConfigrations() {
                     </ListItem> */}
                     <Divider />
                   </List>
-                  <GridContainer style={{marginTop:20}}>
-                  <GridItem xs={6} sm={6} md={6} lg={6}>
-                    {/* <legend>Selected Logo</legend> */}
-                    <ImageUpload
-                      addButtonProps={{
-                        color: "info",
-                        round: true,
-                      }}
-                      changeButtonProps={{
-                        color: "info",
-                        round: true,
-                      }}
-                      removeButtonProps={{
-                        color: "danger",
-                        round: true,
-                      }}
-                      oldImage={!headerImage && state.values.selectedHeader !== undefined ?  `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedHeader}` : undefined}
-                      buttonId="header_image"
-                      handleImageChange={handleImageChange}
-                      name="header"
-                      input_name="header"
-                    />
-                  </GridItem>
-                  <GridItem xs={6} sm={6} md={6} lg={6}>
-                    {/* <legend>Selected Logo</legend> */}
-                    <ImageUpload
-                      addButtonProps={{
-                        color: "info",
-                        round: true,
-                      }}
-                      changeButtonProps={{
-                        color: "info",
-                        round: true,
-                      }}
-                      removeButtonProps={{
-                        color: "danger",
-                        round: true,
-                      }}
-                      oldImage={!footerImage && state.values.selectedFooter !== undefined ?  `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedFooter}` : undefined}
-                      buttonId="footer_image"
-                      handleImageChange={handleImageChange}
-                      name="footer"
-                      input_name="footer"
-
-                    />
-                  </GridItem>
+                  <GridContainer style={{ marginTop: 20 }}>
+                    <GridItem xs={6} sm={6} md={6} lg={6}>
+                      {/* <legend>Selected Logo</legend> */}
+                      <ImageUpload
+                        addButtonProps={{
+                          color: "info",
+                          round: true,
+                        }}
+                        changeButtonProps={{
+                          color: "info",
+                          round: true,
+                        }}
+                        removeButtonProps={{
+                          color: "danger",
+                          round: true,
+                        }}
+                        oldImage={
+                          !headerImage &&
+                          state.values.selectedHeader !== undefined
+                            ? `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedHeader}`
+                            : undefined
+                        }
+                        buttonId="header_image"
+                        handleImageChange={handleImageChange}
+                        name="header"
+                        input_name="header"
+                      />
+                    </GridItem>
+                    <GridItem xs={6} sm={6} md={6} lg={6}>
+                      {/* <legend>Selected Logo</legend> */}
+                      <ImageUpload
+                        addButtonProps={{
+                          color: "info",
+                          round: true,
+                        }}
+                        changeButtonProps={{
+                          color: "info",
+                          round: true,
+                        }}
+                        removeButtonProps={{
+                          color: "danger",
+                          round: true,
+                        }}
+                        oldImage={
+                          !footerImage &&
+                          state.values.selectedFooter !== undefined
+                            ? `${process.env.REACT_APP_LDOCS_API_URL}/${state.values.selectedFooter}`
+                            : undefined
+                        }
+                        buttonId="footer_image"
+                        handleImageChange={handleImageChange}
+                        name="footer"
+                        input_name="footer"
+                      />
+                    </GridItem>
                   </GridContainer>
                 </CardBody>
               </Card>
             </GridItem>
-           
           </GridContainer>
           <Button
             color="info"

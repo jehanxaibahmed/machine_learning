@@ -446,8 +446,8 @@ export default function GeneralConfigrations() {
                         autoComplete={false}
                         id="auth_smtp_pass"
                         onChange={handleChange}
-                        type="password"
-                        value={state.values.pass || ""}
+                        type="text"
+                        value={"*".repeat(state.values.pass.length)  || ""}
                       />
                     </GridItem>
                     <GridItem

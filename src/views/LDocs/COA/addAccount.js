@@ -8,6 +8,8 @@ import {
   MenuItem,
   Tooltip,
   IconButton,
+  Checkbox,
+  FormControlLabel,
 } from "@material-ui/core";
 import Swal from "sweetalert2";
 import {
@@ -52,6 +54,7 @@ export default function AddAccount(props) {
       Acc_Type: "",
       Acc_Opening_Balance: 0,
       Acc_Ref_Remarks: "",
+      status:false
     },
     errors: {
       Acc_NO: "",
@@ -144,7 +147,7 @@ export default function AddAccount(props) {
         Acc_Type: formState.values.Acc_Type,
         Acc_Opening_Balance: formState.values.Acc_Opening_Balance,
         Acc_Ref_Remarks: formState.values.Acc_Ref_Remarks,
-        Status: true,
+        Status: formState.values.status,
       };
       let msg = "";
       axios({
@@ -218,11 +221,11 @@ export default function AddAccount(props) {
           <CardBody>
             <form>
               <GridContainer>
-              <GridItem
+                <GridItem
                   xs={12}
                   sm={12}
-                  md={12}
-                  lg={12}
+                  md={10}
+                  lg={10}
                   style={{ marginTop: "10px", marginBottom: "10px" }}
                 >
                   <TextField
@@ -239,6 +242,34 @@ export default function AddAccount(props) {
                     onChange={handleChange}
                     type="text"
                     value={formState.values.Acc_Description || ""}
+                  />
+                </GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={2}
+                  lg={2}
+                  style={{  }}
+                >
+                  <FormControlLabel
+                  labelPlacement="bottom"
+                    control={
+                      <Checkbox
+                        checked={formState.values.status}
+                        onChange={()=>{
+                          setFormState((formState) => ({
+                            ...formState,
+                            values: {
+                              ...formState.values,
+                              status: !formState.values.status,
+                            },
+                          }));
+                        }}
+                        name="status"
+                        color="primary"
+                      />
+                    }
+                    label="Status"
                   />
                 </GridItem>
                 <GridItem
@@ -323,7 +354,6 @@ export default function AddAccount(props) {
                     label="Opening Balance"
                     id="openingBalance"
                     name="Acc_Opening_Balance"
-                   
                     onChange={(event) => {
                       handleChange(event);
                     }}
@@ -357,8 +387,6 @@ export default function AddAccount(props) {
                     value={formState.values.Acc_Ref_Remarks || ""}
                   />
                 </GridItem>
-
-               
               </GridContainer>
               <Button
                 color="info"

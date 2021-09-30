@@ -86,7 +86,7 @@ export default function COA() {
     setViewModal(true);
   };
 
-  //Get Compaines
+  //Get COA
   const getCOA = () => {
     setIsLoading(true);
     axios({

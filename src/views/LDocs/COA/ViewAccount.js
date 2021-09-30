@@ -8,6 +8,8 @@ import {
   Slide,
   Dialog,
   MenuItem,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import Swal from "sweetalert2";
 import {
@@ -60,7 +62,7 @@ export default function ViewComp(props) {
       Acc_Type: AccDetail.Acc_Type,
       Acc_Opening_Balance: AccDetail.Acc_Opening_Balance,
       Acc_Ref_Remarks: AccDetail.Acc_Ref_Remarks,
-      Status: AccDetail.status,
+      Status: AccDetail.Status,
     },
     errors: {
       errors: {
@@ -184,7 +186,7 @@ export default function ViewComp(props) {
         Acc_Ref_Remarks: formState.values.Acc_Ref_Remarks,
         accountId:AccDetail._id,
         createdBy:AccDetail.createdBy,
-        status:true ,
+        Status:formState.values.Status ,
         otp: OTP,
       };
       let msg = "";
@@ -278,8 +280,8 @@ export default function ViewComp(props) {
               <GridItem
                   xs={12}
                   sm={12}
-                  md={12}
-                  lg={12}
+                  md={10}
+                  lg={10}
                   style={{ marginTop: "10px", marginBottom: "10px" }}
                 >
                   <TextField
@@ -297,6 +299,34 @@ export default function ViewComp(props) {
                     onChange={handleChange}
                     type="text"
                     value={formState.values.Acc_Description || ""}
+                  />
+                </GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={2}
+                  lg={2}
+                  style={{  }}
+                >
+                  <FormControlLabel
+                  labelPlacement="bottom"
+                    control={
+                      <Checkbox
+                        checked={formState.values.Status}
+                        onChange={()=>{
+                          setFormState((formState) => ({
+                            ...formState,
+                            values: {
+                              ...formState.values,
+                              Status: !formState.values.Status,
+                            },
+                          }));
+                        }}
+                        name="status"
+                        color="primary"
+                      />
+                    }
+                    label="Status"
                   />
                 </GridItem>
                 <GridItem
