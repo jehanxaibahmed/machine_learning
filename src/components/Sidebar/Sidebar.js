@@ -33,6 +33,7 @@ import sidebarStyle from "assets/jss/material-dashboard-pro-react/components/sid
 import avatar from "assets/img/avatar-2.png";
 import jwt from "jsonwebtoken";
 import { _IsAr } from "views/LDocs/Functions/Functions";
+import { checkSelectAll } from "views/LDocs/Functions/Functions";
 
 var ps;
 
@@ -46,35 +47,43 @@ const action = {
 class SidebarWrapper extends React.Component {
   sidebarWrapper = React.createRef();
   constructor(props) {
-    super(props);
+    super(props); 
     this.state = {
-      ar: false,
-      ap: false
+      isApEnable : props.isApEnable,
+      isArEnable : props.isArEnable,
     }
-    // if(props.isTabs){
-    //   console.log("IN CONDITION");
-    //   this.setState({ isTabs: true});
-    //   this.forceUpdate();
-    // }
   }
+
   componentDidMount() {
-      ps = new PerfectScrollbar(this.sidebarWrapper.current, {
-        suppressScrollX: true,
-        suppressScrollY: false,
-      });
+    ps = new PerfectScrollbar(this.sidebarWrapper.current, {
+      suppressScrollX: true,
+      suppressScrollY: false,
+    });
   }
   componentWillUnmount() {
-      ps.destroy();
+    ps.destroy();
   }
 
-
   render() {
-    const { className, user, headerLinks, links, userData, tabValue, handleTabChange, isTabs, permissions } = this.props;
-    
-    if (permissions) {
-      const { ap, ar } = permissions || {};
+    const {
+      className,
+      user,
+      headerLinks,
+      links,
+      userData,
+      tabValue,
+      handleTabChange,
+      isTabs,
+      isApEnable,
+      isArEnable,
+    } = this.props;
 
-    }
+    // console.log("AP", isApEnable ? isApEnable :);
+
+
+    
+
+
     const a11yProps = (index) => {
       return {
         id: `simple-tab-${index}`,
@@ -85,15 +94,21 @@ class SidebarWrapper extends React.Component {
       <div className={className} ref={this.sidebarWrapper}>
         {userData ? user : <CircularProgress disableShrink />}
         {headerLinks}
-        {isTabs ?
+        {isTabs ? (
           <Tabs
-            style={{ zIndex: 999999999, width: "calc(100% - 30px)", margin: 15 }}
+            style={{
+              zIndex: 999999999,
+              width: "calc(100% - 30px)",
+              margin: 15,
+            }}
             value={tabValue}
             onChange={handleTabChange}
             aria-label="simple tabs example"
           >
+            {isApEnable ? 
             <Tab
-              style={{ minWidth: "50%" }}
+              style={{ minWidth: !isArEnable ? "100%": "50%" }}
+              disabled={!isArEnable}
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <Avatar
@@ -110,9 +125,11 @@ class SidebarWrapper extends React.Component {
                 </div>
               }
               {...a11yProps(0)}
-            />
+            />:""}
+            {isArEnable ?
             <Tab
-              style={{ minWidth: "50%" }}
+              style={{ minWidth: !isApEnable ? "100%": "50%" }}
+              disabled={!isApEnable}
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <Avatar
@@ -130,7 +147,11 @@ class SidebarWrapper extends React.Component {
               }
               {...a11yProps(1)}
             />
-          </Tabs> : ""}
+            :""}
+          </Tabs>
+        ) : (
+          ""
+        )}
         <Divider
           style={{
             background: "hsla(0,0%,100%,.3)",
@@ -155,18 +176,25 @@ class Sidebar extends React.Component {
       level1: "",
       isAr: props?.isAr,
       LogoutCheck: false,
-      tabValue: _IsAr() ? 1 : 0,
+      tabValue: props.isApEnable && props.isArEnable ? _IsAr() ? 1 : 0 : props.isArEnable ? 1 : 0,
+      isApEnable: props.isApEnable,
+      isArEnable: props.isArEnable,
       ...this.getCollapseStates(props.routes ? props.routes : []),
       ...this.getCollapseStates(props.aproutes ? props.aproutes : []),
       ...this.getCollapseStates(props.arroutes ? props.arroutes : []),
     };
+
+
   }
+
+ 
+
   handleTabChange = (event, newValue) => {
     // this.props.handleTabVal(newValue);
     this.setState({ tabValue: newValue });
     let routes = this.props.aproutes;
     // this.createLinks(this.props.routes ? this.props.routes : newValue === 0 ? this.props.aproutes : routes)
-  }
+  };
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.userData != this.props.userData) {
       this.setState({
@@ -179,16 +207,18 @@ class Sidebar extends React.Component {
   // that it gets through this.props.routes
   getCollapseStates = (routes) => {
     let initialState = {};
-    routes.filter(route=>route.name !== undefined).map((prop) => {
-      if (prop.collapse) {
-        initialState = {
-          [prop.state]: this.getCollapseInitialState(prop.views),
-          ...this.getCollapseStates(prop.views),
-          ...initialState,
-        };
-      }
-      return null;
-    });
+    routes
+      .filter((route) => route.name !== undefined)
+      .map((prop) => {
+        if (prop.collapse) {
+          initialState = {
+            [prop.state]: this.getCollapseInitialState(prop.views),
+            ...this.getCollapseStates(prop.views),
+            ...initialState,
+          };
+        }
+        return null;
+      });
     return initialState;
   };
   // this verifies if any of the collapses should be default opened on a rerender of this component
@@ -211,32 +241,160 @@ class Sidebar extends React.Component {
   openCollapse(collapse) {
     var st = {};
     st[collapse] = !this.state[collapse];
-    let routes = this.props.aproutes && this.props.arroutes ? this.props.aproutes.concat(this.props.arroutes) : this.props.routes;
-    routes.filter(route=>route.name !== undefined).map((prop, key) => {
-      if (typeof prop["state"] !== "undefined" && prop["state"] !== collapse) {
-        st[prop["state"]] = false;
-      }
-    });
+    let routes =
+      this.props.aproutes && this.props.arroutes
+        ? this.props.aproutes.concat(this.props.arroutes)
+        : this.props.routes;
+    routes
+      .filter((route) => route.name !== undefined)
+      .map((prop, key) => {
+        if (
+          typeof prop["state"] !== "undefined" &&
+          prop["state"] !== collapse
+        ) {
+          st[prop["state"]] = false;
+        }
+      });
     this.setState(st);
   }
   // this function creates the links and collapses that appear in the sidebar (left menu)
   createLinks = (routes) => {
     const { classes, color, rtlActive } = this.props;
 
-    return routes.filter(route=>route.name !== undefined).map((prop, key) => {
-      if (prop.redirect) {
-        return null;
-      }
-      if (prop.collapse) {
-        var st = {};
-        st[prop["state"]] = !this.state[prop.state];
+    return routes
+      .filter((route) => route.name !== undefined)
+      .map((prop, key) => {
+        if (prop.redirect) {
+          return null;
+        }
+        if (prop.collapse) {
+          var st = {};
+          st[prop["state"]] = !this.state[prop.state];
+          const navLinkClasses =
+            classes.itemLink +
+            " " +
+            cx({
+              [" " + classes.collapseActive]: this.getCollapseInitialState(
+                prop.views
+              ),
+            });
+          const itemText =
+            classes.itemText +
+            " " +
+            cx({
+              [classes.itemTextMini]:
+                this.props.miniActive && this.state.miniActive,
+              [classes.itemTextMiniRTL]:
+                rtlActive && this.props.miniActive && this.state.miniActive,
+              [classes.itemTextRTL]: rtlActive,
+            });
+          const collapseItemText =
+            classes.collapseItemText +
+            " " +
+            cx({
+              [classes.collapseItemTextMini]:
+                this.props.miniActive && this.state.miniActive,
+              [classes.collapseItemTextMiniRTL]:
+                rtlActive && this.props.miniActive && this.state.miniActive,
+              [classes.collapseItemTextRTL]: rtlActive,
+            });
+          const itemIcon =
+            classes.itemIcon +
+            " " +
+            cx({
+              [classes.itemIconRTL]: rtlActive,
+            });
+          const caret =
+            classes.caret +
+            " " +
+            cx({
+              [classes.caretRTL]: rtlActive,
+            });
+          const collapseItemMini =
+            classes.collapseItemMini +
+            " " +
+            cx({
+              [classes.collapseItemMiniRTL]: rtlActive,
+            });
+          return (
+            <ListItem
+              key={key}
+              className={cx(
+                { [classes.item]: prop.icon !== undefined },
+                { [classes.collapseItem]: prop.icon === undefined }
+              )}
+            >
+              <NavLink
+                to={"#"}
+                className={navLinkClasses}
+                onClick={(e) => {
+                  e.preventDefault();
+                  this.openCollapse(prop["state"]);
+                }}
+              >
+                {prop.icon !== undefined ? (
+                  typeof prop.icon === "string" ? (
+                    <Icon className={itemIcon}>{prop.icon}</Icon>
+                  ) : (
+                    <prop.icon className={itemIcon} />
+                  )
+                ) : (
+                  <span className={collapseItemMini}>
+                    {rtlActive ? prop.rtlMini : prop.mini}
+                  </span>
+                )}
+                <ListItemText
+                  primary={rtlActive ? prop.rtlName : prop.name}
+                  style={{
+                    color: this.state.tabValue == 0 ? "white" : "#D8AABB",
+                  }}
+                  secondary={
+                    <b
+                      className={
+                        caret +
+                        " " +
+                        (this.state[prop.state] ? classes.caretActive : "")
+                      }
+                    />
+                  }
+                  disableTypography={true}
+                  className={cx(
+                    { [itemText]: prop.icon !== undefined },
+                    { [collapseItemText]: prop.icon === undefined }
+                  )}
+                />
+              </NavLink>
+              <Collapse in={this.state[prop.state]} unmountOnExit>
+                <List
+                  className={
+                    this.props.miniActive
+                      ? classes.list + " " + classes.collapseListMini
+                      : classes.list + " " + classes.collapseList
+                  }
+                >
+                  {this.createLinks(prop.views)}
+                </List>
+              </Collapse>
+            </ListItem>
+          );
+        }
+        const innerNavLinkClasses =
+          classes.collapseItemLink +
+          " " +
+          cx({
+            [" " + classes[color]]: this.activeRoute(prop.path),
+          });
+        const collapseItemMini =
+          classes.collapseItemMini +
+          " " +
+          cx({
+            [classes.collapseItemMiniRTL]: rtlActive,
+          });
         const navLinkClasses =
           classes.itemLink +
           " " +
           cx({
-            [" " + classes.collapseActive]: this.getCollapseInitialState(
-              prop.views
-            ),
+            [" " + classes[color]]: this.activeRoute(prop.path),
           });
         const itemText =
           classes.itemText +
@@ -264,18 +422,6 @@ class Sidebar extends React.Component {
           cx({
             [classes.itemIconRTL]: rtlActive,
           });
-        const caret =
-          classes.caret +
-          " " +
-          cx({
-            [classes.caretRTL]: rtlActive,
-          });
-        const collapseItemMini =
-          classes.collapseItemMini +
-          " " +
-          cx({
-            [classes.collapseItemMiniRTL]: rtlActive,
-          });
         return (
           <ListItem
             key={key}
@@ -285,12 +431,11 @@ class Sidebar extends React.Component {
             )}
           >
             <NavLink
-              to={"#"}
-              className={navLinkClasses}
-              onClick={(e) => {
-                e.preventDefault();
-                this.openCollapse(prop["state"]);
-              }}
+              to={prop.layout + prop.path}
+              className={cx(
+                { [navLinkClasses]: prop.icon !== undefined },
+                { [innerNavLinkClasses]: prop.icon === undefined }
+              )}
             >
               {prop.icon !== undefined ? (
                 typeof prop.icon === "string" ? (
@@ -305,120 +450,19 @@ class Sidebar extends React.Component {
               )}
               <ListItemText
                 primary={rtlActive ? prop.rtlName : prop.name}
-                style={{ color: this.state.tabValue == 0 ? "white" : "#D8AABB" }}
-                secondary={
-                  <b
-                    className={
-                      caret +
-                      " " +
-                      (this.state[prop.state] ? classes.caretActive : "")
-                    }
-                  />
-                }
                 disableTypography={true}
+                style={{
+                  color: this.state.tabValue == 0 ? "white" : "#D8AABB",
+                }}
                 className={cx(
                   { [itemText]: prop.icon !== undefined },
                   { [collapseItemText]: prop.icon === undefined }
                 )}
               />
             </NavLink>
-            <Collapse in={this.state[prop.state]} unmountOnExit>
-              <List
-                className={
-                  this.props.miniActive
-                    ? classes.list + " " + classes.collapseListMini
-                    : classes.list + " " + classes.collapseList
-                }
-              >
-                {this.createLinks(prop.views)}
-              </List>
-            </Collapse>
           </ListItem>
         );
-      }
-      const innerNavLinkClasses =
-        classes.collapseItemLink +
-        " " +
-        cx({
-          [" " + classes[color]]: this.activeRoute(prop.path),
-        });
-      const collapseItemMini =
-        classes.collapseItemMini +
-        " " +
-        cx({
-          [classes.collapseItemMiniRTL]: rtlActive,
-        });
-      const navLinkClasses =
-        classes.itemLink +
-        " " +
-        cx({
-          [" " + classes[color]]: this.activeRoute(prop.path),
-        });
-      const itemText =
-        classes.itemText +
-        " " +
-        cx({
-          [classes.itemTextMini]:
-            this.props.miniActive && this.state.miniActive,
-          [classes.itemTextMiniRTL]:
-            rtlActive && this.props.miniActive && this.state.miniActive,
-          [classes.itemTextRTL]: rtlActive,
-        });
-      const collapseItemText =
-        classes.collapseItemText +
-        " " +
-        cx({
-          [classes.collapseItemTextMini]:
-            this.props.miniActive && this.state.miniActive,
-          [classes.collapseItemTextMiniRTL]:
-            rtlActive && this.props.miniActive && this.state.miniActive,
-          [classes.collapseItemTextRTL]: rtlActive,
-        });
-      const itemIcon =
-        classes.itemIcon +
-        " " +
-        cx({
-          [classes.itemIconRTL]: rtlActive,
-        });
-      return (
-        <ListItem
-          key={key}
-          className={cx(
-            { [classes.item]: prop.icon !== undefined },
-            { [classes.collapseItem]: prop.icon === undefined }
-          )}
-        >
-          <NavLink
-            to={prop.layout + prop.path}
-            className={cx(
-              { [navLinkClasses]: prop.icon !== undefined },
-              { [innerNavLinkClasses]: prop.icon === undefined }
-            )}
-          >
-            {prop.icon !== undefined ? (
-              typeof prop.icon === "string" ? (
-                <Icon className={itemIcon}>{prop.icon}</Icon>
-              ) : (
-                <prop.icon className={itemIcon} />
-              )
-            ) : (
-              <span className={collapseItemMini}>
-                {rtlActive ? prop.rtlMini : prop.mini}
-              </span>
-            )}
-            <ListItemText
-              primary={rtlActive ? prop.rtlName : prop.name}
-              disableTypography={true}
-              style={{ color: this.state.tabValue == 0 ? "white" : "#D8AABB" }}
-              className={cx(
-                { [itemText]: prop.icon !== undefined },
-                { [collapseItemText]: prop.icon === undefined }
-              )}
-            />
-          </NavLink>
-        </ListItem>
-      );
-    });
+      });
   };
   handleLogoutUser = () => {
     localStorage.clear();
@@ -431,7 +475,16 @@ class Sidebar extends React.Component {
     const Token = localStorage.getItem("cooljwt");
     const loginName = jwt.decode(Token).loginName || jwt.decode(Token).name;
     const displayName = jwt.decode(Token).displayName || jwt.decode(Token).name;
-    const { classes, logo, image, aproutes, arroutes, routes, bgColor, rtlActive } = this.props;
+    const {
+      classes,
+      logo,
+      image,
+      aproutes,
+      arroutes,
+      routes,
+      bgColor,
+      rtlActive,
+    } = this.props;
     const itemText =
       classes.itemText +
       " " +
@@ -492,9 +545,7 @@ class Sidebar extends React.Component {
               onClick={() => this.openCollapse("openAvatar")}
             >
               <ListItemText
-                primary={
-                   displayName || loginName
-                }
+                primary={displayName || loginName}
                 // secondary={
                 //   <b
                 //     className={
@@ -555,7 +606,9 @@ class Sidebar extends React.Component {
     );
     var links = (
       <List style={{ zIndex: 99999999999999 }} className={classes.list}>
-        {this.createLinks(routes ? routes : this.state.tabValue == 0 ? aproutes : arroutes)}
+        {this.createLinks(
+          routes ? routes : this.state.tabValue == 0 ? aproutes : arroutes
+        )}
       </List>
     );
 
@@ -618,8 +671,7 @@ class Sidebar extends React.Component {
       cx({
         [classes.drawerPaperMini]:
           this.props.miniActive && this.state.miniActive,
-        [classes.sidebarWrapperWithPerfectScrollbar]:
-          true,
+        [classes.sidebarWrapperWithPerfectScrollbar]: true,
       });
     return (
       <div ref={this.mainPanel}>
@@ -650,9 +702,11 @@ class Sidebar extends React.Component {
               links={links}
               isAr={this.state.isAr}
               isTabs={arroutes && aproutes ? true : false}
-              tabValue={this.props.tabVal}
+              tabValue={this.state.tabValue}
               handleTabChange={this.handleTabChange}
               permissions={this.props.permissions}
+              isApEnable={this.state.isApEnable ?  this.state.isApEnable : false}
+              isArEnable={this.state.isArEnable ? this.state.isArEnable : false }
             />
             {image !== undefined ? (
               <div
@@ -682,6 +736,9 @@ class Sidebar extends React.Component {
               isTabs={arroutes && aproutes ? true : false}
               tabValue={this.state.tabValue}
               handleTabChange={this.handleTabChange}
+              permissions={this.props.permissions}
+              isApEnable={this.state.isApEnable ?  this.state.isApEnable : false}
+              isArEnable={this.state.isArEnable ? this.state.isArEnable : false }
             />
             {image !== undefined ? (
               <div
@@ -732,7 +789,7 @@ function mapStateToProps(state) {
   return {
     userData: state.userReducer.userListData,
     isAr: state.userReducer.isAr,
-    tabVal: state.userReducer.tabVal
+    tabVal: state.userReducer.tabVal,
   };
 }
 export default connect(

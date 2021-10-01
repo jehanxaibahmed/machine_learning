@@ -243,6 +243,29 @@ export const msgAlert = (msg) => {
   });
 };
 
+
+export const checkSelectAll = (permissions ,key1, key2) => {
+  let AllSelectedModule = [];
+  debugger;
+  Object.keys(permissions).map((key) => {
+    if(key1){key = key1};
+    console.log('key1', key1);
+    Object.keys(permissions[key]).map((sub_key) => {
+      if(key2){sub_key = key2};
+      Object.keys(permissions[key][sub_key])
+        .map(item => {
+          if (item != "name" && item != "enable" && typeof permissions[key][sub_key][item] == "object") {
+            AllSelectedModule.push(permissions[key][sub_key][item]?.enable ? true : false);
+          }
+        });
+    });
+  });
+  let isAllSelectedModule = AllSelectedModule
+    .some(item => item === true);
+  return isAllSelectedModule;
+}
+
+
 export const validateInvoice = async (row, Token, isAr) => {
   return new Promise((res, rej) => {
     axios({

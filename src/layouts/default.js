@@ -58,9 +58,10 @@ const checkTimeCompare = (dat) => {
 
 export default function Dashboard(props) {
   const permissions = useSelector(state => state.userReducer.permissions);
+  const isApEnable = useSelector(state => state.userReducer.isApEnable);
+  const isArEnable = useSelector(state => state.userReducer.isArEnable);
   const notifications = useSelector(state => state.userReducer.notifications);
   const routes = arRoutes(permissions).concat(apRoutes(permissions)).concat(defaultRoutes(permissions));
-  const tabVal = useSelector(state => state.userReducer.tabVal);
   const isTokenExpired = useSelector(state => state.userReducer.isTokenExpired);
   const tasks = useSelector(state => state.userReducer.tasks);
   const { ...rest } = props;
@@ -324,6 +325,8 @@ export default function Dashboard(props) {
         color={color}
         bgColor={bgColor}
         miniActive={miniActive}
+        isArEnable={isArEnable}
+        isApEnable={isApEnable}
         handleTabVal={changeTabHandler}
         permissions={permissions}
         {...rest}

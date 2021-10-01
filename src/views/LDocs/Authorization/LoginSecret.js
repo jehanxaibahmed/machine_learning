@@ -23,6 +23,7 @@ import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import DeviceUUID, { getToken } from "views/LDocs/Functions/Functions";
+import { checkSelectAll } from "../Functions/Functions";
 let uuid = new DeviceUUID().get();
 let os = new DeviceUUID().parse().os;
 console.log(new DeviceUUID().parse());
@@ -35,8 +36,13 @@ getToken().then((res) => {
 const useStyles = makeStyles(styles);
 export default function LoginSecret(props) {
   const [twofa, setTwofa] = useState("");
-  let token = useSelector((state) => state.userReducer.Token) ||
-  localStorage.getItem("cooljwt");
+  const [state, setState] = useState({
+    ap: false,
+    ar: false,
+  });
+  let token =
+    useSelector((state) => state.userReducer.Token) ||
+    localStorage.getItem("cooljwt");
   const [loggedIn, setloggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -66,8 +72,14 @@ export default function LoginSecret(props) {
       .then(async (response) => {
         let token = response.headers.cooljwt;
         dispatch(setPermissions(response?.data));
+        let ap = checkSelectAll(response?.data, "ap");
+        let ar = checkSelectAll(response?.data, "ar");
+        setState({
+          ap,
+          ar,
+        });
         let decoded = jwt.decode(token);
-        console.log('user_details', decoded);
+        console.log("user_details", decoded);
         if (!decoded.isTenant) {
           await axios({
             method: "post", //you can set what request you want to be
@@ -108,13 +120,14 @@ export default function LoginSecret(props) {
   return (
     <div className={classes.container}>
       {loggedIn && userData !== null ? (
-        userData?.role?.isAdmin ?
-          (
-            <Redirect to="/admin/dashboard/ad" />
-          ) : (
-            <Redirect to="/default/dashboard/ap" />
-          )
-      ) : ""}
+        userData?.role?.isAdmin ? (
+          <Redirect to="/admin/dashboard/ad" />
+        ) : (
+         state.ap ? <Redirect to="/default/dashboard/ap" /> : <Redirect to="/default/dashboard/ar" />
+        )
+      ) : (
+        ""
+      )}
       <GridContainer justify="center">
         <GridItem xs={12} sm={6} md={4}>
           <form onSubmit={handleClick}>

@@ -1,3 +1,5 @@
+import { checkSelectAll } from "views/LDocs/Functions/Functions";
+
 const initialState = {
   Token : null,
   isTokenExpired: false,
@@ -16,6 +18,8 @@ const initialState = {
   isAr:false,
   tabVal:0,
   permissions:null,
+  isApEnable:false,
+  isArEnable:false
 };
 
 const userReducer = (state = initialState, action) => {
@@ -23,8 +27,11 @@ const userReducer = (state = initialState, action) => {
   switch (action.type) {
 
     case "SET_PERMISSIONS": {
-     
-      return { ...state, permissions: action.response};
+      let isAp = checkSelectAll(action.response, "ap");
+      let isAr = checkSelectAll(action.response, "ar");
+      console.log("permission", checkSelectAll(action.response, "ap"));
+
+      return { ...state, permissions: action.response, isArEnable: isAr, isApEnable: isAp};
     }
 
     case "SET_IS_AR": {
