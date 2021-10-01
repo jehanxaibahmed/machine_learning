@@ -71,13 +71,17 @@ export default function LoginSecret(props) {
     })
       .then(async (response) => {
         let token = response.headers.cooljwt;
-        dispatch(setPermissions(response?.data));
-        let ap = checkSelectAll(response?.data, "ap");
-        let ar = checkSelectAll(response?.data, "ar");
-        setState({
-          ap,
-          ar,
-        });
+        if (typeof response?.data == "object") {
+          dispatch(setPermissions(response?.data));
+          let ap = checkSelectAll(response?.data, "ap");
+          let ar = checkSelectAll(response?.data, "ar");
+          setState({
+            ap,
+            ar,
+          });
+        }else{
+          dispatch(setPermissions())
+        }
         let decoded = jwt.decode(token);
         console.log("user_details", decoded);
         if (!decoded.isTenant) {
@@ -122,8 +126,10 @@ export default function LoginSecret(props) {
       {loggedIn && userData !== null ? (
         userData?.role?.isAdmin ? (
           <Redirect to="/admin/dashboard/ad" />
+        ) : state.ap ? (
+          <Redirect to="/default/dashboard/ap" />
         ) : (
-         state.ap ? <Redirect to="/default/dashboard/ap" /> : <Redirect to="/default/dashboard/ar" />
+          <Redirect to="/default/dashboard/ar" />
         )
       ) : (
         ""

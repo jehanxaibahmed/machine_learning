@@ -243,28 +243,37 @@ export const msgAlert = (msg) => {
   });
 };
 
-
-export const checkSelectAll = (permissions ,key1, key2) => {
+export const checkSelectAll = (permissions, key1, key2) => {
   let AllSelectedModule = [];
-  debugger;
-  Object.keys(permissions).map((key) => {
-    if(key1){key = key1};
-    console.log('key1', key1);
-    Object.keys(permissions[key]).map((sub_key) => {
-      if(key2){sub_key = key2};
-      Object.keys(permissions[key][sub_key])
-        .map(item => {
-          if (item != "name" && item != "enable" && typeof permissions[key][sub_key][item] == "object") {
-            AllSelectedModule.push(permissions[key][sub_key][item]?.enable ? true : false);
+  if (typeof permissions == "object") {
+    Object.keys(permissions).map((key) => {
+      if (key1) {
+        key = key1;
+      }
+      console.log("key1", key1);
+      Object.keys(permissions[key]).map((sub_key) => {
+        if (key2) {
+          sub_key = key2;
+        }
+        Object.keys(permissions[key][sub_key]).map((item) => {
+          if (
+            item != "name" &&
+            item != "enable" &&
+            typeof permissions[key][sub_key][item] == "object"
+          ) {
+            AllSelectedModule.push(
+              permissions[key][sub_key][item]?.enable ? true : false
+            );
           }
         });
+      });
     });
-  });
-  let isAllSelectedModule = AllSelectedModule
-    .some(item => item === true);
-  return isAllSelectedModule;
-}
-
+    let isAllSelectedModule = AllSelectedModule.some((item) => item === true);
+    return isAllSelectedModule;
+  } else {
+    return false;
+  }
+};
 
 export const validateInvoice = async (row, Token, isAr) => {
   return new Promise((res, rej) => {
@@ -439,7 +448,7 @@ export const validateInvoice = async (row, Token, isAr) => {
                 },
                 "Vendor ID": {
                   onChain: isAr ? blockchain.clientID : blockchain.VendorID,
-                  offChain: isAr ?  invoice.clientId : invoice.vendorId ,
+                  offChain: isAr ? invoice.clientId : invoice.vendorId,
                   isSame: isVendorIDSame,
                   onChainName: BlockchainNames.vendorName || null,
                   offChainName: InvoiceNames.vendorName || null,
@@ -464,7 +473,11 @@ export const validateInvoice = async (row, Token, isAr) => {
                   offChainName: InvoiceNames.organizationName || null,
                 },
                 "Discount Percentage": {
-                  onChain: `${ isAr ? blockchain.discountPercent :  blockchain.discountPercentage}%`,
+                  onChain: `${
+                    isAr
+                      ? blockchain.discountPercent
+                      : blockchain.discountPercentage
+                  }%`,
                   offChain: `${invoice.discountPercent}%`,
                   isSame: isDiscountPercentageSame,
                 },
