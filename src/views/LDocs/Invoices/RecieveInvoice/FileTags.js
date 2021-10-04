@@ -47,6 +47,7 @@ export default function FileTags(props) {
       tenantId:file.tenantId,
       organizationId:file.organizationId,
       vendorId:file.vendorId,
+      clientId:file.clientId,
       version:file.version,
       invoiceTag: {
         email: decoded.email,

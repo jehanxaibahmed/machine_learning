@@ -28,6 +28,15 @@ export const ArReports = (permissions) => {
       "icon": ReceivableAgingImage,
       "isImg": true,
     }:{},
+    permissions?.invoiceAging?.enable ?
+    {
+      "id": 3,
+      "name": "Customer 360",
+      "title": "Ledger Report of a Customer",
+      "link": "../default/clientledger/ar",
+      "icon": ReceivableAgingImage,
+      "isImg": true,
+    }:{},
 
   ];
 }
@@ -38,7 +47,7 @@ export const ApReports = (permissions) => {
   return [
     permissions?.apAnalytics?.enable ?
     {
-      "id": 3,
+      "id": 4,
       "name": "Payable Analytics",
       "title": "Analytical Summary of Accounts Payable ",
       "link": "../default/financeDashboard/ap",
@@ -47,10 +56,19 @@ export const ApReports = (permissions) => {
     }:{},
     permissions?.invoiceAging?.enable ?
     {
-      "id": 4,
+      "id": 5,
       "name": "Payable Aging",
       "title": "Aging Report of Accounts Payable",
       "link": "../default/invoice-aging/ap",
+      "icon": PayableAgingImage,
+      "isImg": true,
+    }:{},
+    permissions?.invoiceAging?.enable ?
+    {
+      "id": 6,
+      "name": "Supplier 360",
+      "title": "Ledger Report of Vendor",
+      "link": "../default/supplierledger/ap",
       "icon": PayableAgingImage,
       "isImg": true,
     }:{},
@@ -60,7 +78,7 @@ export const ApReports = (permissions) => {
 const Reports = [
 
   {
-    "id": 5,
+    "id": 7,
     "name": "Cashflow",
     "title": "An overview of the Receivable and Payable Cash Flows",
     "link": "../default/cashflow",

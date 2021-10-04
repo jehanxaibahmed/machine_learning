@@ -94,7 +94,7 @@ export default function FileAdvanceView(props) {
   const getBlockChainData = async () => {
     let offchainData = [];
     if (isAr) {
-     axios({
+      axios({
         method: "post", //you can set what request you want to be
         url: `${process.env.REACT_APP_LDOCS_API_URL}/AR/get-invoice-workflow-history-offchain`,
         data: {
@@ -120,7 +120,7 @@ export default function FileAdvanceView(props) {
           offchainData = [];
         });
     }
-   axios({
+    axios({
       method: "get", //you can set what request you want to be
       url: isAr
         ? `${process.env.REACT_APP_LDOCS_API_BOOKCHAIN_URL}/api/invoiceWorkflow/get-invoice-workflow-history/${fileData.clientId}-${fileData.invoiceId}-${fileData.version}`
@@ -142,8 +142,6 @@ export default function FileAdvanceView(props) {
         console.log(error);
         setBlockChainData(offchainData);
       });
-
-    
   };
 
   //Get BlockChain View
@@ -304,7 +302,7 @@ export default function FileAdvanceView(props) {
     await getPaymentData();
     setIsLoading(false);
     if (!isVendor) {
-       getValidator();
+      getValidator();
     }
 
     if (fileData.initWorkFlow && !isVendor) {
@@ -338,15 +336,19 @@ export default function FileAdvanceView(props) {
           <Typography variant="subtitle2" component="h2">
             {step?.Event.toUpperCase()} STEP (
             {formatDateTime(step?.EventInitDate)})
-            <Tooltip title="Transaction ID">
-              <a
-                href={`https://test.whatsonchain.com/tx/${step?.TxnID}`}
-                target="_blank"
-                style={{ float: "right" }}
-              >
-                <VerifiedUserIcon />
-              </a>
-            </Tooltip>
+            {step?.TxnID ? (
+              <Tooltip title="Transaction ID">
+                <a
+                  href={`https://test.whatsonchain.com/tx/${step?.TxnID}`}
+                  target="_blank"
+                  style={{ float: "right" }}
+                >
+                  <VerifiedUserIcon />
+                </a>
+              </Tooltip>
+            ) : (
+              ""
+            )}
           </Typography>
         </CardHeader>
         <Divider />

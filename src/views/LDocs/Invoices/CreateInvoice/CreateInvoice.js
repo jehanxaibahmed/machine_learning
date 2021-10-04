@@ -273,10 +273,9 @@ export default function CreateInvoice(props) {
           type.Acc_Type == payload
         )};
 
-        console.log("account Types", response);
         setFormState((formState) => ({
           ...formState,
-          expenseTypes: isAr ? account_types("Expenses").concat(account_types("Liabilities")) : account_types("Revenue").concat(account_types("Assets"))  ,
+          expenseTypes: !isAr ? account_types("Expenses").concat(account_types("Liabilities")) : account_types("Revenue").concat(account_types("Assets")),
         }));
       })
       .catch((error) => {
