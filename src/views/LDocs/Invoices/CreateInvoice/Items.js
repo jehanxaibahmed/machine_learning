@@ -105,12 +105,12 @@ export default function Items(props) {
     baseCurrency,
     userData,
     edit,
-    isAr
+    isAr,
   } = props;
   const classes = useStyles();
   const [lookups, setLookups] = useState([]);
   const [baseCurr, setBaseCurr] = useState();
-  
+
   //getLookups
   const getLookUp = async () => {
     return new Promise((res, rej) => {
@@ -126,7 +126,7 @@ export default function Items(props) {
         })
         .catch((error) => {
           if (error.response) {
-             error.response.status == 401 && dispatch(setIsTokenExpired(true));
+            error.response.status == 401 && dispatch(setIsTokenExpired(true));
           }
           console.log(error);
           rej([]);
@@ -138,9 +138,17 @@ export default function Items(props) {
     getLookUp();
   }, []);
 
-  React.useEffect(()=>{
-    setBaseCurr(baseCurrency ? baseCurrency : !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '');
-  },[formState])
+  React.useEffect(() => {
+    setBaseCurr(
+      baseCurrency
+        ? baseCurrency
+        : !isVendor
+        ? userData.currency.Currency_Base
+        : formState.selectedOrg
+        ? formState.selectedOrg.currency
+        : ""
+    );
+  }, [formState]);
 
   return (
     <GridItem xs={12} sm={12} md={12} lg={12}>
@@ -493,9 +501,12 @@ export default function Items(props) {
                           </MenuItem>
                           {formState.expenseTypes
                             ? formState.expenseTypes.map((exp, index) => (
-                              <MenuItem key={index} value={exp.Acc_Description}>
-                              {exp.Acc_Description}
-                            </MenuItem>
+                                <MenuItem
+                                  key={index}
+                                  value={exp.Acc_Description}
+                                >
+                                  {exp.Acc_Description}
+                                </MenuItem>
                               ))
                             : ""}
                         </TextField>
@@ -567,18 +578,21 @@ export default function Items(props) {
                       {row.itemName}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {`${currency.Code} `} 
+                      {`${currency.Code} `}
                       {addZeroes(row.unitCost)}
                       <br />
-                      {currency._id != baseCurr &&  conversionRate(
-                        currency._id,
-                        baseCurr,
-                        currencyLookups,
-                        row.unitCost,
-                        false,
-                        edit,
-                        formState.conversionRate ? formState.conversionRate : 0 
-                      )}
+                      {currency._id != baseCurr &&
+                        conversionRate(
+                          currency._id,
+                          baseCurr,
+                          currencyLookups,
+                          row.unitCost,
+                          false,
+                          edit,
+                          formState.conversionRate
+                            ? formState.conversionRate
+                            : 0
+                        )}
                     </StyledTableCell>
                     <StyledTableCell align="right">
                       {addZeroes(row.quantity)}
@@ -587,18 +601,27 @@ export default function Items(props) {
                       {addZeroes(row.discount)}%
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {`${currency.Code} `} 
+                      {`${currency.Code} `}
                       {addZeroes(row.amount)}
                       <br />
-                      {currency._id != baseCurr && conversionRate(
-                        currency._id,
-                        baseCurrency ? baseCurrency : !isVendor ? userData.currency.Currency_Base : formState.selectedOrg ? formState.selectedOrg.currency : '',
-                        currencyLookups,
-                        row.amount,
-                        false,
-                        edit,
-                        formState.conversionRate ? formState.conversionRate : 0 
-                      )}
+                      {currency._id != baseCurr &&
+                        conversionRate(
+                          currency._id,
+                          baseCurrency
+                            ? baseCurrency
+                            : !isVendor
+                            ? userData.currency.Currency_Base
+                            : formState.selectedOrg
+                            ? formState.selectedOrg.currency
+                            : "",
+                          currencyLookups,
+                          row.amount,
+                          false,
+                          edit,
+                          formState.conversionRate
+                            ? formState.conversionRate
+                            : 0
+                        )}
                     </StyledTableCell>
                     <StyledTableCell style={{ width: 100 }} align="right">
                       <Tooltip title="Edit Item" aria-label="edit">
@@ -866,10 +889,11 @@ export default function Items(props) {
                     </StyledTableCell>
                     :""}
                 </StyledTableRow> */}
-                <StyledTableRow key={"AddingItem1"}>
-                  {!isVendor && formState.isReceipt && formState.isPo ? (
+                {!isVendor && formState.isReceipt && formState.isPo ? (
+                  <StyledTableRow key={"AddingItem1"}>
                     <React.Fragment>
-                      <StyledTableCell style={{ paddingTop: 30 }} colSpan="2">
+                      
+                      <StyledTableCell style={{ paddingTop: 30 }} colSpan="6">
                         <Select
                           className={classes.textField}
                           multiple
@@ -915,21 +939,23 @@ export default function Items(props) {
                         </Tooltip>
                       </StyledTableCell>
                     </React.Fragment>
-                  ) : (
-                    ""
-                  )}
-                  {formState.isPeetyCash ? (
-                    <StyledTableCell style={{ paddingTop: 30 }} colSpan="3">
+                  </StyledTableRow>
+                ) : (
+                  ""
+                )}
+                <StyledTableRow>
+                  {isAr ? (
+                    <StyledTableCell style={{ paddingTop: 20 }} colSpan="3">
                       <TextField
                         className={classes.textField}
                         fullWidth={true}
                         error={formState.errors.inlineExpenseType === "error"}
                         helperText={
                           formState.errors.inlineExpenseType === "error"
-                            ? "Valid Expense Type required"
+                            ? "Valid Revenue / Asset Type required"
                             : null
                         }
-                        label={isAr ? "Revenue Type" : "Expense Type"}
+                        label={"Revenue / Asset Type"}
                         id="inlineExpenseType"
                         name="inlineExpenseType"
                         onChange={(event) => {
@@ -941,19 +967,60 @@ export default function Items(props) {
                         select
                       >
                         <MenuItem disabled={true} key={"disabled"}>
-                          {isAr ? "Revenue Type" : "Expense Type"}
+                          {"Revenue / Asset Type"}
                         </MenuItem>
                         {formState.expenseTypes
                           ? formState.expenseTypes.map((exp, index) => (
-                            <MenuItem key={index} value={exp.Acc_Description}>
-                            {exp.Acc_Description}
-                          </MenuItem>
+                              <MenuItem key={index} value={exp.Acc_Description}>
+                                {exp.Acc_Description} (
+                                <small
+                                  style={{
+                                    alignSelf: "right",
+                                    textAlign: "right",
+                                  }}
+                                >
+                                  {exp.Acc_Type}
+                                </small>
+                                )
+                              </MenuItem>
                             ))
                           : ""}
                       </TextField>
                     </StyledTableCell>
                   ) : (
-                    ""
+                    <StyledTableCell style={{ paddingTop: 20 }} colSpan="3">
+                      <TextField
+                        className={classes.textField}
+                        fullWidth={true}
+                        error={formState.errors.inlineExpenseType === "error"}
+                        helperText={
+                          formState.errors.inlineExpenseType === "error"
+                            ? "Valid Expense / Liabilites Type required"
+                            : null
+                        }
+                        label={"Liabilites / Expense Type"}
+                        id="inlineExpenseType"
+                        name="inlineExpenseType"
+                        onChange={(event) => {
+                          handleChange(event);
+                        }}
+                        // variant="outlined"
+                        value={formState.values.inlineExpenseType}
+                        // MenuProps={MenuProps}
+                        select
+                      >
+                        <MenuItem disabled={true} key={"disabled"}>
+                          {"Liabilites / Expense Type"}
+                        </MenuItem>
+                        {formState.expenseTypes
+                          ? formState.expenseTypes.map((exp, index) => (
+                              <MenuItem key={index} value={exp.Acc_Description}>
+                                {exp.Acc_Description}
+                              </MenuItem>
+                            ))
+                          : ""}
+                      </TextField>
+                    </StyledTableCell>
                   )}
                   <StyledTableCell
                     colSpan={

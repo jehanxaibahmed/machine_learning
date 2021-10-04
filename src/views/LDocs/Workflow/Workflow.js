@@ -263,7 +263,8 @@ const viewWorkflowColumnView = (row) => {
                  id: prop._id,
                  workflowName: prop.workflowName,
                  organizationName: prop.organizationName,
-                 comments: prop.comments,
+                 companyName:prop.companyName,
+                 type:prop.isAR ? "ACCOUNT RECEIVABLE" : "ACCOUNT PAYABLE",
                  actions: (
                    <div className="actions-right">
                      <Tooltip title="Update Invoice Workflow" aria-label="updateWorkflow">
@@ -1812,12 +1813,16 @@ const createWorkflow = () => {
                           accessor: "workflowName",
                         },
                         {
+                          Header: "Type",
+                          accessor: "type",
+                        },
+                        {
                           Header: "Organization",
                           accessor: "organizationName",
                         },
                         {
-                          Header: "Description",
-                          accessor: "comments",
+                          Header: "Location",
+                          accessor: "companyName",
                         },
                         {
                           Header: "Actions",

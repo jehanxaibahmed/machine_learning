@@ -234,8 +234,6 @@ export default function CreateInvoice(props) {
       : ""
   );
 
-
-
   const getLookUp = () => {
     const organizationId = edit
       ? fileData.organizationId
@@ -263,16 +261,22 @@ export default function CreateInvoice(props) {
           console.log(error);
         });
     }
-     //Get ExpenseTypes
+    //Get ExpenseTypes
     axios({
       method: "get",
       url: `${process.env.REACT_APP_LDOCS_API_URL}/tenant/getAccounts`,
       headers: { cooljwt: Token },
     })
       .then((response) => {
+        let account_types = (payload) => {
+          return response.data.filter((type) => 
+          type.Acc_Type == payload
+        )};
+
+        console.log("account Types", response);
         setFormState((formState) => ({
           ...formState,
-          expenseTypes: response.data.filter(type=>type.Acc_Type == isAr ? "Revenue" : "Expenses"),
+          expenseTypes: isAr ? account_types("Expenses").concat(account_types("Liabilities")) : account_types("Revenue").concat(account_types("Assets"))  ,
         }));
       })
       .catch((error) => {
@@ -3259,10 +3263,12 @@ export default function CreateInvoice(props) {
                               error={formState.errors.expenseType === "error"}
                               helperText={
                                 formState.errors.expenseType === "error"
-                                  ? isAr ? "Valid Revenue Type is required" : "Valid Expense Type is required"
+                                  ? isAr
+                                    ? "Valid Revenue Type is required"
+                                    : "Valid Expense Type is required"
                                   : null
                               }
-                              label={isAr ?"Revenue Type" :"Expense Type"}
+                              label={isAr ? "Revenue Type" : "Expense Type"}
                               id="expenseType"
                               disabled={formState.isPeetyCash}
                               name="expenseType"
@@ -3274,7 +3280,10 @@ export default function CreateInvoice(props) {
                             >
                               {formState.expenseTypes
                                 ? formState.expenseTypes.map((exp, index) => (
-                                    <MenuItem key={index} value={exp.Acc_Description}>
+                                    <MenuItem
+                                      key={index}
+                                      value={exp.Acc_Description}
+                                    >
                                       {exp.Acc_Description}
                                     </MenuItem>
                                   ))

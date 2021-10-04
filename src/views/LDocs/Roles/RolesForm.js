@@ -81,6 +81,7 @@ export default function Roles() {
       headers: { cooljwt:Token},
     })
      .then(async(response) => {
+       console.log("role Response", response);
         setData(
           response.data.map((prop, key) => {
            return {
@@ -90,6 +91,7 @@ export default function Roles() {
              createdBy: prop.createdBy,
              actions: (
                <div className="actions-right">
+                 {!prop.isDefault ? 
                  <Tooltip title="Update Level 1" aria-label="updateRole">
                    <Button
                      justIcon
@@ -102,7 +104,7 @@ export default function Roles() {
                    >
                      <EditIcon />
                    </Button>
-                 </Tooltip>
+                 </Tooltip>:""}
                  <Tooltip title="View Level 1" aria-label="viewRole">
                    <Button
                      justIcon

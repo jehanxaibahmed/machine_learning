@@ -237,7 +237,7 @@ export default function Step3(props) {
         >
           <TextField
             className={classes.textField}
-            error={formState.errors.workflow === "error"}
+            error={formState.errors.role === "error"}
             fullWidth={true}
             // helperText={
             //   formState.errors.workflow === "error"

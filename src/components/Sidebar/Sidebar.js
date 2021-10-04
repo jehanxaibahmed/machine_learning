@@ -47,11 +47,11 @@ const action = {
 class SidebarWrapper extends React.Component {
   sidebarWrapper = React.createRef();
   constructor(props) {
-    super(props); 
+    super(props);
     this.state = {
-      isApEnable : props.isApEnable,
-      isArEnable : props.isArEnable,
-    }
+      isApEnable: props.isApEnable,
+      isArEnable: props.isArEnable,
+    };
   }
 
   componentDidMount() {
@@ -80,10 +80,6 @@ class SidebarWrapper extends React.Component {
 
     // console.log("AP", isApEnable ? isApEnable :);
 
-
-    
-
-
     const a11yProps = (index) => {
       return {
         id: `simple-tab-${index}`,
@@ -95,72 +91,79 @@ class SidebarWrapper extends React.Component {
         {userData ? user : <CircularProgress disableShrink />}
         {headerLinks}
         {isTabs ? (
-          <Tabs
-            style={{
-              zIndex: 999999999,
-              width: "calc(100% - 30px)",
-              margin: 15,
-            }}
-            value={tabValue}
-            onChange={handleTabChange}
-            aria-label="simple tabs example"
-          >
-            {isApEnable ? 
-            <Tab
-              style={{ minWidth: !isArEnable ? "100%": "50%" }}
-              disabled={!isArEnable}
-              label={
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <Avatar
-                    alt="ap icon"
-                    src={ApImage}
-                    variant="square"
-                    style={{
-                      verticalAlign: "middle",
-                      width: 30,
-                      marginRight: 20,
-                    }}
-                  />{" "}
-                  AP{" "}
-                </div>
-              }
-              {...a11yProps(0)}
-            />:""}
-            {isArEnable ?
-            <Tab
-              style={{ minWidth: !isApEnable ? "100%": "50%" }}
-              disabled={!isApEnable}
-              label={
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <Avatar
-                    alt="ap icon"
-                    src={ArImage}
-                    variant="square"
-                    style={{
-                      verticalAlign: "middle",
-                      width: 30,
-                      marginRight: 20,
-                    }}
-                  />{" "}
-                  AR{" "}
-                </div>
-              }
-              {...a11yProps(1)}
+          <>
+            <Tabs
+              style={{
+                zIndex: 999999999,
+                width: "calc(100% - 30px)",
+                margin: 15,
+              }}
+              value={tabValue}
+              onChange={handleTabChange}
+              aria-label="simple tabs example"
+            >
+              {isApEnable ? (
+                <Tab
+                  style={{ minWidth: !isArEnable ? "100%" : "50%" }}
+                  disabled={!isArEnable}
+                  label={
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Avatar
+                        alt="ap icon"
+                        src={ApImage}
+                        variant="square"
+                        style={{
+                          verticalAlign: "middle",
+                          width: 30,
+                          marginRight: 20,
+                        }}
+                      />{" "}
+                      {isApEnable && isArEnable ? "AP" : "ACCOUNT PAYABLE"}{" "}
+                    </div>
+                  }
+                  {...a11yProps(0)}
+                />
+              ) : (
+                ""
+              )}
+              {isArEnable ? (
+                <Tab
+                  style={{ minWidth: !isApEnable ? "100%" : "50%" }}
+                  disabled={!isApEnable}
+                  label={
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Avatar
+                        alt="ap icon"
+                        src={ArImage}
+                        variant="square"
+                        style={{
+                          verticalAlign: "middle",
+                          width: 30,
+                          marginRight: 20,
+                        }}
+                      />{" "}
+                      {isApEnable && isArEnable ? "AR" : "ACCOUNT RECEIVABLE"}{" "}
+                    </div>
+                  }
+                  {...a11yProps(1)}
+                />
+              ) : (
+                ""
+              )}
+            </Tabs>
+            <Divider
+              style={{
+                background: "hsla(0,0%,100%,.3)",
+                width: "calc(100% - 30px)",
+                bottom: 0,
+                height: 1,
+                margin: 15,
+              }}
             />
-            :""}
-          </Tabs>
+          </>
         ) : (
           ""
         )}
-        <Divider
-          style={{
-            background: "hsla(0,0%,100%,.3)",
-            width: "calc(100% - 30px)",
-            bottom: 0,
-            height: 1,
-            margin: 15,
-          }}
-        />
         {links}
       </div>
     );
@@ -176,18 +179,21 @@ class Sidebar extends React.Component {
       level1: "",
       isAr: props?.isAr,
       LogoutCheck: false,
-      tabValue: props.isApEnable && props.isArEnable ? _IsAr() ? 1 : 0 : props.isArEnable ? 1 : 0,
+      tabValue:
+        props.isApEnable && props.isArEnable
+          ? _IsAr()
+            ? 1
+            : 0
+          : props.isArEnable
+          ? 1
+          : 0,
       isApEnable: props.isApEnable,
       isArEnable: props.isArEnable,
       ...this.getCollapseStates(props.routes ? props.routes : []),
       ...this.getCollapseStates(props.aproutes ? props.aproutes : []),
       ...this.getCollapseStates(props.arroutes ? props.arroutes : []),
     };
-
-
   }
-
- 
 
   handleTabChange = (event, newValue) => {
     // this.props.handleTabVal(newValue);
@@ -705,8 +711,8 @@ class Sidebar extends React.Component {
               tabValue={this.state.tabValue}
               handleTabChange={this.handleTabChange}
               permissions={this.props.permissions}
-              isApEnable={this.state.isApEnable ?  this.state.isApEnable : false}
-              isArEnable={this.state.isArEnable ? this.state.isArEnable : false }
+              isApEnable={this.state.isApEnable ? this.state.isApEnable : false}
+              isArEnable={this.state.isArEnable ? this.state.isArEnable : false}
             />
             {image !== undefined ? (
               <div
@@ -737,8 +743,8 @@ class Sidebar extends React.Component {
               tabValue={this.state.tabValue}
               handleTabChange={this.handleTabChange}
               permissions={this.props.permissions}
-              isApEnable={this.state.isApEnable ?  this.state.isApEnable : false}
-              isArEnable={this.state.isArEnable ? this.state.isArEnable : false }
+              isApEnable={this.state.isApEnable ? this.state.isApEnable : false}
+              isArEnable={this.state.isArEnable ? this.state.isArEnable : false}
             />
             {image !== undefined ? (
               <div

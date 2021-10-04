@@ -758,13 +758,13 @@ export default function Register(props) {
               <GridItem
           xs={12}
           sm={12}
-          md={6}
-          lg={6}
-          style={{ marginBottom: "10px", marginTop: "10px" }}
+          md={4}
+          lg={4}
+          style={{ marginBottom: "10px"}}
         >
           <TextField
             className={classes.textField}
-            error={formState.errors.workflow === "error"}
+            error={formState.errors.role === "error"}
             fullWidth={true}
             // helperText={
             //   formState.errors.workflow === "error"

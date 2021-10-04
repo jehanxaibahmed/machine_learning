@@ -65,6 +65,13 @@ var adminRoutes = [
         layout: "/admin",
       },
       {
+        path: "/coa/ad",
+        name: "Chart of Account",
+        icon: DescriptionIcon,
+        component: COA,
+        layout: "/admin",
+      },
+      {
         path: "/supplier/ad",
         name: "Supplier",
         icon: PeopleIcon,
@@ -130,13 +137,6 @@ var adminRoutes = [
         name: "Invoice Configrations",
         icon: DescriptionIcon,
         component: InvoiceConfigrations,
-        layout: "/admin",
-      },
-      {
-        path: "/coa/ad",
-        name: "Chart of Account",
-        icon: DescriptionIcon,
-        component: COA,
         layout: "/admin",
       },
       {
