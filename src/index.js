@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 import { store, persistor } from "./redux";
 import { PersistGate } from 'redux-persist/integration/react'
 import addNotification from 'react-push-notification'; 
-
+ 
 
 // import AuthLayout from "layouts/Auth.js";
 // import RtlLayout from "layouts/RTL.js";
